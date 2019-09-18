@@ -18,8 +18,8 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
 	void Start () {
         // Initialize all states
-        AcceleratingState s_accelerating = new AcceleratingState(c_playerData);
-        StationaryState s_stationary = new StationaryState (c_playerData);
+        AcceleratingState s_accelerating = new AcceleratingState();
+        StationaryState s_stationary = new StationaryState ();
 
         c_stateMachine = new StateMachine (s_accelerating);
         c_stateMachine.AddState(s_stationary);
@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour {
     /// state is updated.
     /// </summary>
 	void FixedUpdate () {
-        c_stateMachine.Act();
+        c_stateMachine.Act(ref c_playerData);
 
         Debug.Log(c_playerData.GetCurrentSpeed());
 

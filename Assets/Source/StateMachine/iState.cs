@@ -10,8 +10,8 @@ public interface iState {
     /// constructor.
     /// </summary>
     /// <param name="dataIn">The current object's PlayerData</param>
-    void ProvideData(PlayerData dataIn);
+    // void ProvideData(PlayerData dataIn);
 
-    void Act();
+    void Act(ref PlayerData c_playerData);
     iState GetNextState(Command cmd);
 }

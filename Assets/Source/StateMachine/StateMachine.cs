@@ -32,9 +32,9 @@ public class StateMachine {
     /// <summary>
     /// Performs the behavior of the current state
     /// </summary>
-    public void Act()
+    public void Act(ref PlayerData c_playerData)
     {
-        i_currentState.Act();
+        i_currentState.Act(ref c_playerData);
     }
 
     /// <summary>

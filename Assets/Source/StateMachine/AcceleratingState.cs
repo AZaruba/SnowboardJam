@@ -5,17 +5,10 @@ using UnityEngine;
 public class AcceleratingState : iState {
 
     private AccelerationCartridge cart_acceleration;
-    private PlayerData c_playerData;
 
-    public AcceleratingState(PlayerData dataIn)
+    public AcceleratingState()
     {
-        ProvideData(dataIn);
         cart_acceleration = new AccelerationCartridge ();
-    }
-
-    public void ProvideData(PlayerData dataIn)
-    {
-        c_playerData = dataIn;
     }
 
     /// <summary>
@@ -23,7 +16,7 @@ public class AcceleratingState : iState {
     /// the Acceleration cart to change the speed. Then puts the speed
     /// back into the playerdata.
     /// </summary>
-    public void Act()
+    public void Act(ref PlayerData c_playerData)
     {
         float f_currentSpeed = c_playerData.GetCurrentSpeed();
         float f_acceleration = c_playerData.GetAcceleration();
@@ -42,7 +35,7 @@ public class AcceleratingState : iState {
     {
         if (cmd == Command.COAST)
         {
-            return new StationaryState (c_playerData);
+            return new StationaryState ();
         }
         return this;
     }

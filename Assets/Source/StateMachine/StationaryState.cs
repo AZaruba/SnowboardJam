@@ -5,22 +5,15 @@ using UnityEngine;
 public class StationaryState : iState {
 
     private AccelerationCartridge cart_acceleration;
-    private PlayerData c_playerData;
 
-    public StationaryState(PlayerData dataIn)
+    public StationaryState()
     {
-        ProvideData(dataIn);
         cart_acceleration = new AccelerationCartridge ();
     }
 
-    public void ProvideData(PlayerData dataIn)
+    public void Act(ref PlayerData c_playerData)
     {
-        c_playerData = dataIn;
-    }
-
-    public void Act()
-    {
-        c_playerData.SetCurrentSpeed(Decelerate());
+        c_playerData.SetCurrentSpeed(Decelerate(ref c_playerData));
     }
 
     /// <summary>
@@ -33,7 +26,7 @@ public class StationaryState : iState {
         // TODO: Replace this with states held by the state machine to prevent constructor calls
         if (cmd == Command.ACCELERATE)
         {
-            return new AcceleratingState (c_playerData);
+            return new AcceleratingState ();
         }
         return this;
     }
@@ -41,7 +34,7 @@ public class StationaryState : iState {
     /// <summary>
     /// Performs deceleration as needed (if object moving)
     /// </summary>
-    private float Decelerate()
+    private float Decelerate(ref PlayerData c_playerData)
     {
         float f_currentSpeed = c_playerData.GetCurrentSpeed();
         float f_deceleration = c_playerData.GetAcceleration();
