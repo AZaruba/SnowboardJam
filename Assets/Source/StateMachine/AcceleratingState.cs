@@ -7,10 +7,10 @@ public class AcceleratingState : iState {
     private AccelerationCartridge cart_acceleration;
     private PlayerData c_playerData;
 
-    public AcceleratingState(PlayerData dataIn, AccelerationCartridge cartIn)
+    public AcceleratingState(PlayerData dataIn)
     {
         ProvideData(dataIn);
-        cart_acceleration = cartIn;
+        cart_acceleration = new AccelerationCartridge ();
     }
 
     public void ProvideData(PlayerData dataIn)
@@ -33,8 +33,17 @@ public class AcceleratingState : iState {
         c_playerData.SetCurrentSpeed(f_currentSpeed);
     }
 
+    /// <summary>
+    /// Returns the state after the given command.
+    /// </summary>
+    /// <returns>An iState following a given Command, or this if none.</returns>
+    /// <param name="cmd">The command</param>
     public iState GetNextState(Command cmd)
     {
-        return new AcceleratingState (c_playerData, cart_acceleration);
+        if (cmd == Command.COAST)
+        {
+            return new StationaryState (c_playerData);
+        }
+        return this;
     }
 }

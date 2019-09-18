@@ -50,6 +50,10 @@ public class PlayerData : MonoBehaviour {
         if (newSpeed > f_topSpeed)
         {
             f_currentSpeed = f_topSpeed;
+        } 
+        else if (newSpeed < 0)
+        {
+            f_currentSpeed = 0.0f;
         }
         else
         {

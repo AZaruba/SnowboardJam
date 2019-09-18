@@ -18,9 +18,11 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
 	void Start () {
         // Initialize all states
-        AcceleratingState s_accelerating = new AcceleratingState(c_playerData, new AccelerationCartridge());
+        AcceleratingState s_accelerating = new AcceleratingState(c_playerData);
+        StationaryState s_stationary = new StationaryState (c_playerData);
 
         c_stateMachine = new StateMachine (s_accelerating);
+        c_stateMachine.AddState(s_stationary);
 	}
 	
 	/// <summary>
@@ -32,5 +34,19 @@ public class PlayerController : MonoBehaviour {
         c_stateMachine.Act();
 
         Debug.Log(c_playerData.GetCurrentSpeed());
+
+        UpdateStateMachine();
 	}
+
+    private void UpdateStateMachine()
+    {
+        if (Input.GetKey(KeyCode.Space))
+        {
+            c_stateMachine.Execute(Command.ACCELERATE);
+        }
+        else
+        {
+            c_stateMachine.Execute(Command.COAST);
+        }
+    }
 }
