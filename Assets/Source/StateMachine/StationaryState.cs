@@ -5,10 +5,12 @@ using UnityEngine;
 public class StationaryState : iState {
 
     private AccelerationCartridge cart_acceleration;
+    private VelocityCartridge cart_velocity;
 
     public StationaryState()
     {
         cart_acceleration = new AccelerationCartridge ();
+        cart_velocity = new VelocityCartridge ();
     }
 
     public void Act(ref PlayerData c_playerData)
@@ -39,7 +41,13 @@ public class StationaryState : iState {
         float f_currentSpeed = c_playerData.GetCurrentSpeed();
         float f_deceleration = c_playerData.GetAcceleration();
 
+        Vector3 v_currentPosition = c_playerData.GetCurrentPosition();
+        Vector3 fwd = Vector3.forward;
+
         cart_acceleration.Decelerate(ref f_currentSpeed, ref f_deceleration);
+        cart_velocity.UpdatePosition(ref v_currentPosition, ref fwd, ref f_currentSpeed);
+
+        c_playerData.SetCurrentPosition(v_currentPosition);
 
         return f_currentSpeed;
     }

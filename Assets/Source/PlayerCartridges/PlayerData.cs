@@ -9,6 +9,8 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float f_acceleration;
 
     private float f_currentSpeed;
+
+    private Vector3 v_currentPosition;
     #endregion
 
     #region Getters
@@ -38,6 +40,15 @@ public class PlayerData : MonoBehaviour {
     {
         return f_currentSpeed;
     }
+
+    /// <summary>
+    /// Gets the current position.
+    /// </summary>
+    /// <returns>v_currentPosition</returns>
+    public Vector3 GetCurrentPosition()
+    {
+        return v_currentPosition;
+    }
     #endregion
 
     #region Setters
@@ -61,6 +72,14 @@ public class PlayerData : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Sets the current position.
+    /// </summary>
+    /// <param name="newPosition">The new v_currentPosition</param>
+    public void SetCurrentPosition(Vector3 newPosition)
+    {
+        v_currentPosition = newPosition;
+    }
     #endregion
 
     void Start()

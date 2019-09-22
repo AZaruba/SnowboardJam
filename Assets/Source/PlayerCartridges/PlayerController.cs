@@ -16,7 +16,8 @@ public class PlayerController : MonoBehaviour {
     /// Start this instance. Initializes all valid states for this object
     /// then adds them to the state machine
     /// </summary>
-	void Start () {
+	void Start ()
+    {
         // Initialize all states
         AcceleratingState s_accelerating = new AcceleratingState();
         StationaryState s_stationary = new StationaryState ();
@@ -30,14 +31,26 @@ public class PlayerController : MonoBehaviour {
     /// used for object-level functions (such as translations) and then the
     /// state is updated.
     /// </summary>
-	void FixedUpdate () {
+	void FixedUpdate ()
+    {
         c_stateMachine.Act(ref c_playerData);
 
-        Debug.Log(c_playerData.GetCurrentSpeed());
+        EngineUpdate();
 
         UpdateStateMachine();
 	}
 
+    /// <summary>
+    /// Updates the object's state within the engine.
+    /// </summary>
+    void EngineUpdate()
+    {
+        transform.position = c_playerData.GetCurrentPosition();
+    }
+
+    /// <summary>
+    /// Updates the state machine based on whatever input sources are required
+    /// </summary>
     private void UpdateStateMachine()
     {
         if (Input.GetKey(KeyCode.Space))
@@ -49,4 +62,15 @@ public class PlayerController : MonoBehaviour {
             c_stateMachine.Execute(Command.COAST);
         }
     }
+
+    #region StartupFunctions
+    /// <summary>
+    /// Sets default values for player data that interfaces with the engine, such as the player position
+    /// </summary>
+    void SetDefaultPlayerData()
+    {
+        c_playerData.SetCurrentPosition(transform.position);
+        c_playerData.SetCurrentSpeed(0.0f);
+    }
+    #endregion
 }

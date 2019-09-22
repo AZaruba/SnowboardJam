@@ -5,10 +5,12 @@ using UnityEngine;
 public class AcceleratingState : iState {
 
     private AccelerationCartridge cart_acceleration;
+    private VelocityCartridge cart_velocity;
 
     public AcceleratingState()
     {
         cart_acceleration = new AccelerationCartridge ();
+        cart_velocity = new VelocityCartridge ();
     }
 
     /// <summary>
@@ -21,8 +23,13 @@ public class AcceleratingState : iState {
         float f_currentSpeed = c_playerData.GetCurrentSpeed();
         float f_acceleration = c_playerData.GetAcceleration();
 
-        cart_acceleration.Accelerate(ref f_currentSpeed, ref f_acceleration);
+        Vector3 v_currentPosition = c_playerData.GetCurrentPosition();
+        Vector3 fwd = Vector3.forward;
 
+        cart_acceleration.Accelerate(ref f_currentSpeed, ref f_acceleration);
+        cart_velocity.UpdatePosition(ref v_currentPosition, ref fwd, ref f_currentSpeed);
+
+        c_playerData.SetCurrentPosition(v_currentPosition);
         c_playerData.SetCurrentSpeed(f_currentSpeed);
     }
 
