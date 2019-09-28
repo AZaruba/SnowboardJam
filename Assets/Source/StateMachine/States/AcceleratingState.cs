@@ -7,10 +7,10 @@ public class AcceleratingState : iState {
     private AccelerationCartridge cart_acceleration;
     private VelocityCartridge cart_velocity;
 
-    public AcceleratingState()
+    public AcceleratingState(ref AccelerationCartridge cart_a, ref VelocityCartridge cart_v)
     {
-        cart_acceleration = new AccelerationCartridge ();
-        cart_velocity = new VelocityCartridge ();
+        this.cart_acceleration = cart_a;
+        this.cart_velocity = cart_v;
     }
 
     /// <summary>
@@ -38,12 +38,12 @@ public class AcceleratingState : iState {
     /// </summary>
     /// <returns>An iState following a given Command, or this if none.</returns>
     /// <param name="cmd">The command</param>
-    public iState GetNextState(Command cmd)
+    public StateRef GetNextState(Command cmd)
     {
         if (cmd == Command.COAST)
         {
-            return new CoastingState ();
+            return StateRef.COASTING;
         }
-        return this;
+        return StateRef.ACCELERATING;
     }
 }

@@ -19,13 +19,13 @@ public class StationaryState : iState {
     /// </summary>
     /// <returns>An iState following a given Command, or this if none.</returns>
     /// <param name="cmd">The command</param>
-    public iState GetNextState(Command cmd)
+    public StateRef GetNextState(Command cmd)
     {
         // TODO: Replace this with states held by the state machine to prevent constructor calls
         if (cmd == Command.ACCELERATE)
         {
-            return new AcceleratingState ();
+            return StateRef.ACCELERATING;
         }
-        return this;
+        return StateRef.STATIONARY;
     }
 }

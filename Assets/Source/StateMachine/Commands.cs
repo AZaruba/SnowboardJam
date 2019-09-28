@@ -15,3 +15,19 @@ public enum Command {
     STOP,
 
 }
+
+public enum StateRef {
+    ERROR_STATE = -1,
+    START_STATE,
+
+    STATIONARY,
+    ACCELERATING,
+    COASTING,
+    BRAKING,
+
+    ACCELERATING_TURNING,
+    COASTING_TURNING,
+    BRAKING_TURNING,
+
+    AIRBORNE,
+}

@@ -13,5 +13,5 @@ public interface iState {
     // void ProvideData(PlayerData dataIn);
 
     void Act(ref PlayerData c_playerData);
-    iState GetNextState(Command cmd);
+    StateRef GetNextState(Command cmd);
 }

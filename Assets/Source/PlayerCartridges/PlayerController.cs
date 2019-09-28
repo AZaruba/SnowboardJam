@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour {
 
     // private members
     private StateMachine c_stateMachine;
+
+    // cartridge list
+    private AccelerationCartridge cart_acceleration;
+    private VelocityCartridge cart_velocity;
     #endregion
 
 	/// <summary>
@@ -18,14 +22,18 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
 	void Start ()
     {
+        // Initialize all cartridges
+        cart_acceleration = new AccelerationCartridge();
+        cart_velocity = new VelocityCartridge ();
+
         // Initialize all states
-        AcceleratingState s_accelerating = new AcceleratingState();
-        CoastingState s_coasting = new CoastingState ();
+        AcceleratingState s_accelerating = new AcceleratingState(ref cart_acceleration, ref cart_velocity);
+        CoastingState s_coasting = new CoastingState (ref cart_acceleration, ref cart_velocity);
         StationaryState s_stationary = new StationaryState ();
 
-        c_stateMachine = new StateMachine (s_accelerating);
-        c_stateMachine.AddState(s_stationary);
-        c_stateMachine.AddState(s_coasting);
+        c_stateMachine = new StateMachine (s_accelerating, StateRef.ACCELERATING);
+        c_stateMachine.AddState(s_stationary, StateRef.STATIONARY);
+        c_stateMachine.AddState(s_coasting, StateRef.COASTING);
 	}
 	
 	/// <summary>

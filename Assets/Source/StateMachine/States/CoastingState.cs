@@ -7,10 +7,10 @@ public class CoastingState : iState {
     private AccelerationCartridge cart_acceleration;
     private VelocityCartridge cart_velocity;
 
-    public CoastingState()
+    public CoastingState(ref AccelerationCartridge cart_a, ref VelocityCartridge cart_v)
     {
-        cart_acceleration = new AccelerationCartridge ();
-        cart_velocity = new VelocityCartridge ();
+        this.cart_acceleration = cart_a;
+        this.cart_velocity = cart_v;
     }
 
     public void Act(ref PlayerData c_playerData)
@@ -23,18 +23,18 @@ public class CoastingState : iState {
     /// </summary>
     /// <returns>An iState following a given Command, or this if none.</returns>
     /// <param name="cmd">The command</param>
-    public iState GetNextState(Command cmd)
+    public StateRef GetNextState(Command cmd)
     {
         // TODO: Replace this with states held by the state machine to prevent constructor calls
         if (cmd == Command.ACCELERATE)
         {
-            return new AcceleratingState ();
+            return StateRef.ACCELERATING;
         }
         else if (cmd == Command.STOP)
         {
-            return new StationaryState ();
+            return StateRef.STATIONARY;
         }
-        return this;
+        return StateRef.COASTING;
     }
 
     /// <summary>
