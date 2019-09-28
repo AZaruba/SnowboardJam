@@ -42,7 +42,7 @@ public class AcceleratingState : iState {
     {
         if (cmd == Command.COAST)
         {
-            return new StationaryState ();
+            return new CoastingState ();
         }
         return this;
     }

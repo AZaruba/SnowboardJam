@@ -20,10 +20,12 @@ public class PlayerController : MonoBehaviour {
     {
         // Initialize all states
         AcceleratingState s_accelerating = new AcceleratingState();
+        CoastingState s_coasting = new CoastingState ();
         StationaryState s_stationary = new StationaryState ();
 
         c_stateMachine = new StateMachine (s_accelerating);
         c_stateMachine.AddState(s_stationary);
+        c_stateMachine.AddState(s_coasting);
 	}
 	
 	/// <summary>
@@ -56,6 +58,10 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetKey(KeyCode.Space))
         {
             c_stateMachine.Execute(Command.ACCELERATE);
+        } 
+        else if (c_playerData.GetCurrentSpeed() <= 0.0f)
+        {
+            c_stateMachine.Execute(Command.STOP);
         }
         else
         {

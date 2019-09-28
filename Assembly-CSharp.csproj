@@ -56,6 +56,7 @@
      <Compile Include="Assets\Source\PlayerCartridges\PlayerData.cs" />
      <Compile Include="Assets\Source\PlayerCartridges\VelocityCartridge.cs" />
      <Compile Include="Assets\Source\StateMachine\AcceleratingState.cs" />
+     <Compile Include="Assets\Source\StateMachine\CoastingState.cs" />
      <Compile Include="Assets\Source\StateMachine\Commands.cs" />
      <Compile Include="Assets\Source\StateMachine\iState.cs" />
      <Compile Include="Assets\Source\StateMachine\StateMachine.cs" />
