@@ -376,6 +376,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   f_topSpeed: 2
   f_acceleration: 0.01
+  f_turnSpeed: 10
 --- !u!114 &734568627
 MonoBehaviour:
   m_ObjectHideFlags: 0

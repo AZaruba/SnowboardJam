@@ -7,10 +7,12 @@ public class PlayerData : MonoBehaviour {
     #region Members
     [SerializeField] private float f_topSpeed;
     [SerializeField] private float f_acceleration;
+    [SerializeField] private float f_turnSpeed;
 
     private float f_currentSpeed;
 
     private Vector3 v_currentPosition;
+    private Vector3 v_currentDirection;
     #endregion
 
     #region Getters
@@ -32,6 +34,11 @@ public class PlayerData : MonoBehaviour {
         return f_acceleration;
     }
 
+    public float GetTurnSpeed()
+    {
+        return f_turnSpeed;
+    }
+
     /// <summary>
     /// Gets the current speed.
     /// </summary>
@@ -49,8 +56,18 @@ public class PlayerData : MonoBehaviour {
     {
         return v_currentPosition;
     }
+
+    /// <summary>
+    /// Gets the current direction.
+    /// </summary>
+    /// <returns>v_currentDirection</returns>
+    public Vector3 GetCurrentDirection()
+    {
+        return v_currentDirection;
+    }
     #endregion
 
+    /// Setters should be only for "active" data (that is, data that is used by the engine)
     #region Setters
     /// <summary>
     /// Sets the current speed.
@@ -85,5 +102,14 @@ public class PlayerData : MonoBehaviour {
     void Start()
     {
         f_currentSpeed = 0.0f;
+    }
+
+    /// <summary>
+    /// Sets the current direction.
+    /// </summary>
+    /// <param name="newDirection">The new v_currentDirection.</param>
+    public void SetCurrentDirection(Vector3 newDirection)
+    {
+        v_currentDirection = newDirection;
     }
 }

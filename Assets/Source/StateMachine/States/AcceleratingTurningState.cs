@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AcceleratingState : iState {
+public class AcceleratingTurningState : iState {
 
     private AccelerationCartridge cart_acceleration;
     private VelocityCartridge cart_velocity;
+    private HandlingCartridge cart_handling;
 
-    public AcceleratingState(ref AccelerationCartridge cart_a, ref VelocityCartridge cart_v)
+    public AcceleratingTurningState(ref AccelerationCartridge cart_a, 
+                                    ref VelocityCartridge cart_v, 
+                                    ref HandlingCartridge cart_h)
     {
         this.cart_acceleration = cart_a;
         this.cart_velocity = cart_v;
+        this.cart_handling = cart_h;
     }
 
     /// <summary>
@@ -22,15 +26,18 @@ public class AcceleratingState : iState {
     {
         float f_currentSpeed = c_playerData.GetCurrentSpeed();
         float f_acceleration = c_playerData.GetAcceleration();
+        float f_turnSpeed = c_playerData.GetTurnSpeed();
 
         Vector3 v_currentPosition = c_playerData.GetCurrentPosition();
-        Vector3 fwd = c_playerData.GetCurrentDirection();;
+        Vector3 v_currentDirection = c_playerData.GetCurrentDirection();
 
         cart_acceleration.Accelerate(ref f_currentSpeed, ref f_acceleration);
-        cart_velocity.UpdatePosition(ref v_currentPosition, ref fwd, ref f_currentSpeed);
+        cart_handling.Turn(ref v_currentDirection, ref f_turnSpeed);
+        cart_velocity.UpdatePosition(ref v_currentPosition, ref v_currentDirection, ref f_currentSpeed);
 
         c_playerData.SetCurrentPosition(v_currentPosition);
         c_playerData.SetCurrentSpeed(f_currentSpeed);
+        c_playerData.SetCurrentDirection(v_currentDirection);
     }
 
     /// <summary>
@@ -42,11 +49,11 @@ public class AcceleratingState : iState {
     {
         if (cmd == Command.COAST)
         {
-            return StateRef.COASTING;
+            return StateRef.COASTING_TURNING;
         }
-        if (cmd == Command.TURN)
+        if (cmd == Command.TURN_END)
         {
-            return StateRef.ACCELERATING_TURNING;
+            return StateRef.ACCELERATING;
         }
         return StateRef.ACCELERATING;
     }

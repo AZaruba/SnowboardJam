@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour {
     // cartridge list
     private AccelerationCartridge cart_acceleration;
     private VelocityCartridge cart_velocity;
+    private HandlingCartridge cart_handling;
     #endregion
 
 	/// <summary>
@@ -22,18 +23,25 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
 	void Start ()
     {
+        SetDefaultPlayerData();
+
         // Initialize all cartridges
         cart_acceleration = new AccelerationCartridge();
         cart_velocity = new VelocityCartridge ();
+        cart_handling = new HandlingCartridge ();
 
         // Initialize all states
         AcceleratingState s_accelerating = new AcceleratingState(ref cart_acceleration, ref cart_velocity);
+        AcceleratingTurningState s_acceleratingTurning = new AcceleratingTurningState (ref cart_acceleration, ref cart_velocity, ref cart_handling);
         CoastingState s_coasting = new CoastingState (ref cart_acceleration, ref cart_velocity);
+        CoastingTurningState s_coastingTurning = new CoastingTurningState (ref cart_acceleration, ref cart_velocity, ref cart_handling);
         StationaryState s_stationary = new StationaryState ();
 
         c_stateMachine = new StateMachine (s_accelerating, StateRef.ACCELERATING);
         c_stateMachine.AddState(s_stationary, StateRef.STATIONARY);
         c_stateMachine.AddState(s_coasting, StateRef.COASTING);
+        c_stateMachine.AddState(s_coastingTurning, StateRef.COASTING_TURNING);
+        c_stateMachine.AddState(s_acceleratingTurning, StateRef.ACCELERATING_TURNING);
 	}
 	
 	/// <summary>
@@ -56,6 +64,7 @@ public class PlayerController : MonoBehaviour {
     void EngineUpdate()
     {
         transform.position = c_playerData.GetCurrentPosition();
+        transform.forward = c_playerData.GetCurrentDirection();
     }
 
     /// <summary>
@@ -71,9 +80,18 @@ public class PlayerController : MonoBehaviour {
         {
             c_stateMachine.Execute(Command.STOP);
         }
-        else
+        else // Coasting, stopping, and accelerating are all mutually exclusive
         {
             c_stateMachine.Execute(Command.COAST);
+        }
+
+        if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0.0f) // TODO: implement dead zone
+        {
+            c_stateMachine.Execute(Command.TURN);
+        }
+        else
+        {
+            c_stateMachine.Execute(Command.TURN_END);
         }
     }
 
@@ -84,6 +102,7 @@ public class PlayerController : MonoBehaviour {
     void SetDefaultPlayerData()
     {
         c_playerData.SetCurrentPosition(transform.position);
+        c_playerData.SetCurrentDirection(transform.forward);
         c_playerData.SetCurrentSpeed(0.0f);
     }
     #endregion

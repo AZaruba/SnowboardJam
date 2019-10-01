@@ -53,13 +53,16 @@
   <ItemGroup>
      <Compile Include="Assets\Source\Debug\DebugFunctions.cs" />
      <Compile Include="Assets\Source\PlayerCartridges\AccelerationCartridge.cs" />
+     <Compile Include="Assets\Source\PlayerCartridges\HandlingCartridge.cs" />
      <Compile Include="Assets\Source\PlayerCartridges\PlayerController.cs" />
      <Compile Include="Assets\Source\PlayerCartridges\PlayerData.cs" />
      <Compile Include="Assets\Source\PlayerCartridges\VelocityCartridge.cs" />
      <Compile Include="Assets\Source\StateMachine\Commands.cs" />
      <Compile Include="Assets\Source\StateMachine\StateMachine.cs" />
      <Compile Include="Assets\Source\StateMachine\States\AcceleratingState.cs" />
+     <Compile Include="Assets\Source\StateMachine\States\AcceleratingTurningState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\CoastingState.cs" />
+     <Compile Include="Assets\Source\StateMachine\States\CoastingTurningState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\iState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\StationaryState.cs" />
  <Reference Include="UnityEngine.UI">
