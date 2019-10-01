@@ -15,6 +15,12 @@ public class PlayerData : MonoBehaviour {
     private Vector3 v_currentDirection;
     #endregion
 
+    #region IOMembers
+
+    private float f_inputAxisTurn;
+
+    #endregion
+
     #region Getters
     /// <summary>
     /// Gets the top speed.
@@ -111,5 +117,23 @@ public class PlayerData : MonoBehaviour {
     public void SetCurrentDirection(Vector3 newDirection)
     {
         v_currentDirection = newDirection;
+    }
+
+    /// <summary>
+    /// Gets f_inputAxisTurn;
+    /// </summary>
+    /// <returns>f_inputAxisTurn</returns>
+    public float GetInputAxisTurn()
+    {
+        return f_inputAxisTurn;
+    }
+
+    /// <summary>
+    /// Sets f_inputAxisTurn
+    /// </summary>
+    /// <param name="axisValue">A float between -1 and 1</param></param>
+    public void SetInputAxisTurn(float axisValue)
+    {
+        f_inputAxisTurn = axisValue;
     }
 }

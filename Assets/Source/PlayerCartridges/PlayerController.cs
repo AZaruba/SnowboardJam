@@ -51,6 +51,8 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
 	void FixedUpdate ()
     {
+        EnginePull();
+
         c_stateMachine.Act(ref c_playerData);
 
         EngineUpdate();
@@ -65,6 +67,14 @@ public class PlayerController : MonoBehaviour {
     {
         transform.position = c_playerData.GetCurrentPosition();
         transform.forward = c_playerData.GetCurrentDirection();
+    }
+
+    /// <summary>
+    /// Pulls information from the engine into the controller/data structure
+    /// </summary>
+    void EnginePull()
+    {
+        c_playerData.SetInputAxisTurn(Input.GetAxis("Horizontal"));
     }
 
     /// <summary>
@@ -85,7 +95,7 @@ public class PlayerController : MonoBehaviour {
             c_stateMachine.Execute(Command.COAST);
         }
 
-        if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0.0f) // TODO: implement dead zone
+        if (Mathf.Abs(c_playerData.GetInputAxisTurn()) > 0.0f) // TODO: implement dead zone
         {
             c_stateMachine.Execute(Command.TURN);
         }

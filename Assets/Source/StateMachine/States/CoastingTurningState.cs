@@ -50,7 +50,7 @@ public class CoastingTurningState : iState {
     {
         float f_currentSpeed = c_playerData.GetCurrentSpeed();
         float f_deceleration = c_playerData.GetAcceleration();
-        float f_turnSpeed = c_playerData.GetTurnSpeed();
+        float f_turnSpeed = c_playerData.GetTurnSpeed() * c_playerData.GetInputAxisTurn();
 
         Vector3 v_currentPosition = c_playerData.GetCurrentPosition();
         Vector3 v_currentDirection = c_playerData.GetCurrentDirection();
