@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StationaryState : iState {
+public class StationaryState : iPlayerState {
 
     public StationaryState()
     {

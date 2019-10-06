@@ -51,6 +51,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Source\Cartridges\CameraCartridges\CameraController.cs" />
+     <Compile Include="Assets\Source\Cartridges\CameraCartridges\CameraData.cs" />
+     <Compile Include="Assets\Source\Cartridges\CameraCartridges\FocusCartridge.cs" />
      <Compile Include="Assets\Source\Cartridges\iEntityController.cs" />
      <Compile Include="Assets\Source\Cartridges\PlayerCartridges\AccelerationCartridge.cs" />
      <Compile Include="Assets\Source\Cartridges\PlayerCartridges\HandlingCartridge.cs" />
@@ -59,12 +62,15 @@
      <Compile Include="Assets\Source\Cartridges\PlayerCartridges\VelocityCartridge.cs" />
      <Compile Include="Assets\Source\Debug\DebugFunctions.cs" />
      <Compile Include="Assets\Source\StateMachine\Commands.cs" />
-     <Compile Include="Assets\Source\StateMachine\StateMachine.cs" />
-     <Compile Include="Assets\Source\StateMachine\States\iState.cs" />
+     <Compile Include="Assets\Source\StateMachine\StateMachines\CameraStateMachine.cs" />
+     <Compile Include="Assets\Source\StateMachine\StateMachines\PlayerStateMachine.cs" />
+     <Compile Include="Assets\Source\StateMachine\States\Camera\iCameraState.cs" />
+     <Compile Include="Assets\Source\StateMachine\States\Camera\StationaryLookAtState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\AcceleratingState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\AcceleratingTurningState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\CoastingState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\CoastingTurningState.cs" />
+     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\iPlayerState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\StationaryState.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

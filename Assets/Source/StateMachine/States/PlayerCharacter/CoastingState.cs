@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoastingState : iState {
+public class CoastingState : iPlayerState {
 
     private AccelerationCartridge cart_acceleration;
     private VelocityCartridge cart_velocity;

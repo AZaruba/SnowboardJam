@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private PlayerData   c_playerData;
 
     // private members
-    private StateMachine c_stateMachine;
+    private PlayerStateMachine c_stateMachine;
 
     // cartridge list
     private AccelerationCartridge cart_acceleration;
@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         CoastingTurningState s_coastingTurning = new CoastingTurningState (ref cart_acceleration, ref cart_velocity, ref cart_handling);
         StationaryState s_stationary = new StationaryState ();
 
-        c_stateMachine = new StateMachine (s_accelerating, StateRef.ACCELERATING);
+        c_stateMachine = new PlayerStateMachine (s_accelerating, StateRef.ACCELERATING);
         c_stateMachine.AddState(s_stationary, StateRef.STATIONARY);
         c_stateMachine.AddState(s_coasting, StateRef.COASTING);
         c_stateMachine.AddState(s_coastingTurning, StateRef.COASTING_TURNING);
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// <summary>
     /// Updates the object's state within the engine.
     /// </summary>
-    void EngineUpdate()
+    public void EngineUpdate()
     {
         transform.position = c_playerData.GetCurrentPosition();
         transform.forward = c_playerData.GetCurrentDirection();
@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// <summary>
     /// Pulls information from the engine into the controller/data structure
     /// </summary>
-    void EnginePull()
+    public void EnginePull()
     {
         c_playerData.SetInputAxisTurn(Input.GetAxis("Horizontal"));
     }
@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// <summary>
     /// Updates the state machine based on whatever input sources are required
     /// </summary>
-    private void UpdateStateMachine()
+    public void UpdateStateMachine()
     {
         if (Input.GetKey(KeyCode.Space))
         {

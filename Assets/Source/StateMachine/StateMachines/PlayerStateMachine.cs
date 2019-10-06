@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateMachine {
+public class PlayerStateMachine {
     
     #region Members
-    private iState i_currentState;
-    private Dictionary<StateRef, iState> l_validStates;
+    private iPlayerState i_currentState;
+    private Dictionary<StateRef, iPlayerState> l_validStates;
     #endregion
 
     #region PublicFunctions
     /// <summary>
     /// Default Constructor for StateMachine
     /// </summary>
-    public StateMachine()
+    public PlayerStateMachine()
     {
-        l_validStates = new Dictionary<StateRef, iState> ();
+        l_validStates = new Dictionary<StateRef, iPlayerState> ();
     }
 
     /// <summary>
@@ -24,9 +24,9 @@ public class StateMachine {
     /// </summary>
     /// <param name="defaultState">Default state.</param>
     /// <param name="stateRef">A StateRef value identifying the state.</param>
-    public StateMachine(iState defaultState, StateRef stateRef)
+    public PlayerStateMachine(iPlayerState defaultState, StateRef stateRef)
     {
-        l_validStates = new Dictionary<StateRef, iState> ();
+        l_validStates = new Dictionary<StateRef, iPlayerState> ();
         l_validStates.Add(stateRef, defaultState);
         i_currentState = defaultState;
     }
@@ -59,7 +59,7 @@ public class StateMachine {
     /// <returns><c>true</c>, if state was added</returns>
     /// <param name="newState">New state.</param>
     /// <param name="stateRef">State reference.</param>
-    public bool AddState(iState newState, StateRef stateRef)
+    public bool AddState(iPlayerState newState, StateRef stateRef)
     {
         l_validStates.Add(stateRef, newState);
         return true;

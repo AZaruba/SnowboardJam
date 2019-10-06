@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface iState {
+public interface iPlayerState {
 
     /// <summary>
     /// The interface defining a function which gives the state
