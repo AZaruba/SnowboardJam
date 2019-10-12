@@ -15,6 +15,9 @@ public enum Command {
     BRAKE,
     COAST,
     STOP,
+    LAND,
+    FALL,
+    JUMP,
     #endregion
 
     #region CameraCommands
@@ -31,15 +34,16 @@ public enum StateRef {
 
     #region PlayerStates
     STATIONARY,
-    ACCELERATING,
-    COASTING,
-    BRAKING,
-
-    ACCELERATING_TURNING,
-    COASTING_TURNING,
-    BRAKING_TURNING,
-
+    RIDING,
+    STOPPING,
+    CARVING,
+    CARVING_STOPPING,
+    CHARGING,
+    CARVING_CHARGING,
     AIRBORNE,
+    JUMPING,
+    TRICKING,
+    LANDING,
     #endregion
 
     #region CameraStates

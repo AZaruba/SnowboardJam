@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     #region Members
     // Serialized items
     [SerializeField] private PlayerData   c_playerData;
+    [SerializeField] private Rigidbody r_rigidBody;
 
     // private members
     private PlayerStateMachine c_stateMachine;
@@ -15,6 +16,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private AccelerationCartridge cart_acceleration;
     private VelocityCartridge cart_velocity;
     private HandlingCartridge cart_handling;
+    private AngleCalculationCartridge cart_angleCalc;
+    private GravityCartridge cart_gravity;
     #endregion
 
 	/// <summary>
@@ -24,24 +27,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
 	void Start ()
     {
         SetDefaultPlayerData();
+        cart_gravity = new GravityCartridge ();
 
-        // Initialize all cartridges
-        cart_acceleration = new AccelerationCartridge();
-        cart_velocity = new VelocityCartridge ();
-        cart_handling = new HandlingCartridge ();
-
-        // Initialize all states
-        AcceleratingState s_accelerating = new AcceleratingState(ref cart_acceleration, ref cart_velocity);
-        AcceleratingTurningState s_acceleratingTurning = new AcceleratingTurningState (ref cart_acceleration, ref cart_velocity, ref cart_handling);
-        CoastingState s_coasting = new CoastingState (ref cart_acceleration, ref cart_velocity);
-        CoastingTurningState s_coastingTurning = new CoastingTurningState (ref cart_acceleration, ref cart_velocity, ref cart_handling);
         StationaryState s_stationary = new StationaryState ();
+        AerialState s_aerial = new AerialState (ref cart_gravity);
 
-        c_stateMachine = new PlayerStateMachine (s_accelerating, StateRef.ACCELERATING);
+        c_stateMachine = new PlayerStateMachine (s_aerial, StateRef.AIRBORNE);
         c_stateMachine.AddState(s_stationary, StateRef.STATIONARY);
-        c_stateMachine.AddState(s_coasting, StateRef.COASTING);
-        c_stateMachine.AddState(s_coastingTurning, StateRef.COASTING_TURNING);
-        c_stateMachine.AddState(s_acceleratingTurning, StateRef.ACCELERATING_TURNING);
 	}
 	
 	/// <summary>
@@ -65,8 +57,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EngineUpdate()
     {
-        transform.position = c_playerData.GetCurrentPosition();
-        transform.forward = c_playerData.GetCurrentDirection();
+        transform.position = c_playerData.CurrentPosition;
+        transform.forward = c_playerData.CurrentDirection;
     }
 
     /// <summary>
@@ -74,7 +66,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EnginePull()
     {
-        c_playerData.SetInputAxisTurn(Input.GetAxis("Horizontal"));
+        c_playerData.InputAxisTurn = Input.GetAxis("Horizontal");
+
+        /* I don't want materials-based physics, setting velocities to zero allows the
+         * Rigidbody to prevent clipping while not causing any unwanted forces.
+         */
+        r_rigidBody.velocity = Vector3.zero;
+        r_rigidBody.angularVelocity = Vector3.zero;
     }
 
     /// <summary>
@@ -82,27 +80,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void UpdateStateMachine()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            c_stateMachine.Execute(Command.ACCELERATE);
-        } 
-        else if (c_playerData.GetCurrentSpeed() <= 0.0f)
-        {
-            c_stateMachine.Execute(Command.STOP);
-        }
-        else // Coasting, stopping, and accelerating are all mutually exclusive
-        {
-            c_stateMachine.Execute(Command.COAST);
-        }
-
-        if (Mathf.Abs(c_playerData.GetInputAxisTurn()) > 0.0f) // TODO: implement dead zone
-        {
-            c_stateMachine.Execute(Command.TURN);
-        }
-        else
-        {
-            c_stateMachine.Execute(Command.TURN_END);
-        }
+        
     }
 
     #region StartupFunctions
@@ -111,9 +89,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     void SetDefaultPlayerData()
     {
-        c_playerData.SetCurrentPosition(transform.position);
-        c_playerData.SetCurrentDirection(transform.forward);
-        c_playerData.SetCurrentSpeed(0.0f);
+        c_playerData.CurrentPosition = transform.position;
+        c_playerData.CurrentDirection = transform.forward;
+        c_playerData.CurrentSpeed = 0.0f;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        c_stateMachine.Execute(Command.LAND);
     }
     #endregion
 }

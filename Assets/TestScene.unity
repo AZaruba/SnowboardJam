@@ -269,13 +269,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 87259798}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8, y: -0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 10}
+  m_LocalRotation: {x: 0.08715578, y: 0, z: 0, w: 0.9961947}
+  m_LocalPosition: {x: 8, y: -1, z: 0}
+  m_LocalScale: {x: 5, y: 1, z: 10}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 10, y: 0, z: 0}
 --- !u!1 &734568621
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,6 +289,8 @@ GameObject:
   - component: {fileID: 734568622}
   - component: {fileID: 734568626}
   - component: {fileID: 734568627}
+  - component: {fileID: 734568628}
+  - component: {fileID: 734568629}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -356,7 +358,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 734568621}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -373,9 +375,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aead74ec139c4b4391ce29393104832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  f_topSpeed: 0.5
-  f_acceleration: 0.01
-  f_turnSpeed: 2
+  f_topSpeed: 0
+  f_acceleration: 0
+  f_turnSpeed: 0
+  f_jumpPower: 0
+  f_gravityFactor: 0.1
 --- !u!114 &734568627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,6 +392,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   c_playerData: {fileID: 734568626}
+  r_rigidBody: {fileID: 734568629}
+--- !u!65 &734568628
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 734568621}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &734568629
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 734568621}
+  serializedVersion: 2
+  m_Mass: 0.0000001
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &745530428
 GameObject:
   m_ObjectHideFlags: 0

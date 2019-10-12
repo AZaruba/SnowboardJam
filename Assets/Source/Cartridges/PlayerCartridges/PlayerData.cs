@@ -8,132 +8,98 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float f_topSpeed;
     [SerializeField] private float f_acceleration;
     [SerializeField] private float f_turnSpeed;
+    [SerializeField] private float f_jumpPower;
+    [SerializeField] private float f_gravityFactor;
 
     private float f_currentSpeed;
+    private float f_currentJumpPower;
+    private float f_currentAirVelocity;
 
     private Vector3 v_currentPosition;
     private Vector3 v_currentDirection;
+    private Vector3 v_currentNormal;
     #endregion
 
     #region IOMembers
 
-    private float f_inputAxisTurn;
+    private float f_inputAxisTurn { get; set; }
 
     #endregion
 
-    #region Getters
-    /// <summary>
-    /// Gets the top speed.
-    /// </summary>
-    /// <returns>f_topSpeed</returns>
-    public float GetTopSpeed()
+    #region SerializedProperties
+    public float TopSpeed
     {
-        return f_topSpeed;
+        get { return f_topSpeed; }
+        set { f_topSpeed = value; }
     }
 
-    /// <summary>
-    /// Gets the acceleration.
-    /// </summary>
-    /// <returns>f_acceleration</returns>
-    public float GetAcceleration()
+    public float Acceleration
     {
-        return f_acceleration;
+        get { return f_acceleration; }
+        set { f_acceleration = value; }
     }
 
-    public float GetTurnSpeed()
+    public float TurnSpeed
     {
-        return f_turnSpeed;
+        get { return f_turnSpeed; }
+        set { f_turnSpeed = value; }
     }
 
-    /// <summary>
-    /// Gets the current speed.
-    /// </summary>
-    /// <returns>f_currentSpeed</returns>
-    public float GetCurrentSpeed()
+    public float JumpPower
     {
-        return f_currentSpeed;
+        get { return f_jumpPower; }
+        set { f_jumpPower = value; }
     }
 
-    /// <summary>
-    /// Gets the current position.
-    /// </summary>
-    /// <returns>v_currentPosition</returns>
-    public Vector3 GetCurrentPosition()
+    public float Gravity
     {
-        return v_currentPosition;
-    }
-
-    /// <summary>
-    /// Gets the current direction.
-    /// </summary>
-    /// <returns>v_currentDirection</returns>
-    public Vector3 GetCurrentDirection()
-    {
-        return v_currentDirection;
+        get { return f_gravityFactor; }
+        set { f_gravityFactor = value; }
     }
     #endregion
-
-    /// Setters should be only for "active" data (that is, data that is used by the engine)
-    #region Setters
-    /// <summary>
-    /// Sets the current speed.
-    /// </summary>
-    /// <param name="newSpeed">The new f_currentSpeed</param>
-    public void SetCurrentSpeed(float newSpeed)
+    #region SerializedActives
+    public float CurrentSpeed
     {
-        if (newSpeed > f_topSpeed)
-        {
-            f_currentSpeed = f_topSpeed;
-        } 
-        else if (newSpeed < 0)
-        {
-            f_currentSpeed = 0.0f;
-        }
-        else
-        {
-            f_currentSpeed = newSpeed;
-        }
+        get { return f_currentSpeed; }
+        set { f_currentSpeed = value; }
     }
 
-    /// <summary>
-    /// Sets the current position.
-    /// </summary>
-    /// <param name="newPosition">The new v_currentPosition</param>
-    public void SetCurrentPosition(Vector3 newPosition)
+    public float CurrentJumpPower
     {
-        v_currentPosition = newPosition;
+        get { return f_currentJumpPower; }
+        set { f_currentJumpPower = value; }
+    }
+
+    public float CurrentAirVelocity
+    {
+        get { return f_currentAirVelocity; }
+        set { f_currentAirVelocity = value; }
     }
     #endregion
-
-    void Start()
+    #region Vectors
+    public Vector3 CurrentPosition
     {
-        f_currentSpeed = 0.0f;
+        get { return v_currentPosition; }
+        set { v_currentPosition = value; }
     }
 
-    /// <summary>
-    /// Sets the current direction.
-    /// </summary>
-    /// <param name="newDirection">The new v_currentDirection.</param>
-    public void SetCurrentDirection(Vector3 newDirection)
+    public Vector3 CurrentDirection
     {
-        v_currentDirection = newDirection;
+        get { return v_currentDirection; }
+        set { v_currentDirection = value; }
     }
 
-    /// <summary>
-    /// Gets f_inputAxisTurn;
-    /// </summary>
-    /// <returns>f_inputAxisTurn</returns>
-    public float GetInputAxisTurn()
+    public Vector3 CurrentNormal
     {
-        return f_inputAxisTurn;
+        get { return v_currentNormal; }
+        set { v_currentNormal = value; }
     }
-
-    /// <summary>
-    /// Sets f_inputAxisTurn
-    /// </summary>
-    /// <param name="axisValue">A float between -1 and 1</param></param>
-    public void SetInputAxisTurn(float axisValue)
+    #endregion
+    #region IOProperties
+    public float InputAxisTurn
     {
-        f_inputAxisTurn = axisValue;
+        get { return f_inputAxisTurn; }
+        set { f_inputAxisTurn = value; }
     }
+    #endregion
 }

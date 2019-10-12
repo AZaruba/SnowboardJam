@@ -21,11 +21,6 @@ public class StationaryState : iPlayerState {
     /// <param name="cmd">The command</param>
     public StateRef GetNextState(Command cmd)
     {
-        // TODO: Replace this with states held by the state machine to prevent constructor calls
-        if (cmd == Command.ACCELERATE)
-        {
-            return StateRef.ACCELERATING;
-        }
         return StateRef.STATIONARY;
     }
 }

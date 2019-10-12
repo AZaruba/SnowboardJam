@@ -54,8 +54,11 @@
      <Compile Include="Assets\Source\Cartridges\CameraCartridges\CameraController.cs" />
      <Compile Include="Assets\Source\Cartridges\CameraCartridges\CameraData.cs" />
      <Compile Include="Assets\Source\Cartridges\CameraCartridges\FocusCartridge.cs" />
+     <Compile Include="Assets\Source\Cartridges\CameraCartridges\FollowCartridge.cs" />
      <Compile Include="Assets\Source\Cartridges\iEntityController.cs" />
      <Compile Include="Assets\Source\Cartridges\PlayerCartridges\AccelerationCartridge.cs" />
+     <Compile Include="Assets\Source\Cartridges\PlayerCartridges\AngleCalculationCartridge.cs" />
+     <Compile Include="Assets\Source\Cartridges\PlayerCartridges\GravityCartridge.cs" />
      <Compile Include="Assets\Source\Cartridges\PlayerCartridges\HandlingCartridge.cs" />
      <Compile Include="Assets\Source\Cartridges\PlayerCartridges\PlayerController.cs" />
      <Compile Include="Assets\Source\Cartridges\PlayerCartridges\PlayerData.cs" />
@@ -66,11 +69,10 @@
      <Compile Include="Assets\Source\StateMachine\StateMachines\PlayerStateMachine.cs" />
      <Compile Include="Assets\Source\StateMachine\States\Camera\iCameraState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\Camera\StationaryLookAtState.cs" />
-     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\AcceleratingState.cs" />
-     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\AcceleratingTurningState.cs" />
-     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\CoastingState.cs" />
-     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\CoastingTurningState.cs" />
+     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\AerialState.cs" />
+     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\CarvingState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\iPlayerState.cs" />
+     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\RidingState.cs" />
      <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\StationaryState.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
