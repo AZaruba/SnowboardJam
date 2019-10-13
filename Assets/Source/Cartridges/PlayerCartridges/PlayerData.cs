@@ -20,9 +20,10 @@ public class PlayerData : MonoBehaviour {
     private Vector3 v_currentNormal;
     #endregion
 
-    #region IOMembers
+    #region EngineMembers
 
     private float f_inputAxisTurn { get; set; }
+    private Vector3 v_surfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
 
     #endregion
 
@@ -100,6 +101,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return f_inputAxisTurn; }
         set { f_inputAxisTurn = value; }
+    }
+
+    public Vector3 CurrentSurfaceNormal
+    {
+        get { return v_surfaceNormal; }
+        set { v_surfaceNormal = value; }
     }
     #endregion
 }

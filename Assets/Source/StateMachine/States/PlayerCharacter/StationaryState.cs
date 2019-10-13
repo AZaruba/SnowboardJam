@@ -4,14 +4,24 @@ using UnityEngine;
 
 public class StationaryState : iPlayerState {
 
-    public StationaryState()
-    {
+    AngleCalculationCartridge cart_angleCalc;
 
+    public StationaryState(ref AngleCalculationCartridge angleCalc)
+    {
+        this.cart_angleCalc = angleCalc;
     }
 
     public void Act(ref PlayerData c_playerData)
     {
-        // if stationary, do nothing (potentially add idle animations here)
+        Vector3 currentNormal = c_playerData.CurrentNormal;
+        Vector3 currentForward = c_playerData.CurrentDirection;
+        Vector3 currentSurfaceNormal = c_playerData.CurrentSurfaceNormal;
+
+        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward);
+
+        c_playerData.CurrentNormal = currentNormal;
+        c_playerData.CurrentDirection = currentForward;
+        // surface normal does not need to be updated
     }
 
     /// <summary>

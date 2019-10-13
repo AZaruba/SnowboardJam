@@ -9,12 +9,10 @@ public enum Command {
     RESET,
 
     #region PlayerCommand
-    ACCELERATE,
+    RIDE,
     TURN,
-    TURN_END,
-    BRAKE,
-    COAST,
-    STOP,
+    SLOW,
+    STOP, // when velocity reaches zero
     LAND,
     FALL,
     JUMP,

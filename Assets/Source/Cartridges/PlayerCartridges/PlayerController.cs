@@ -28,8 +28,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         SetDefaultPlayerData();
         cart_gravity = new GravityCartridge ();
+        cart_angleCalc = new AngleCalculationCartridge ();
 
-        StationaryState s_stationary = new StationaryState ();
+        StationaryState s_stationary = new StationaryState (ref cart_angleCalc);
         AerialState s_aerial = new AerialState (ref cart_gravity);
 
         c_stateMachine = new PlayerStateMachine (s_aerial, StateRef.AIRBORNE);
@@ -57,8 +58,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EngineUpdate()
     {
-        transform.position = c_playerData.CurrentPosition;
-        transform.forward = c_playerData.CurrentDirection;
+        transform.SetPositionAndRotation(c_playerData.CurrentPosition, Quaternion.LookRotation(c_playerData.CurrentDirection, c_playerData.CurrentNormal));
     }
 
     /// <summary>
@@ -91,11 +91,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         c_playerData.CurrentPosition = transform.position;
         c_playerData.CurrentDirection = transform.forward;
+        c_playerData.CurrentNormal = transform.up;
         c_playerData.CurrentSpeed = 0.0f;
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        RaycastHit rch_rayHit;
+        if (Physics.Raycast(transform.position, Vector3.down, out rch_rayHit))
+        {
+            c_playerData.CurrentSurfaceNormal = rch_rayHit.normal;
+        }
+
         c_stateMachine.Execute(Command.LAND);
     }
     #endregion
