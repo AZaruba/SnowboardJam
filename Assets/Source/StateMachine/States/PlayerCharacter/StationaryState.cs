@@ -13,14 +13,18 @@ public class StationaryState : iPlayerState {
 
     public void Act(ref PlayerData c_playerData)
     {
+        Vector3 currentPosition = c_playerData.CurrentPosition;
         Vector3 currentNormal = c_playerData.CurrentNormal;
         Vector3 currentForward = c_playerData.CurrentDirection;
         Vector3 currentSurfaceNormal = c_playerData.CurrentSurfaceNormal;
+        Vector3 currentSurfaceAttPoint = c_playerData.CurrentSurfaceAttachPoint;
 
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward);
+        cart_angleCalc.MoveToAttachPoint(ref currentPosition, ref currentSurfaceAttPoint);
 
         c_playerData.CurrentNormal = currentNormal;
         c_playerData.CurrentDirection = currentForward;
+        c_playerData.CurrentPosition = currentPosition;
         // surface normal does not need to be updated
     }
 

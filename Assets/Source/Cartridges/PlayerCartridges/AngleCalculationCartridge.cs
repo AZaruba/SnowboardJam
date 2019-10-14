@@ -15,4 +15,10 @@ public class AngleCalculationCartridge
         currentForward = Quaternion.FromToRotation(currentNormal, targetNormal) * currentForward;
         currentNormal = targetNormal;
     }
+
+    public void MoveToAttachPoint(ref Vector3 currentPosition, ref Vector3 attachPoint)
+    {
+        currentPosition = Vector3.Lerp(currentPosition,attachPoint, 0.1f);
+    }
+
 }

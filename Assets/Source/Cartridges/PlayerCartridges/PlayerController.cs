@@ -101,6 +101,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         if (Physics.Raycast(transform.position, Vector3.down, out rch_rayHit))
         {
             c_playerData.CurrentSurfaceNormal = rch_rayHit.normal;
+            c_playerData.CurrentSurfaceAttachPoint = rch_rayHit.point;
         }
 
         c_stateMachine.Execute(Command.LAND);
