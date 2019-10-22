@@ -18,7 +18,15 @@ public class AngleCalculationCartridge
 
     public void MoveToAttachPoint(ref Vector3 currentPosition, ref Vector3 attachPoint)
     {
-        currentPosition = Vector3.Lerp(currentPosition,attachPoint, 0.1f);
+        currentPosition = attachPoint; // Vector3.Lerp(currentPosition,attachPoint, 0.1f);
     }
 
+    /*
+    public void VerifyDownwardAngle(ref Vector3 referenceVec, ref Vector3 currentDirection, ref bool downward)
+    {
+        Vector3 crossProduct = Vector3.Cross(currentDirection, referenceVec);
+
+
+    }
+    */
 }

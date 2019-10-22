@@ -29,12 +29,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
         SetDefaultPlayerData();
         cart_gravity = new GravityCartridge ();
         cart_angleCalc = new AngleCalculationCartridge ();
+        cart_velocity = new VelocityCartridge ();
+        cart_acceleration = new AccelerationCartridge ();
 
         StationaryState s_stationary = new StationaryState (ref cart_angleCalc);
         AerialState s_aerial = new AerialState (ref cart_gravity);
+        RidingState s_riding = new RidingState (ref cart_angleCalc, ref cart_acceleration, ref cart_velocity);
 
         c_stateMachine = new PlayerStateMachine (s_aerial, StateRef.AIRBORNE);
         c_stateMachine.AddState(s_stationary, StateRef.STATIONARY);
+        c_stateMachine.AddState(s_riding, StateRef.RIDING);
 	}
 	
 	/// <summary>
@@ -80,7 +84,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void UpdateStateMachine()
     {
-        
+        c_stateMachine.Execute(Command.RIDE);
     }
 
     #region StartupFunctions

@@ -35,6 +35,10 @@ public class StationaryState : iPlayerState {
     /// <param name="cmd">The command</param>
     public StateRef GetNextState(Command cmd)
     {
+        if (cmd == Command.RIDE)
+        {
+            return StateRef.RIDING;
+        }
         return StateRef.STATIONARY;
     }
 }
