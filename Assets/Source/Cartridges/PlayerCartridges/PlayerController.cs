@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     #region Members
     // Serialized items
     [SerializeField] private PlayerData   c_playerData;
-    [SerializeField] private Rigidbody r_rigidBody;
+    [SerializeField] private CharacterController c_characterController;
 
     // private members
     private PlayerStateMachine c_stateMachine;
@@ -62,7 +62,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EngineUpdate()
     {
-        transform.SetPositionAndRotation(c_playerData.CurrentPosition, Quaternion.LookRotation(c_playerData.CurrentDirection, c_playerData.CurrentNormal));
+        c_characterController.Move(c_playerData.CurrentPosition - c_characterController.transform.position);
+        c_characterController.transform.Rotate(c_playerData.RotationBuffer.eulerAngles);
     }
 
     /// <summary>
@@ -71,12 +72,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EnginePull()
     {
         c_playerData.InputAxisTurn = Input.GetAxis("Horizontal");
-
-        /* I don't want materials-based physics, setting velocities to zero allows the
-         * Rigidbody to prevent clipping while not causing any unwanted forces.
-         */
-        r_rigidBody.velocity = Vector3.zero;
-        r_rigidBody.angularVelocity = Vector3.zero;
     }
 
     /// <summary>
@@ -84,7 +79,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void UpdateStateMachine()
     {
-        c_stateMachine.Execute(Command.RIDE);
+        c_stateMachine.Execute(Command.RIDE, ref c_playerData);
+        if (c_characterController.isGrounded)
+        {
+            c_stateMachine.Execute(Command.LAND, ref c_playerData);
+        }
     }
 
     #region StartupFunctions
@@ -98,17 +97,22 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.CurrentNormal = transform.up;
         c_playerData.CurrentSpeed = 0.0f;
     }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        RaycastHit rch_rayHit;
-        if (Physics.Raycast(transform.position, Vector3.down, out rch_rayHit))
-        {
-            c_playerData.CurrentSurfaceNormal = rch_rayHit.normal;
-            c_playerData.CurrentSurfaceAttachPoint = rch_rayHit.point;
-        }
-
-        c_stateMachine.Execute(Command.LAND);
-    }
     #endregion
+
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        /* Known issues here:
+         * 
+         * 1) How can we differentiate between different types of environment objects? - ANSWER: layers?
+         * 2) How can we handle the forces of gravity (i.e. don't make the player go back up a hill
+         * 3) What can only change angle when we NEED to
+         *    ANSWER: a) add an ACTION on state change that will do something when we change state
+         *            b) have states cycle back (i.e. CHANGE to the same state)
+         */ 
+        if (c_stateMachine.GetCurrentState() == StateRef.AIRBORNE)
+        {
+            c_playerData.CurrentSurfaceAttachPoint = hit.point;
+        }
+        c_playerData.CurrentSurfaceNormal = hit.normal;
+    }
 }

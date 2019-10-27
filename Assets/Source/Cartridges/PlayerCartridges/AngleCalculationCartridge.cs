@@ -10,12 +10,17 @@ public class AngleCalculationCartridge
     /// <param name="targetNormal">Target normal.</param>
     /// <param name="currentNormal">Current normal.</param>
     /// <param name="currentForward">Current forward.</param>
-    public void AlignRotationWithSurface(ref Vector3 targetNormal, ref Vector3 currentNormal, ref Vector3 currentForward)
+    public void AlignRotationWithSurface(ref Vector3 targetNormal, ref Vector3 currentNormal, ref Vector3 currentForward, ref Quaternion resultRotation)
     {
-        currentForward = Quaternion.FromToRotation(currentNormal, targetNormal) * currentForward;
+        
+        Vector3 newForward = Quaternion.FromToRotation(currentNormal, targetNormal) * currentForward;
+
+        resultRotation = Quaternion.FromToRotation(currentNormal, targetNormal);
         currentNormal = targetNormal;
+        currentForward = newForward;
     }
 
+    // needs refactoring as the attach point may change arbitrarily
     public void MoveToAttachPoint(ref Vector3 currentPosition, ref Vector3 attachPoint)
     {
         currentPosition = attachPoint; // Vector3.Lerp(currentPosition,attachPoint, 0.1f);

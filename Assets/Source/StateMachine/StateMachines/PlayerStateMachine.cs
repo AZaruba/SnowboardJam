@@ -6,6 +6,7 @@ public class PlayerStateMachine {
     
     #region Members
     private iPlayerState i_currentState;
+    private StateRef sr_currentStateRef;
     private Dictionary<StateRef, iPlayerState> l_validStates;
     #endregion
 
@@ -29,6 +30,7 @@ public class PlayerStateMachine {
         l_validStates = new Dictionary<StateRef, iPlayerState> ();
         l_validStates.Add(stateRef, defaultState);
         i_currentState = defaultState;
+        sr_currentStateRef = stateRef;
     }
 
     /// <summary>
@@ -42,15 +44,28 @@ public class PlayerStateMachine {
     /// <summary>
     /// Executes a command on the state machine, changing the state
     /// </summary>
-    public void Execute(Command cmd)
+    public void Execute(Command cmd, ref PlayerData c_playerData)
     {
         StateRef e_nextState = i_currentState.GetNextState(cmd);
         bool foundState = l_validStates.TryGetValue(e_nextState, out i_currentState);
-        
+
+
         if (!foundState)
         {
             Debug.Log("ERROR: State Not Found!");
+            return;
         }
+
+        if (e_nextState != sr_currentStateRef)
+        {
+            i_currentState.TransitionAct(ref c_playerData);
+            sr_currentStateRef = e_nextState;
+        }
+    }
+
+    public StateRef GetCurrentState()
+    {
+        return sr_currentStateRef;
     }
 
     /// <summary>

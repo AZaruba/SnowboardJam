@@ -24,6 +24,11 @@ public class AerialState : iPlayerState {
         c_playerData.CurrentSpeed = airVelocity;
     }
 
+    public void TransitionAct(ref PlayerData c_playerData)
+    {
+        Debug.Log("AERIAL");
+    }
+
     public StateRef GetNextState(Command cmd)
     {
         if (cmd == Command.LAND)

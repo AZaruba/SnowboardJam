@@ -18,6 +18,8 @@ public class PlayerData : MonoBehaviour {
     private Vector3 v_currentPosition;
     private Vector3 v_currentDirection;
     private Vector3 v_currentNormal;
+
+    private Quaternion q_bufferedRotation;
     #endregion
 
     #region EngineMembers
@@ -94,6 +96,13 @@ public class PlayerData : MonoBehaviour {
     {
         get { return v_currentNormal; }
         set { v_currentNormal = value; }
+    }
+    #endregion
+    #region Quaternions
+    public Quaternion RotationBuffer
+    {
+        get { return q_bufferedRotation; }
+        set { q_bufferedRotation = value; }
     }
     #endregion
     #region IOProperties
