@@ -26,6 +26,14 @@ public class AngleCalculationCartridge
         currentPosition = attachPoint; // Vector3.Lerp(currentPosition,attachPoint, 0.1f);
     }
 
+    /// <summary>
+    /// Zeroes out a rotation, useful for when want to update a rotation buffer.
+    /// </summary>
+    /// <param name="rotation">The rotation to be zeroed. Should be a rotation buffer.</param>
+    public void ZeroRotation(ref Quaternion rotation)
+    {
+        rotation = Quaternion.identity;
+    }
     /*
     public void VerifyDownwardAngle(ref Vector3 referenceVec, ref Vector3 currentDirection, ref bool downward)
     {

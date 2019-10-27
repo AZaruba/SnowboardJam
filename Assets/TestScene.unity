@@ -377,6 +377,7 @@ MonoBehaviour:
   f_turnSpeed: 0
   f_jumpPower: 0
   f_gravityFactor: 0.15
+  RaycastDistance: 1
 --- !u!114 &734568627
 MonoBehaviour:
   m_ObjectHideFlags: 0

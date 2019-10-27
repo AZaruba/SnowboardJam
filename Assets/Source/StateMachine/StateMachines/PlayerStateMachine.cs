@@ -44,7 +44,7 @@ public class PlayerStateMachine {
     /// <summary>
     /// Executes a command on the state machine, changing the state
     /// </summary>
-    public void Execute(Command cmd, ref PlayerData c_playerData)
+    public void Execute(Command cmd, ref PlayerData c_playerData, bool ForceTransition = false)
     {
         StateRef e_nextState = i_currentState.GetNextState(cmd);
         bool foundState = l_validStates.TryGetValue(e_nextState, out i_currentState);
@@ -56,7 +56,7 @@ public class PlayerStateMachine {
             return;
         }
 
-        if (e_nextState != sr_currentStateRef)
+        if (e_nextState != sr_currentStateRef || ForceTransition)
         {
             i_currentState.TransitionAct(ref c_playerData);
             sr_currentStateRef = e_nextState;

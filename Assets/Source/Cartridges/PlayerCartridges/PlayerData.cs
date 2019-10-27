@@ -23,7 +23,7 @@ public class PlayerData : MonoBehaviour {
     #endregion
 
     #region EngineMembers
-
+    [SerializeField] private float RaycastDistance;
     private float f_inputAxisTurn { get; set; }
     private Vector3 v_surfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
     private Vector3 v_surfaceAttachPoint { get; set; }
@@ -58,6 +58,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return f_gravityFactor; }
         set { f_gravityFactor = value; }
+    }
+
+    public float f_raycastDistance
+    {
+        get { return RaycastDistance; }
+        set { RaycastDistance = value; }
     }
     #endregion
     #region SerializedActives

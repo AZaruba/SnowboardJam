@@ -24,19 +24,20 @@ public class RidingState : iPlayerState {
         float acceleration = c_playerData.Acceleration;
         Vector3 currentPos = c_playerData.CurrentPosition;
         Vector3 currentDir = c_playerData.CurrentDirection;
+        Quaternion currentRotation = c_playerData.RotationBuffer;
 
         cart_acceleration.Accelerate(ref currentVelocity, ref acceleration);
         cart_velocity.UpdatePosition(ref currentPos, ref currentDir, ref currentVelocity);
+        cart_angleCalc.ZeroRotation(ref currentRotation);
 
         c_playerData.CurrentSpeed = currentVelocity;
         c_playerData.Acceleration = acceleration;
         c_playerData.CurrentPosition = currentPos;
-        c_playerData.CurrentDirection = currentDir;
+        c_playerData.RotationBuffer = currentRotation;
     }
 
     public void TransitionAct(ref PlayerData c_playerData)
     {
-        Debug.Log("RIDING");
         Vector3 currentPosition = c_playerData.CurrentPosition;
         Vector3 currentNormal = c_playerData.CurrentNormal;
         Vector3 currentForward = c_playerData.CurrentDirection;

@@ -48,11 +48,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
 	void FixedUpdate ()
     {
-        EnginePull();
+        EngineUpdate();
 
         c_stateMachine.Act(ref c_playerData);
 
-        EngineUpdate();
+        EnginePull();
 
         UpdateStateMachine();
 	}
@@ -72,6 +72,21 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EnginePull()
     {
         c_playerData.InputAxisTurn = Input.GetAxis("Horizontal");
+
+        // raycast to check for change in ground
+        RaycastHit hitInfo;
+        if (Physics.Raycast(c_characterController.transform.position, Vector3.down, out hitInfo, c_playerData.f_raycastDistance))
+        {
+            Vector3 oldSurfaceNormal = c_playerData.CurrentSurfaceNormal;
+
+            c_playerData.CurrentSurfaceNormal = hitInfo.normal;
+            c_playerData.CurrentSurfaceAttachPoint = hitInfo.point;
+            if (c_playerData.CurrentSurfaceNormal.normalized !=
+                oldSurfaceNormal)
+            {
+                c_stateMachine.Execute(Command.RIDE, ref c_playerData, true);
+            }
+        }
     }
 
     /// <summary>
@@ -105,14 +120,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
          * 
          * 1) How can we differentiate between different types of environment objects? - ANSWER: layers?
          * 2) How can we handle the forces of gravity (i.e. don't make the player go back up a hill
-         * 3) What can only change angle when we NEED to
-         *    ANSWER: a) add an ACTION on state change that will do something when we change state
-         *            b) have states cycle back (i.e. CHANGE to the same state)
+         * 3) If we can cycle back to the same state, how do we ensure a surface change occurs
          */ 
+
         if (c_stateMachine.GetCurrentState() == StateRef.AIRBORNE)
         {
             c_playerData.CurrentSurfaceAttachPoint = hit.point;
         }
-        c_playerData.CurrentSurfaceNormal = hit.normal;
     }
 }

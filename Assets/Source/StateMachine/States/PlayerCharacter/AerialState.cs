@@ -33,7 +33,7 @@ public class AerialState : iPlayerState {
     {
         if (cmd == Command.LAND)
         {
-            return StateRef.STATIONARY;
+            return StateRef.RIDING;
         }
         return StateRef.AIRBORNE;
     }
