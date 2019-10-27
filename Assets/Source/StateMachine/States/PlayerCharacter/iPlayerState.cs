@@ -14,4 +14,5 @@ public interface iPlayerState {
 
     void Act(ref PlayerData c_playerData);
     StateRef GetNextState(Command cmd);
+    void TransitionAct(ref PlayerData c_playerData);
 }
