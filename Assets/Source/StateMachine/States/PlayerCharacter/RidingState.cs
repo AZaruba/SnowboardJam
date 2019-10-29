@@ -38,6 +38,7 @@ public class RidingState : iPlayerState {
 
     public void TransitionAct(ref PlayerData c_playerData)
     {
+        Debug.Log("RIDING");
         Vector3 currentPosition = c_playerData.CurrentPosition;
         Vector3 currentNormal = c_playerData.CurrentNormal;
         Vector3 currentForward = c_playerData.CurrentDirection;
@@ -52,6 +53,7 @@ public class RidingState : iPlayerState {
         c_playerData.CurrentDirection = currentForward;
         c_playerData.CurrentPosition = currentPosition;
         c_playerData.RotationBuffer = rotationBuf;
+        c_playerData.CurrentAirVelocity = 0.0f;
     }
 
     public StateRef GetNextState(Command cmd)

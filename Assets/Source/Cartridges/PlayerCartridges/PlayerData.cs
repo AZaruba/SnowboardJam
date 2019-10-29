@@ -10,6 +10,7 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float f_turnSpeed;
     [SerializeField] private float f_jumpPower;
     [SerializeField] private float f_gravityFactor;
+    [SerializeField] private float TerminalVelocity;
 
     private float f_currentSpeed;
     private float f_currentJumpPower;
@@ -58,6 +59,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return f_gravityFactor; }
         set { f_gravityFactor = value; }
+    }
+
+    public float f_terminalVelocity
+    {
+        get { return TerminalVelocity; }
+        set { TerminalVelocity = value; }
     }
 
     public float f_raycastDistance

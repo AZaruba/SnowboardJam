@@ -75,14 +75,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         // raycast to check for change in ground
         RaycastHit hitInfo;
-        if (Physics.Raycast(c_characterController.transform.position, Vector3.down, out hitInfo, c_playerData.f_raycastDistance))
+        Vector3 downwardVector = c_playerData.CurrentNormal * -1;
+
+        // TODO: missing: angle checking to ensure that the character only snaps to the ground for certain angles
+        if (Physics.Raycast(c_characterController.transform.position, downwardVector, out hitInfo, c_playerData.f_raycastDistance))
         {
             Vector3 oldSurfaceNormal = c_playerData.CurrentSurfaceNormal;
 
             c_playerData.CurrentSurfaceNormal = hitInfo.normal;
             c_playerData.CurrentSurfaceAttachPoint = hitInfo.point;
-            if (c_playerData.CurrentSurfaceNormal.normalized !=
-                oldSurfaceNormal)
+            if (c_playerData.CurrentSurfaceNormal.normalized != oldSurfaceNormal)
             {
                 c_stateMachine.Execute(Command.RIDE, ref c_playerData, true);
             }
@@ -116,16 +118,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        /* Known issues here:
-         * 
-         * 1) How can we differentiate between different types of environment objects? - ANSWER: layers?
-         * 2) How can we handle the forces of gravity (i.e. don't make the player go back up a hill
-         * 3) If we can cycle back to the same state, how do we ensure a surface change occurs
-         */ 
-
         if (c_stateMachine.GetCurrentState() == StateRef.AIRBORNE)
         {
             c_playerData.CurrentSurfaceAttachPoint = hit.point;
         }
     }
 }
+
+        /* Known issues:
+         * 
+         * 1) How can we differentiate between different types of environment objects? - ANSWER: layers?
+         * 2) How can we handle the forces of gravity (i.e. don't make the player go back up a hill - ANSWER: Separate ground and aerial velocity
+         * 3) If we can cycle back to the same state, how do we ensure a surface change occurs - ANSWER: INTTERUPT ACTIONS
+         */ 
