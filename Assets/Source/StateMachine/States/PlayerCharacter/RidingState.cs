@@ -22,11 +22,12 @@ public class RidingState : iPlayerState {
         // check for angle when implemented
         float currentVelocity = c_playerData.CurrentSpeed;
         float acceleration = c_playerData.Acceleration;
+        float topSpeed = c_playerData.TopSpeed;
         Vector3 currentPos = c_playerData.CurrentPosition;
         Vector3 currentDir = c_playerData.CurrentDirection;
         Quaternion currentRotation = c_playerData.RotationBuffer;
 
-        cart_acceleration.Accelerate(ref currentVelocity, ref acceleration);
+        cart_acceleration.Accelerate(ref currentVelocity, ref acceleration, topSpeed);
         cart_velocity.UpdatePosition(ref currentPos, ref currentDir, ref currentVelocity);
         cart_angleCalc.ZeroRotation(ref currentRotation);
 
@@ -38,7 +39,6 @@ public class RidingState : iPlayerState {
 
     public void TransitionAct(ref PlayerData c_playerData)
     {
-        Debug.Log("RIDING");
         Vector3 currentPosition = c_playerData.CurrentPosition;
         Vector3 currentNormal = c_playerData.CurrentNormal;
         Vector3 currentForward = c_playerData.CurrentDirection;
@@ -46,8 +46,9 @@ public class RidingState : iPlayerState {
         Vector3 currentSurfaceAttPoint = c_playerData.CurrentSurfaceAttachPoint;
         Quaternion rotationBuf = c_playerData.RotationBuffer;
 
+        cart_angleCalc.ZeroRotation(ref rotationBuf);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref rotationBuf);
-        cart_angleCalc.MoveToAttachPoint(ref currentPosition, ref currentSurfaceAttPoint);
+        //cart_angleCalc.MoveToAttachPoint(ref currentPosition, ref currentSurfaceAttPoint);
 
         c_playerData.CurrentNormal = currentNormal;
         c_playerData.CurrentDirection = currentForward;
@@ -58,6 +59,10 @@ public class RidingState : iPlayerState {
 
     public StateRef GetNextState(Command cmd)
     {
+        if (cmd == Command.FALL)
+        {
+            return StateRef.AIRBORNE;
+        }
         return StateRef.RIDING;
     }
 }

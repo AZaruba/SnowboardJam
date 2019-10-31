@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     // Serialized items
     [SerializeField] private PlayerData   c_playerData;
     [SerializeField] private CharacterController c_characterController;
+    [SerializeField] private DebugAccessor debugAccessor;
 
     // private members
     private PlayerStateMachine c_stateMachine;
@@ -33,7 +34,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_acceleration = new AccelerationCartridge ();
 
         StationaryState s_stationary = new StationaryState (ref cart_angleCalc);
-        AerialState s_aerial = new AerialState (ref cart_gravity);
+        AerialState s_aerial = new AerialState (ref cart_gravity, ref cart_velocity);
         RidingState s_riding = new RidingState (ref cart_angleCalc, ref cart_acceleration, ref cart_velocity);
 
         c_stateMachine = new PlayerStateMachine (s_aerial, StateRef.AIRBORNE);
@@ -55,6 +56,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         EnginePull();
 
         UpdateStateMachine();
+
+        debugAccessor.DisplayState("player", c_stateMachine.GetCurrentState());
 	}
 
     /// <summary>
@@ -72,6 +75,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EnginePull()
     {
         c_playerData.InputAxisTurn = Input.GetAxis("Horizontal");
+    }
+
+    /// <summary>
+    /// Updates the state machine based on whatever input sources are required
+    /// </summary>
+    public void UpdateStateMachine()
+    {
 
         // raycast to check for change in ground
         RaycastHit hitInfo;
@@ -89,13 +99,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_stateMachine.Execute(Command.RIDE, ref c_playerData, true);
             }
         }
-    }
+        else
+        {
+            c_stateMachine.Execute(Command.FALL, ref c_playerData);
+        }
 
-    /// <summary>
-    /// Updates the state machine based on whatever input sources are required
-    /// </summary>
-    public void UpdateStateMachine()
-    {
         c_stateMachine.Execute(Command.RIDE, ref c_playerData);
         if (c_characterController.isGrounded)
         {

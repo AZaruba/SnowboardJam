@@ -20,7 +20,7 @@ public class AngleCalculationCartridge
         currentForward = newForward;
     }
 
-    // needs refactoring as the attach point may change arbitrarily
+    // TODO: This needs to be rethought as simply moving to an attach point isn't a one-size-fits-all solution
     public void MoveToAttachPoint(ref Vector3 currentPosition, ref Vector3 attachPoint)
     {
         currentPosition = attachPoint; // Vector3.Lerp(currentPosition,attachPoint, 0.1f);
