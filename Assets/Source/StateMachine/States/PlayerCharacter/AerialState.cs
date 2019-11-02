@@ -24,9 +24,9 @@ public class AerialState : iPlayerState {
         Vector3 currentDir = c_playerData.CurrentDirection;
         Vector3 position = c_playerData.CurrentPosition;
 
+        position.y += airVelocity;
         cart_gravity.UpdateAirVelocity(ref airVelocity, ref gravity, ref terminalVelocity);
         cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
-        position.y += airVelocity;
 
         c_playerData.CurrentPosition = position;
         c_playerData.CurrentAirVelocity = airVelocity;
@@ -36,13 +36,12 @@ public class AerialState : iPlayerState {
     {
         Vector3 previousDirection = c_playerData.CurrentDirection;
         float currentVelocity = c_playerData.CurrentSpeed;
-        float airVelocity = previousDirection.y;
+        float airVelocity = previousDirection.y * currentVelocity;
 
         previousDirection.y = 0.0f; // "flatten direction"
 
         // scale velocity by the change in magnitude so we don't go faster in a direction
         float magnitudeFactor = previousDirection.magnitude / c_playerData.CurrentDirection.magnitude;
-        airVelocity *= (1 - magnitudeFactor) * currentVelocity;
 
         c_playerData.CurrentAirVelocity = airVelocity;
         c_playerData.CurrentDirection = previousDirection;

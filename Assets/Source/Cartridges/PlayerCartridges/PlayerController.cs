@@ -57,7 +57,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         UpdateStateMachine();
 
-        debugAccessor.DisplayState("player", c_stateMachine.GetCurrentState());
+        debugAccessor.DisplayFloat("Aerial Velocity", c_playerData.CurrentAirVelocity);
+        debugAccessor.DisplayState("Player State", c_stateMachine.GetCurrentState());
+        debugAccessor.DisplayVector3("Dir of Travel", c_playerData.CurrentDirection);
 	}
 
     /// <summary>
@@ -82,7 +84,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void UpdateStateMachine()
     {
-
         // raycast to check for change in ground
         RaycastHit hitInfo;
         Vector3 downwardVector = c_playerData.CurrentNormal * -1;
@@ -96,18 +97,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_playerData.CurrentSurfaceAttachPoint = hitInfo.point;
             if (c_playerData.CurrentSurfaceNormal.normalized != oldSurfaceNormal)
             {
-                c_stateMachine.Execute(Command.RIDE, ref c_playerData, true);
+                c_playerData.CurrentPosition = c_characterController.transform.position;
+                c_stateMachine.Execute(Command.LAND, ref c_playerData, true);
             }
         }
         else
         {
             c_stateMachine.Execute(Command.FALL, ref c_playerData);
-        }
-
-        c_stateMachine.Execute(Command.RIDE, ref c_playerData);
-        if (c_characterController.isGrounded)
-        {
-            c_stateMachine.Execute(Command.LAND, ref c_playerData);
         }
     }
 
@@ -123,19 +119,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.CurrentSpeed = 0.0f;
     }
     #endregion
-
-    void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        if (c_stateMachine.GetCurrentState() == StateRef.AIRBORNE)
-        {
-            c_playerData.CurrentSurfaceAttachPoint = hit.point;
-        }
-    }
 }
 
         /* Known issues:
          * 
-         * 1) How can we differentiate between different types of environment objects? - ANSWER: layers?
-         * 2) How can we handle the forces of gravity (i.e. don't make the player go back up a hill - ANSWER: Separate ground and aerial velocity
-         * 3) If we can cycle back to the same state, how do we ensure a surface change occurs - ANSWER: INTTERUPT ACTIONS
+         * 1) If the angle is steep enough, the player will "wobble" on the corner
+         * 2) The character will get slowed down if careening down fast enough
+         *       - If the max speed is faster than the terminal velocity, we're good!
+         *       - We may want to be able to ACCELERATE downardd
+         * 3) The player still "floats" above the ground, how to solve it?
+         * 4) Add time/frame scaling to make serialized values easier to manage
          */ 

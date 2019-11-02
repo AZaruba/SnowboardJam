@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class DebugFunctions : MonoBehaviour {
 
-    [SerializeField] Text debugText;
+    [SerializeField] Text debugText1;
+    [SerializeField] Text debugText2;
+    [SerializeField] Text debugText3;
 	// Use this for initialization
 	void Start () {
 		
@@ -21,11 +23,16 @@ public class DebugFunctions : MonoBehaviour {
 
     public void DisplayFloat(string floatName, float number)
     {
-        debugText.text = floatName + ": " + number;
+        debugText1.text = floatName + ": " + number;
     }
 
     public void DisplayState(string objName, StateRef state)
     {
-        debugText.text = objName + ": " + state;
+        debugText2.text = objName + ": " + state;
+    }
+
+    public void DisplayVector3(string objName, Vector3 vec)
+    {
+        debugText3.text = objName + ": " + vec;
     }
 }

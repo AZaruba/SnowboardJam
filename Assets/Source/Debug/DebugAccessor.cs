@@ -15,4 +15,9 @@ public class DebugAccessor : MonoBehaviour
     {
         debugInstance.DisplayState(objName, state);
     }
+
+    public void DisplayVector3(string objName, Vector3 vec)
+    {
+        debugInstance.DisplayVector3(objName, vec);
+    }
 }

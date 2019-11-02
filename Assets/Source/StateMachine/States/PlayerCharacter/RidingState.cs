@@ -39,20 +39,17 @@ public class RidingState : iPlayerState {
 
     public void TransitionAct(ref PlayerData c_playerData)
     {
-        Vector3 currentPosition = c_playerData.CurrentPosition;
         Vector3 currentNormal = c_playerData.CurrentNormal;
         Vector3 currentForward = c_playerData.CurrentDirection;
         Vector3 currentSurfaceNormal = c_playerData.CurrentSurfaceNormal;
-        Vector3 currentSurfaceAttPoint = c_playerData.CurrentSurfaceAttachPoint;
         Quaternion rotationBuf = c_playerData.RotationBuffer;
 
         cart_angleCalc.ZeroRotation(ref rotationBuf);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref rotationBuf);
-        //cart_angleCalc.MoveToAttachPoint(ref currentPosition, ref currentSurfaceAttPoint);
+        // cart_angleCalc.MoveToAttachPoint(ref currentPosition, ref currentSurfaceAttPoint);
 
         c_playerData.CurrentNormal = currentNormal;
         c_playerData.CurrentDirection = currentForward;
-        c_playerData.CurrentPosition = currentPosition;
         c_playerData.RotationBuffer = rotationBuf;
         c_playerData.CurrentAirVelocity = 0.0f;
     }
