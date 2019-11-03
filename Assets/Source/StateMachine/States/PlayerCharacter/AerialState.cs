@@ -30,6 +30,7 @@ public class AerialState : iPlayerState {
 
         c_playerData.CurrentPosition = position;
         c_playerData.CurrentAirVelocity = airVelocity;
+        c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity);
     }
 
     public void TransitionAct(ref PlayerData c_playerData)

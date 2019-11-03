@@ -25,34 +25,26 @@ public class RidingState : iPlayerState {
         float topSpeed = c_playerData.TopSpeed;
         Vector3 currentPos = c_playerData.CurrentPosition;
         Vector3 currentDir = c_playerData.CurrentDirection;
+        Vector3 currentNormal = c_playerData.CurrentNormal;
+        Vector3 currentSurfaceNormal = c_playerData.CurrentSurfaceNormal;
         Quaternion currentRotation = c_playerData.RotationBuffer;
 
         cart_acceleration.Accelerate(ref currentVelocity, ref acceleration, topSpeed);
+        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
         cart_velocity.UpdatePosition(ref currentPos, ref currentDir, ref currentVelocity);
-        cart_angleCalc.ZeroRotation(ref currentRotation);
 
         c_playerData.CurrentSpeed = currentVelocity;
         c_playerData.Acceleration = acceleration;
         c_playerData.CurrentPosition = currentPos;
+        c_playerData.CurrentNormal = currentNormal;
+        c_playerData.CurrentDirection = currentDir;
         c_playerData.RotationBuffer = currentRotation;
     }
 
     public void TransitionAct(ref PlayerData c_playerData)
     {
-        float currentVelocity = c_playerData.CurrentSpeed; // current velocity should get aerial velocity (scaled to angle) added on landing
-        Vector3 currentNormal = c_playerData.CurrentNormal;
-        Vector3 currentForward = c_playerData.CurrentDirection;
-        Vector3 currentSurfaceNormal = c_playerData.CurrentSurfaceNormal;
-        Quaternion rotationBuf = c_playerData.RotationBuffer;
-
-        cart_angleCalc.ZeroRotation(ref rotationBuf);
-        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref rotationBuf);
-        // cart_angleCalc.MoveToAttachPoint(ref currentPosition, ref currentSurfaceAttPoint);
-
-        c_playerData.CurrentNormal = currentNormal;
-        c_playerData.CurrentDirection = currentForward;
-        c_playerData.RotationBuffer = rotationBuf;
         c_playerData.CurrentAirVelocity = 0.0f;
+        c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
     }
 
     public StateRef GetNextState(Command cmd)

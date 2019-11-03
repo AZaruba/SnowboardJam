@@ -12,8 +12,7 @@ public class AngleCalculationCartridge
     /// <param name="currentForward">Current forward.</param>
     public void AlignRotationWithSurface(ref Vector3 targetNormal, ref Vector3 currentNormal, ref Vector3 currentForward, ref Quaternion resultRotation)
     {
-        
-        Vector3 newForward = Quaternion.FromToRotation(currentNormal, targetNormal) * currentForward;
+        Vector3 newForward = Vector3.ProjectOnPlane(currentForward, targetNormal).normalized;
 
         resultRotation = Quaternion.FromToRotation(currentNormal, targetNormal);
         currentNormal = targetNormal;

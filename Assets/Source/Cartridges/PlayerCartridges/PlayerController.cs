@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayFloat("Aerial Velocity", c_playerData.CurrentAirVelocity);
         debugAccessor.DisplayState("Player State", c_stateMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Normal", c_playerData.CurrentNormal * -1);
+        debugAccessor.DisplayVector3("CurrentDir", c_playerData.CurrentDirection * -1);
 	}
 
     /// <summary>
@@ -69,13 +69,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         Vector3 frameTranslation = c_playerData.CurrentPosition - c_characterController.transform.position;
+
         c_characterController.Move(frameTranslation);
         c_characterController.transform.Rotate(c_playerData.RotationBuffer.eulerAngles);
-
-        c_playerData.v_currentOffset += frameTranslation;
-        Vector3 offsetPivot = c_playerData.v_currentOffset - c_characterController.transform.position;
-        offsetPivot = c_playerData.RotationBuffer * offsetPivot;
-        c_playerData.v_currentOffset = offsetPivot + c_characterController.transform.position;
         
     }
 
@@ -89,7 +85,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         RaycastHit hitInfo;
         Vector3 downwardVector = c_playerData.CurrentNormal * -1;
-        if (Physics.Raycast(c_playerData.v_currentOffset, downwardVector, out hitInfo, c_playerData.f_raycastDistance))
+        if (Physics.Raycast(c_playerData.CurrentPosition, downwardVector, out hitInfo, c_playerData.f_currentRaycastDistance))
         {
             c_playerData.CurrentSurfaceNormal = hitInfo.normal;
             c_playerData.CurrentSurfaceAttachPoint = hitInfo.point;
@@ -111,7 +107,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else
         {
-            c_stateMachine.Execute(Command.LAND, ref c_playerData, true);
+            c_stateMachine.Execute(Command.LAND, ref c_playerData);
         }
     }
 
@@ -124,7 +120,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.CurrentPosition = transform.position;
         c_playerData.CurrentDirection = transform.forward;
         c_playerData.CurrentNormal = transform.up;
-        c_playerData.v_currentOffset = transform.position + c_playerData.v_surfaceRayOffset;
         c_playerData.CurrentSpeed = 0.0f;
     }
     #endregion
