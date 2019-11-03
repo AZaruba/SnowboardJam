@@ -49,17 +49,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
 	void FixedUpdate ()
     {
-        EngineUpdate();
-
-        c_stateMachine.Act(ref c_playerData);
 
         EnginePull();
 
         UpdateStateMachine();
 
+        c_stateMachine.Act(ref c_playerData);
+
+        EngineUpdate();
+
         debugAccessor.DisplayFloat("Aerial Velocity", c_playerData.CurrentAirVelocity);
         debugAccessor.DisplayState("Player State", c_stateMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Dir of Travel", c_playerData.CurrentDirection);
+        debugAccessor.DisplayVector3("Normal", c_playerData.CurrentNormal * -1);
 	}
 
     /// <summary>
@@ -67,8 +68,15 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EngineUpdate()
     {
-        c_characterController.Move(c_playerData.CurrentPosition - c_characterController.transform.position);
+        Vector3 frameTranslation = c_playerData.CurrentPosition - c_characterController.transform.position;
+        c_characterController.Move(frameTranslation);
         c_characterController.transform.Rotate(c_playerData.RotationBuffer.eulerAngles);
+
+        c_playerData.v_currentOffset += frameTranslation;
+        Vector3 offsetPivot = c_playerData.v_currentOffset - c_characterController.transform.position;
+        offsetPivot = c_playerData.RotationBuffer * offsetPivot;
+        c_playerData.v_currentOffset = offsetPivot + c_characterController.transform.position;
+        
     }
 
     /// <summary>
@@ -77,6 +85,19 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EnginePull()
     {
         c_playerData.InputAxisTurn = Input.GetAxis("Horizontal");
+        c_playerData.CurrentPosition = c_characterController.transform.position;
+
+        RaycastHit hitInfo;
+        Vector3 downwardVector = c_playerData.CurrentNormal * -1;
+        if (Physics.Raycast(c_playerData.v_currentOffset, downwardVector, out hitInfo, c_playerData.f_raycastDistance))
+        {
+            c_playerData.CurrentSurfaceNormal = hitInfo.normal;
+            c_playerData.CurrentSurfaceAttachPoint = hitInfo.point;
+        }
+        else
+        {
+            c_playerData.CurrentSurfaceNormal = Vector3.zero;
+        }
     }
 
     /// <summary>
@@ -84,26 +105,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void UpdateStateMachine()
     {
-        // raycast to check for change in ground
-        RaycastHit hitInfo;
-        Vector3 downwardVector = c_playerData.CurrentNormal * -1;
-
-        // TODO: missing: angle checking to ensure that the character only snaps to the ground for certain angles
-        if (Physics.Raycast(c_characterController.transform.position, downwardVector, out hitInfo, c_playerData.f_raycastDistance))
+        if (c_playerData.CurrentSurfaceNormal.normalized == Vector3.zero)
         {
-            Vector3 oldSurfaceNormal = c_playerData.CurrentSurfaceNormal;
-
-            c_playerData.CurrentSurfaceNormal = hitInfo.normal;
-            c_playerData.CurrentSurfaceAttachPoint = hitInfo.point;
-            if (c_playerData.CurrentSurfaceNormal.normalized != oldSurfaceNormal)
-            {
-                c_playerData.CurrentPosition = c_characterController.transform.position;
-                c_stateMachine.Execute(Command.LAND, ref c_playerData, true);
-            }
+            c_stateMachine.Execute(Command.FALL, ref c_playerData);
         }
         else
         {
-            c_stateMachine.Execute(Command.FALL, ref c_playerData);
+            c_stateMachine.Execute(Command.LAND, ref c_playerData, true);
         }
     }
 
@@ -116,6 +124,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.CurrentPosition = transform.position;
         c_playerData.CurrentDirection = transform.forward;
         c_playerData.CurrentNormal = transform.up;
+        c_playerData.v_currentOffset = transform.position + c_playerData.v_surfaceRayOffset;
         c_playerData.CurrentSpeed = 0.0f;
     }
     #endregion

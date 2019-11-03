@@ -39,6 +39,7 @@ public class RidingState : iPlayerState {
 
     public void TransitionAct(ref PlayerData c_playerData)
     {
+        float currentVelocity = c_playerData.CurrentSpeed; // current velocity should get aerial velocity (scaled to angle) added on landing
         Vector3 currentNormal = c_playerData.CurrentNormal;
         Vector3 currentForward = c_playerData.CurrentDirection;
         Vector3 currentSurfaceNormal = c_playerData.CurrentSurfaceNormal;

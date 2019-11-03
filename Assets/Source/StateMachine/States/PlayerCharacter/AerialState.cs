@@ -46,6 +46,7 @@ public class AerialState : iPlayerState {
         c_playerData.CurrentAirVelocity = airVelocity;
         c_playerData.CurrentDirection = previousDirection;
         c_playerData.CurrentSpeed *= magnitudeFactor;
+        c_playerData.CurrentNormal = Vector3.up; // we want to check for ground directly below the player while in the air
     }
 
     public StateRef GetNextState(Command cmd)

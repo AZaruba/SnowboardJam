@@ -11,6 +11,7 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float f_jumpPower;
     [SerializeField] private float f_gravityFactor;
     [SerializeField] private float TerminalVelocity;
+    [SerializeField] private Vector3 SurfaceRayOffset;
 
     private float f_currentSpeed;
     private float f_currentJumpPower;
@@ -18,6 +19,7 @@ public class PlayerData : MonoBehaviour {
 
     private Vector3 v_currentPosition;
     private Vector3 v_currentDirection;
+    private Vector3 CurrentRayOffset;
     private Vector3 v_currentNormal;
 
     private Quaternion q_bufferedRotation;
@@ -109,6 +111,18 @@ public class PlayerData : MonoBehaviour {
     {
         get { return v_currentNormal; }
         set { v_currentNormal = value; }
+    }
+
+    public Vector3 v_surfaceRayOffset
+    {
+        get { return SurfaceRayOffset; }
+        set { SurfaceRayOffset = value; }
+    }
+
+    public Vector3 v_currentOffset
+    {
+        get { return CurrentRayOffset; }
+        set { CurrentRayOffset = value; }
     }
     #endregion
     #region Quaternions
