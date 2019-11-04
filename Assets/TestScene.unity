@@ -492,13 +492,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aead74ec139c4b4391ce29393104832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  f_topSpeed: 0.5
+  f_topSpeed: 2
   f_acceleration: 0.01
   TurnSpeed: 1
   f_jumpPower: 0
-  f_gravityFactor: 0.03
+  f_gravityFactor: 0.02
   TerminalVelocity: 1
-  RaycastDistance: 0.7
+  RaycastDistance: 0.8
 --- !u!114 &734568627
 MonoBehaviour:
   m_ObjectHideFlags: 0
