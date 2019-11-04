@@ -29,8 +29,8 @@ public class AerialState : iPlayerState {
         cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
 
         c_playerData.CurrentPosition = position;
-        c_playerData.CurrentAirVelocity = airVelocity;
-        c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity);
+        c_playerData.CurrentAirVelocity = airVelocity; // TODO: should only cast a ray down when velocity is below zero
+        c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity); //TODO: remove constant here
     }
 
     public void TransitionAct(ref PlayerData c_playerData)

@@ -14,6 +14,7 @@ public class AngleCalculationCartridge
     {
         Vector3 newForward = Vector3.ProjectOnPlane(currentForward, targetNormal).normalized;
 
+        // TODO: The rotation is currently iffy when we simply project onto a plane
         resultRotation = Quaternion.FromToRotation(currentNormal, targetNormal);
         currentNormal = targetNormal;
         currentForward = newForward;

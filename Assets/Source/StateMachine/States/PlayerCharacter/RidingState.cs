@@ -53,6 +53,10 @@ public class RidingState : iPlayerState {
         {
             return StateRef.AIRBORNE;
         }
+        if (cmd == Command.TURN)
+        {
+            return StateRef.CARVING;
+        }
         return StateRef.RIDING;
     }
 }

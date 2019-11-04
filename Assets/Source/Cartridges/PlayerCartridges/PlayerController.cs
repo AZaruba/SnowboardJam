@@ -32,14 +32,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_angleCalc = new AngleCalculationCartridge ();
         cart_velocity = new VelocityCartridge ();
         cart_acceleration = new AccelerationCartridge ();
+        cart_handling = new HandlingCartridge();
 
         StationaryState s_stationary = new StationaryState (ref cart_angleCalc);
         AerialState s_aerial = new AerialState (ref cart_gravity, ref cart_velocity);
         RidingState s_riding = new RidingState (ref cart_angleCalc, ref cart_acceleration, ref cart_velocity);
+        CarvingState s_carving = new CarvingState(ref cart_angleCalc, ref cart_acceleration, ref cart_velocity, ref cart_handling);
 
         c_stateMachine = new PlayerStateMachine (s_aerial, StateRef.AIRBORNE);
         c_stateMachine.AddState(s_stationary, StateRef.STATIONARY);
         c_stateMachine.AddState(s_riding, StateRef.RIDING);
+        c_stateMachine.AddState(s_carving, StateRef.CARVING);
 	}
 	
 	/// <summary>
@@ -80,8 +83,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EnginePull()
     {
-        c_playerData.InputAxisTurn = Input.GetAxis("Horizontal");
+        c_playerData.f_inputAxisTurn = Input.GetAxis("Horizontal");
         c_playerData.CurrentPosition = c_characterController.transform.position;
+        // c_playerData.CurrentDirection = c_characterController.transform.forward;
+        // c_playerData.CurrentNormal = c_characterController.transform.up;
 
         RaycastHit hitInfo;
         Vector3 downwardVector = c_playerData.CurrentNormal * -1;
@@ -108,6 +113,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
         else
         {
             c_stateMachine.Execute(Command.LAND, ref c_playerData);
+        }
+        if (Mathf.Abs(c_playerData.f_inputAxisTurn) > 0.0f)
+        {
+            c_stateMachine.Execute(Command.TURN, ref c_playerData);
+        }
+        else
+        {
+            c_stateMachine.Execute(Command.RIDE, ref c_playerData);
         }
     }
 
