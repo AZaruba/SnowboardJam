@@ -29,8 +29,15 @@ public class AerialState : iPlayerState {
         cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
 
         c_playerData.CurrentPosition = position;
-        c_playerData.CurrentAirVelocity = airVelocity; // TODO: should only cast a ray down when velocity is below zero
-        c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity); //TODO: remove constant here
+        c_playerData.CurrentAirVelocity = airVelocity;
+        if (airVelocity < Constants.ZERO_F)
+        {
+            c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity);
+        }
+        else
+        {
+            c_playerData.f_currentRaycastDistance = Constants.ZERO_F;
+        }
     }
 
     public void TransitionAct(ref PlayerData c_playerData)
@@ -39,7 +46,7 @@ public class AerialState : iPlayerState {
         float currentVelocity = c_playerData.CurrentSpeed;
         float airVelocity = previousDirection.y * currentVelocity;
 
-        previousDirection.y = 0.0f; // "flatten direction"
+        previousDirection.y = Constants.ZERO_F; // "flatten direction"
 
         // scale velocity by the change in magnitude so we don't go faster in a direction
         float magnitudeFactor = previousDirection.magnitude / c_playerData.CurrentDirection.magnitude;

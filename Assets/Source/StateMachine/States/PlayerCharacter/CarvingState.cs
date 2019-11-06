@@ -38,7 +38,7 @@ public class CarvingState : iPlayerState {
 
         cart_acceleration.Accelerate(ref currentVelocity, ref acceleration, topSpeed);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
-        cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis);
+        cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis,ref currentRotation);
         cart_velocity.UpdatePosition(ref currentPos, ref currentDir, ref currentVelocity);
 
         c_playerData.CurrentSpeed = currentVelocity;
