@@ -37,6 +37,7 @@ public class RidingState : iPlayerState {
         c_playerData.Acceleration = acceleration;
         c_playerData.CurrentPosition = currentPos;
         c_playerData.CurrentNormal = currentNormal;
+        c_playerData.CurrentDown = currentNormal * -1;
         c_playerData.CurrentDirection = currentDir;
         c_playerData.RotationBuffer = currentRotation;
     }

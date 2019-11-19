@@ -64,6 +64,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         debugAccessor.DisplayFloat("Aerial Velocity", c_playerData.CurrentAirVelocity);
         debugAccessor.DisplayState("Player State", c_stateMachine.GetCurrentState());
         debugAccessor.DisplayVector3("CurrentDir", c_playerData.CurrentDirection * -1);
+        debugAccessor.DisplayVector3("CurrentNormal", c_playerData.CurrentNormal, 1);
 	}
 
     /// <summary>
@@ -89,7 +90,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // c_playerData.CurrentNormal = c_characterController.transform.up;
 
         RaycastHit hitInfo;
-        Vector3 downwardVector = c_playerData.CurrentNormal * -1;
+        Vector3 downwardVector = c_playerData.CurrentDown;
         if (Physics.Raycast(c_playerData.CurrentPosition, downwardVector, out hitInfo, c_playerData.f_currentRaycastDistance))
         {
             c_playerData.CurrentSurfaceNormal = hitInfo.normal;
@@ -133,6 +134,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.CurrentPosition = transform.position;
         c_playerData.CurrentDirection = transform.forward;
         c_playerData.CurrentNormal = transform.up;
+        c_playerData.CurrentDown = transform.up * -1;
         c_playerData.CurrentSpeed = 0.0f;
     }
     #endregion
@@ -140,10 +142,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         /* Known issues:
          * 
-         * 1) If the angle is steep enough, the player will "wobble" on the corner
-         * 2) The character will get slowed down if careening down fast enough
-         *       - If the max speed is faster than the terminal velocity, we're good!
-         *       - We may want to be able to ACCELERATE downardd
-         * 3) The player still "floats" above the ground, how to solve it?
-         * 4) Add time/frame scaling to make serialized values easier to manage
+         * 1) We need to orient the upward and forward when moving "off-axis" down a curve, it appears to be off center.
+         * 2) The player still "floats" above the ground, how to solve it?
+         * 3) Add time/frame scaling to make serialized values easier to manage
          */ 

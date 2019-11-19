@@ -16,8 +16,19 @@ public class DebugAccessor : MonoBehaviour
         debugInstance.DisplayState(objName, state);
     }
 
-    public void DisplayVector3(string objName, Vector3 vec)
+    public void DisplayVector3(string objName, Vector3 vec, int line = 0)
     {
-        debugInstance.DisplayVector3(objName, vec);
+        if (line > 1)
+        {
+            return;
+        }
+        if (line == 0)
+        {
+            debugInstance.DisplayVector3(objName, vec);
+        }
+        else if (line == 1)
+        {
+            debugInstance.DisplayVector3(objName, vec, 1);
+        }
     }
 }
