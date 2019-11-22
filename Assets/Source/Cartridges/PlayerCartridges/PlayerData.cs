@@ -21,6 +21,7 @@ public class PlayerData : MonoBehaviour {
     private Vector3 v_currentDirection;
     private Vector3 v_currentNormal;
     private Vector3 v_currentDown;
+    private Vector3 v_currentTranslation;
 
     private Quaternion q_bufferedRotation;
     #endregion
@@ -123,6 +124,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return v_currentDown; }
         set { v_currentDown = value; }
+    }
+
+    public Vector3 CurrentTranslation
+    {
+        get { return v_currentTranslation; }
+        set { v_currentTranslation = value; }
     }
     #endregion
     #region Quaternions

@@ -60,10 +60,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         EngineUpdate();
 
-        debugAccessor.DisplayFloat("Aerial Velocity", c_playerData.CurrentAirVelocity);
+        debugAccessor.DisplayFloat("Current Velocity", c_playerData.CurrentSpeed);
         debugAccessor.DisplayState("Player State", c_stateMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Current Transform Normal", transform.up);
-        debugAccessor.DisplayVector3("CurrentNormal", c_playerData.CurrentNormal, 1);
+        debugAccessor.DisplayVector3("Current Translation", c_playerData.CurrentTranslation);
+        debugAccessor.DisplayVector3("CurrentDirection", c_playerData.CurrentDirection, 1);
 	}
 
     /// <summary>
@@ -71,11 +71,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EngineUpdate()
     {
-        Vector3 frameTranslation = c_playerData.CurrentPosition - transform.position;
-
-        transform.position += frameTranslation;
-        transform.Rotate(c_playerData.RotationBuffer.eulerAngles);
-        
+        transform.position += c_playerData.CurrentTranslation;
+        transform.Rotate(c_playerData.RotationBuffer.eulerAngles);   
     }
 
     /// <summary>
@@ -89,6 +86,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // OTHERWISE it implies that there is a desync between data and the engine
         c_playerData.CurrentPosition = transform.position;
         c_playerData.CurrentDirection = transform.forward;
+        c_playerData.CurrentTranslation = Vector3.zero;
         c_playerData.CurrentNormal = transform.up;
 
         RaycastHit hitInfo;
@@ -133,6 +131,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     void SetDefaultPlayerData()
     {
         c_playerData.CurrentPosition = transform.position;
+        c_playerData.CurrentTranslation = Vector3.zero;
         c_playerData.CurrentDirection = transform.forward;
         c_playerData.CurrentNormal = transform.up;
         c_playerData.CurrentDown = transform.up * -1;

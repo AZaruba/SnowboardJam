@@ -22,13 +22,13 @@ public class AerialState : iPlayerState {
         float currentSpeed = c_playerData.CurrentSpeed;
 
         Vector3 currentDir = c_playerData.CurrentDirection;
-        Vector3 position = c_playerData.CurrentPosition;
+        Vector3 translation = c_playerData.CurrentTranslation;
 
-        position.y += airVelocity;
         cart_gravity.UpdateAirVelocity(ref airVelocity, ref gravity, ref terminalVelocity);
-        cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
+        cart_velocity.UpdatePosition(ref translation, ref currentDir, ref currentSpeed);
+        translation.y += airVelocity;
 
-        c_playerData.CurrentPosition = position;
+        c_playerData.CurrentTranslation = translation;
         c_playerData.CurrentAirVelocity = airVelocity;
         if (airVelocity < Constants.ZERO_F)
         {
@@ -42,17 +42,21 @@ public class AerialState : iPlayerState {
 
     public void TransitionAct(ref PlayerData c_playerData)
     {
+        Debug.Log("AERIAL");
         Vector3 previousDirection = c_playerData.CurrentDirection;
+        Vector3 currentTranslation = c_playerData.CurrentTranslation;
         float currentVelocity = c_playerData.CurrentSpeed;
         float airVelocity = previousDirection.y * currentVelocity;
 
         previousDirection.y = Constants.ZERO_F; // "flatten direction"
+        currentTranslation.y = Constants.ZERO_F; // "flatten translation"
 
         // scale velocity by the change in magnitude so we don't go faster in a direction
         float magnitudeFactor = previousDirection.magnitude / c_playerData.CurrentDirection.magnitude;
 
         c_playerData.CurrentAirVelocity = airVelocity;
         c_playerData.CurrentDirection = previousDirection;
+        c_playerData.CurrentTranslation = currentTranslation;
         c_playerData.CurrentSpeed *= magnitudeFactor;
         c_playerData.CurrentDown = Vector3.down;
     }
