@@ -7,7 +7,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     #region Members
     // Serialized items
     [SerializeField] private PlayerData   c_playerData;
-    [SerializeField] private CharacterController c_characterController;
     [SerializeField] private DebugAccessor debugAccessor;
 
     // private members
@@ -63,7 +62,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayFloat("Aerial Velocity", c_playerData.CurrentAirVelocity);
         debugAccessor.DisplayState("Player State", c_stateMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("CurrentDir", c_playerData.CurrentDirection * -1);
+        debugAccessor.DisplayVector3("Current Transform Normal", transform.up);
         debugAccessor.DisplayVector3("CurrentNormal", c_playerData.CurrentNormal, 1);
 	}
 
@@ -72,10 +71,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EngineUpdate()
     {
-        Vector3 frameTranslation = c_playerData.CurrentPosition - c_characterController.transform.position;
+        Vector3 frameTranslation = c_playerData.CurrentPosition - transform.position;
 
-        c_characterController.Move(frameTranslation);
-        c_characterController.transform.Rotate(c_playerData.RotationBuffer.eulerAngles);
+        transform.position += frameTranslation;
+        transform.Rotate(c_playerData.RotationBuffer.eulerAngles);
         
     }
 
@@ -85,13 +84,15 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EnginePull()
     {
         c_playerData.f_inputAxisTurn = Input.GetAxis("Horizontal");
-        c_playerData.CurrentPosition = c_characterController.transform.position;
-        // c_playerData.CurrentDirection = c_characterController.transform.forward;
-        // c_playerData.CurrentNormal = c_characterController.transform.up;
+
+        // TODO: ensure that we can pull the direction and the normal from the object
+        // OTHERWISE it implies that there is a desync between data and the engine
+        c_playerData.CurrentPosition = transform.position;
+        c_playerData.CurrentDirection = transform.forward;
+        c_playerData.CurrentNormal = transform.up;
 
         RaycastHit hitInfo;
-        Vector3 downwardVector = c_playerData.CurrentDown;
-        if (Physics.Raycast(c_playerData.CurrentPosition, downwardVector, out hitInfo, c_playerData.f_currentRaycastDistance))
+        if (Physics.Raycast(c_playerData.CurrentPosition, c_playerData.CurrentDown, out hitInfo, c_playerData.f_currentRaycastDistance))
         {
             c_playerData.CurrentSurfaceNormal = hitInfo.normal;
             c_playerData.CurrentSurfaceAttachPoint = hitInfo.point;
@@ -140,9 +141,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
     #endregion
 }
 
-        /* Known issues:
-         * 
-         * 1) We need to orient the upward and forward when moving "off-axis" down a curve, it appears to be off center.
-         * 2) The player still "floats" above the ground, how to solve it?
-         * 3) Add time/frame scaling to make serialized values easier to manage
-         */ 
+/* TODO LIST:
+ * 1) Raycast tolerance: create function that will prevent clipping by snapping the player to
+ *    the surface hit by the raycast, should prevent any collision.
+ * 2) Raycast accuracy: Add another ray to the direction of travel to ensure rotation along
+ *    curves works okay. This should help prevent "sinking" if #1 does not
+ * 3) T R I C K T I M E
+ */ 

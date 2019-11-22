@@ -12,12 +12,12 @@ public class AngleCalculationCartridge
     /// <param name="currentForward">Current forward.</param>
     public void AlignRotationWithSurface(ref Vector3 targetNormal, ref Vector3 currentNormal, ref Vector3 currentForward, ref Quaternion resultRotation)
     {
-        Vector3 newForward = Vector3.ProjectOnPlane(currentForward, targetNormal).normalized;
+        Vector3 targetForward = Vector3.ProjectOnPlane(currentForward, targetNormal);
+        Quaternion normalRotation = Quaternion.FromToRotation(currentNormal, targetNormal);
 
-        // TODO: The rotation is currently iffy when we simply project onto a plane
-        resultRotation = Quaternion.FromToRotation(currentNormal, targetNormal);
+        resultRotation = normalRotation;
+        currentForward = targetForward;
         currentNormal = targetNormal;
-        currentForward = newForward;
     }
 
     // TODO: This needs to be rethought as simply moving to an attach point isn't a one-size-fits-all solution
