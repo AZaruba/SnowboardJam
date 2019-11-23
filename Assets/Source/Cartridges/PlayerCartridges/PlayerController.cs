@@ -139,6 +139,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 }
 
 /* TODO LIST:
- * 1) How do we deal with decelerating when going DOWN and accelerating when going UP?
- *    -> ROTATE THE "up" when we adhere to a surface
+ * 1) Crashing
+ * 2) Improving the surface adherence when moving down
  */ 
