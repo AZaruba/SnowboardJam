@@ -84,8 +84,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // TODO: ensure that we can pull the direction and the normal from the object
         // OTHERWISE it implies that there is a desync between data and the engine
         c_playerData.CurrentPosition = transform.position;
-        c_playerData.CurrentDirection = transform.forward;
-        c_playerData.CurrentNormal = transform.up;
+        c_playerData.CurrentDirection = transform.forward.normalized;
+        c_playerData.CurrentNormal = transform.up.normalized;
 
         RaycastHit hitInfo;
         if (Physics.Raycast(c_playerData.CurrentPosition, c_playerData.CurrentDown, out hitInfo, c_playerData.f_currentRaycastDistance))
@@ -139,6 +139,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 }
 
 /* TODO LIST:
- * 1) Crashing
+ * 1) Crashing (as in the mechanic, not the failure state!)
  * 2) Improving the surface adherence when moving down
  */ 

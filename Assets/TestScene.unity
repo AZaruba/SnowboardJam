@@ -552,12 +552,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aead74ec139c4b4391ce29393104832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  f_topSpeed: 0.8
-  f_acceleration: 0.01
-  TurnSpeed: 3
+  f_topSpeed: 40
+  f_acceleration: 20
+  TurnSpeed: 100
   f_jumpPower: 0
-  f_gravityFactor: 0.02
-  TerminalVelocity: 1.2
+  f_gravityFactor: 40
+  TerminalVelocity: 50
   CrashRecoveryTime: 1
   RaycastDistance: 0.6
 --- !u!33 &734568624
@@ -576,7 +576,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 734568621}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40, y: 40, z: -20}
+  m_LocalPosition: {x: -20, y: 40, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -697,7 +697,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745530428}
   m_LocalRotation: {x: 0.12278779, y: -0.6963643, z: 0.12278779, w: 0.6963643}
-  m_LocalPosition: {x: -20, y: 20, z: 20}
+  m_LocalPosition: {x: 0, y: 40, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

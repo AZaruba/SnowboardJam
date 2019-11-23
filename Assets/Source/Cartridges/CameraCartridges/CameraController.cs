@@ -29,15 +29,15 @@ public class CameraController : MonoBehaviour, iEntityController {
     /// used for object-level functions (such as translations) and then the
     /// state is updated.
     /// </summary>
-	void FixedUpdate ()
+	void Update ()
     {
         EnginePull();
+
+        UpdateStateMachine();
 
         c_stateMachine.Act(ref c_cameraData);
 
         EngineUpdate();
-
-        UpdateStateMachine();
 	}
 
     public void EngineUpdate()
