@@ -13,6 +13,8 @@ public enum Command {
     TURN,
     SLOW,
     STOP, // when velocity reaches zero
+    CRASH,
+    BONK,
     LAND,
     FALL,
     JUMP,
@@ -34,6 +36,8 @@ public enum StateRef {
     STATIONARY,
     RIDING,
     STOPPING,
+    BONKED,
+    CRASHED,
     CARVING,
     CARVING_STOPPING,
     CHARGING,

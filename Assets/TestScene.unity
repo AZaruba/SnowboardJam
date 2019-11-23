@@ -342,6 +342,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: d20bd3b04be96594183d580f62e7235a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: d20bd3b04be96594183d580f62e7235a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -350,7 +355,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: d20bd3b04be96594183d580f62e7235a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -30
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: d20bd3b04be96594183d580f62e7235a,
         type: 3}
@@ -491,7 +496,7 @@ GameObject:
   - component: {fileID: 734568626}
   - component: {fileID: 734568623}
   m_Layer: 8
-  m_Name: Cube
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -547,13 +552,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aead74ec139c4b4391ce29393104832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  f_topSpeed: 0.5
+  f_topSpeed: 0.8
   f_acceleration: 0.01
-  TurnSpeed: 2
+  TurnSpeed: 3
   f_jumpPower: 0
   f_gravityFactor: 0.02
-  TerminalVelocity: 1
-  RaycastDistance: 0.8
+  TerminalVelocity: 1.2
+  CrashRecoveryTime: 1
+  RaycastDistance: 0.6
 --- !u!33 &734568624
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -570,7 +576,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 734568621}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20, y: 10, z: -20}
+  m_LocalPosition: {x: -40, y: 40, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -665,7 +671,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 70
+  field of view: 77.7892
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -691,7 +697,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745530428}
   m_LocalRotation: {x: 0.12278779, y: -0.6963643, z: 0.12278779, w: 0.6963643}
-  m_LocalPosition: {x: -10, y: 0, z: 0}
+  m_LocalPosition: {x: -20, y: 20, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

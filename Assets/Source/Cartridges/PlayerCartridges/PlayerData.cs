@@ -11,17 +11,18 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float f_jumpPower;
     [SerializeField] private float f_gravityFactor;
     [SerializeField] private float TerminalVelocity;
+    [SerializeField] private float CrashRecoveryTime;
 
     private float f_currentSpeed;
     private float f_currentJumpPower;
     private float f_currentAirVelocity;
+    private float CrashTimer;
     private float CurrentRaycastDistance;
 
     private Vector3 v_currentPosition;
     private Vector3 v_currentDirection;
     private Vector3 v_currentNormal;
     private Vector3 v_currentDown;
-    private Vector3 v_currentTranslation;
 
     private Quaternion q_bufferedRotation;
     #endregion
@@ -81,6 +82,12 @@ public class PlayerData : MonoBehaviour {
         get { return CurrentRaycastDistance; }
         set { CurrentRaycastDistance = value; }
     }
+
+    public float f_crashRecoveryTime
+    {
+        get { return CrashRecoveryTime; }
+        set { CrashRecoveryTime = value; }
+    }
     #endregion
     #region SerializedActives
     public float CurrentSpeed
@@ -99,6 +106,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return f_currentAirVelocity; }
         set { f_currentAirVelocity = value; }
+    }
+
+    public float f_currentCrashTimer
+    {
+        get { return CrashTimer; }
+        set { CrashTimer = value; }
     }
     #endregion
     #region Vectors
@@ -124,12 +137,6 @@ public class PlayerData : MonoBehaviour {
     {
         get { return v_currentDown; }
         set { v_currentDown = value; }
-    }
-
-    public Vector3 CurrentTranslation
-    {
-        get { return v_currentTranslation; }
-        set { v_currentTranslation = value; }
     }
     #endregion
     #region Quaternions

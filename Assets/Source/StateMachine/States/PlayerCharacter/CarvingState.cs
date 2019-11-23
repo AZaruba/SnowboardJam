@@ -29,7 +29,6 @@ public class CarvingState : iPlayerState {
         float acceleration = c_playerData.Acceleration;
         float topSpeed = c_playerData.TopSpeed;
         Vector3 currentPosition = c_playerData.CurrentPosition;
-        Vector3 currentTrans = c_playerData.CurrentTranslation;
         Vector3 currentDir = c_playerData.CurrentDirection;
         Vector3 currentNormal = c_playerData.CurrentNormal;
         Vector3 currentSurfaceNormal = c_playerData.CurrentSurfaceNormal;
@@ -39,16 +38,16 @@ public class CarvingState : iPlayerState {
         float inputAxis = c_playerData.f_inputAxisTurn * c_playerData.f_turnSpeed;
 
         cart_acceleration.Accelerate(ref currentVelocity, ref acceleration, topSpeed);
-        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
         cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
-        cart_velocity.UpdatePosition(ref currentTrans, ref currentDir, ref currentVelocity);
-        cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentTrans);
+        cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
+        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
+        cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
 
         c_playerData.CurrentSpeed = currentVelocity;
         c_playerData.Acceleration = acceleration;
-        c_playerData.CurrentTranslation = currentTrans;
-        c_playerData.CurrentNormal = currentNormal;
-        c_playerData.CurrentDirection = currentDir;
+        c_playerData.CurrentPosition = currentPosition;
+        c_playerData.CurrentNormal = currentNormal.normalized;
+        c_playerData.CurrentDirection = currentDir.normalized;
         c_playerData.RotationBuffer = currentRotation;
     }
 

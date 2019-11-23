@@ -51,7 +51,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
 	void FixedUpdate ()
     {
-
         EnginePull();
 
         UpdateStateMachine();
@@ -62,8 +61,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayFloat("Current Velocity", c_playerData.CurrentSpeed);
         debugAccessor.DisplayState("Player State", c_stateMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Current Translation", c_playerData.CurrentTranslation);
-        debugAccessor.DisplayVector3("CurrentDirection", c_playerData.CurrentDirection, 1);
+        debugAccessor.DisplayVector3("Current Normal", c_playerData.CurrentNormal);
+        debugAccessor.DisplayVector3("Current Direction", c_playerData.CurrentDirection, 1);
 	}
 
     /// <summary>
@@ -71,8 +70,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EngineUpdate()
     {
-        transform.position += c_playerData.CurrentTranslation;
-        transform.Rotate(c_playerData.RotationBuffer.eulerAngles);   
+        transform.position = c_playerData.CurrentPosition;
+        transform.rotation = c_playerData.RotationBuffer; // transform.Rotate(c_playerData.RotationBuffer.eulerAngles);   
     }
 
     /// <summary>
@@ -86,7 +85,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // OTHERWISE it implies that there is a desync between data and the engine
         c_playerData.CurrentPosition = transform.position;
         c_playerData.CurrentDirection = transform.forward;
-        c_playerData.CurrentTranslation = Vector3.zero;
         c_playerData.CurrentNormal = transform.up;
 
         RaycastHit hitInfo;
@@ -131,7 +129,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     void SetDefaultPlayerData()
     {
         c_playerData.CurrentPosition = transform.position;
-        c_playerData.CurrentTranslation = Vector3.zero;
+        c_playerData.RotationBuffer = transform.rotation;
         c_playerData.CurrentDirection = transform.forward;
         c_playerData.CurrentNormal = transform.up;
         c_playerData.CurrentDown = transform.up * -1;
@@ -141,9 +139,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 }
 
 /* TODO LIST:
- * 1) Raycast tolerance: create function that will prevent clipping by snapping the player to
- *    the surface hit by the raycast, should prevent any collision.
- * 2) Raycast accuracy: Add another ray to the direction of travel to ensure rotation along
- *    curves works okay. This should help prevent "sinking" if #1 does not
- * 3) T R I C K T I M E
+ * 1) How do we deal with decelerating when going DOWN and accelerating when going UP?
+ *    -> ROTATE THE "up" when we adhere to a surface
  */ 

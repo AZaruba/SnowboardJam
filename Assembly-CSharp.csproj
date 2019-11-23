@@ -74,10 +74,10 @@
     <Compile Include="Assets\Source\Cartridges\PlayerCartridges\HandlingCartridge.cs" />
     <Compile Include="Assets\Source\Cartridges\PlayerCartridges\PlayerController.cs" />
     <Compile Include="Assets\Source\Cartridges\PlayerCartridges\PlayerData.cs" />
+    <Compile Include="Assets\Source\Cartridges\PlayerCartridges\TimerCartridge.cs" />
     <Compile Include="Assets\Source\Cartridges\PlayerCartridges\VelocityCartridge.cs" />
     <Compile Include="Assets\Source\Debug\DebugAccessor.cs" />
     <Compile Include="Assets\Source\Debug\DebugFunctions.cs" />
-    <Compile Include="Assets\Source\EngineInterface\RaycastUtility.cs" />
     <Compile Include="Assets\Source\StateMachine\Commands.cs" />
     <Compile Include="Assets\Source\StateMachine\StateMachines\CameraStateMachine.cs" />
     <Compile Include="Assets\Source\StateMachine\StateMachines\PlayerStateMachine.cs" />
@@ -85,6 +85,7 @@
     <Compile Include="Assets\Source\StateMachine\States\Camera\StationaryLookAtState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\AerialState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\CarvingState.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\CrashedState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\iPlayerState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\RidingState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\StationaryState.cs" />
