@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// used for object-level functions (such as translations) and then the
     /// state is updated.
     /// </summary>
-	void FixedUpdate ()
+	void Update ()
     {
         EnginePull();
 

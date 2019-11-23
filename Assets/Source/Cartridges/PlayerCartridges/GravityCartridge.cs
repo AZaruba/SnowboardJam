@@ -11,7 +11,7 @@ public class GravityCartridge {
             currentAirVelocity = terminalVelocity * -1;
             return;
         }
-        currentAirVelocity -= globalGravity;
+        currentAirVelocity -= globalGravity * Time.deltaTime;
     }
 
     public void Jump(ref float currentAirVelocity, ref float jumpPower)

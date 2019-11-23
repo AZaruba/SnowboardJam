@@ -12,7 +12,7 @@ public class AccelerationCartridge {
             velocity = topSpeed;
             return;
         }
-        velocity += acceleration * surfaceFactor;
+        velocity += acceleration * surfaceFactor * Time.deltaTime;
     }
 
     public void Decelerate(ref float velocity, ref float deceleration, float surfaceFactor = 1.0f)
@@ -22,7 +22,7 @@ public class AccelerationCartridge {
             velocity = 0.0f;
             return;
         }
-        velocity -= deceleration * surfaceFactor;
+        velocity -= deceleration * surfaceFactor * Time.deltaTime;
     }
     #endregion
 }

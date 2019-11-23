@@ -26,13 +26,13 @@ public class AerialState : iPlayerState {
 
         cart_gravity.UpdateAirVelocity(ref airVelocity, ref gravity, ref terminalVelocity);
         cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
-        position.y += airVelocity;
+        position.y += airVelocity * Time.deltaTime;
 
         c_playerData.CurrentPosition = position;
         c_playerData.CurrentAirVelocity = airVelocity;
         if (airVelocity < Constants.ZERO_F)
         {
-            c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity);
+            c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity) * Time.deltaTime;
         }
         else
         {
@@ -44,7 +44,7 @@ public class AerialState : iPlayerState {
     {
         Vector3 previousDirection = c_playerData.CurrentDirection;
         float currentVelocity = c_playerData.CurrentSpeed;
-        float airVelocity = previousDirection.y * currentVelocity;
+        float airVelocity = previousDirection.normalized.y * currentVelocity;
 
         previousDirection.y = Constants.ZERO_F; // "flatten direction"
 
