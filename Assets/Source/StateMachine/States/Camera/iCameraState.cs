@@ -13,5 +13,6 @@ public interface iCameraState {
     // void ProvideData(PlayerData dataIn);
 
     void Act(ref CameraData c_cameraData);
+    void TransitionAct(ref CameraData c_cameraData);
     StateRef GetNextState(Command cmd);
 }

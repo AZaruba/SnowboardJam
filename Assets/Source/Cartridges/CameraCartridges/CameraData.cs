@@ -5,85 +5,75 @@ using UnityEngine;
 public class CameraData : MonoBehaviour {
 
     #region Members
-    [SerializeField] private float f_followDistance;
-    [SerializeField] private Vector3 v_offsetVector;
-    [SerializeField] private GameObject go_target;
+    [SerializeField] private float FollowDistance;
+    [SerializeField] private Vector3 OffsetVector;
+    [SerializeField] private Transform TargetTransform;
 
-    private float f_fieldOfView;
+    private float FieldOfView;
+    private float CameraAngle;
 
-    private Vector3 v_currentPosition;
-    private Vector3 v_currentDirection;
+    private Vector3 CurrentPosition;
+    private Vector3 CurrentDirection;
 
-    private Vector3 v_targetPosition;
+    private Vector3 TargetPosition;
+    private Vector3 TargetDirection;
     #endregion
 
-    #region Getters
-
-    public float GetFollowDistance()
+    #region SerializedProperties
+    public float f_followDistance
     {
-        return f_followDistance;
+        get { return FollowDistance; }
+        set { FollowDistance = value; }
     }
 
-    public float GetFOV()
+    public Vector3 v_offsetVector
     {
-        return f_fieldOfView;
+        get { return OffsetVector; }
+        set { OffsetVector = value; }
     }
 
-    public Vector3 GetCurrentPosition()
+    public Transform t_targetTransform
     {
-        return v_currentPosition;
-    }
-
-    public Vector3 GetCurrentDirection()
-    {
-        return v_currentDirection;
-    }
-
-    public Vector3 GetOffsetVector()
-    {
-        return v_offsetVector;
-    }
-
-    public Vector3 GetTargetPosition()
-    {
-        return v_targetPosition;
-    }
-
-    public GameObject GetTarget()
-    {
-        return go_target;
+        get { return TargetTransform; }
+        set { TargetTransform = value; }
     }
     #endregion
 
-    #region Setters
-    public void SetFollowDistance(float newFollowDistance)
+    #region PrivateProperties
+    public float f_fov
     {
-        f_followDistance = newFollowDistance;
+        get { return FieldOfView; }
+        set { FieldOfView = value; }
     }
 
-    public void SetFOV(float newFOV)
+    public float f_cameraAngle
     {
-        f_fieldOfView = newFOV;
+        get { return CameraAngle; }
+        set { CameraAngle = value; }
     }
 
-    public void SetCurrentPosition(Vector3 newPosition)
+    public Vector3 v_currentPosition
     {
-        v_currentPosition = newPosition;
+        get { return CurrentPosition; }
+        set { CurrentPosition = value; }
     }
 
-    public void SetCurrentDirection(Vector3 newDirection)
+    public Vector3 v_currentDirection
     {
-        v_currentDirection = newDirection;
+        get { return CurrentDirection; }
+        set { CurrentDirection = value; }
     }
 
-    public void SetOffsetVector(Vector3 newOffset)
+    public Vector3 v_targetPosition
     {
-        v_offsetVector = newOffset;
+        get { return TargetPosition; }
+        set { TargetPosition = value; }
     }
 
-    public void SetTargetPosition(Vector3 newPosition)
+    public Vector3 v_targetDirection
     {
-        v_targetPosition = newPosition;
+        get { return TargetDirection; }
+        set { TargetDirection = value; }
     }
     #endregion
 }

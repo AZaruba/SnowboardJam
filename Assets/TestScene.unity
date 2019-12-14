@@ -1031,9 +1031,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd4e9e3d1e6794411a31e23d950ed9f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  f_followDistance: 10
-  v_offsetVector: {x: 0, y: 0, z: 0}
-  go_target: {fileID: 734568621}
+  FollowDistance: 0
+  OffsetVector: {x: 0, y: 0, z: 0}
+  TargetTransform: {fileID: 734568625}
 --- !u!114 &745530434
 MonoBehaviour:
   m_ObjectHideFlags: 0

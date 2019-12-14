@@ -81,6 +81,7 @@
     <Compile Include="Assets\Source\StateMachine\Commands.cs" />
     <Compile Include="Assets\Source\StateMachine\StateMachines\CameraStateMachine.cs" />
     <Compile Include="Assets\Source\StateMachine\StateMachines\PlayerStateMachine.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\Camera\FreeFollowState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\Camera\iCameraState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\Camera\StationaryLookAtState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\AerialState.cs" />

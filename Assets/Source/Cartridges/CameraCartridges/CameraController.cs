@@ -42,20 +42,20 @@ public class CameraController : MonoBehaviour, iEntityController {
 
     public void EngineUpdate()
     {
-        transform.position = c_cameraData.GetCurrentPosition();
-        transform.forward = c_cameraData.GetCurrentDirection();
+        transform.position = c_cameraData.v_currentPosition;
+        transform.forward = c_cameraData.v_currentDirection;
     }
 
     public void EnginePull()
     {
-        c_cameraData.SetTargetPosition(c_cameraData.GetTarget().transform.position);
+        c_cameraData.v_targetPosition = c_cameraData.t_targetTransform.position;
     }
 
     public void UpdateStateMachine()
     {
-        Vector3 cameraPosition = c_cameraData.GetCurrentPosition();
-        Vector3 targetPosition = c_cameraData.GetTargetPosition();
-        float followDistance = c_cameraData.GetFollowDistance();
+        Vector3 cameraPosition = c_cameraData.v_currentPosition;
+        Vector3 targetPosition = c_cameraData.v_targetPosition;
+        float followDistance = c_cameraData.f_followDistance;
 
         float trueDistance = Vector3.Distance(cameraPosition, targetPosition);
 
@@ -95,11 +95,13 @@ public class CameraController : MonoBehaviour, iEntityController {
 
     void SetDefaultCameraData()
     {
-        Vector3 targetPosition = c_cameraData.GetTarget().transform.position;
+        Vector3 targetPosition = c_cameraData.t_targetTransform.position;
+        Vector3 targetDirection = c_cameraData.t_targetTransform.forward;
 
-        c_cameraData.SetCurrentPosition(transform.position);
-        c_cameraData.SetTargetPosition(targetPosition);
-        c_cameraData.SetCurrentDirection(transform.forward);
+        c_cameraData.v_currentPosition = transform.position;
+        c_cameraData.v_currentDirection = transform.forward;
+        c_cameraData.v_targetPosition = targetPosition;
+        c_cameraData.v_targetDirection = targetDirection;
     }
     #endregion
 }
