@@ -5,13 +5,13 @@ using UnityEngine;
 public class ApproachFollowState : iCameraState
 {
     private FocusCartridge cart_focus;
-    private VelocityCartridge cart_vel;
+    private AngleAdjustmentCartridge cart_angle;
     private FollowCartridge cart_follow;
 
-    public ApproachFollowState(ref FocusCartridge focus, ref VelocityCartridge vel, ref FollowCartridge follow)
+    public ApproachFollowState(ref FocusCartridge focus, ref AngleAdjustmentCartridge ang, ref FollowCartridge follow)
     {
         this.cart_focus = focus;
-        this.cart_vel = vel;
+        this.cart_angle = ang;
         this.cart_follow = follow;
     }
 
@@ -21,7 +21,8 @@ public class ApproachFollowState : iCameraState
         Vector3 targetPosition = c_cameraData.v_targetPosition;
         Vector3 lookVector = c_cameraData.v_currentDirection;
 
-        cart_follow.ApproachTarget(ref currentPosition, targetPosition);
+        cart_follow.ApproachTarget(ref currentPosition, targetPosition, Vector3.Distance(currentPosition, targetPosition));
+        cart_angle.AdjustPositionOnRadius(ref currentPosition, c_cameraData.v_surfaceBelowCameraPosition, c_cameraData.f_followHeight);
         cart_focus.PointVectorAt(ref currentPosition, ref targetPosition, ref lookVector);
 
         c_cameraData.v_currentDirection = lookVector;

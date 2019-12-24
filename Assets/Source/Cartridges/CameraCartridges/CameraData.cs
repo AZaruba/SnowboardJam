@@ -6,6 +6,7 @@ public class CameraData : MonoBehaviour {
 
     #region Members
     [SerializeField] private float FollowDistance;
+    [SerializeField] private float FollowHeight;
     [SerializeField] private Vector3 OffsetVector;
     [SerializeField] private Transform TargetTransform;
 
@@ -17,6 +18,8 @@ public class CameraData : MonoBehaviour {
 
     private Vector3 TargetPosition;
     private Vector3 TargetDirection;
+
+    private Vector3 SurfaceBelowCameraPosition;
     #endregion
 
     #region SerializedProperties
@@ -24,6 +27,12 @@ public class CameraData : MonoBehaviour {
     {
         get { return FollowDistance; }
         set { FollowDistance = value; }
+    }
+
+    public float f_followHeight
+    {
+        get { return FollowHeight; }
+        set { FollowHeight = value; }
     }
 
     public Vector3 v_offsetVector
@@ -74,6 +83,12 @@ public class CameraData : MonoBehaviour {
     {
         get { return TargetDirection; }
         set { TargetDirection = value; }
+    }
+
+    public Vector3 v_surfaceBelowCameraPosition
+    {
+        get { return SurfaceBelowCameraPosition; }
+        set { SurfaceBelowCameraPosition = value; }
     }
     #endregion
 }

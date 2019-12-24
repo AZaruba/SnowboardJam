@@ -60,7 +60,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         EngineUpdate();
 
         debugAccessor.DisplayFloat("Current Velocity", c_playerData.CurrentSpeed);
-        debugAccessor.DisplayState("Player State", c_stateMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Current Normal", c_playerData.CurrentNormal);
         debugAccessor.DisplayVector3("Current Direction", c_playerData.CurrentDirection, 1);
 	}

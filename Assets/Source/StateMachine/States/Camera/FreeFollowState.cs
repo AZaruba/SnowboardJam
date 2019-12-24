@@ -5,13 +5,13 @@ using UnityEngine;
 public class FreeFollowState : iCameraState
 {
     private FocusCartridge cart_focus;
-    private VelocityCartridge cart_vel;
+    private AngleAdjustmentCartridge cart_angle;
     private FollowCartridge cart_follow;
 
-    public FreeFollowState(ref FocusCartridge focus, ref VelocityCartridge vel, ref FollowCartridge follow)
+    public FreeFollowState(ref FocusCartridge focus, ref AngleAdjustmentCartridge ang, ref FollowCartridge follow)
     {
         this.cart_focus = focus;
-        this.cart_vel = vel;
+        this.cart_angle = ang;
         this.cart_follow = follow;
     }
 
@@ -22,6 +22,7 @@ public class FreeFollowState : iCameraState
         Vector3 lookVector = c_cameraData.v_currentDirection;
 
         cart_follow.ApproachTarget(ref currentPosition, targetPosition);
+        cart_angle.AdjustPositionOnRadius(ref currentPosition, c_cameraData.v_surfaceBelowCameraPosition, c_cameraData.f_followHeight);
         cart_focus.PointVectorAt(ref currentPosition, ref targetPosition, ref lookVector);
 
         c_cameraData.v_currentDirection = lookVector;

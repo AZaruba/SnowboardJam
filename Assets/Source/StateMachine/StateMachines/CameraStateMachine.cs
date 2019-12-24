@@ -6,6 +6,7 @@ public class CameraStateMachine {
 
     #region Members
     private iCameraState i_currentState;
+    private StateRef sr_currentStateRef;
     private Dictionary<StateRef, iCameraState> l_validStates;
     #endregion
 
@@ -36,7 +37,7 @@ public class CameraStateMachine {
     {
         StateRef e_nextState = i_currentState.GetNextState(cmd);
         bool foundState = l_validStates.TryGetValue(e_nextState, out i_currentState);
-
+        sr_currentStateRef = e_nextState;
         if (!foundState)
         {
             Debug.Log("ERROR: State Not Found!");
@@ -53,5 +54,10 @@ public class CameraStateMachine {
     {
         l_validStates.Add(stateRef, newState);
         return true;
+    }
+
+    public StateRef GetCurrentState()
+    {
+        return sr_currentStateRef;
     }
 }

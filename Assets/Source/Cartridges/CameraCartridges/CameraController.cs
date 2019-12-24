@@ -6,12 +6,13 @@ public class CameraController : MonoBehaviour, iEntityController {
 
     #region Members
     [SerializeField] private CameraData c_cameraData;
+    [SerializeField] private DebugAccessor debugAccessor;
 
     private CameraStateMachine c_stateMachine;
 
     //cartridge list
     private FocusCartridge cart_focus;
-    private VelocityCartridge cart_velocity;
+    private AngleAdjustmentCartridge cart_angle;
     private FollowCartridge cart_follow;
     #endregion
 
@@ -33,6 +34,7 @@ public class CameraController : MonoBehaviour, iEntityController {
     /// </summary>
 	void Update ()
     {
+        // TODO: the camera drags a fair amount behind, what is the reason for this?
         EnginePull();
 
         UpdateStateMachine();
@@ -40,6 +42,8 @@ public class CameraController : MonoBehaviour, iEntityController {
         c_stateMachine.Act(ref c_cameraData);
 
         EngineUpdate();
+
+        debugAccessor.DisplayState("Camera State", c_stateMachine.GetCurrentState());
 	}
 
     public void EngineUpdate()
@@ -51,6 +55,19 @@ public class CameraController : MonoBehaviour, iEntityController {
     public void EnginePull()
     {
         c_cameraData.v_targetPosition = c_cameraData.t_targetTransform.position;
+
+        RaycastHit hitInfo;
+        if (Physics.Raycast(c_cameraData.v_currentPosition, Vector3.down, out hitInfo, c_cameraData.f_followHeight))
+        {
+            c_cameraData.v_surfaceBelowCameraPosition = hitInfo.point;
+        }
+        else
+        {
+            // TODO: fix this hacky solution for the "no ground below camera" issue
+            Vector3 groundlessPosition = c_cameraData.v_currentPosition;
+            groundlessPosition.y -= c_cameraData.f_followHeight;
+            c_cameraData.v_surfaceBelowCameraPosition = groundlessPosition;
+        }
     }
 
     public void UpdateStateMachine()
@@ -84,9 +101,9 @@ public class CameraController : MonoBehaviour, iEntityController {
     void InitializeStateMachine()
     {
         StationaryLookAtState s_stationary = new StationaryLookAtState (ref cart_focus);
-        FreeFollowState s_freeFollow = new FreeFollowState(ref cart_focus, ref cart_velocity, ref cart_follow);
-        ApproachFollowState s_approachFollow = new ApproachFollowState(ref cart_focus, ref cart_velocity, ref cart_follow);
-        AwayFollowState s_awayFollow = new AwayFollowState(ref cart_focus, ref cart_velocity, ref cart_follow);
+        FreeFollowState s_freeFollow = new FreeFollowState(ref cart_focus, ref cart_angle, ref cart_follow);
+        ApproachFollowState s_approachFollow = new ApproachFollowState(ref cart_focus, ref cart_angle, ref cart_follow);
+        AwayFollowState s_awayFollow = new AwayFollowState(ref cart_focus, ref cart_angle, ref cart_follow);
 
         c_stateMachine = new CameraStateMachine (s_stationary, StateRef.STATIONARY);
         c_stateMachine.AddState(s_freeFollow, StateRef.TRACKING);
@@ -101,7 +118,7 @@ public class CameraController : MonoBehaviour, iEntityController {
     {
         cart_focus = new FocusCartridge ();
         cart_follow = new FollowCartridge();
-        cart_velocity = new VelocityCartridge();
+        cart_angle = new AngleAdjustmentCartridge();
     }
 
     void SetDefaultCameraData()
@@ -109,8 +126,12 @@ public class CameraController : MonoBehaviour, iEntityController {
         Vector3 targetPosition = c_cameraData.t_targetTransform.position;
         Vector3 targetDirection = c_cameraData.t_targetTransform.forward;
 
-        c_cameraData.v_currentPosition = transform.position;
-        c_cameraData.v_currentDirection = transform.forward;
+        Vector3 cameraPosition = targetPosition -
+            (targetDirection.normalized * c_cameraData.f_followDistance) +
+            (Vector3.up * c_cameraData.f_followHeight);
+
+        c_cameraData.v_currentPosition = cameraPosition;
+        c_cameraData.v_currentDirection = targetPosition - cameraPosition;
         c_cameraData.v_targetPosition = targetPosition;
         c_cameraData.v_targetDirection = targetDirection;
     }
