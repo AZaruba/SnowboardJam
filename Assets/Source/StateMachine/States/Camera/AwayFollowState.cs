@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FreeFollowState : iCameraState
+public class AwayFollowState : iCameraState
 {
     private FocusCartridge cart_focus;
     private VelocityCartridge cart_vel;
     private FollowCartridge cart_follow;
 
-    public FreeFollowState(ref FocusCartridge focus, ref VelocityCartridge vel, ref FollowCartridge follow)
+    public AwayFollowState(ref FocusCartridge focus, ref VelocityCartridge vel, ref FollowCartridge follow)
     {
         this.cart_focus = focus;
         this.cart_vel = vel;
@@ -21,7 +21,7 @@ public class FreeFollowState : iCameraState
         Vector3 targetPosition = c_cameraData.v_targetPosition;
         Vector3 lookVector = c_cameraData.v_currentDirection;
 
-        cart_follow.ApproachTarget(ref currentPosition, targetPosition);
+        cart_follow.LeaveTarget(ref currentPosition, targetPosition);
         cart_focus.PointVectorAt(ref currentPosition, ref targetPosition, ref lookVector);
 
         c_cameraData.v_currentDirection = lookVector;
@@ -35,14 +35,14 @@ public class FreeFollowState : iCameraState
 
     public StateRef GetNextState(Command cmd)
     {
-        if (cmd == Command.DRAG)
-        {
-            return StateRef.LEAVING;
-        }
-        else if (cmd == Command.APPROACH)
+        if (cmd == Command.APPROACH)
         {
             return StateRef.APPROACHING;
         }
-        return StateRef.TRACKING;
+        else if (cmd == Command.TRACK)
+        {
+            return StateRef.TRACKING;
+        }
+        return StateRef.LEAVING;
     }
 }

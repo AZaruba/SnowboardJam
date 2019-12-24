@@ -11,6 +11,8 @@ public class CameraController : MonoBehaviour, iEntityController {
 
     //cartridge list
     private FocusCartridge cart_focus;
+    private VelocityCartridge cart_velocity;
+    private FollowCartridge cart_follow;
     #endregion
 
     /// <summary>
@@ -61,15 +63,16 @@ public class CameraController : MonoBehaviour, iEntityController {
 
         if (trueDistance > followDistance)
         {
-            // camera is too far, start moving closer
+            c_stateMachine.Execute(Command.APPROACH);
         } 
         else if (trueDistance < followDistance)
         {
-            // camera is too close, start moving further away
+            c_stateMachine.Execute(Command.DRAG);
         } 
         else
         {
             // we have achieved balance!
+            c_stateMachine.Execute(Command.TRACK);
         }
     }
 
@@ -81,8 +84,14 @@ public class CameraController : MonoBehaviour, iEntityController {
     void InitializeStateMachine()
     {
         StationaryLookAtState s_stationary = new StationaryLookAtState (ref cart_focus);
+        FreeFollowState s_freeFollow = new FreeFollowState(ref cart_focus, ref cart_velocity, ref cart_follow);
+        ApproachFollowState s_approachFollow = new ApproachFollowState(ref cart_focus, ref cart_velocity, ref cart_follow);
+        AwayFollowState s_awayFollow = new AwayFollowState(ref cart_focus, ref cart_velocity, ref cart_follow);
 
         c_stateMachine = new CameraStateMachine (s_stationary, StateRef.STATIONARY);
+        c_stateMachine.AddState(s_freeFollow, StateRef.TRACKING);
+        c_stateMachine.AddState(s_approachFollow, StateRef.APPROACHING);
+        c_stateMachine.AddState(s_awayFollow, StateRef.LEAVING);
     }
 
     /// <summary>
@@ -91,6 +100,8 @@ public class CameraController : MonoBehaviour, iEntityController {
     void InitializeCartridges()
     {
         cart_focus = new FocusCartridge ();
+        cart_follow = new FollowCartridge();
+        cart_velocity = new VelocityCartridge();
     }
 
     void SetDefaultCameraData()

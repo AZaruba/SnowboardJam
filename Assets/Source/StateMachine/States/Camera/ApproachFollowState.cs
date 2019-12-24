@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FreeFollowState : iCameraState
+public class ApproachFollowState : iCameraState
 {
     private FocusCartridge cart_focus;
     private VelocityCartridge cart_vel;
     private FollowCartridge cart_follow;
 
-    public FreeFollowState(ref FocusCartridge focus, ref VelocityCartridge vel, ref FollowCartridge follow)
+    public ApproachFollowState(ref FocusCartridge focus, ref VelocityCartridge vel, ref FollowCartridge follow)
     {
         this.cart_focus = focus;
         this.cart_vel = vel;
@@ -39,10 +39,10 @@ public class FreeFollowState : iCameraState
         {
             return StateRef.LEAVING;
         }
-        else if (cmd == Command.APPROACH)
+        else if (cmd == Command.TRACK)
         {
-            return StateRef.APPROACHING;
+            return StateRef.TRACKING;
         }
-        return StateRef.TRACKING;
+        return StateRef.APPROACHING;
     }
 }

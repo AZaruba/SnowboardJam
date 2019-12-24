@@ -22,7 +22,7 @@ public class StationaryLookAtState : iCameraState {
 
         cart_focus.PointVectorAt(ref currentPosition, ref currentTargetPosition, ref lookVector);
 
-        c_cameraData.v_currentDirection =lookVector;
+        c_cameraData.v_currentDirection = lookVector;
     }
 
     public void TransitionAct(ref CameraData c_CameraData)

@@ -21,9 +21,12 @@ public enum Command {
     #endregion
 
     #region CameraCommands
+    APPROACH,
+    DRAG,
     TRACK,
     REST,
-    TRACK_FAST,
+    SPEEDUP,
+    SLOWDOWN,
     #endregion
 }
 
@@ -50,7 +53,11 @@ public enum StateRef {
 
     #region CameraStates
     // STATIONARY,
+    APPROACHING,
+    LEAVING,
     TRACKING,
+    APPROACHING_FAST,
+    LEAVING_FAST,
     TRACKING_FAST,
     #endregion
 
