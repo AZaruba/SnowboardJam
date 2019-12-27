@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: The Turn function causes strange behavior on slopes and angle changes
 public class CarvingState : iPlayerState {
 
     AngleCalculationCartridge cart_angleCalc;
@@ -38,9 +39,9 @@ public class CarvingState : iPlayerState {
         float inputAxis = c_playerData.f_inputAxisTurn * c_playerData.f_turnSpeed;
 
         cart_acceleration.Accelerate(ref currentVelocity, ref acceleration, topSpeed);
-        cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
         cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
+        cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
         cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
 
         c_playerData.CurrentSpeed = currentVelocity;
