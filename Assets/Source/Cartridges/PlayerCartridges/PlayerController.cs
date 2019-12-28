@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         EngineUpdate();
 
         debugAccessor.DisplayFloat("Current Velocity", c_playerData.CurrentSpeed);
-        debugAccessor.DisplayVector3("Current Normal", c_playerData.CurrentNormal);
+        debugAccessor.DisplayVector3("Current Rotated Forward", c_playerData.RotationBuffer * Vector3.forward);
         debugAccessor.DisplayVector3("Current Direction", c_playerData.CurrentDirection, 1);
 	}
 
@@ -85,6 +85,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.CurrentPosition = transform.position;
         c_playerData.CurrentDirection = transform.forward.normalized;
         c_playerData.CurrentNormal = transform.up.normalized;
+        c_playerData.RotationBuffer = transform.rotation;
 
         RaycastHit hitInfo;
         if (Physics.Raycast(c_playerData.CurrentPosition, c_playerData.CurrentDown, out hitInfo, c_playerData.f_currentRaycastDistance))

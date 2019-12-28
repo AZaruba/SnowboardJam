@@ -14,10 +14,9 @@ public class HandlingCartridge {
     /// <param name="gripFactor">Grip should potentially affect handling</param>
     public void Turn(ref Vector3 direction, ref Vector3 normal, ref float handling, ref Quaternion currentRotation, float gripFactor = 1.0f)
     {
-        // THIS is the culprit! We only go haywire while turning
-        Quaternion newRotation = Quaternion.AngleAxis(handling * Time.deltaTime, Vector3.up);
+        Quaternion newRotation = Quaternion.AngleAxis(handling * Time.deltaTime, normal);
         direction = newRotation * direction;
-        currentRotation *= newRotation;
+        currentRotation = currentRotation * newRotation;
     }
 
     // TODO: Include a function for turning the model and NOT the direction of travel.

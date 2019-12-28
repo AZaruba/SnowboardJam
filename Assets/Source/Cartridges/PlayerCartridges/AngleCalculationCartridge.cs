@@ -16,8 +16,8 @@ public class AngleCalculationCartridge
         Quaternion normalRotation = Quaternion.LookRotation(targetForward, targetNormal);
 
         resultRotation = normalRotation;
-        currentForward = targetForward;
-        currentNormal = targetNormal;
+        currentForward = targetForward.normalized;
+        currentNormal = targetNormal.normalized;
     }
 
     // TODO: This needs to be rethought as simply moving to an attach point isn't a one-size-fits-all solution

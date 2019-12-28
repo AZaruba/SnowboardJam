@@ -42,12 +42,14 @@ public class CarvingState : iPlayerState {
         cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
         cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
-        cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
+        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
+
 
         c_playerData.CurrentSpeed = currentVelocity;
         c_playerData.Acceleration = acceleration;
         c_playerData.CurrentPosition = currentPosition;
         c_playerData.CurrentNormal = currentNormal.normalized;
+        c_playerData.CurrentDown = currentNormal.normalized * -1;
         c_playerData.CurrentDirection = currentDir.normalized;
         c_playerData.RotationBuffer = currentRotation;
     }
