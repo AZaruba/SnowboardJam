@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AerialState : iPlayerState {
+public class AerialState : iState {
 
     private GravityCartridge cart_gravity;
     private VelocityCartridge cart_velocity;
+    private PlayerData c_playerData;
 
-    public AerialState(ref GravityCartridge cart_grav, ref VelocityCartridge cart_vel)
+    public AerialState(ref PlayerData playerData, ref GravityCartridge cart_grav, ref VelocityCartridge cart_vel)
     {
-        cart_gravity = cart_grav;
-        cart_velocity = cart_vel;
+        this.c_playerData = playerData;
+        this.cart_gravity = cart_grav;
+        this.cart_velocity = cart_vel;
     }
 
     // TODO: add horizontal movement that takes minimal external input here
-    public void Act(ref PlayerData c_playerData)
+    public void Act()
     {
         float airVelocity = c_playerData.CurrentAirVelocity;
         float gravity = c_playerData.Gravity;
@@ -40,7 +42,7 @@ public class AerialState : iPlayerState {
         }
     }
 
-    public void TransitionAct(ref PlayerData c_playerData)
+    public void TransitionAct()
     {
         Vector3 previousDirection = c_playerData.CurrentDirection;
         float currentVelocity = c_playerData.CurrentSpeed;

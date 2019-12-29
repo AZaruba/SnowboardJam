@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private DebugAccessor debugAccessor;
 
     // private members
-    private PlayerStateMachine c_stateMachine;
+    private StateMachine c_StateMachine;
 
     // cartridge list
     private AccelerationCartridge cart_acceleration;
@@ -33,15 +33,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_acceleration = new AccelerationCartridge ();
         cart_handling = new HandlingCartridge();
 
-        StationaryState s_stationary = new StationaryState (ref cart_angleCalc);
-        AerialState s_aerial = new AerialState (ref cart_gravity, ref cart_velocity);
-        RidingState s_riding = new RidingState (ref cart_angleCalc, ref cart_acceleration, ref cart_velocity);
-        CarvingState s_carving = new CarvingState(ref cart_angleCalc, ref cart_acceleration, ref cart_velocity, ref cart_handling);
+        StationaryState s_stationary = new StationaryState (ref c_playerData, ref cart_angleCalc);
+        AerialState s_aerial = new AerialState (ref c_playerData, ref cart_gravity, ref cart_velocity);
+        RidingState s_riding = new RidingState (ref c_playerData, ref cart_angleCalc, ref cart_acceleration, ref cart_velocity);
+        SlowingState s_slowing = new SlowingState(ref c_playerData, ref cart_velocity, ref cart_acceleration, ref cart_angleCalc);
+        CarvingState s_carving = new CarvingState(ref c_playerData, ref cart_angleCalc, ref cart_acceleration, ref cart_velocity, ref cart_handling);
 
-        c_stateMachine = new PlayerStateMachine (s_aerial, StateRef.AIRBORNE);
-        c_stateMachine.AddState(s_stationary, StateRef.STATIONARY);
-        c_stateMachine.AddState(s_riding, StateRef.RIDING);
-        c_stateMachine.AddState(s_carving, StateRef.CARVING);
+        c_StateMachine = new StateMachine (s_aerial, StateRef.AIRBORNE);
+        c_StateMachine.AddState(s_stationary, StateRef.STATIONARY);
+        c_StateMachine.AddState(s_riding, StateRef.RIDING);
+        c_StateMachine.AddState(s_carving, StateRef.CARVING);
+        c_StateMachine.AddState(s_slowing, StateRef.STOPPING);
 	}
 	
 	/// <summary>
@@ -55,7 +57,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         UpdateStateMachine();
 
-        c_stateMachine.Act(ref c_playerData);
+        c_StateMachine.Act();
 
         EngineUpdate();
 
@@ -79,6 +81,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EnginePull()
     {
         c_playerData.f_inputAxisTurn = Input.GetAxis("Horizontal");
+        c_playerData.f_inputAxisLVert = Input.GetAxis("Vertical");
 
         // TODO: ensure that we can pull the direction and the normal from the object
         // OTHERWISE it implies that there is a desync between data and the engine
@@ -106,19 +109,27 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (c_playerData.CurrentSurfaceNormal.normalized == Vector3.zero)
         {
-            c_stateMachine.Execute(Command.FALL, ref c_playerData);
+            c_StateMachine.Execute(Command.FALL);
         }
         else
         {
-            c_stateMachine.Execute(Command.LAND, ref c_playerData);
+            c_StateMachine.Execute(Command.LAND);
         }
         if (Mathf.Abs(c_playerData.f_inputAxisTurn) > 0.0f)
         {
-            c_stateMachine.Execute(Command.TURN, ref c_playerData);
+            c_StateMachine.Execute(Command.TURN);
         }
         else
         {
-            c_stateMachine.Execute(Command.RIDE, ref c_playerData);
+            c_StateMachine.Execute(Command.RIDE);
+        }
+        if (c_playerData.f_inputAxisLVert < 0.0f)
+        {
+            c_StateMachine.Execute(Command.SLOW);
+        }
+        if (c_playerData.CurrentSpeed <= 0.0f)
+        {
+            c_StateMachine.Execute(Command.STOP);
         }
     }
 

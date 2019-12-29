@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface iPlayerState {
+public interface iState {
 
     /// <summary>
     /// The interface defining a function which gives the state
@@ -12,7 +12,7 @@ public interface iPlayerState {
     /// <param name="dataIn">The current object's PlayerData</param>
     // void ProvideData(PlayerData dataIn);
 
-    void Act(ref PlayerData c_playerData);
+    void Act();
     StateRef GetNextState(Command cmd);
-    void TransitionAct(ref PlayerData c_playerData);
+    void TransitionAct();
 }

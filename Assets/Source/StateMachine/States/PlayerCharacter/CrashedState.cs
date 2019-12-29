@@ -8,12 +8,12 @@ public class CrashedState
         this.cart_timer = timer;
     }
 
-    public void Act(ref PlayerData c_playerData)
+    public void Act()
     {
 
     }
 
-    public void TransitionAct(ref PlayerData c_playerData)
+    public void TransitionAct()
     {
 
     }

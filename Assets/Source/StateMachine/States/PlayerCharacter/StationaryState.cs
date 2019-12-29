@@ -2,23 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StationaryState : iPlayerState {
+public class StationaryState : iState {
 
     AngleCalculationCartridge cart_angleCalc;
+    PlayerData c_playerData;
 
-    public StationaryState(ref AngleCalculationCartridge angleCalc)
+    public StationaryState(ref PlayerData playerData, ref AngleCalculationCartridge angleCalc)
     {
+        this.c_playerData = playerData;
         this.cart_angleCalc = angleCalc;
     }
 
-    public void Act(ref PlayerData c_playerData)
+    public void Act()
     {
 
     }
 
-    public void TransitionAct(ref PlayerData c_playerData)
+    public void TransitionAct()
     {
-        Debug.Log("STATIONARY");
         Vector3 currentPosition = c_playerData.CurrentPosition;
         Vector3 currentNormal = c_playerData.CurrentNormal;
         Vector3 currentForward = c_playerData.CurrentDirection;
@@ -27,10 +28,10 @@ public class StationaryState : iPlayerState {
         Quaternion rotationBuf = c_playerData.RotationBuffer;
 
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref rotationBuf);
-        cart_angleCalc.MoveToAttachPoint(ref currentPosition, ref currentSurfaceAttPoint);
 
-        c_playerData.CurrentNormal = currentNormal;
-        c_playerData.CurrentDirection = currentForward;
+        c_playerData.CurrentNormal = currentNormal.normalized;
+        c_playerData.CurrentDown = currentNormal.normalized * -1;
+        c_playerData.CurrentDirection = currentForward.normalized;
         c_playerData.CurrentPosition = currentPosition;
         c_playerData.RotationBuffer = rotationBuf;
         // surface normal does not need to be updated

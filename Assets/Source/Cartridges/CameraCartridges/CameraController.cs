@@ -8,7 +8,7 @@ public class CameraController : MonoBehaviour, iEntityController {
     [SerializeField] private CameraData c_cameraData;
     [SerializeField] private DebugAccessor debugAccessor;
 
-    private CameraStateMachine c_stateMachine;
+    private StateMachine c_StateMachine;
 
     //cartridge list
     private FocusCartridge cart_focus;
@@ -39,11 +39,11 @@ public class CameraController : MonoBehaviour, iEntityController {
 
         UpdateStateMachine();
 
-        c_stateMachine.Act(ref c_cameraData);
+        c_StateMachine.Act();
 
         EngineUpdate();
 
-        debugAccessor.DisplayState("Camera State", c_stateMachine.GetCurrentState());
+        debugAccessor.DisplayState("Camera State", c_StateMachine.GetCurrentState());
 	}
 
     public void EngineUpdate()
@@ -80,16 +80,16 @@ public class CameraController : MonoBehaviour, iEntityController {
 
         if (trueDistance > followDistance)
         {
-            c_stateMachine.Execute(Command.APPROACH);
+            c_StateMachine.Execute(Command.APPROACH);
         } 
         else if (trueDistance < followDistance)
         {
-            c_stateMachine.Execute(Command.DRAG);
+            c_StateMachine.Execute(Command.DRAG);
         } 
         else
         {
             // we have achieved balance!
-            c_stateMachine.Execute(Command.TRACK);
+            c_StateMachine.Execute(Command.TRACK);
         }
     }
 
@@ -100,15 +100,15 @@ public class CameraController : MonoBehaviour, iEntityController {
     /// </summary>
     void InitializeStateMachine()
     {
-        StationaryLookAtState s_stationary = new StationaryLookAtState (ref cart_focus);
-        FreeFollowState s_freeFollow = new FreeFollowState(ref cart_focus, ref cart_angle, ref cart_follow);
-        ApproachFollowState s_approachFollow = new ApproachFollowState(ref cart_focus, ref cart_angle, ref cart_follow);
-        AwayFollowState s_awayFollow = new AwayFollowState(ref cart_focus, ref cart_angle, ref cart_follow);
+        StationaryLookAtState s_stationary = new StationaryLookAtState (ref c_cameraData, ref cart_focus);
+        FreeFollowState s_freeFollow = new FreeFollowState(ref c_cameraData, ref cart_focus, ref cart_angle, ref cart_follow);
+        ApproachFollowState s_approachFollow = new ApproachFollowState(ref c_cameraData, ref cart_focus, ref cart_angle, ref cart_follow);
+        AwayFollowState s_awayFollow = new AwayFollowState(ref c_cameraData, ref cart_focus, ref cart_angle, ref cart_follow);
 
-        c_stateMachine = new CameraStateMachine (s_stationary, StateRef.STATIONARY);
-        c_stateMachine.AddState(s_freeFollow, StateRef.TRACKING);
-        c_stateMachine.AddState(s_approachFollow, StateRef.APPROACHING);
-        c_stateMachine.AddState(s_awayFollow, StateRef.LEAVING);
+        c_StateMachine = new StateMachine (s_stationary, StateRef.STATIONARY);
+        c_StateMachine.AddState(s_freeFollow, StateRef.TRACKING);
+        c_StateMachine.AddState(s_approachFollow, StateRef.APPROACHING);
+        c_StateMachine.AddState(s_awayFollow, StateRef.LEAVING);
     }
 
     /// <summary>

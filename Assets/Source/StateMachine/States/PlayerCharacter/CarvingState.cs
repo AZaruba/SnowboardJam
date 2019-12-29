@@ -3,27 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // TODO: The Turn function causes strange behavior on slopes and angle changes
-public class CarvingState : iPlayerState {
+public class CarvingState : iState {
 
     AngleCalculationCartridge cart_angleCalc;
     AccelerationCartridge     cart_acceleration;
     VelocityCartridge         cart_velocity;
     HandlingCartridge         cart_handling;
+    PlayerData                c_playerData;
 
     //TODO: Investigate breaking out certain actions into a separate state machine
     //TODO: Give player data to the state machine and possibly the states by reference
-    public CarvingState(ref AngleCalculationCartridge angleCalc,
+    public CarvingState(ref PlayerData playerData,
+        ref AngleCalculationCartridge angleCalc,
         ref AccelerationCartridge acceleration,
         ref VelocityCartridge velocity,
         ref HandlingCartridge handling)
     {
+        this.c_playerData = playerData;
         this.cart_angleCalc = angleCalc;
         this.cart_acceleration = acceleration;
         this.cart_velocity = velocity;
         this.cart_handling = handling;
     }
 
-    public void Act(ref PlayerData c_playerData)
+    public void Act()
     {
         // check for angle when implemented
         float currentVelocity = c_playerData.CurrentSpeed;
@@ -54,7 +57,7 @@ public class CarvingState : iPlayerState {
         c_playerData.RotationBuffer = currentRotation;
     }
 
-    public void TransitionAct(ref PlayerData c_playerData)
+    public void TransitionAct()
     {
 
     }
@@ -68,6 +71,10 @@ public class CarvingState : iPlayerState {
         if (cmd == Command.RIDE)
         {
             return StateRef.RIDING;
+        }
+        if (cmd == Command.SLOW)
+        {
+            return StateRef.STOPPING;
         }
         return StateRef.CARVING;
     }

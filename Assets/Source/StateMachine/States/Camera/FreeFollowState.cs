@@ -2,20 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FreeFollowState : iCameraState
+public class FreeFollowState : iState
 {
     private FocusCartridge cart_focus;
     private AngleAdjustmentCartridge cart_angle;
     private FollowCartridge cart_follow;
+    private CameraData c_cameraData;
 
-    public FreeFollowState(ref FocusCartridge focus, ref AngleAdjustmentCartridge ang, ref FollowCartridge follow)
+    public FreeFollowState(ref CameraData cameraData, ref FocusCartridge focus, ref AngleAdjustmentCartridge ang, ref FollowCartridge follow)
     {
+        this.c_cameraData = cameraData;
         this.cart_focus = focus;
         this.cart_angle = ang;
         this.cart_follow = follow;
     }
 
-    public void Act(ref CameraData c_cameraData)
+    public void Act()
     {
         Vector3 currentPosition = c_cameraData.v_currentPosition;
         Vector3 targetPosition = c_cameraData.v_targetPosition;
@@ -29,7 +31,7 @@ public class FreeFollowState : iCameraState
         c_cameraData.v_currentPosition = currentPosition;
     }
 
-    public void TransitionAct(ref CameraData c_cameraData)
+    public void TransitionAct()
     {
 
     }

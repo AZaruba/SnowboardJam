@@ -15,7 +15,7 @@ public class AccelerationCartridge {
         velocity += acceleration * surfaceFactor * Time.deltaTime;
     }
 
-    public void Decelerate(ref float velocity, ref float deceleration, float surfaceFactor = 1.0f)
+    public void Decelerate(ref float velocity, float deceleration, float surfaceFactor = 1.0f)
     {
         if (velocity < 0)
         {

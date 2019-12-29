@@ -7,6 +7,7 @@ public class PlayerData : MonoBehaviour {
     #region Members
     [SerializeField] private float f_topSpeed;
     [SerializeField] private float f_acceleration;
+    [SerializeField] private float BrakePower;
     [SerializeField] private float TurnSpeed;
     [SerializeField] private float f_jumpPower;
     [SerializeField] private float f_gravityFactor;
@@ -30,6 +31,7 @@ public class PlayerData : MonoBehaviour {
     #region EngineMembers
     [SerializeField] private float RaycastDistance;
     private float InputAxisTurn { get; set; }
+    private float InputAxisLVert;
     private Vector3 v_surfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
     private Vector3 v_surfaceAttachPoint { get; set; }
     #endregion
@@ -45,6 +47,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return f_acceleration; }
         set { f_acceleration = value; }
+    }
+
+    public float f_brakePower
+    {
+        get { return BrakePower; }
+        set { BrakePower = value; }
     }
 
     public float f_turnSpeed
@@ -151,6 +159,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return InputAxisTurn; }
         set { InputAxisTurn = value; }
+    }
+
+    public float f_inputAxisLVert
+    {
+        get { return InputAxisLVert; }
+        set { InputAxisLVert = value; }
     }
 
     public Vector3 CurrentSurfaceNormal

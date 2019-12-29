@@ -2,28 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RidingState : iState {
-
+public class SlowingState : iState
+{
+    AccelerationCartridge cart_acceleration;
+    VelocityCartridge cart_velocity;
     AngleCalculationCartridge cart_angleCalc;
-    AccelerationCartridge     cart_acceleration;
-    VelocityCartridge         cart_velocity;
     PlayerData c_playerData;
 
-    public RidingState(ref PlayerData playerData, ref AngleCalculationCartridge angleCalc,
-        ref AccelerationCartridge acceleration,
-        ref VelocityCartridge velocity)
+    public SlowingState(ref PlayerData playerData, ref VelocityCartridge vel, 
+        ref AccelerationCartridge accel, ref AngleCalculationCartridge angleCalc)
     {
-        this.c_playerData = playerData;
-        this.cart_angleCalc = angleCalc;
-        this.cart_acceleration = acceleration;
-        this.cart_velocity = velocity;
+        c_playerData = playerData;
+        cart_velocity = vel;
+        cart_acceleration = accel;
+        cart_angleCalc = angleCalc;
     }
-
     public void Act()
     {
         // check for angle when implemented
         float currentVelocity = c_playerData.CurrentSpeed;
-        float acceleration = c_playerData.Acceleration;
+        float deceleration = c_playerData.f_brakePower;
         float topSpeed = c_playerData.TopSpeed;
         Vector3 currentPosition = c_playerData.CurrentPosition;
         Vector3 currentDir = c_playerData.CurrentDirection;
@@ -32,13 +30,12 @@ public class RidingState : iState {
         Vector3 currentSurfacePosition = c_playerData.CurrentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.RotationBuffer;
 
-        cart_acceleration.Accelerate(ref currentVelocity, ref acceleration, topSpeed);
+        cart_acceleration.Decelerate(ref currentVelocity, deceleration);
         cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
         cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
 
         c_playerData.CurrentSpeed = currentVelocity;
-        c_playerData.Acceleration = acceleration;
         c_playerData.CurrentPosition = currentPosition;
         c_playerData.CurrentNormal = currentNormal.normalized;
         c_playerData.CurrentDown = currentNormal.normalized * -1;
@@ -48,9 +45,7 @@ public class RidingState : iState {
 
     public void TransitionAct()
     {
-        c_playerData.CurrentAirVelocity = 0.0f;
-        c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
-        c_playerData.CurrentDown = c_playerData.CurrentSurfaceNormal * -1;
+
     }
 
     public StateRef GetNextState(Command cmd)
@@ -59,14 +54,18 @@ public class RidingState : iState {
         {
             return StateRef.AIRBORNE;
         }
-        if (cmd == Command.TURN)
+        if (cmd == Command.RIDE)
         {
-            return StateRef.CARVING;
+            return StateRef.RIDING;
         }
-        if (cmd == Command.SLOW)
+        if (cmd == Command.STOP)
+        {
+            return StateRef.STATIONARY;
+        }
+        if (cmd == Command.TURN)
         {
             return StateRef.STOPPING;
         }
-        return StateRef.RIDING;
+        return StateRef.STOPPING;
     }
 }
