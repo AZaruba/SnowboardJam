@@ -2,21 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlowingState : iState
+public class SlowingCarvingState : iState
 {
+    AngleCalculationCartridge cart_angleCalc;
     AccelerationCartridge cart_acceleration;
     VelocityCartridge cart_velocity;
-    AngleCalculationCartridge cart_angleCalc;
+    HandlingCartridge cart_handling;
     PlayerData c_playerData;
 
-    public SlowingState(ref PlayerData playerData, ref VelocityCartridge vel, 
-        ref AccelerationCartridge accel, ref AngleCalculationCartridge angleCalc)
+    public SlowingCarvingState(ref PlayerData playerData,
+        ref AngleCalculationCartridge angleCalc,
+        ref AccelerationCartridge acceleration,
+        ref VelocityCartridge velocity,
+        ref HandlingCartridge handling)
     {
-        c_playerData = playerData;
-        cart_velocity = vel;
-        cart_acceleration = accel;
-        cart_angleCalc = angleCalc;
+        this.c_playerData = playerData;
+        this.cart_angleCalc = angleCalc;
+        this.cart_acceleration = acceleration;
+        this.cart_velocity = velocity;
+        this.cart_handling = handling;
     }
+
     public void Act()
     {
         // check for angle when implemented
@@ -29,10 +35,14 @@ public class SlowingState : iState
         Vector3 currentSurfacePosition = c_playerData.CurrentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.RotationBuffer;
 
+        float inputAxis = c_playerData.f_inputAxisTurn * c_playerData.f_turnSpeed;
+
         cart_acceleration.Decelerate(ref currentVelocity, deceleration);
         cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
-        cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
+        cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
+        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
+
 
         c_playerData.CurrentSpeed = currentVelocity;
         c_playerData.CurrentPosition = currentPosition;
@@ -57,14 +67,14 @@ public class SlowingState : iState
         {
             return StateRef.RIDING;
         }
+        if (cmd == Command.SLOW)
+        {
+            return StateRef.STOPPING;
+        }
         if (cmd == Command.STOP)
         {
             return StateRef.STATIONARY;
         }
-        if (cmd == Command.TURN)
-        {
-            return StateRef.CARVING_STOPPING;
-        }
-        return StateRef.STOPPING;
+        return StateRef.CARVING_STOPPING;
     }
 }

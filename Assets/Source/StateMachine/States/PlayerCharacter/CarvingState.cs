@@ -74,7 +74,7 @@ public class CarvingState : iState {
         }
         if (cmd == Command.SLOW)
         {
-            return StateRef.STOPPING;
+            return StateRef.CARVING_STOPPING;
         }
         return StateRef.CARVING;
     }

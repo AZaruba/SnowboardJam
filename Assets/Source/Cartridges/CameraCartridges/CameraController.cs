@@ -42,9 +42,7 @@ public class CameraController : MonoBehaviour, iEntityController {
         c_StateMachine.Act();
 
         EngineUpdate();
-
-        debugAccessor.DisplayState("Camera State", c_StateMachine.GetCurrentState());
-	}
+    }
 
     public void EngineUpdate()
     {

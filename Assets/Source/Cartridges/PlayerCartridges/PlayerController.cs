@@ -38,12 +38,15 @@ public class PlayerController : MonoBehaviour, iEntityController {
         RidingState s_riding = new RidingState (ref c_playerData, ref cart_angleCalc, ref cart_acceleration, ref cart_velocity);
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref cart_velocity, ref cart_acceleration, ref cart_angleCalc);
         CarvingState s_carving = new CarvingState(ref c_playerData, ref cart_angleCalc, ref cart_acceleration, ref cart_velocity, ref cart_handling);
+        SlowingCarvingState s_carvingSlow = new SlowingCarvingState(ref c_playerData, ref cart_angleCalc, ref cart_acceleration, ref cart_velocity, ref cart_handling);
+
 
         c_StateMachine = new StateMachine (s_aerial, StateRef.AIRBORNE);
         c_StateMachine.AddState(s_stationary, StateRef.STATIONARY);
         c_StateMachine.AddState(s_riding, StateRef.RIDING);
         c_StateMachine.AddState(s_carving, StateRef.CARVING);
         c_StateMachine.AddState(s_slowing, StateRef.STOPPING);
+        c_StateMachine.AddState(s_carvingSlow, StateRef.CARVING_STOPPING);
 	}
 	
 	/// <summary>
@@ -61,7 +64,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         EngineUpdate();
 
-        debugAccessor.DisplayFloat("Current Velocity", c_playerData.CurrentSpeed);
+        debugAccessor.DisplayState("Current PlayerState: ", c_StateMachine.GetCurrentState());
+        debugAccessor.DisplayFloat("Current SlowAxis", c_playerData.f_inputAxisTurn);
         debugAccessor.DisplayVector3("Current Rotated Forward", c_playerData.RotationBuffer * Vector3.forward);
         debugAccessor.DisplayVector3("Current Direction", c_playerData.CurrentDirection, 1);
 	}
@@ -107,6 +111,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void UpdateStateMachine()
     {
+        // current issue, these commands don't work out great
         if (c_playerData.CurrentSurfaceNormal.normalized == Vector3.zero)
         {
             c_StateMachine.Execute(Command.FALL);
@@ -115,17 +120,20 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_StateMachine.Execute(Command.LAND);
         }
+
         if (Mathf.Abs(c_playerData.f_inputAxisTurn) > 0.0f)
         {
             c_StateMachine.Execute(Command.TURN);
         }
-        else
-        {
-            c_StateMachine.Execute(Command.RIDE);
-        }
         if (c_playerData.f_inputAxisLVert < 0.0f)
         {
             c_StateMachine.Execute(Command.SLOW);
+        }
+
+        if (Mathf.Abs(c_playerData.f_inputAxisTurn) < 0.0f &&
+            c_playerData.f_inputAxisLVert >= 0.0f)
+        {
+            c_StateMachine.Execute(Command.RIDE);
         }
         if (c_playerData.CurrentSpeed <= 0.0f)
         {
