@@ -34,8 +34,10 @@ public enum StateRef {
     
     ERROR_STATE = -1,
     START_STATE,
+    DISABLED,
 
     #region PlayerStates
+    IDLE,
     STATIONARY,
     RIDING,
     STOPPING,
@@ -49,6 +51,14 @@ public enum StateRef {
     JUMPING,
     TRICKING,
     LANDING,
+    #endregion
+
+    #region TurnStates
+
+    #endregion
+
+    #region AirStates
+    GROUNDED,
     #endregion
 
     #region CameraStates

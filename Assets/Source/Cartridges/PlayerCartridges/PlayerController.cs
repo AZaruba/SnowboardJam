@@ -10,7 +10,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private DebugAccessor debugAccessor;
 
     // private members
-    private StateMachine c_StateMachine;
+    private StateMachine c_turnMachine;
+    private StateMachine c_airMachine;
+    private StateMachine c_accelMachine;
 
     // cartridge list
     private AccelerationCartridge cart_acceleration;
@@ -33,20 +35,29 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_acceleration = new AccelerationCartridge ();
         cart_handling = new HandlingCartridge();
 
+        MoveAerialState s_moveAerial = new MoveAerialState();
         StationaryState s_stationary = new StationaryState (ref c_playerData, ref cart_angleCalc);
-        AerialState s_aerial = new AerialState (ref c_playerData, ref cart_gravity, ref cart_velocity);
         RidingState s_riding = new RidingState (ref c_playerData, ref cart_angleCalc, ref cart_acceleration, ref cart_velocity);
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref cart_velocity, ref cart_acceleration, ref cart_angleCalc);
-        CarvingState s_carving = new CarvingState(ref c_playerData, ref cart_angleCalc, ref cart_acceleration, ref cart_velocity, ref cart_handling);
-        SlowingCarvingState s_carvingSlow = new SlowingCarvingState(ref c_playerData, ref cart_angleCalc, ref cart_acceleration, ref cart_velocity, ref cart_handling);
 
+        StraightState s_straight = new StraightState();
+        CarvingState s_carving = new CarvingState(ref c_playerData, ref cart_handling);
+        TurnDisabledState s_turnDisabled = new TurnDisabledState();
 
-        c_StateMachine = new StateMachine (s_aerial, StateRef.AIRBORNE);
-        c_StateMachine.AddState(s_stationary, StateRef.STATIONARY);
-        c_StateMachine.AddState(s_riding, StateRef.RIDING);
-        c_StateMachine.AddState(s_carving, StateRef.CARVING);
-        c_StateMachine.AddState(s_slowing, StateRef.STOPPING);
-        c_StateMachine.AddState(s_carvingSlow, StateRef.CARVING_STOPPING);
+        AerialState s_aerial = new AerialState(ref c_playerData, ref cart_gravity, ref cart_velocity);
+        GroundedState s_grounded = new GroundedState();
+
+        c_accelMachine = new StateMachine(s_stationary, StateRef.STATIONARY);
+        c_accelMachine.AddState(s_riding, StateRef.RIDING);
+        c_accelMachine.AddState(s_slowing, StateRef.STOPPING);
+        c_accelMachine.AddState(s_moveAerial, StateRef.AIRBORNE);
+
+        c_turnMachine = new StateMachine(s_straight, StateRef.RIDING);
+        c_turnMachine.AddState(s_carving, StateRef.CARVING);
+        c_turnMachine.AddState(s_turnDisabled, StateRef.DISABLED);
+
+        c_airMachine = new StateMachine(s_grounded, StateRef.GROUNDED);
+        c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
 	}
 	
 	/// <summary>
@@ -60,11 +71,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         UpdateStateMachine();
 
-        c_StateMachine.Act();
+        c_accelMachine.Act();
+        c_turnMachine.Act();
+        c_airMachine.Act();
 
         EngineUpdate();
 
-        debugAccessor.DisplayState("Current PlayerState: ", c_StateMachine.GetCurrentState());
+        debugAccessor.DisplayState("Current PlayerState: ", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayFloat("Current SlowAxis", c_playerData.f_inputAxisTurn);
         debugAccessor.DisplayVector3("Current Rotated Forward", c_playerData.RotationBuffer * Vector3.forward);
         debugAccessor.DisplayVector3("Current Direction", c_playerData.CurrentDirection, 1);
@@ -114,30 +127,38 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // current issue, these commands don't work out great
         if (c_playerData.CurrentSurfaceNormal.normalized == Vector3.zero)
         {
-            c_StateMachine.Execute(Command.FALL);
+            c_accelMachine.Execute(Command.FALL);
+            c_turnMachine.Execute(Command.FALL);
+            c_airMachine.Execute(Command.FALL);
         }
         else
         {
-            c_StateMachine.Execute(Command.LAND);
+            c_accelMachine.Execute(Command.LAND);
+            c_turnMachine.Execute(Command.LAND);
+            c_airMachine.Execute(Command.LAND);
         }
 
         if (Mathf.Abs(c_playerData.f_inputAxisTurn) > 0.0f)
         {
-            c_StateMachine.Execute(Command.TURN);
+            c_turnMachine.Execute(Command.TURN);
         }
-        if (c_playerData.f_inputAxisLVert < 0.0f)
+        else
         {
-            c_StateMachine.Execute(Command.SLOW);
+            c_turnMachine.Execute(Command.RIDE);
         }
 
-        if (Mathf.Abs(c_playerData.f_inputAxisTurn) < 0.0f &&
-            c_playerData.f_inputAxisLVert >= 0.0f)
+        if (c_playerData.f_inputAxisLVert < 0.0f)
         {
-            c_StateMachine.Execute(Command.RIDE);
+            c_accelMachine.Execute(Command.SLOW);
         }
+        else
+        {
+            c_accelMachine.Execute(Command.RIDE);
+        }
+
         if (c_playerData.CurrentSpeed <= 0.0f)
         {
-            c_StateMachine.Execute(Command.STOP);
+            c_accelMachine.Execute(Command.STOP);
         }
     }
 

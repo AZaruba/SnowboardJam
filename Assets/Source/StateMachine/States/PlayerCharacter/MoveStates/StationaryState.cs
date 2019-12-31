@@ -24,7 +24,6 @@ public class StationaryState : iState {
         Vector3 currentNormal = c_playerData.CurrentNormal;
         Vector3 currentForward = c_playerData.CurrentDirection;
         Vector3 currentSurfaceNormal = c_playerData.CurrentSurfaceNormal;
-        Vector3 currentSurfaceAttPoint = c_playerData.CurrentSurfaceAttachPoint;
         Quaternion rotationBuf = c_playerData.RotationBuffer;
 
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref rotationBuf);
@@ -44,6 +43,10 @@ public class StationaryState : iState {
     /// <param name="cmd">The command</param>
     public StateRef GetNextState(Command cmd)
     {
+        if (cmd == Command.FALL)
+        {
+            return StateRef.AIRBORNE;
+        }
         if (cmd == Command.RIDE)
         {
             return StateRef.RIDING;

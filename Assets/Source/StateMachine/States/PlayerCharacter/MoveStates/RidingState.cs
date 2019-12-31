@@ -2,32 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlowingCarvingState : iState
-{
+public class RidingState : iState {
+
     AngleCalculationCartridge cart_angleCalc;
-    AccelerationCartridge cart_acceleration;
-    VelocityCartridge cart_velocity;
-    HandlingCartridge cart_handling;
+    AccelerationCartridge     cart_acceleration;
+    VelocityCartridge         cart_velocity;
     PlayerData c_playerData;
 
-    public SlowingCarvingState(ref PlayerData playerData,
-        ref AngleCalculationCartridge angleCalc,
+    public RidingState(ref PlayerData playerData, ref AngleCalculationCartridge angleCalc,
         ref AccelerationCartridge acceleration,
-        ref VelocityCartridge velocity,
-        ref HandlingCartridge handling)
+        ref VelocityCartridge velocity)
     {
         this.c_playerData = playerData;
         this.cart_angleCalc = angleCalc;
         this.cart_acceleration = acceleration;
         this.cart_velocity = velocity;
-        this.cart_handling = handling;
     }
 
     public void Act()
     {
         // check for angle when implemented
         float currentVelocity = c_playerData.CurrentSpeed;
-        float deceleration = c_playerData.f_brakePower;
+        float acceleration = c_playerData.Acceleration;
+        float topSpeed = c_playerData.TopSpeed;
         Vector3 currentPosition = c_playerData.CurrentPosition;
         Vector3 currentDir = c_playerData.CurrentDirection;
         Vector3 currentNormal = c_playerData.CurrentNormal;
@@ -35,16 +32,13 @@ public class SlowingCarvingState : iState
         Vector3 currentSurfacePosition = c_playerData.CurrentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.RotationBuffer;
 
-        float inputAxis = c_playerData.f_inputAxisTurn * c_playerData.f_turnSpeed;
-
-        cart_acceleration.Decelerate(ref currentVelocity, deceleration);
+        cart_acceleration.Accelerate(ref currentVelocity, ref acceleration, topSpeed);
         cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
-        cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
-        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
-
+        cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
 
         c_playerData.CurrentSpeed = currentVelocity;
+        c_playerData.Acceleration = acceleration;
         c_playerData.CurrentPosition = currentPosition;
         c_playerData.CurrentNormal = currentNormal.normalized;
         c_playerData.CurrentDown = currentNormal.normalized * -1;
@@ -54,7 +48,9 @@ public class SlowingCarvingState : iState
 
     public void TransitionAct()
     {
-
+        c_playerData.CurrentAirVelocity = 0.0f;
+        c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
+        c_playerData.CurrentDown = c_playerData.CurrentSurfaceNormal * -1;
     }
 
     public StateRef GetNextState(Command cmd)
@@ -63,18 +59,10 @@ public class SlowingCarvingState : iState
         {
             return StateRef.AIRBORNE;
         }
-        if (cmd == Command.RIDE)
-        {
-            return StateRef.RIDING;
-        }
         if (cmd == Command.SLOW)
         {
             return StateRef.STOPPING;
         }
-        if (cmd == Command.STOP)
-        {
-            return StateRef.STATIONARY;
-        }
-        return StateRef.CARVING_STOPPING;
+        return StateRef.RIDING;
     }
 }

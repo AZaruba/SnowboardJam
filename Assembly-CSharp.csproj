@@ -86,13 +86,16 @@
     <Compile Include="Assets\Source\StateMachine\States\Camera\FreeFollowState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\Camera\StationaryLookAtState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\iState.cs" />
-    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\AerialState.cs" />
-    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\CarvingState.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\AirStates\AerialState.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\AirStates\GroundedState.cs" />
     <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\CrashedState.cs" />
-    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\RidingState.cs" />
-    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\SlowingCarvingState.cs" />
-    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\SlowingState.cs" />
-    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\StationaryState.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\MoveStates\MoveAerialState.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\MoveStates\RidingState.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\MoveStates\SlowingState.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\MoveStates\StationaryState.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\TurnStates\CarvingState.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\TurnStates\StraightState.cs" />
+    <Compile Include="Assets\Source\StateMachine\States\PlayerCharacter\TurnStates\TurnDisabledState.cs" />
     <Compile Include="Assets\Source\Utilities\Constants.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>/Users/azaruba/Workspace/SnowboardJam/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

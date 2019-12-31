@@ -1,0 +1,25 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GroundedState : iState
+{
+    public void Act()
+    {
+
+    }
+
+    public void TransitionAct()
+    {
+
+    }
+
+    public StateRef GetNextState(Command cmd)
+    {
+        if (cmd == Command.FALL)
+        {
+            return StateRef.AIRBORNE;
+        }
+        return StateRef.GROUNDED;
+    }
+}

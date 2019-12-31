@@ -63,7 +63,7 @@ public class AerialState : iState {
     {
         if (cmd == Command.LAND)
         {
-            return StateRef.RIDING;
+            return StateRef.GROUNDED;
         }
         return StateRef.AIRBORNE;
     }
