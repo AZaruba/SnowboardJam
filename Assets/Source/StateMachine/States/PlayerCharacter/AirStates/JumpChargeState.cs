@@ -26,7 +26,7 @@ public class JumpChargeState : iState
 
     public void TransitionAct()
     {
-
+        c_playerData.f_currentJumpCharge = c_playerData.f_baseJumpPower;
     }
 
     public StateRef GetNextState(Command cmd)

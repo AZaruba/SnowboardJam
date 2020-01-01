@@ -23,7 +23,6 @@ public class JumpingState : iState
         float gravity = c_playerData.f_gravity;
         float terminalVelocity = c_playerData.f_terminalVelocity;
         float currentSpeed = c_playerData.f_currentSpeed;
-
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 position = c_playerData.v_currentPosition;
 
@@ -35,7 +34,7 @@ public class JumpingState : iState
         c_playerData.f_currentAirVelocity = airVelocity;
         if (airVelocity < Constants.ZERO_F)
         {
-            c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity) * Time.deltaTime;
+            c_playerData.f_currentRaycastDistance = (Mathf.Abs(airVelocity) * Time.deltaTime) + c_playerData.f_raycastDistance;
         }
         else
         {
@@ -47,15 +46,15 @@ public class JumpingState : iState
     {
         Vector3 previousDirection = c_playerData.v_currentDirection;
         float currentVelocity = c_playerData.f_currentSpeed;
-        float airVelocity = previousDirection.normalized.y * currentVelocity;
         float jumpCharge = c_playerData.f_currentJumpCharge;
+        float airVelocity = (previousDirection.normalized.y * currentVelocity) + jumpCharge;
 
         previousDirection.y = Constants.ZERO_F; // "flatten direction"
 
         // scale velocity by the change in magnitude so we don't go faster in a direction
         float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
 
-        c_playerData.f_currentAirVelocity = airVelocity + jumpCharge;
+        c_playerData.f_currentAirVelocity = airVelocity;
         c_playerData.v_currentDirection = previousDirection;
         c_playerData.f_currentSpeed *= magnitudeFactor;
         c_playerData.v_currentDown = Vector3.down;
@@ -68,7 +67,7 @@ public class JumpingState : iState
         {
             return StateRef.GROUNDED;
         }
-        return StateRef.AIRBORNE;
+        return StateRef.JUMPING;
     }
 
 

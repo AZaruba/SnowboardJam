@@ -11,6 +11,7 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float BrakePower;
     [SerializeField] private float TurnSpeed;
     [SerializeField] private float JumpPower;
+    [SerializeField] private float BaseJumpPower;
     [SerializeField] private float JumpChargeRate;
     [SerializeField] private float GravityFactor;
     [SerializeField] private float TerminalVelocity;
@@ -68,6 +69,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return JumpPower; }
         set { JumpPower = value; }
+    }
+
+    public float f_baseJumpPower
+    {
+        get { return BaseJumpPower; }
+        set { BaseJumpPower = value; }
     }
 
     public float f_jumpChargeRate

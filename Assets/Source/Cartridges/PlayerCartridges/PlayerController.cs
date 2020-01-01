@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_incr = new IncrementCartridge();
 
         MoveAerialState s_moveAerial = new MoveAerialState();
-        StationaryState s_stationary = new StationaryState (ref c_playerData, ref cart_angleCalc);
+        StationaryState s_stationary = new StationaryState (ref c_playerData, ref cart_angleCalc, ref cart_velocity);
         RidingState s_riding = new RidingState (ref c_playerData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity);
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc);
 
@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
 
         AerialState s_aerial = new AerialState(ref c_playerData, ref cart_gravity, ref cart_velocity);
+        JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
         GroundedState s_grounded = new GroundedState();
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
 
@@ -61,6 +62,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         c_airMachine = new StateMachine(s_grounded, StateRef.GROUNDED);
         c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
+        c_airMachine.AddState(s_jumping, StateRef.JUMPING);
         c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
 	}
 	
@@ -82,9 +84,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         EngineUpdate();
 
         debugAccessor.DisplayState("Current AirState: ", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayFloat("Current Jump Charge", c_playerData.f_currentJumpCharge);
-        debugAccessor.DisplayVector3("Current Direction", c_playerData.q_currentRotation * Vector3.forward);
-        debugAccessor.DisplayVector3("Current Normal", c_playerData.v_currentNormal, 1);
+        debugAccessor.DisplayFloat("Current AirVelocity", c_playerData.f_currentAirVelocity);
+        debugAccessor.DisplayVector3("Current Down", c_playerData.v_currentDown);
+        debugAccessor.DisplayVector3("Current Position", c_playerData.v_currentPosition, 1);
 	}
 
     /// <summary>

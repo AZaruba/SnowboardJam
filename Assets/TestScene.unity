@@ -868,13 +868,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aead74ec139c4b4391ce29393104832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  f_topSpeed: 20
-  f_acceleration: 20
+  TopSpeed: 15
+  Acceleration: 20
   BrakePower: 20
   TurnSpeed: 100
-  JumpPower: 10
+  JumpPower: 15
+  BaseJumpPower: 10
   JumpChargeRate: 5
-  f_gravityFactor: 40
+  GravityFactor: 40
   TerminalVelocity: 50
   CrashRecoveryTime: 1
   RaycastDistance: 0.6
