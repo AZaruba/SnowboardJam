@@ -19,16 +19,16 @@ public class CarvingState : iState {
 
     public void Act()
     {
-        Vector3 currentDir = c_playerData.CurrentDirection;
-        Vector3 currentNormal = c_playerData.CurrentNormal;
-        Quaternion currentRotation = c_playerData.RotationBuffer;
+        Vector3 currentDir = c_playerData.v_currentDirection;
+        Vector3 currentNormal = c_playerData.v_currentNormal;
+        Quaternion currentRotation = c_playerData.q_currentRotation;
 
         float inputAxis = c_playerData.f_inputAxisTurn * c_playerData.f_turnSpeed;
 
         cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
 
-        c_playerData.CurrentDirection = currentDir.normalized;
-        c_playerData.RotationBuffer = currentRotation;
+        c_playerData.v_currentDirection = currentDir.normalized;
+        c_playerData.q_currentRotation = currentRotation;
     }
 
     public void TransitionAct()

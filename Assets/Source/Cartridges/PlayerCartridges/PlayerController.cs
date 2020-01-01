@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private StateMachine c_accelMachine;
 
     // cartridge list
-    private AccelerationCartridge cart_acceleration;
+    private AccelerationCartridge cart_f_acceleration;
     private VelocityCartridge cart_velocity;
     private HandlingCartridge cart_handling;
     private AngleCalculationCartridge cart_angleCalc;
@@ -33,14 +33,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_gravity = new GravityCartridge ();
         cart_angleCalc = new AngleCalculationCartridge ();
         cart_velocity = new VelocityCartridge ();
-        cart_acceleration = new AccelerationCartridge ();
+        cart_f_acceleration = new AccelerationCartridge ();
         cart_handling = new HandlingCartridge();
         cart_incr = new IncrementCartridge();
 
         MoveAerialState s_moveAerial = new MoveAerialState();
         StationaryState s_stationary = new StationaryState (ref c_playerData, ref cart_angleCalc);
-        RidingState s_riding = new RidingState (ref c_playerData, ref cart_angleCalc, ref cart_acceleration, ref cart_velocity);
-        SlowingState s_slowing = new SlowingState(ref c_playerData, ref cart_velocity, ref cart_acceleration, ref cart_angleCalc);
+        RidingState s_riding = new RidingState (ref c_playerData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity);
+        SlowingState s_slowing = new SlowingState(ref c_playerData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc);
 
         StraightState s_straight = new StraightState();
         CarvingState s_carving = new CarvingState(ref c_playerData, ref cart_handling);
@@ -83,8 +83,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Current AirState: ", c_airMachine.GetCurrentState());
         debugAccessor.DisplayFloat("Current Jump Charge", c_playerData.f_currentJumpCharge);
-        debugAccessor.DisplayVector3("Current Direction", c_playerData.RotationBuffer * Vector3.forward);
-        debugAccessor.DisplayVector3("Current Normal", c_playerData.CurrentNormal, 1);
+        debugAccessor.DisplayVector3("Current Direction", c_playerData.q_currentRotation * Vector3.forward);
+        debugAccessor.DisplayVector3("Current Normal", c_playerData.v_currentNormal, 1);
 	}
 
     /// <summary>
@@ -92,8 +92,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EngineUpdate()
     {
-        transform.position = c_playerData.CurrentPosition;
-        transform.rotation = c_playerData.RotationBuffer; // transform.Rotate(c_playerData.RotationBuffer.eulerAngles);   
+        transform.position = c_playerData.v_currentPosition;
+        transform.rotation = c_playerData.q_currentRotation; // transform.Rotate(c_playerData.q_currentRotation.eulerAngles);   
     }
 
     /// <summary>
@@ -106,20 +106,20 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         // TODO: ensure that we can pull the direction and the normal from the object
         // OTHERWISE it implies that there is a desync between data and the engine
-        c_playerData.CurrentPosition = transform.position;
-        c_playerData.CurrentDirection = transform.forward.normalized;
-        c_playerData.CurrentNormal = transform.up.normalized;
-        c_playerData.RotationBuffer = transform.rotation;
+        c_playerData.v_currentPosition = transform.position;
+        c_playerData.v_currentDirection = transform.forward.normalized;
+        c_playerData.v_currentNormal = transform.up.normalized;
+        c_playerData.q_currentRotation = transform.rotation;
 
         RaycastHit hitInfo;
-        if (Physics.Raycast(c_playerData.CurrentPosition, c_playerData.CurrentDown, out hitInfo, c_playerData.f_currentRaycastDistance))
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out hitInfo, c_playerData.f_currentRaycastDistance))
         {
-            c_playerData.CurrentSurfaceNormal = hitInfo.normal;
-            c_playerData.CurrentSurfaceAttachPoint = hitInfo.point;
+            c_playerData.v_currentSurfaceNormal = hitInfo.normal;
+            c_playerData.v_currentSurfaceAttachPoint = hitInfo.point;
         }
         else
         {
-            c_playerData.CurrentSurfaceNormal = Vector3.zero;
+            c_playerData.v_currentSurfaceNormal = Vector3.zero;
         }
     }
 
@@ -129,7 +129,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void UpdateStateMachine()
     {
         // current issue, these commands don't work out great
-        if (c_playerData.CurrentSurfaceNormal.normalized == Vector3.zero)
+        if (c_playerData.v_currentSurfaceNormal.normalized == Vector3.zero)
         {
             c_accelMachine.Execute(Command.FALL);
             c_turnMachine.Execute(Command.FALL);
@@ -160,7 +160,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.RIDE);
         }
 
-        if (c_playerData.CurrentSpeed <= 0.0f)
+        if (c_playerData.f_currentSpeed <= 0.0f)
         {
             c_accelMachine.Execute(Command.STOP);
         }
@@ -182,12 +182,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     void SetDefaultPlayerData()
     {
-        c_playerData.CurrentPosition = transform.position;
-        c_playerData.RotationBuffer = transform.rotation;
-        c_playerData.CurrentDirection = transform.forward;
-        c_playerData.CurrentNormal = transform.up;
-        c_playerData.CurrentDown = transform.up * -1;
-        c_playerData.CurrentSpeed = Constants.ZERO_F;
+        c_playerData.v_currentPosition = transform.position;
+        c_playerData.q_currentRotation = transform.rotation;
+        c_playerData.v_currentDirection = transform.forward;
+        c_playerData.v_currentNormal = transform.up;
+        c_playerData.v_currentDown = transform.up * -1;
+        c_playerData.f_currentSpeed = Constants.ZERO_F;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
     }
     #endregion

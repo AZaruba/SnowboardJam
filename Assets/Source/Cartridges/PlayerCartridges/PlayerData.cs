@@ -6,50 +6,50 @@ public class PlayerData : MonoBehaviour {
     
     // TODO: break out data into multiple piles similar to state machines
     #region Members
-    [SerializeField] private float f_topSpeed;
-    [SerializeField] private float f_acceleration;
+    [SerializeField] private float TopSpeed;
+    [SerializeField] private float Acceleration;
     [SerializeField] private float BrakePower;
     [SerializeField] private float TurnSpeed;
     [SerializeField] private float JumpPower;
     [SerializeField] private float JumpChargeRate;
-    [SerializeField] private float f_gravityFactor;
+    [SerializeField] private float GravityFactor;
     [SerializeField] private float TerminalVelocity;
     [SerializeField] private float CrashRecoveryTime;
 
-    private float f_currentSpeed;
-    private float f_currentJumpPower;
-    private float f_currentAirVelocity;
+    private float CurrentSpeed;
+    private float CurrentAirVelocity;
     private float CurrentJumpCharge;
     private float CrashTimer;
     private float CurrentRaycastDistance;
 
-    private Vector3 v_currentPosition;
-    private Vector3 v_currentDirection;
-    private Vector3 v_currentNormal;
-    private Vector3 v_currentDown;
+    private Vector3 CurrentPosition;
+    private Vector3 CurrentDirection;
+    private Vector3 CurrentNormal;
+    private Vector3 CurrentDown;
 
-    private Quaternion q_bufferedRotation;
+    private Quaternion CurrentRotation;
     #endregion
 
     #region EngineMembers
     [SerializeField] private float RaycastDistance;
+    private bool JumpBtnPressed;
     private float InputAxisTurn { get; set; }
     private float InputAxisLVert;
-    private Vector3 v_surfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
-    private Vector3 v_surfaceAttachPoint { get; set; }
+    private Vector3 SurfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
+    private Vector3 SurfaceAttachPoint { get; set; }
     #endregion
 
     #region SerializedProperties
-    public float TopSpeed
+    public float f_topSpeed
     {
-        get { return f_topSpeed; }
-        set { f_topSpeed = value; }
+        get { return TopSpeed; }
+        set { TopSpeed = value; }
     }
 
-    public float Acceleration
+    public float f_acceleration
     {
-        get { return f_acceleration; }
-        set { f_acceleration = value; }
+        get { return Acceleration; }
+        set { Acceleration = value; }
     }
 
     public float f_brakePower
@@ -76,10 +76,10 @@ public class PlayerData : MonoBehaviour {
         set { JumpChargeRate = value; }
     }
 
-    public float Gravity
+    public float f_gravity
     {
-        get { return f_gravityFactor; }
-        set { f_gravityFactor = value; }
+        get { return GravityFactor; }
+        set { GravityFactor = value; }
     }
 
     public float f_terminalVelocity
@@ -107,10 +107,10 @@ public class PlayerData : MonoBehaviour {
     }
     #endregion
     #region SerializedActives
-    public float CurrentSpeed
+    public float f_currentSpeed
     {
-        get { return f_currentSpeed; }
-        set { f_currentSpeed = value; }
+        get { return CurrentSpeed; }
+        set { CurrentSpeed = value; }
     }
 
     public float f_currentJumpCharge
@@ -119,10 +119,10 @@ public class PlayerData : MonoBehaviour {
         set { CurrentJumpCharge = value; }
     }
 
-    public float CurrentAirVelocity
+    public float f_currentAirVelocity
     {
-        get { return f_currentAirVelocity; }
-        set { f_currentAirVelocity = value; }
+        get { return CurrentAirVelocity; }
+        set { CurrentAirVelocity = value; }
     }
 
     public float f_currentCrashTimer
@@ -132,38 +132,43 @@ public class PlayerData : MonoBehaviour {
     }
     #endregion
     #region Vectors
-    public Vector3 CurrentPosition
+    public Vector3 v_currentPosition
     {
-        get { return v_currentPosition; }
-        set { v_currentPosition = value; }
+        get { return CurrentPosition; }
+        set { CurrentPosition = value; }
     }
 
-    public Vector3 CurrentDirection
+    public Vector3 v_currentDirection
     {
-        get { return v_currentDirection; }
-        set { v_currentDirection = value; }
+        get { return CurrentDirection; }
+        set { CurrentDirection = value; }
     }
 
-    public Vector3 CurrentNormal
+    public Vector3 v_currentNormal
     {
-        get { return v_currentNormal; }
-        set { v_currentNormal = value; }
+        get { return CurrentNormal; }
+        set { CurrentNormal = value; }
     }
 
-    public Vector3 CurrentDown
+    public Vector3 v_currentDown
     {
-        get { return v_currentDown; }
-        set { v_currentDown = value; }
+        get { return CurrentDown; }
+        set { CurrentDown = value; }
     }
     #endregion
     #region Quaternions
-    public Quaternion RotationBuffer
+    public Quaternion q_currentRotation
     {
-        get { return q_bufferedRotation; }
-        set { q_bufferedRotation = value; }
+        get { return CurrentRotation; }
+        set { CurrentRotation = value; }
     }
     #endregion
     #region IOProperties
+    public bool b_jumpBtnPressed
+    {
+        get { return JumpBtnPressed; }
+        set { JumpBtnPressed = value; }
+    }
     public float f_inputAxisTurn
     {
         get { return InputAxisTurn; }
@@ -176,16 +181,16 @@ public class PlayerData : MonoBehaviour {
         set { InputAxisLVert = value; }
     }
 
-    public Vector3 CurrentSurfaceNormal
+    public Vector3 v_currentSurfaceNormal
     {
-        get { return v_surfaceNormal; }
-        set { v_surfaceNormal = value; }
+        get { return SurfaceNormal; }
+        set { SurfaceNormal = value; }
     }
 
-    public Vector3 CurrentSurfaceAttachPoint
+    public Vector3 v_currentSurfaceAttachPoint
     {
-        get { return v_surfaceAttachPoint; }
-        set { v_surfaceAttachPoint = value; }
+        get { return SurfaceAttachPoint; }
+        set { SurfaceAttachPoint = value; }
     }
     #endregion
 }

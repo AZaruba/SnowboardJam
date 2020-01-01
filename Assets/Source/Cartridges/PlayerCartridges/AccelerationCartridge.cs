@@ -5,14 +5,14 @@ using UnityEngine;
 public class AccelerationCartridge {
 
     #region PublicFunctions
-    public void Accelerate(ref float velocity, ref float acceleration, float topSpeed, float surfaceFactor = 1.0f)
+    public void Accelerate(ref float velocity, ref float f_acceleration, float topSpeed, float surfaceFactor = 1.0f)
     {
         if (velocity > topSpeed)
         {
             velocity = topSpeed;
             return;
         }
-        velocity += acceleration * surfaceFactor * Time.deltaTime;
+        velocity += f_acceleration * surfaceFactor * Time.deltaTime;
     }
 
     public void Decelerate(ref float velocity, float deceleration, float surfaceFactor = 1.0f)

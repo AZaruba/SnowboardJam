@@ -20,19 +20,19 @@ public class StationaryState : iState {
 
     public void TransitionAct()
     {
-        Vector3 currentPosition = c_playerData.CurrentPosition;
-        Vector3 currentNormal = c_playerData.CurrentNormal;
-        Vector3 currentForward = c_playerData.CurrentDirection;
-        Vector3 currentSurfaceNormal = c_playerData.CurrentSurfaceNormal;
-        Quaternion rotationBuf = c_playerData.RotationBuffer;
+        Vector3 currentPosition = c_playerData.v_currentPosition;
+        Vector3 currentNormal = c_playerData.v_currentNormal;
+        Vector3 currentForward = c_playerData.v_currentDirection;
+        Vector3 currentSurfaceNormal = c_playerData.v_currentSurfaceNormal;
+        Quaternion rotationBuf = c_playerData.q_currentRotation;
 
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref rotationBuf);
 
-        c_playerData.CurrentNormal = currentNormal.normalized;
-        c_playerData.CurrentDown = currentNormal.normalized * -1;
-        c_playerData.CurrentDirection = currentForward.normalized;
-        c_playerData.CurrentPosition = currentPosition;
-        c_playerData.RotationBuffer = rotationBuf;
+        c_playerData.v_currentNormal = currentNormal.normalized;
+        c_playerData.v_currentDown = currentNormal.normalized * -1;
+        c_playerData.v_currentDirection = currentForward.normalized;
+        c_playerData.v_currentPosition = currentPosition;
+        c_playerData.q_currentRotation = rotationBuf;
         // surface normal does not need to be updated
     }
 

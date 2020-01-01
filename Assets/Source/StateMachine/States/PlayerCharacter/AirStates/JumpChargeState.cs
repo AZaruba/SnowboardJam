@@ -38,7 +38,7 @@ public class JumpChargeState : iState
         }
         if (cmd == Command.JUMP)
         {
-            return StateRef.AIRBORNE;
+            return StateRef.JUMPING;
         }
         return StateRef.CHARGING;
     }

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AerialState : iState {
+public class JumpingState : iState
+{
 
     private GravityCartridge cart_gravity;
     private VelocityCartridge cart_velocity;
     private PlayerData c_playerData;
 
-    public AerialState(ref PlayerData playerData, ref GravityCartridge cart_grav, ref VelocityCartridge cart_vel)
+    public JumpingState(ref PlayerData playerData, ref GravityCartridge cart_grav, ref VelocityCartridge cart_vel)
     {
         this.c_playerData = playerData;
         this.cart_gravity = cart_grav;
@@ -54,7 +55,7 @@ public class AerialState : iState {
         // scale velocity by the change in magnitude so we don't go faster in a direction
         float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
 
-        c_playerData.f_currentAirVelocity = airVelocity;
+        c_playerData.f_currentAirVelocity = airVelocity + jumpCharge;
         c_playerData.v_currentDirection = previousDirection;
         c_playerData.f_currentSpeed *= magnitudeFactor;
         c_playerData.v_currentDown = Vector3.down;

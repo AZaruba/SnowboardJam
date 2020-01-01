@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SlowingState : iState
 {
-    AccelerationCartridge cart_acceleration;
+    AccelerationCartridge cart_f_acceleration;
     VelocityCartridge cart_velocity;
     AngleCalculationCartridge cart_angleCalc;
     PlayerData c_playerData;
@@ -14,32 +14,32 @@ public class SlowingState : iState
     {
         c_playerData = playerData;
         cart_velocity = vel;
-        cart_acceleration = accel;
+        cart_f_acceleration = accel;
         cart_angleCalc = angleCalc;
     }
     public void Act()
     {
         // check for angle when implemented
-        float currentVelocity = c_playerData.CurrentSpeed;
+        float currentVelocity = c_playerData.f_currentSpeed;
         float deceleration = c_playerData.f_brakePower;
-        Vector3 currentPosition = c_playerData.CurrentPosition;
-        Vector3 currentDir = c_playerData.CurrentDirection;
-        Vector3 currentNormal = c_playerData.CurrentNormal;
-        Vector3 currentSurfaceNormal = c_playerData.CurrentSurfaceNormal;
-        Vector3 currentSurfacePosition = c_playerData.CurrentSurfaceAttachPoint;
-        Quaternion currentRotation = c_playerData.RotationBuffer;
+        Vector3 currentPosition = c_playerData.v_currentPosition;
+        Vector3 currentDir = c_playerData.v_currentDirection;
+        Vector3 currentNormal = c_playerData.v_currentNormal;
+        Vector3 currentSurfaceNormal = c_playerData.v_currentSurfaceNormal;
+        Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
+        Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_acceleration.Decelerate(ref currentVelocity, deceleration);
+        cart_f_acceleration.Decelerate(ref currentVelocity, deceleration);
         cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
         cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
 
-        c_playerData.CurrentSpeed = currentVelocity;
-        c_playerData.CurrentPosition = currentPosition;
-        c_playerData.CurrentNormal = currentNormal.normalized;
-        c_playerData.CurrentDown = currentNormal.normalized * -1;
-        c_playerData.CurrentDirection = currentDir.normalized;
-        c_playerData.RotationBuffer = currentRotation;
+        c_playerData.f_currentSpeed = currentVelocity;
+        c_playerData.v_currentPosition = currentPosition;
+        c_playerData.v_currentNormal = currentNormal.normalized;
+        c_playerData.v_currentDown = currentNormal.normalized * -1;
+        c_playerData.v_currentDirection = currentDir.normalized;
+        c_playerData.q_currentRotation = currentRotation;
     }
 
     public void TransitionAct()
