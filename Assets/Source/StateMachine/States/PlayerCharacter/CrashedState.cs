@@ -1,9 +1,9 @@
 ﻿using System;
 public class CrashedState
 {
-    TimerCartridge cart_timer;
+    IncrementCartridge cart_timer;
     
-    public CrashedState(ref TimerCartridge timer)
+    public CrashedState(ref IncrementCartridge timer)
     {
         this.cart_timer = timer;
     }

@@ -47,16 +47,18 @@ public class AerialState : iState {
         Vector3 previousDirection = c_playerData.CurrentDirection;
         float currentVelocity = c_playerData.CurrentSpeed;
         float airVelocity = previousDirection.normalized.y * currentVelocity;
+        float jumpCharge = c_playerData.f_currentJumpCharge;
 
         previousDirection.y = Constants.ZERO_F; // "flatten direction"
 
         // scale velocity by the change in magnitude so we don't go faster in a direction
         float magnitudeFactor = previousDirection.magnitude / c_playerData.CurrentDirection.magnitude;
 
-        c_playerData.CurrentAirVelocity = airVelocity;
+        c_playerData.CurrentAirVelocity = airVelocity + jumpCharge;
         c_playerData.CurrentDirection = previousDirection;
         c_playerData.CurrentSpeed *= magnitudeFactor;
         c_playerData.CurrentDown = Vector3.down;
+        c_playerData.f_currentJumpCharge = Constants.ZERO_F;
     }
 
     public StateRef GetNextState(Command cmd)

@@ -16,6 +16,10 @@ public class GroundedState : iState
 
     public StateRef GetNextState(Command cmd)
     {
+        if (cmd == Command.CHARGE)
+        {
+            return StateRef.CHARGING;
+        }
         if (cmd == Command.FALL)
         {
             return StateRef.AIRBORNE;

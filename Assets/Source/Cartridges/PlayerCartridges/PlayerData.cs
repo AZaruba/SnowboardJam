@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class PlayerData : MonoBehaviour {
     
+    // TODO: break out data into multiple piles similar to state machines
     #region Members
     [SerializeField] private float f_topSpeed;
     [SerializeField] private float f_acceleration;
     [SerializeField] private float BrakePower;
     [SerializeField] private float TurnSpeed;
-    [SerializeField] private float f_jumpPower;
+    [SerializeField] private float JumpPower;
+    [SerializeField] private float JumpChargeRate;
     [SerializeField] private float f_gravityFactor;
     [SerializeField] private float TerminalVelocity;
     [SerializeField] private float CrashRecoveryTime;
@@ -17,6 +19,7 @@ public class PlayerData : MonoBehaviour {
     private float f_currentSpeed;
     private float f_currentJumpPower;
     private float f_currentAirVelocity;
+    private float CurrentJumpCharge;
     private float CrashTimer;
     private float CurrentRaycastDistance;
 
@@ -61,10 +64,16 @@ public class PlayerData : MonoBehaviour {
         set { TurnSpeed = value; }
     }
 
-    public float JumpPower
+    public float f_jumpPower
     {
-        get { return f_jumpPower; }
-        set { f_jumpPower = value; }
+        get { return JumpPower; }
+        set { JumpPower = value; }
+    }
+
+    public float f_jumpChargeRate
+    {
+        get { return JumpChargeRate; }
+        set { JumpChargeRate = value; }
     }
 
     public float Gravity
@@ -104,10 +113,10 @@ public class PlayerData : MonoBehaviour {
         set { f_currentSpeed = value; }
     }
 
-    public float CurrentJumpPower
+    public float f_currentJumpCharge
     {
-        get { return f_currentJumpPower; }
-        set { f_currentJumpPower = value; }
+        get { return CurrentJumpCharge; }
+        set { CurrentJumpCharge = value; }
     }
 
     public float CurrentAirVelocity

@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private HandlingCartridge cart_handling;
     private AngleCalculationCartridge cart_angleCalc;
     private GravityCartridge cart_gravity;
+    private IncrementCartridge cart_incr;
     #endregion
 
 	/// <summary>
@@ -34,6 +35,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_velocity = new VelocityCartridge ();
         cart_acceleration = new AccelerationCartridge ();
         cart_handling = new HandlingCartridge();
+        cart_incr = new IncrementCartridge();
 
         MoveAerialState s_moveAerial = new MoveAerialState();
         StationaryState s_stationary = new StationaryState (ref c_playerData, ref cart_angleCalc);
@@ -46,6 +48,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         AerialState s_aerial = new AerialState(ref c_playerData, ref cart_gravity, ref cart_velocity);
         GroundedState s_grounded = new GroundedState();
+        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
 
         c_accelMachine = new StateMachine(s_stationary, StateRef.STATIONARY);
         c_accelMachine.AddState(s_riding, StateRef.RIDING);
@@ -58,6 +61,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         c_airMachine = new StateMachine(s_grounded, StateRef.GROUNDED);
         c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
+        c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
 	}
 	
 	/// <summary>
@@ -77,8 +81,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         EngineUpdate();
 
-        debugAccessor.DisplayState("Current PlayerState: ", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayFloat("Current SlowAxis", c_playerData.f_inputAxisTurn);
+        debugAccessor.DisplayState("Current AirState: ", c_airMachine.GetCurrentState());
+        debugAccessor.DisplayFloat("Current Jump Charge", c_playerData.f_currentJumpCharge);
         debugAccessor.DisplayVector3("Current Direction", c_playerData.RotationBuffer * Vector3.forward);
         debugAccessor.DisplayVector3("Current Normal", c_playerData.CurrentNormal, 1);
 	}
@@ -160,6 +164,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_accelMachine.Execute(Command.STOP);
         }
+
+        // TODO: integrate this keypress into the player data
+        if (Input.GetKey(KeyCode.Space))
+        {
+            c_airMachine.Execute(Command.CHARGE);
+        }
+        else
+        {
+            c_airMachine.Execute(Command.JUMP);
+        }
     }
 
     #region StartupFunctions
@@ -173,7 +187,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.CurrentDirection = transform.forward;
         c_playerData.CurrentNormal = transform.up;
         c_playerData.CurrentDown = transform.up * -1;
-        c_playerData.CurrentSpeed = 0.0f;
+        c_playerData.CurrentSpeed = Constants.ZERO_F;
+        c_playerData.f_currentJumpCharge = Constants.ZERO_F;
     }
     #endregion
 }

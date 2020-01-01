@@ -872,7 +872,8 @@ MonoBehaviour:
   f_acceleration: 20
   BrakePower: 20
   TurnSpeed: 100
-  f_jumpPower: 0
+  JumpPower: 10
+  JumpChargeRate: 5
   f_gravityFactor: 40
   TerminalVelocity: 50
   CrashRecoveryTime: 1
