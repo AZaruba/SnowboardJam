@@ -48,3 +48,7 @@ sysinfo.txt
 .vs/
 
 .DS_Store
+
+Assembly-CSharp.csproj
+
+SnowboardJam.sln
