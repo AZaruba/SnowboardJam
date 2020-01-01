@@ -79,8 +79,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Current PlayerState: ", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayFloat("Current SlowAxis", c_playerData.f_inputAxisTurn);
-        debugAccessor.DisplayVector3("Current Rotated Forward", c_playerData.RotationBuffer * Vector3.forward);
-        debugAccessor.DisplayVector3("Current Direction", c_playerData.CurrentDirection, 1);
+        debugAccessor.DisplayVector3("Current Direction", c_playerData.RotationBuffer * Vector3.forward);
+        debugAccessor.DisplayVector3("Current Normal", c_playerData.CurrentNormal, 1);
 	}
 
     /// <summary>
