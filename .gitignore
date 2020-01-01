@@ -52,3 +52,7 @@ sysinfo.txt
 Assembly-CSharp.csproj
 
 SnowboardJam.sln
+
+*.csproj
+
+*.sln
