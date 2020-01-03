@@ -38,6 +38,7 @@ public class StationaryState : iState {
         c_playerData.v_currentDirection = currentForward.normalized;
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.q_currentRotation = currentRotation;
+        c_playerData.f_currentCrashTimer = Constants.ZERO_F;
         // surface normal does not need to be updated
     }
 
@@ -52,7 +53,7 @@ public class StationaryState : iState {
         {
             return StateRef.AIRBORNE;
         }
-        if (cmd == Command.RIDE)
+        if (cmd == Command.STARTMOVE)
         {
             return StateRef.RIDING;
         }

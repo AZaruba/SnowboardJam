@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TurnDisabledState : iState
+public class AirDisabledState : iState
 {
     public void Act()
     {
@@ -16,13 +16,9 @@ public class TurnDisabledState : iState
 
     public StateRef GetNextState(Command cmd)
     {
-        if (cmd == Command.LAND)
-        {
-            return StateRef.RIDING;
-        }
         if (cmd == Command.READY)
         {
-            return StateRef.RIDING;
+            return StateRef.GROUNDED;
         }
         return StateRef.DISABLED;
     }

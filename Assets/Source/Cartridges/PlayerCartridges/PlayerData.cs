@@ -22,6 +22,7 @@ public class PlayerData : MonoBehaviour {
     private float CurrentJumpCharge;
     private float CrashTimer;
     private float CurrentRaycastDistance;
+    private float CurrentForwardRaycastDistance;
 
     private Vector3 CurrentPosition;
     private Vector3 CurrentDirection;
@@ -33,7 +34,9 @@ public class PlayerData : MonoBehaviour {
 
     #region EngineMembers
     [SerializeField] private float RaycastDistance;
+    [SerializeField] private float ForwardRaycastDistance;
     private bool JumpBtnPressed;
+    private bool ObstacleInRange;
     private float InputAxisTurn { get; set; }
     private float InputAxisLVert;
     private Vector3 SurfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
@@ -101,10 +104,22 @@ public class PlayerData : MonoBehaviour {
         set { RaycastDistance = value; }
     }
 
+    public float f_forwardRaycastDistance
+    {
+        get { return ForwardRaycastDistance; }
+        set { ForwardRaycastDistance = value; }
+    }
+
     public float f_currentRaycastDistance
     {
         get { return CurrentRaycastDistance; }
         set { CurrentRaycastDistance = value; }
+    }
+
+    public float f_currentForwardRaycastDistance
+    {
+        get { return CurrentForwardRaycastDistance; }
+        set { CurrentForwardRaycastDistance = value; }
     }
 
     public float f_crashRecoveryTime
@@ -175,6 +190,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return JumpBtnPressed; }
         set { JumpBtnPressed = value; }
+    }
+
+    public bool b_obstacleInRange
+    {
+        get { return ObstacleInRange; }
+        set { ObstacleInRange = value; }
     }
     public float f_inputAxisTurn
     {

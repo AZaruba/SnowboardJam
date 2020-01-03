@@ -1,13 +1,8 @@
-﻿using System;
-public class CrashedState
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+public class IdleState : iState
 {
-    IncrementCartridge cart_timer;
-    
-    public CrashedState(ref IncrementCartridge timer)
-    {
-        this.cart_timer = timer;
-    }
-
     public void Act()
     {
 

@@ -19,6 +19,11 @@ public enum Command {
     LAND,
     FALL,
     JUMP,
+    READY,
+    #endregion
+
+    #region PlayerMoveCommands
+    STARTMOVE,
     #endregion
 
     #region CameraCommands

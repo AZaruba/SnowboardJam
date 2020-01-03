@@ -40,6 +40,10 @@ public class JumpChargeState : iState
         {
             return StateRef.JUMPING;
         }
+        if (cmd == Command.CRASH)
+        {
+            return StateRef.DISABLED;
+        }
         return StateRef.CHARGING;
     }
 }

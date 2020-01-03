@@ -24,6 +24,10 @@ public class GroundedState : iState
         {
             return StateRef.AIRBORNE;
         }
+        if (cmd == Command.CRASH)
+        {
+            return StateRef.DISABLED;
+        }
         return StateRef.GROUNDED;
     }
 }

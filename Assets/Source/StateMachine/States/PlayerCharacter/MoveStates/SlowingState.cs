@@ -61,6 +61,10 @@ public class SlowingState : iState
         {
             return StateRef.STATIONARY;
         }
+        if (cmd == Command.CRASH)
+        {
+            return StateRef.CRASHED;
+        }
         return StateRef.STOPPING;
     }
 }

@@ -38,6 +38,10 @@ public class CarvingState : iState {
 
     public StateRef GetNextState(Command cmd)
     {
+        if (cmd == Command.CRASH)
+        {
+            return StateRef.DISABLED;
+        }
         if (cmd == Command.FALL)
         {
             return StateRef.DISABLED;

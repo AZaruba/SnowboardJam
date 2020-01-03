@@ -24,6 +24,10 @@ public class StraightState : iState
         {
             return StateRef.CARVING;
         }
+        if (cmd == Command.CRASH)
+        {
+            return StateRef.DISABLED;
+        }
         return StateRef.RIDING;
     }
 }

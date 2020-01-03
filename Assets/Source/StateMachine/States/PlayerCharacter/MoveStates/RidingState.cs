@@ -63,6 +63,10 @@ public class RidingState : iState {
         {
             return StateRef.STOPPING;
         }
+        if (cmd == Command.CRASH)
+        {
+            return StateRef.CRASHED;
+        }
         return StateRef.RIDING;
     }
 }

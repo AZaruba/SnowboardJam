@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         StationaryState s_stationary = new StationaryState (ref c_playerData, ref cart_angleCalc, ref cart_velocity);
         RidingState s_riding = new RidingState (ref c_playerData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity);
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc);
+        CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
         StraightState s_straight = new StraightState();
         CarvingState s_carving = new CarvingState(ref c_playerData, ref cart_handling);
@@ -50,11 +51,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
         JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
         GroundedState s_grounded = new GroundedState();
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
+        AirDisabledState s_airDisabled = new AirDisabledState();
 
         c_accelMachine = new StateMachine(s_stationary, StateRef.STATIONARY);
         c_accelMachine.AddState(s_riding, StateRef.RIDING);
         c_accelMachine.AddState(s_slowing, StateRef.STOPPING);
         c_accelMachine.AddState(s_moveAerial, StateRef.AIRBORNE);
+        c_accelMachine.AddState(s_crashed, StateRef.CRASHED);
 
         c_turnMachine = new StateMachine(s_straight, StateRef.RIDING);
         c_turnMachine.AddState(s_carving, StateRef.CARVING);
@@ -64,6 +67,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
         c_airMachine.AddState(s_jumping, StateRef.JUMPING);
         c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
+        c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
 	}
 	
 	/// <summary>
@@ -83,8 +87,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         EngineUpdate();
 
-        debugAccessor.DisplayState("Current AirState: ", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayFloat("Current AirVelocity", c_playerData.f_currentAirVelocity);
+        debugAccessor.DisplayState("Current State: ", c_turnMachine.GetCurrentState());
+        debugAccessor.DisplayFloat("Current Crash Timer", c_playerData.f_currentCrashTimer);
         debugAccessor.DisplayVector3("Current Down", c_playerData.v_currentDown);
         debugAccessor.DisplayVector3("Current Position", c_playerData.v_currentPosition, 1);
 	}
@@ -123,6 +127,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_playerData.v_currentSurfaceNormal = Vector3.zero;
         }
+
+        CheckForObstacle();
     }
 
     /// <summary>
@@ -161,6 +167,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_accelMachine.Execute(Command.RIDE);
         }
+        if (c_playerData.f_inputAxisLVert > 0.0f)
+        {
+            c_accelMachine.Execute(Command.STARTMOVE);
+        }
 
         if (c_playerData.f_currentSpeed <= 0.0f)
         {
@@ -175,6 +185,19 @@ public class PlayerController : MonoBehaviour, iEntityController {
         else
         {
             c_airMachine.Execute(Command.JUMP);
+        }
+
+        if (c_playerData.f_currentCrashTimer > c_playerData.f_crashRecoveryTime)
+        {
+            c_accelMachine.Execute(Command.READY);
+            c_turnMachine.Execute(Command.READY);
+            c_airMachine.Execute(Command.READY);
+        }
+        else if (c_playerData.b_obstacleInRange)
+        {
+            c_accelMachine.Execute(Command.CRASH);
+            c_turnMachine.Execute(Command.CRASH);
+            c_airMachine.Execute(Command.CRASH);
         }
     }
 
@@ -191,11 +214,32 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.v_currentDown = transform.up * -1;
         c_playerData.f_currentSpeed = Constants.ZERO_F;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
+        c_playerData.f_currentForwardRaycastDistance = c_playerData.f_forwardRaycastDistance;
+        c_playerData.b_obstacleInRange = false;
     }
     #endregion
+
+    /// <summary>
+    /// Checks in front of the character for an obstacle in the way.
+    /// </summary>
+    private void CheckForObstacle()
+    {
+        float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.deltaTime);
+        RaycastHit hitInfo;
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out hitInfo, distance))
+        {
+            c_playerData.b_obstacleInRange = true;
+        }
+        else
+        {
+            c_playerData.b_obstacleInRange = false;
+        }
+    }
 }
 
 /* TODO LIST:
- * 1) Crashing (as in the mechanic, not the failure state!)
- * 2) Improving the surface adherence when moving down
+ * 1) When Crashing, we need to figure out how to reset the timer without looping into a crash again
+ * 2) AIR Crashing as a separate mechanic
+ * 3) Angle reorientation when hitting angled walls as an alternative to crashing
+ * 4) BIG TASK: implement switch stance/coming back down from a half pipe type of ramp
  */ 
