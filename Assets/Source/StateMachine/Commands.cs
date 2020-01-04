@@ -13,15 +13,26 @@ public enum Command {
     TURN,
     SLOW,
     STOP, // when velocity reaches zero
+    CHARGE,
+    CRASH,
+    BONK,
     LAND,
     FALL,
     JUMP,
+    READY,
+    #endregion
+
+    #region PlayerMoveCommands
+    STARTMOVE,
     #endregion
 
     #region CameraCommands
+    APPROACH,
+    DRAG,
     TRACK,
     REST,
-    TRACK_FAST,
+    SPEEDUP,
+    SLOWDOWN,
     #endregion
 }
 
@@ -29,24 +40,38 @@ public enum StateRef {
     
     ERROR_STATE = -1,
     START_STATE,
+    DISABLED,
 
     #region PlayerStates
+    IDLE,
     STATIONARY,
     RIDING,
     STOPPING,
+    BONKED,
+    CRASHED,
     CARVING,
-    CARVING_STOPPING,
     CHARGING,
-    CARVING_CHARGING,
     AIRBORNE,
     JUMPING,
     TRICKING,
     LANDING,
     #endregion
 
+    #region TurnStates
+
+    #endregion
+
+    #region AirStates
+    GROUNDED,
+    #endregion
+
     #region CameraStates
     // STATIONARY,
+    APPROACHING,
+    LEAVING,
     TRACKING,
+    APPROACHING_FAST,
+    LEAVING_FAST,
     TRACKING_FAST,
     #endregion
 

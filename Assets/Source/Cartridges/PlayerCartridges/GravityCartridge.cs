@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class GravityCartridge {
 
-    public void UpdateAirVelocity(ref float currentAirVelocity, ref float globalGravity)
+    public void UpdateAirVelocity(ref float currentAirVelocity, ref float globalGravity, ref float terminalVelocity)
     {
-        currentAirVelocity -= globalGravity;
+        if (currentAirVelocity < terminalVelocity * -1)
+        {
+            currentAirVelocity = terminalVelocity * -1;
+            return;
+        }
+        currentAirVelocity -= globalGravity * Time.deltaTime;
     }
 
     public void Jump(ref float currentAirVelocity, ref float jumpPower)
