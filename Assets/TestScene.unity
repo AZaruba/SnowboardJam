@@ -1037,7 +1037,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FollowDistance: 3
   FollowHeight: 2
-  OffsetVector: {x: 0, y: 0, z: 0}
+  OffsetVector: {x: 0, y: 2, z: -3}
   TargetTransform: {fileID: 734568625}
 --- !u!114 &745530434
 MonoBehaviour:

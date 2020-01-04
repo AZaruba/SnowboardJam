@@ -86,11 +86,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_airMachine.Act();
 
         EngineUpdate();
-
-        debugAccessor.DisplayState("Current State: ", c_turnMachine.GetCurrentState());
-        debugAccessor.DisplayFloat("Current Crash Timer", c_playerData.f_currentCrashTimer);
-        debugAccessor.DisplayVector3("Current Down", c_playerData.v_currentDown);
-        debugAccessor.DisplayVector3("Current Position", c_playerData.v_currentPosition, 1);
 	}
 
     /// <summary>

@@ -6,13 +6,13 @@ public class FollowCartridge {
 
     public void ApproachTarget(ref Vector3 subjectPos, Vector3 destPos, float inertia = 0.5f)
     {
-        subjectPos = Vector3.Lerp(subjectPos, destPos, Time.deltaTime);
+        subjectPos = Vector3.Lerp(subjectPos, destPos, inertia);
     }
 
     public void LeaveTarget(ref Vector3 subjectPos, Vector3 destPos, float inertia = 0.5f)
     {
         Vector3 relativeDestination = subjectPos - destPos;
-        subjectPos = Vector3.Lerp(subjectPos, relativeDestination, Time.deltaTime);
+        subjectPos = Vector3.Lerp(subjectPos, relativeDestination, inertia);
     }
 
     /// <summary>

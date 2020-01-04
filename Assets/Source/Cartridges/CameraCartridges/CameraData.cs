@@ -20,6 +20,8 @@ public class CameraData : MonoBehaviour {
     private Vector3 TargetDirection;
 
     private Vector3 SurfaceBelowCameraPosition;
+
+    private Quaternion TargetRotation;
     #endregion
 
     #region SerializedProperties
@@ -83,6 +85,12 @@ public class CameraData : MonoBehaviour {
     {
         get { return TargetDirection; }
         set { TargetDirection = value; }
+    }
+
+    public Quaternion q_targetRotation
+    {
+        get { return TargetRotation; }
+        set { TargetRotation = value; }
     }
 
     public Vector3 v_surfaceBelowCameraPosition
