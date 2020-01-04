@@ -4,124 +4,221 @@ using UnityEngine;
 
 public class PlayerData : MonoBehaviour {
     
+    // TODO: break out data into multiple piles similar to state machines
     #region Members
-    [SerializeField] private float f_topSpeed;
-    [SerializeField] private float f_acceleration;
-    [SerializeField] private float f_turnSpeed;
-    [SerializeField] private float f_jumpPower;
-    [SerializeField] private float f_gravityFactor;
+    [SerializeField] private float TopSpeed;
+    [SerializeField] private float Acceleration;
+    [SerializeField] private float BrakePower;
+    [SerializeField] private float TurnSpeed;
+    [SerializeField] private float JumpPower;
+    [SerializeField] private float BaseJumpPower;
+    [SerializeField] private float JumpChargeRate;
+    [SerializeField] private float GravityFactor;
+    [SerializeField] private float TerminalVelocity;
+    [SerializeField] private float CrashRecoveryTime;
 
-    private float f_currentSpeed;
-    private float f_currentJumpPower;
-    private float f_currentAirVelocity;
+    private float CurrentSpeed;
+    private float CurrentAirVelocity;
+    private float CurrentJumpCharge;
+    private float CrashTimer;
+    private float CurrentRaycastDistance;
+    private float CurrentForwardRaycastDistance;
 
-    private Vector3 v_currentPosition;
-    private Vector3 v_currentDirection;
-    private Vector3 v_currentNormal;
+    private Vector3 CurrentPosition;
+    private Vector3 CurrentDirection;
+    private Vector3 CurrentNormal;
+    private Vector3 CurrentDown;
 
-    private Quaternion q_bufferedRotation;
+    private Quaternion CurrentRotation;
     #endregion
 
     #region EngineMembers
-
-    private float f_inputAxisTurn { get; set; }
-    private Vector3 v_surfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
-    private Vector3 v_surfaceAttachPoint { get; set; }
+    [SerializeField] private float RaycastDistance;
+    [SerializeField] private float ForwardRaycastDistance;
+    private bool JumpBtnPressed;
+    private bool ObstacleInRange;
+    private float InputAxisTurn { get; set; }
+    private float InputAxisLVert;
+    private Vector3 SurfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
+    private Vector3 SurfaceAttachPoint { get; set; }
     #endregion
 
     #region SerializedProperties
-    public float TopSpeed
+    public float f_topSpeed
     {
-        get { return f_topSpeed; }
-        set { f_topSpeed = value; }
+        get { return TopSpeed; }
+        set { TopSpeed = value; }
     }
 
-    public float Acceleration
+    public float f_acceleration
     {
-        get { return f_acceleration; }
-        set { f_acceleration = value; }
+        get { return Acceleration; }
+        set { Acceleration = value; }
     }
 
-    public float TurnSpeed
+    public float f_brakePower
     {
-        get { return f_turnSpeed; }
-        set { f_turnSpeed = value; }
+        get { return BrakePower; }
+        set { BrakePower = value; }
     }
 
-    public float JumpPower
+    public float f_turnSpeed
     {
-        get { return f_jumpPower; }
-        set { f_jumpPower = value; }
+        get { return TurnSpeed; }
+        set { TurnSpeed = value; }
     }
 
-    public float Gravity
+    public float f_jumpPower
     {
-        get { return f_gravityFactor; }
-        set { f_gravityFactor = value; }
+        get { return JumpPower; }
+        set { JumpPower = value; }
+    }
+
+    public float f_baseJumpPower
+    {
+        get { return BaseJumpPower; }
+        set { BaseJumpPower = value; }
+    }
+
+    public float f_jumpChargeRate
+    {
+        get { return JumpChargeRate; }
+        set { JumpChargeRate = value; }
+    }
+
+    public float f_gravity
+    {
+        get { return GravityFactor; }
+        set { GravityFactor = value; }
+    }
+
+    public float f_terminalVelocity
+    {
+        get { return TerminalVelocity; }
+        set { TerminalVelocity = value; }
+    }
+
+    public float f_raycastDistance
+    {
+        get { return RaycastDistance; }
+        set { RaycastDistance = value; }
+    }
+
+    public float f_forwardRaycastDistance
+    {
+        get { return ForwardRaycastDistance; }
+        set { ForwardRaycastDistance = value; }
+    }
+
+    public float f_currentRaycastDistance
+    {
+        get { return CurrentRaycastDistance; }
+        set { CurrentRaycastDistance = value; }
+    }
+
+    public float f_currentForwardRaycastDistance
+    {
+        get { return CurrentForwardRaycastDistance; }
+        set { CurrentForwardRaycastDistance = value; }
+    }
+
+    public float f_crashRecoveryTime
+    {
+        get { return CrashRecoveryTime; }
+        set { CrashRecoveryTime = value; }
     }
     #endregion
     #region SerializedActives
-    public float CurrentSpeed
+    public float f_currentSpeed
     {
-        get { return f_currentSpeed; }
-        set { f_currentSpeed = value; }
+        get { return CurrentSpeed; }
+        set { CurrentSpeed = value; }
     }
 
-    public float CurrentJumpPower
+    public float f_currentJumpCharge
     {
-        get { return f_currentJumpPower; }
-        set { f_currentJumpPower = value; }
+        get { return CurrentJumpCharge; }
+        set { CurrentJumpCharge = value; }
     }
 
-    public float CurrentAirVelocity
+    public float f_currentAirVelocity
     {
-        get { return f_currentAirVelocity; }
-        set { f_currentAirVelocity = value; }
+        get { return CurrentAirVelocity; }
+        set { CurrentAirVelocity = value; }
+    }
+
+    public float f_currentCrashTimer
+    {
+        get { return CrashTimer; }
+        set { CrashTimer = value; }
     }
     #endregion
     #region Vectors
-    public Vector3 CurrentPosition
+    public Vector3 v_currentPosition
     {
-        get { return v_currentPosition; }
-        set { v_currentPosition = value; }
+        get { return CurrentPosition; }
+        set { CurrentPosition = value; }
     }
 
-    public Vector3 CurrentDirection
+    public Vector3 v_currentDirection
     {
-        get { return v_currentDirection; }
-        set { v_currentDirection = value; }
+        get { return CurrentDirection; }
+        set { CurrentDirection = value; }
     }
 
-    public Vector3 CurrentNormal
+    public Vector3 v_currentNormal
     {
-        get { return v_currentNormal; }
-        set { v_currentNormal = value; }
+        get { return CurrentNormal; }
+        set { CurrentNormal = value; }
+    }
+
+    public Vector3 v_currentDown
+    {
+        get { return CurrentDown; }
+        set { CurrentDown = value; }
     }
     #endregion
     #region Quaternions
-    public Quaternion RotationBuffer
+    public Quaternion q_currentRotation
     {
-        get { return q_bufferedRotation; }
-        set { q_bufferedRotation = value; }
+        get { return CurrentRotation; }
+        set { CurrentRotation = value; }
     }
     #endregion
     #region IOProperties
-    public float InputAxisTurn
+    public bool b_jumpBtnPressed
     {
-        get { return f_inputAxisTurn; }
-        set { f_inputAxisTurn = value; }
+        get { return JumpBtnPressed; }
+        set { JumpBtnPressed = value; }
     }
 
-    public Vector3 CurrentSurfaceNormal
+    public bool b_obstacleInRange
     {
-        get { return v_surfaceNormal; }
-        set { v_surfaceNormal = value; }
+        get { return ObstacleInRange; }
+        set { ObstacleInRange = value; }
+    }
+    public float f_inputAxisTurn
+    {
+        get { return InputAxisTurn; }
+        set { InputAxisTurn = value; }
     }
 
-    public Vector3 CurrentSurfaceAttachPoint
+    public float f_inputAxisLVert
     {
-        get { return v_surfaceAttachPoint; }
-        set { v_surfaceAttachPoint = value; }
+        get { return InputAxisLVert; }
+        set { InputAxisLVert = value; }
+    }
+
+    public Vector3 v_currentSurfaceNormal
+    {
+        get { return SurfaceNormal; }
+        set { SurfaceNormal = value; }
+    }
+
+    public Vector3 v_currentSurfaceAttachPoint
+    {
+        get { return SurfaceAttachPoint; }
+        set { SurfaceAttachPoint = value; }
     }
     #endregion
 }
