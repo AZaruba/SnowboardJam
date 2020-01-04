@@ -38,6 +38,7 @@ public class StationaryState : iState {
         c_playerData.v_currentDirection = currentForward.normalized;
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.q_currentRotation = currentRotation;
+        c_playerData.f_currentSpeed = Constants.ZERO_F;
         c_playerData.f_currentCrashTimer = Constants.ZERO_F;
         // surface normal does not need to be updated
     }
