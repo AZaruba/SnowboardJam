@@ -128,9 +128,10 @@ public class CameraController : MonoBehaviour, iEntityController {
     {
         Vector3 targetPosition = c_cameraData.t_targetTransform.position;
         Vector3 targetDirection = c_cameraData.t_targetTransform.forward;
+        Quaternion targetRotation = c_cameraData.t_targetTransform.rotation;
 
         Vector3 cameraPosition = targetPosition -
-            (targetDirection.normalized * c_cameraData.f_followDistance) +
+            targetRotation * (targetDirection.normalized * c_cameraData.f_followDistance) +
             (Vector3.up * c_cameraData.f_followHeight);
 
         c_cameraData.v_currentPosition = cameraPosition;
