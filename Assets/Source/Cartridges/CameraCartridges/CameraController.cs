@@ -48,11 +48,16 @@ public class CameraController : MonoBehaviour, iEntityController {
     {
         transform.position = c_cameraData.v_currentPosition;
         transform.forward = c_cameraData.v_currentDirection;
+
+        debugAccessor.DisplayState("Current State: ", c_StateMachine.GetCurrentState());
+        debugAccessor.DisplayVector3("Offset Vector", c_cameraData.v_offsetVector);
+        debugAccessor.DisplayVector3("Target Position", c_cameraData.q_targetRotation * c_cameraData.v_offsetVector, 1);
     }
 
     public void EnginePull()
     {
         c_cameraData.v_targetPosition = c_cameraData.t_targetTransform.position;
+        c_cameraData.q_targetRotation = c_cameraData.t_targetTransform.rotation;
 
         RaycastHit hitInfo;
         if (Physics.Raycast(c_cameraData.v_currentPosition, Vector3.down, out hitInfo, c_cameraData.f_followHeight))
@@ -123,9 +128,10 @@ public class CameraController : MonoBehaviour, iEntityController {
     {
         Vector3 targetPosition = c_cameraData.t_targetTransform.position;
         Vector3 targetDirection = c_cameraData.t_targetTransform.forward;
+        Quaternion targetRotation = c_cameraData.t_targetTransform.rotation;
 
         Vector3 cameraPosition = targetPosition -
-            (targetDirection.normalized * c_cameraData.f_followDistance) +
+            targetRotation * (targetDirection.normalized * c_cameraData.f_followDistance) +
             (Vector3.up * c_cameraData.f_followHeight);
 
         c_cameraData.v_currentPosition = cameraPosition;
