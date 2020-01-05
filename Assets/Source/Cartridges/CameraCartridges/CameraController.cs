@@ -47,12 +47,7 @@ public class CameraController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_cameraData.v_currentPosition;
-        transform.forward = c_cameraData.v_currentDirection;
-
-        debugAccessor.DisplayState("Current State: ", c_StateMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Offset Vector", c_cameraData.v_offsetVector);
-        debugAccessor.DisplayVector3("Target Position", c_cameraData.q_targetRotation * c_cameraData.v_offsetVector, 1);
-    }
+        transform.forward = c_cameraData.v_currentDirection;}
 
     public void EnginePull()
     {

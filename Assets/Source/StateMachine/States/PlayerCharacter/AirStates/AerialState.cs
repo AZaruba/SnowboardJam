@@ -24,14 +24,17 @@ public class AerialState : iState {
         float currentSpeed = c_playerData.f_currentSpeed;
 
         Vector3 currentDir = c_playerData.v_currentDirection;
+        Vector3 currentAirDir = c_playerData.v_currentAirDirection;
         Vector3 position = c_playerData.v_currentPosition;
 
         cart_gravity.UpdateAirVelocity(ref airVelocity, ref gravity, ref terminalVelocity);
         cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
         position.y += airVelocity * Time.deltaTime;
+        currentAirDir.y = airVelocity;
 
         c_playerData.v_currentPosition = position;
         c_playerData.f_currentAirVelocity = airVelocity;
+        c_playerData.v_currentAirDirection = currentAirDir;
         if (airVelocity < Constants.ZERO_F)
         {
             c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity) * Time.deltaTime;
@@ -54,8 +57,13 @@ public class AerialState : iState {
         // scale velocity by the change in magnitude so we don't go faster in a direction
         float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
 
+        Vector3 airDirection = previousDirection;
+        airDirection.y = airVelocity;
+        airDirection.Normalize();
+
         c_playerData.f_currentAirVelocity = airVelocity;
         c_playerData.v_currentDirection = previousDirection;
+        c_playerData.v_currentAirDirection = airDirection;
         c_playerData.f_currentSpeed *= magnitudeFactor;
         c_playerData.v_currentDown = Vector3.down;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
@@ -65,6 +73,7 @@ public class AerialState : iState {
     {
         if (cmd == Command.LAND)
         {
+            c_playerData.v_currentDirection = c_playerData.v_currentAirDirection;
             return StateRef.GROUNDED;
         }
         return StateRef.AIRBORNE;

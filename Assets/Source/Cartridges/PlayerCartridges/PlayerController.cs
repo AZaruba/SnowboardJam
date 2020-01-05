@@ -94,7 +94,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_playerData.v_currentPosition;
-        transform.rotation = c_playerData.q_currentRotation; // transform.Rotate(c_playerData.q_currentRotation.eulerAngles);   
+        transform.rotation = c_playerData.q_currentRotation;
+
+        debugAccessor.DisplayVector3("Current AirVector", c_playerData.v_currentAirDirection);
     }
 
     /// <summary>
@@ -205,6 +207,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
         c_playerData.v_currentDirection = transform.forward;
+        c_playerData.v_currentAirDirection = transform.forward;
         c_playerData.v_currentNormal = transform.up;
         c_playerData.v_currentDown = transform.up * -1;
         c_playerData.f_currentSpeed = Constants.ZERO_F;
