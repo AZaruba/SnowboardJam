@@ -26,6 +26,7 @@ public class JumpingState : iState
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentAirDir = c_playerData.v_currentAirDirection;
         Vector3 position = c_playerData.v_currentPosition;
+        Vector3 oldPosition = position;
 
         cart_gravity.UpdateAirVelocity(ref airVelocity, ref gravity, ref terminalVelocity);
         cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
@@ -35,7 +36,7 @@ public class JumpingState : iState
         c_playerData.v_currentPosition = position;
         c_playerData.f_currentAirVelocity = airVelocity;
 
-        c_playerData.v_currentAirDirection = currentAirDir;
+        c_playerData.v_currentAirDirection = Vector3.Normalize(position - oldPosition);
         if (airVelocity < Constants.ZERO_F)
         {
             c_playerData.f_currentRaycastDistance = (Mathf.Abs(airVelocity) * Time.deltaTime) + c_playerData.f_raycastDistance;
@@ -56,6 +57,7 @@ public class JumpingState : iState
         previousDirection.y = Constants.ZERO_F; // "flatten direction"
 
         // scale velocity by the change in magnitude so we don't go faster in a direction
+        // this needs tuning
         float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
 
         Vector3 airDirection = previousDirection;
@@ -74,6 +76,11 @@ public class JumpingState : iState
     {
         if (cmd == Command.LAND)
         {
+            if (Vector3.Distance(c_playerData.v_currentAirDirection.normalized * -1, c_playerData.v_currentSurfaceNormal) > 0.05f)
+            {
+                c_playerData.v_currentDirection = c_playerData.v_currentAirDirection;
+            }
+            c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
             return StateRef.GROUNDED;
         }
         return StateRef.JUMPING;

@@ -24,17 +24,17 @@ public class AerialState : iState {
         float currentSpeed = c_playerData.f_currentSpeed;
 
         Vector3 currentDir = c_playerData.v_currentDirection;
-        Vector3 currentAirDir = c_playerData.v_currentAirDirection;
         Vector3 position = c_playerData.v_currentPosition;
+        Vector3 oldPosition = position;
 
         cart_gravity.UpdateAirVelocity(ref airVelocity, ref gravity, ref terminalVelocity);
         cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
         position.y += airVelocity * Time.deltaTime;
-        currentAirDir.y = airVelocity;
 
         c_playerData.v_currentPosition = position;
         c_playerData.f_currentAirVelocity = airVelocity;
-        c_playerData.v_currentAirDirection = currentAirDir;
+        c_playerData.v_currentAirDirection = Vector3.Normalize(position - oldPosition);
+        c_playerData.v_currentDown = c_playerData.v_currentAirDirection;
         if (airVelocity < Constants.ZERO_F)
         {
             c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity) * Time.deltaTime;
@@ -73,7 +73,12 @@ public class AerialState : iState {
     {
         if (cmd == Command.LAND)
         {
-            c_playerData.v_currentDirection = c_playerData.v_currentAirDirection;
+            if (Vector3.Distance(c_playerData.v_currentAirDirection.normalized * -1,c_playerData.v_currentSurfaceNormal) > 0.05f)
+            {
+                c_playerData.v_currentDirection = c_playerData.v_currentAirDirection;
+            }
+            c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
+            Debug.Log("landing");
             return StateRef.GROUNDED;
         }
         return StateRef.AIRBORNE;
