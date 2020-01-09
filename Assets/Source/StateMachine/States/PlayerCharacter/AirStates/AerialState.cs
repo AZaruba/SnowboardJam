@@ -50,9 +50,9 @@ public class AerialState : iState {
         Vector3 previousDirection = c_playerData.v_currentDirection;
         float currentVelocity = c_playerData.f_currentSpeed;
         float airVelocity = previousDirection.normalized.y * currentVelocity;
-        float jumpCharge = c_playerData.f_currentJumpCharge;
 
         previousDirection.y = Constants.ZERO_F; // "flatten direction"
+        Debug.Log("eh");
 
         // scale velocity by the change in magnitude so we don't go faster in a direction
         float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
@@ -78,7 +78,6 @@ public class AerialState : iState {
                 c_playerData.v_currentDirection = c_playerData.v_currentAirDirection;
             }
             c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
-            Debug.Log("landing");
             return StateRef.GROUNDED;
         }
         return StateRef.AIRBORNE;

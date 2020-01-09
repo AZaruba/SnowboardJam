@@ -50,14 +50,26 @@ public class JumpingState : iState
     public void TransitionAct()
     {
         Vector3 previousDirection = c_playerData.v_currentDirection;
+        Vector3 currentUp = c_playerData.v_currentNormal;
         float currentVelocity = c_playerData.f_currentSpeed;
         float jumpCharge = c_playerData.f_currentJumpCharge;
-        float airVelocity = (previousDirection.normalized.y * currentVelocity) + jumpCharge;
+        float airVelocity;
+
+        Vector3 currentVector = previousDirection * currentVelocity;
+
+        // calculate jump vector
+        currentUp.Normalize();
+        currentUp *= jumpCharge;
+
+        currentVector = currentVector + currentUp;
+        currentVector.Normalize();
+        Debug.Log(currentVector);
+        airVelocity = currentVector.y + currentUp.y;
 
         previousDirection.y = Constants.ZERO_F; // "flatten direction"
+        currentUp.y = Constants.ZERO_F;
 
         // scale velocity by the change in magnitude so we don't go faster in a direction
-        // this needs tuning
         float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
 
         Vector3 airDirection = previousDirection;
@@ -65,7 +77,7 @@ public class JumpingState : iState
         airDirection.Normalize();
 
         c_playerData.f_currentAirVelocity = airVelocity;
-        c_playerData.v_currentDirection = previousDirection.normalized;
+        c_playerData.v_currentDirection = currentVector;
         c_playerData.v_currentAirDirection = airDirection;
         c_playerData.f_currentSpeed *= magnitudeFactor;
         c_playerData.v_currentDown = Vector3.down;
