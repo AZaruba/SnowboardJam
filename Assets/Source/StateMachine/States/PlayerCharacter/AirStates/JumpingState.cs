@@ -92,6 +92,8 @@ public class JumpingState : iState
          *  2) The jump direction should be rolled to be the right angle AROUND the forward
          *  3) The aerial velocity is no big deal, the direction should adapt correctly
          */
+        currentAirVelocity = jumpCharge;
+
 
         c_playerData.v_currentDirection = nextDirection;
         c_playerData.v_currentAirDirection = airDirection;
@@ -107,7 +109,7 @@ public class JumpingState : iState
         {
             if (Vector3.Distance(c_playerData.v_currentAirDirection.normalized * -1, c_playerData.v_currentSurfaceNormal) > 0.05f)
             {
-                c_playerData.v_currentDirection = c_playerData.v_currentAirDirection;
+                c_playerData.v_currentDirection = c_playerData.v_currentAirDirection.normalized;
             }
             c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
             return StateRef.GROUNDED;

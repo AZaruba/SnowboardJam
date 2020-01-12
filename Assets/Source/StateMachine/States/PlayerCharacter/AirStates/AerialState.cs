@@ -35,7 +35,7 @@ public class AerialState : iState {
         c_playerData.f_currentAirVelocity = airVelocity;
         c_playerData.v_currentAirDirection = Vector3.Normalize(position - oldPosition);
         c_playerData.v_currentDown = c_playerData.v_currentAirDirection;
-        if (airVelocity < Constants.ZERO_F)
+        if (airVelocity <= Constants.ZERO_F)
         {
             c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity) * Time.deltaTime;
         }
@@ -49,21 +49,19 @@ public class AerialState : iState {
     {
         Vector3 previousDirection = c_playerData.v_currentDirection;
         float currentVelocity = c_playerData.f_currentSpeed;
-        float airVelocity = previousDirection.normalized.y * currentVelocity;
+        float airVelocity = previousDirection.y * currentVelocity;
+        Vector3 airDirection = previousDirection;
+        airDirection.Normalize();
 
         previousDirection.y = Constants.ZERO_F; // "flatten direction"
 
         // scale velocity by the change in magnitude so we don't go faster in a direction
-        float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
-
-        Vector3 airDirection = previousDirection;
-        airDirection.y = airVelocity;
-        airDirection.Normalize();
+        // float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
 
         c_playerData.f_currentAirVelocity = airVelocity;
-        c_playerData.v_currentDirection = previousDirection;
+        c_playerData.v_currentDirection = previousDirection.normalized;
         c_playerData.v_currentAirDirection = airDirection;
-        c_playerData.f_currentSpeed *= magnitudeFactor;
+        c_playerData.f_currentSpeed *= previousDirection.magnitude;
         c_playerData.v_currentDown = Vector3.down;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
     }
@@ -74,7 +72,7 @@ public class AerialState : iState {
         {
             if (Vector3.Distance(c_playerData.v_currentAirDirection.normalized * -1,c_playerData.v_currentSurfaceNormal) > 0.05f)
             {
-                c_playerData.v_currentDirection = c_playerData.v_currentAirDirection;
+                c_playerData.v_currentDirection = c_playerData.v_currentAirDirection.normalized;
             }
             c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
             return StateRef.GROUNDED;

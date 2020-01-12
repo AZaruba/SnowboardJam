@@ -98,6 +98,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Current GroundState", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Current AirVector", c_playerData.v_currentAirDirection);
+        debugAccessor.DisplayVector3("Current DirVector", c_playerData.v_currentDirection, 1);
         debugAccessor.DisplayFloat("Current Velocity", c_playerData.f_currentSpeed);
     }
 
@@ -216,6 +217,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.f_currentSpeed = Constants.ZERO_F;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentForwardRaycastDistance = c_playerData.f_forwardRaycastDistance;
+        c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
         c_playerData.b_obstacleInRange = false;
     }
     #endregion
