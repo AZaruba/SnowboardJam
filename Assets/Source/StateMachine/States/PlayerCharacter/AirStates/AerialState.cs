@@ -52,7 +52,6 @@ public class AerialState : iState {
         float airVelocity = previousDirection.normalized.y * currentVelocity;
 
         previousDirection.y = Constants.ZERO_F; // "flatten direction"
-        Debug.Log("eh");
 
         // scale velocity by the change in magnitude so we don't go faster in a direction
         float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;

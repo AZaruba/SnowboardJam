@@ -55,7 +55,7 @@ public class RidingState : iState {
 
     public StateRef GetNextState(Command cmd)
     {
-        if (cmd == Command.FALL)
+        if (cmd == Command.FALL || cmd == Command.JUMP)
         {
             return StateRef.AIRBORNE;
         }

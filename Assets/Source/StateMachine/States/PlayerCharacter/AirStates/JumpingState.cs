@@ -49,39 +49,56 @@ public class JumpingState : iState
 
     public void TransitionAct()
     {
+        /* Rationale:
+         * We want to have the jump up vector be rotated AROUND the forward axis. The reason for this
+         * is the player should still be able to jump straight up for game feel, but when traveling with any
+         * amount of roll (i.e. along a platform rotated 45 degrees in the forward direction), the jump
+         * should be along the roll axis.
+         *
+         * How do we solve the "quarter pipe" conundrum?
+         * - is it just the angle between "up" and the current normal?
+         * - ideally it would be the "roll," which would be the angle between global
+         *   up and the current up around the forward axis.
+         *
+         * Implementation:
+         * - Project the two vectors (global up and current normal) onto the
+         *   plane formed by the current direction, then take the angle between
+         *      - CHECK: special case for the current direction as up (making global up zero)
+         *
+         */
         Vector3 previousDirection = c_playerData.v_currentDirection;
-        Vector3 currentUp = c_playerData.v_currentNormal;
-        float currentVelocity = c_playerData.f_currentSpeed;
+        Vector3 currentNormal = c_playerData.v_currentNormal;
+        float currentAirVelocity = Constants.ZERO_F;
         float jumpCharge = c_playerData.f_currentJumpCharge;
-        float airVelocity;
+        float currentVelocity = c_playerData.f_currentSpeed;
 
-        Vector3 currentVector = previousDirection * currentVelocity;
+        Vector3 nextDirection = previousDirection;
+        Vector3 airDirection = Vector3.zero;
+        Vector3 airNormal;
 
-        // calculate jump vector
-        currentUp.Normalize();
-        currentUp *= jumpCharge;
+        /* if we're going upward, use global up. If we're going downward, use local up
+         */
+        if (previousDirection.y < 0.0f)
+        {
+            airNormal = currentNormal;
+        }
+        else
+        {
+            airNormal = Vector3.up;
+        }
 
-        currentVector = currentVector + currentUp;
-        currentVector.Normalize();
-        Debug.Log(currentVector);
-        airVelocity = currentVector.y + currentUp.y;
+        /* Making this work:
+         *  1) The jump charge value should be the y component of the vector + the jumpcharge
+         *  2) The jump direction should be rolled to be the right angle AROUND the forward
+         *  3) The aerial velocity is no big deal, the direction should adapt correctly
+         */
 
-        previousDirection.y = Constants.ZERO_F; // "flatten direction"
-        currentUp.y = Constants.ZERO_F;
-
-        // scale velocity by the change in magnitude so we don't go faster in a direction
-        float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
-
-        Vector3 airDirection = previousDirection;
-        airDirection.y = airVelocity;
-        airDirection.Normalize();
-
-        c_playerData.f_currentAirVelocity = airVelocity;
-        c_playerData.v_currentDirection = currentVector;
+        c_playerData.v_currentDirection = nextDirection;
         c_playerData.v_currentAirDirection = airDirection;
-        c_playerData.f_currentSpeed *= magnitudeFactor;
         c_playerData.v_currentDown = Vector3.down;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
+        c_playerData.f_currentSpeed = currentVelocity;
+        c_playerData.f_currentAirVelocity = currentAirVelocity;
     }
 
     public StateRef GetNextState(Command cmd)

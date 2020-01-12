@@ -181,9 +181,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_airMachine.Execute(Command.CHARGE);
         }
-        else
+        else if (Input.GetKeyUp(KeyCode.Space))
         {
             c_airMachine.Execute(Command.JUMP);
+            c_accelMachine.Execute(Command.JUMP);
         }
 
         if (c_playerData.f_currentCrashTimer > c_playerData.f_crashRecoveryTime)

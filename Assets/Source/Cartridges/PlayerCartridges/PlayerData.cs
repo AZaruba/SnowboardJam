@@ -26,6 +26,7 @@ public class PlayerData : MonoBehaviour {
 
     private Vector3 CurrentPosition;
     private Vector3 CurrentDirection;
+    private Vector3 CurrentModelDirection;
     private Vector3 CurrentAirDirection;
     private Vector3 CurrentNormal;
     private Vector3 CurrentDown;
@@ -165,6 +166,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return CurrentDirection; }
         set { CurrentDirection = value; }
+    }
+
+    public Vector3 v_currentModelDirection
+    {
+        get { return CurrentModelDirection; }
+        set { CurrentModelDirection = value; }
     }
 
     public Vector3 v_currentAirDirection
