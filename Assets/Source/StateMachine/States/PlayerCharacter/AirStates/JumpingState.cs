@@ -68,38 +68,36 @@ public class JumpingState : iState
          */
         Vector3 previousDirection = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
-        float currentAirVelocity = Constants.ZERO_F;
         float jumpCharge = c_playerData.f_currentJumpCharge;
         float currentVelocity = c_playerData.f_currentSpeed;
+        float currentAirVelocity;
 
-        Vector3 nextDirection = previousDirection;
+        Vector3 nextDirection = previousDirection * currentVelocity;
+        nextDirection.y = Constants.ZERO_F;
         Vector3 airDirection = Vector3.zero;
         Vector3 airNormal;
 
         /* if we're going upward, use global up. If we're going downward, use local up
          */
-        if (previousDirection.y < 0.0f)
+        if (previousDirection.y < Constants.ZERO_F)
         {
             airNormal = currentNormal;
+            currentAirVelocity = (jumpCharge + (previousDirection.y * currentVelocity)) * airNormal.y;
+            Debug.Log(currentAirVelocity);
+            currentVelocity += jumpCharge * airNormal.magnitude;
+            nextDirection += Vector3.ProjectOnPlane(airNormal, Vector3.up).normalized * (jumpCharge * airNormal.magnitude);
         }
         else
         {
             airNormal = Vector3.up;
+            currentAirVelocity = jumpCharge + (previousDirection.y * currentVelocity); // what's wrong with the air velocity?
         }
 
-        /* Making this work:
-         *  1) The jump charge value should be the y component of the vector + the jumpcharge
-         *  2) The jump direction should be rolled to be the right angle AROUND the forward
-         *  3) The aerial velocity is no big deal, the direction should adapt correctly
-         */
-        currentAirVelocity = jumpCharge;
-
-
-        c_playerData.v_currentDirection = nextDirection;
-        c_playerData.v_currentAirDirection = airDirection;
+        c_playerData.v_currentDirection = nextDirection.normalized;
+        c_playerData.v_currentAirDirection = airDirection.normalized;
         c_playerData.v_currentDown = Vector3.down;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
-        c_playerData.f_currentSpeed = currentVelocity;
+        c_playerData.f_currentSpeed = Mathf.Min(currentVelocity, c_playerData.f_topSpeed);
         c_playerData.f_currentAirVelocity = currentAirVelocity;
     }
 
@@ -110,6 +108,10 @@ public class JumpingState : iState
             if (Vector3.Distance(c_playerData.v_currentAirDirection.normalized * -1, c_playerData.v_currentSurfaceNormal) > 0.05f)
             {
                 c_playerData.v_currentDirection = c_playerData.v_currentAirDirection.normalized;
+            }
+            else
+            {
+                c_playerData.v_currentDirection = c_playerData.v_currentModelDirection;
             }
             c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
             return StateRef.GROUNDED;

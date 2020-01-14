@@ -32,7 +32,7 @@ public class CameraController : MonoBehaviour, iEntityController {
     /// used for object-level functions (such as translations) and then the
     /// state is updated.
     /// </summary>
-	void Update ()
+	void LateUpdate ()
     {
         // TODO: the camera drags a fair amount behind, what is the reason for this?
         EnginePull();

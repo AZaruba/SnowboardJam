@@ -16,6 +16,8 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float GravityFactor;
     [SerializeField] private float TerminalVelocity;
     [SerializeField] private float CrashRecoveryTime;
+    [SerializeField] private Vector3 BackVectorOffset;
+    [SerializeField] private Vector3 FrontVectorOffset;
 
     private float CurrentSpeed;
     private float CurrentAirVelocity;
@@ -190,6 +192,18 @@ public class PlayerData : MonoBehaviour {
     {
         get { return CurrentDown; }
         set { CurrentDown = value; }
+    }
+
+    public Vector3 v_frontOffset
+    {
+        get { return FrontVectorOffset; }
+        set { FrontVectorOffset = value; }
+    }
+
+    public Vector3 v_backOffset
+    {
+        get { return BackVectorOffset; }
+        set { BackVectorOffset = value; }
     }
     #endregion
     #region Quaternions
