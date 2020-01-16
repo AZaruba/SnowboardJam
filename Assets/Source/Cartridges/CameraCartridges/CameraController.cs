@@ -14,6 +14,9 @@ public class CameraController : MonoBehaviour, iEntityController {
     private FocusCartridge cart_focus;
     private AngleAdjustmentCartridge cart_angle;
     private FollowCartridge cart_follow;
+
+    // TEST REMOVE THIS
+    iMessageClient cl_camera;
     #endregion
 
     /// <summary>
@@ -25,7 +28,12 @@ public class CameraController : MonoBehaviour, iEntityController {
         SetDefaultCameraData();
         InitializeCartridges();
         InitializeStateMachine();
-	}
+
+        cl_camera = new CameraMessageClient();
+        MessageServer.Subscribe(ref cl_camera);
+
+        cl_camera.SendMessage(MessageID.TEST_MSG_TWO);
+    }
 	
     /// <summary>
     /// Update this instance. States perform actions on data, the data is then

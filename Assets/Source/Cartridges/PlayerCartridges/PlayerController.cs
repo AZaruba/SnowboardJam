@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     RaycastHit backHit;
     RaycastHit centerHit;
     RaycastHit forwardHit;
+
+    // TEST REMOVE THIS
+    iMessageClient cl_character;
     #endregion
 
 	/// <summary>
@@ -74,6 +77,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_airMachine.AddState(s_jumping, StateRef.JUMPING);
         c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
         c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
+
+        cl_character = new CharacterMessageClient();
+        MessageServer.Subscribe(ref cl_character);
 	}
 	
 	/// <summary>
@@ -156,6 +162,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         if (c_playerData.f_inputAxisLVert < 0.0f)
         {
             c_accelMachine.Execute(Command.SLOW);
+
+            cl_character.SendMessage(MessageID.TEST_MSG_ONE);
         }
         else
         {
