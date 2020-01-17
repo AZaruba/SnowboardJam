@@ -37,7 +37,7 @@ public class AerialState : iState {
         c_playerData.v_currentDown = c_playerData.v_currentAirDirection;
         if (airVelocity <= Constants.ZERO_F)
         {
-            c_playerData.f_currentRaycastDistance = Mathf.Abs(airVelocity) * Time.deltaTime;
+            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance + Mathf.Abs(airVelocity) * Time.deltaTime;
         }
         else
         {

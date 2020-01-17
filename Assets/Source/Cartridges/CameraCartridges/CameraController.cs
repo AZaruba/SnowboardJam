@@ -50,6 +50,7 @@ public class CameraController : MonoBehaviour, iEntityController {
         c_StateMachine.Act();
 
         EngineUpdate();
+        debugAccessor.DisplayState("Current Camera State", c_StateMachine.GetCurrentState());
     }
 
     public void EngineUpdate()
@@ -138,9 +139,9 @@ public class CameraController : MonoBehaviour, iEntityController {
             (Vector3.up * c_cameraData.f_followHeight);
 
         c_cameraData.v_currentPosition = cameraPosition;
-        c_cameraData.v_currentDirection = targetPosition - cameraPosition;
+        c_cameraData.v_currentDirection = (targetPosition - cameraPosition).normalized;
         c_cameraData.v_targetPosition = targetPosition;
-        c_cameraData.v_targetDirection = targetDirection;
+        c_cameraData.v_targetDirection = targetDirection.normalized;
     }
     #endregion
 }

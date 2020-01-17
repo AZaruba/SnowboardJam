@@ -80,6 +80,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         cl_character = new CharacterMessageClient();
         MessageServer.Subscribe(ref cl_character);
+
+        EnginePull();
 	}
 	
 	/// <summary>
@@ -108,7 +110,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_playerData.q_currentRotation;
 
-        debugAccessor.DisplayState("Current GroundState", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayFloat("Current Velocity", c_playerData.f_currentAirVelocity);
     }
 

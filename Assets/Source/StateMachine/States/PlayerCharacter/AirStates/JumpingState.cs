@@ -43,29 +43,12 @@ public class JumpingState : iState
         }
         else
         {
-            c_playerData.f_currentRaycastDistance = Constants.ZERO_F;
+            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
         }
     }
 
     public void TransitionAct()
     {
-        /* Rationale:
-         * We want to have the jump up vector be rotated AROUND the forward axis. The reason for this
-         * is the player should still be able to jump straight up for game feel, but when traveling with any
-         * amount of roll (i.e. along a platform rotated 45 degrees in the forward direction), the jump
-         * should be along the roll axis.
-         *
-         * How do we solve the "quarter pipe" conundrum?
-         * - is it just the angle between "up" and the current normal?
-         * - ideally it would be the "roll," which would be the angle between global
-         *   up and the current up around the forward axis.
-         *
-         * Implementation:
-         * - Project the two vectors (global up and current normal) onto the
-         *   plane formed by the current direction, then take the angle between
-         *      - CHECK: special case for the current direction as up (making global up zero)
-         *
-         */
         Vector3 previousDirection = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         float jumpCharge = c_playerData.f_currentJumpCharge;
@@ -77,19 +60,15 @@ public class JumpingState : iState
         Vector3 airDirection = Vector3.zero;
         Vector3 airNormal;
 
-        /* if we're going upward, use global up. If we're going downward, use local up
-         */
         if (previousDirection.y < Constants.ZERO_F)
         {
             airNormal = currentNormal;
             currentAirVelocity = (jumpCharge + (previousDirection.y * currentVelocity)) * airNormal.y;
-            Debug.Log(currentAirVelocity);
             currentVelocity += jumpCharge * airNormal.magnitude;
             nextDirection += Vector3.ProjectOnPlane(airNormal, Vector3.up).normalized * (jumpCharge * airNormal.magnitude);
         }
         else
         {
-            airNormal = Vector3.up;
             currentAirVelocity = jumpCharge + (previousDirection.y * currentVelocity); // what's wrong with the air velocity?
         }
 

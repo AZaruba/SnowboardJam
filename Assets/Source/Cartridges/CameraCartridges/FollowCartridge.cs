@@ -11,8 +11,7 @@ public class FollowCartridge {
 
     public void LeaveTarget(ref Vector3 subjectPos, Vector3 destPos, float inertia = 0.5f)
     {
-        Vector3 relativeDestination = subjectPos - destPos;
-        subjectPos = Vector3.Lerp(subjectPos, relativeDestination, inertia);
+        subjectPos = Vector3.Lerp(destPos, subjectPos, inertia);
     }
 
     /// <summary>
