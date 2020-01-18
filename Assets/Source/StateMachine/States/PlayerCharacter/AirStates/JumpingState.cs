@@ -24,48 +24,80 @@ public class JumpingState : iState
         float terminalVelocity = c_playerData.f_terminalVelocity;
         float currentSpeed = c_playerData.f_currentSpeed;
         Vector3 currentDir = c_playerData.v_currentDirection;
+        Vector3 currentAirDir = c_playerData.v_currentAirDirection;
         Vector3 position = c_playerData.v_currentPosition;
+        Vector3 oldPosition = position;
 
         cart_gravity.UpdateAirVelocity(ref airVelocity, ref gravity, ref terminalVelocity);
         cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
         position.y += airVelocity * Time.deltaTime;
+        currentAirDir.y = airVelocity;
 
         c_playerData.v_currentPosition = position;
         c_playerData.f_currentAirVelocity = airVelocity;
+
+        c_playerData.v_currentAirDirection = Vector3.Normalize(position - oldPosition);
         if (airVelocity < Constants.ZERO_F)
         {
             c_playerData.f_currentRaycastDistance = (Mathf.Abs(airVelocity) * Time.deltaTime) + c_playerData.f_raycastDistance;
         }
         else
         {
-            c_playerData.f_currentRaycastDistance = Constants.ZERO_F;
+            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance - (airVelocity * Time.deltaTime);
         }
     }
 
     public void TransitionAct()
     {
         Vector3 previousDirection = c_playerData.v_currentDirection;
-        float currentVelocity = c_playerData.f_currentSpeed;
+        Vector3 currentNormal = c_playerData.v_currentNormal;
         float jumpCharge = c_playerData.f_currentJumpCharge;
-        float airVelocity = (previousDirection.normalized.y * currentVelocity) + jumpCharge;
+        float currentVelocity = c_playerData.f_currentSpeed;
+        float currentAirVelocity;
 
-        previousDirection.y = Constants.ZERO_F; // "flatten direction"
+        Vector3 nextDirection = previousDirection * currentVelocity;
+        nextDirection.y = Constants.ZERO_F;
+        Vector3 airDirection = Vector3.zero;
+        Vector3 airNormal;
 
-        // scale velocity by the change in magnitude so we don't go faster in a direction
-        float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
+        if (previousDirection.y < Constants.ZERO_F)
+        {
+            airNormal = currentNormal;
+            currentAirVelocity = (jumpCharge + (previousDirection.y * currentVelocity)) * airNormal.y;
+            currentVelocity += jumpCharge * airNormal.magnitude;
+            nextDirection += Vector3.ProjectOnPlane(airNormal, Vector3.up).normalized * (jumpCharge * airNormal.magnitude);
+        }
+        else
+        {
+            currentAirVelocity = jumpCharge + (previousDirection.y * currentVelocity); // what's wrong with the air velocity?
+        }
 
-        c_playerData.f_currentAirVelocity = airVelocity;
-        c_playerData.v_currentDirection = previousDirection;
-        c_playerData.f_currentSpeed *= magnitudeFactor;
+        c_playerData.v_currentDirection = nextDirection.normalized;
+        c_playerData.v_currentAirDirection = airDirection.normalized;
         c_playerData.v_currentDown = Vector3.down;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
+        c_playerData.f_currentSpeed = Mathf.Min(currentVelocity, c_playerData.f_topSpeed);
+        c_playerData.f_currentAirVelocity = currentAirVelocity;
     }
 
     public StateRef GetNextState(Command cmd)
     {
         if (cmd == Command.LAND)
         {
+            if (Vector3.Distance(c_playerData.v_currentAirDirection.normalized * -1, c_playerData.v_currentSurfaceNormal) > 0.05f)
+            {
+                c_playerData.v_currentDirection = c_playerData.v_currentAirDirection.normalized;
+            }
+            else
+            {
+                c_playerData.v_currentDirection = c_playerData.v_currentModelDirection;
+            }
+            c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
             return StateRef.GROUNDED;
+        }
+        if (cmd == Command.CRASH)
+        {
+            return StateRef.DISABLED;
         }
         return StateRef.JUMPING;
     }

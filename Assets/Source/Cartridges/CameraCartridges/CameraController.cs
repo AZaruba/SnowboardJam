@@ -14,6 +14,9 @@ public class CameraController : MonoBehaviour, iEntityController {
     private FocusCartridge cart_focus;
     private AngleAdjustmentCartridge cart_angle;
     private FollowCartridge cart_follow;
+
+    // TEST REMOVE THIS
+    iMessageClient cl_camera;
     #endregion
 
     /// <summary>
@@ -25,14 +28,19 @@ public class CameraController : MonoBehaviour, iEntityController {
         SetDefaultCameraData();
         InitializeCartridges();
         InitializeStateMachine();
-	}
+
+        cl_camera = new CameraMessageClient();
+        MessageServer.Subscribe(ref cl_camera);
+
+        cl_camera.SendMessage(MessageID.TEST_MSG_TWO);
+    }
 	
     /// <summary>
     /// Update this instance. States perform actions on data, the data is then
     /// used for object-level functions (such as translations) and then the
     /// state is updated.
     /// </summary>
-	void Update ()
+	void LateUpdate ()
     {
         // TODO: the camera drags a fair amount behind, what is the reason for this?
         EnginePull();
@@ -47,12 +55,12 @@ public class CameraController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_cameraData.v_currentPosition;
-        transform.forward = c_cameraData.v_currentDirection;
-    }
+        transform.forward = c_cameraData.v_currentDirection;}
 
     public void EnginePull()
     {
         c_cameraData.v_targetPosition = c_cameraData.t_targetTransform.position;
+        c_cameraData.q_targetRotation = c_cameraData.t_targetTransform.rotation;
 
         RaycastHit hitInfo;
         if (Physics.Raycast(c_cameraData.v_currentPosition, Vector3.down, out hitInfo, c_cameraData.f_followHeight))
@@ -123,15 +131,16 @@ public class CameraController : MonoBehaviour, iEntityController {
     {
         Vector3 targetPosition = c_cameraData.t_targetTransform.position;
         Vector3 targetDirection = c_cameraData.t_targetTransform.forward;
+        Quaternion targetRotation = c_cameraData.t_targetTransform.rotation;
 
         Vector3 cameraPosition = targetPosition -
-            (targetDirection.normalized * c_cameraData.f_followDistance) +
+            targetRotation * (targetDirection.normalized * c_cameraData.f_followDistance) +
             (Vector3.up * c_cameraData.f_followHeight);
 
         c_cameraData.v_currentPosition = cameraPosition;
-        c_cameraData.v_currentDirection = targetPosition - cameraPosition;
+        c_cameraData.v_currentDirection = (targetPosition - cameraPosition).normalized;
         c_cameraData.v_targetPosition = targetPosition;
-        c_cameraData.v_targetDirection = targetDirection;
+        c_cameraData.v_targetDirection = targetDirection.normalized;
     }
     #endregion
 }

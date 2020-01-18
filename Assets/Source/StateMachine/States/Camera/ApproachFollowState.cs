@@ -22,10 +22,13 @@ public class ApproachFollowState : iState
         Vector3 currentPosition = c_cameraData.v_currentPosition;
         Vector3 targetPosition = c_cameraData.v_targetPosition;
         Vector3 lookVector = c_cameraData.v_currentDirection;
+        Vector3 dragPosition = c_cameraData.q_targetRotation * c_cameraData.v_offsetVector + targetPosition;
+        Vector3 lookTargetPosition = c_cameraData.q_targetRotation * c_cameraData.v_targetOffsetVector + targetPosition - currentPosition; // flatten this rotation
 
-        cart_follow.ApproachTarget(ref currentPosition, targetPosition, Vector3.Distance(currentPosition, targetPosition));
+        cart_follow.ApproachTarget(ref currentPosition, dragPosition, Vector3.Distance(currentPosition, targetPosition) * Time.deltaTime);
         cart_angle.AdjustPositionOnRadius(ref currentPosition, c_cameraData.v_surfaceBelowCameraPosition, c_cameraData.f_followHeight);
-        cart_focus.PointVectorAt(ref currentPosition, ref targetPosition, ref lookVector);
+        // cart_focus.PointVectorAt(ref currentPosition, ref targetPosition, ref lookVector);
+        cart_focus.PointVectorAtLerp(ref lookVector, lookTargetPosition, 2 * Vector3.Distance(lookVector, lookTargetPosition) * Time.deltaTime);
 
         c_cameraData.v_currentDirection = lookVector;
         c_cameraData.v_currentPosition = currentPosition;

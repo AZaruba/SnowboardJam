@@ -8,4 +8,9 @@ public class FocusCartridge
     {
         lookVectorOut = targetPosition - subjectPosition;
     }
+
+    public void PointVectorAtLerp(ref Vector3 lookVectorOut, Vector3 targetLookVector, float inertia = 0.5f)
+    {
+        lookVectorOut = Vector3.Lerp(lookVectorOut, targetLookVector, inertia);
+    }
 }
