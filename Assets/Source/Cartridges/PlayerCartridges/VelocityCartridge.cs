@@ -17,10 +17,11 @@ public class VelocityCartridge {
         position += direction.normalized * velocity * Time.deltaTime;
     }
 
+    // TODO: character's center is currently at the bottom, that should be rectified
     public void RaycastAdjustment(ref Vector3 surfacePoint, ref Vector3 currentPosition, ref Quaternion currentRotation)
     {
         // TODO: Rotate the offset of the character size
-        currentPosition = surfacePoint + currentRotation * new Vector3(0,0.5f,0);
+        currentPosition = surfacePoint + currentRotation * new Vector3(0,1.1f,0);
     }
     #endregion
 }

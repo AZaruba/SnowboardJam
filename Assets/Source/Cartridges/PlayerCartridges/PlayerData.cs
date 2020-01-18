@@ -45,6 +45,7 @@ public class PlayerData : MonoBehaviour {
     private float InputAxisLVert;
     private Vector3 SurfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
     private Vector3 SurfaceAttachPoint { get; set; }
+    private Vector3 ObstacleNormal;
     #endregion
 
     #region SerializedProperties
@@ -247,6 +248,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return SurfaceAttachPoint; }
         set { SurfaceAttachPoint = value; }
+    }
+
+    public Vector3 v_currentObstacleNormal
+    {
+        get { return ObstacleNormal; }
+        set { ObstacleNormal = value; }
     }
     #endregion
 }

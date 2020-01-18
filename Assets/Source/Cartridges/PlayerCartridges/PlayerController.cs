@@ -111,6 +111,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = c_playerData.q_currentRotation;
 
         debugAccessor.DisplayFloat("Current Velocity", c_playerData.f_currentAirVelocity);
+        debugAccessor.DisplayState("Current Move State", c_accelMachine.GetCurrentState());
     }
 
     /// <summary>
@@ -164,7 +165,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_accelMachine.Execute(Command.SLOW);
 
-            cl_character.SendMessage(MessageID.TEST_MSG_ONE);
+            // cl_character.SendMessage(MessageID.TEST_MSG_ONE);
         }
         else
         {
@@ -197,7 +198,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_turnMachine.Execute(Command.READY);
             c_airMachine.Execute(Command.READY);
         }
-        else if (c_playerData.b_obstacleInRange)
+        else if (c_playerData.v_currentObstacleNormal.magnitude > Constants.ZERO_F) // nonzero obstacle normal implies collision
         {
             c_accelMachine.Execute(Command.CRASH);
             c_turnMachine.Execute(Command.CRASH);
@@ -230,14 +231,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     private void CheckForObstacle()
     {
+        // TODO: if above a certain angle, reorient player. If else, crash
         float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.deltaTime);
         if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance))
         {
             c_playerData.b_obstacleInRange = true;
+            c_playerData.v_currentObstacleNormal = forwardHit.normal;
         }
         else
         {
             c_playerData.b_obstacleInRange = false;
+            c_playerData.v_currentObstacleNormal = Vector3.zero;
         }
     }
     private void CheckForGround()

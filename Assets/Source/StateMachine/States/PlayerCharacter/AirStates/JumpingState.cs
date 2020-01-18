@@ -43,7 +43,7 @@ public class JumpingState : iState
         }
         else
         {
-            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
+            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance - (airVelocity * Time.deltaTime);
         }
     }
 
