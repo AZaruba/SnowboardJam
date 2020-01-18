@@ -22,6 +22,8 @@ public class FreeFollowState : iState
         Vector3 currentPosition = c_cameraData.v_currentPosition;
         Vector3 targetPosition = c_cameraData.v_targetPosition;
         Vector3 lookVector = c_cameraData.v_currentDirection;
+        Vector3 dragPosition = c_cameraData.q_targetRotation * c_cameraData.v_offsetVector + targetPosition;
+        Vector3 lookTargetPosition = c_cameraData.q_targetRotation * c_cameraData.v_targetOffsetVector + targetPosition - currentPosition; // flatten this rotation
 
         cart_follow.ApproachTarget(ref currentPosition, targetPosition);
         cart_angle.AdjustPositionOnRadius(ref currentPosition, c_cameraData.v_surfaceBelowCameraPosition, c_cameraData.f_followHeight);
