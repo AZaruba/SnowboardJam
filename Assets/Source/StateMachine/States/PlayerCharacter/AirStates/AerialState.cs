@@ -77,6 +77,10 @@ public class AerialState : iState {
             c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
             return StateRef.GROUNDED;
         }
+        if (cmd == Command.CRASH)
+        {
+            return StateRef.DISABLED;
+        }
         return StateRef.AIRBORNE;
     }
 

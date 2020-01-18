@@ -95,6 +95,10 @@ public class JumpingState : iState
             c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
             return StateRef.GROUNDED;
         }
+        if (cmd == Command.CRASH)
+        {
+            return StateRef.DISABLED;
+        }
         return StateRef.JUMPING;
     }
 
