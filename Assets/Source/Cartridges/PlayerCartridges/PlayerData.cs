@@ -16,6 +16,8 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float GravityFactor;
     [SerializeField] private float TerminalVelocity;
     [SerializeField] private float CrashRecoveryTime;
+    [SerializeField] private Vector3 BackVectorOffset;
+    [SerializeField] private Vector3 FrontVectorOffset;
 
     private float CurrentSpeed;
     private float CurrentAirVelocity;
@@ -26,6 +28,8 @@ public class PlayerData : MonoBehaviour {
 
     private Vector3 CurrentPosition;
     private Vector3 CurrentDirection;
+    private Vector3 CurrentModelDirection;
+    private Vector3 CurrentAirDirection;
     private Vector3 CurrentNormal;
     private Vector3 CurrentDown;
 
@@ -41,6 +45,7 @@ public class PlayerData : MonoBehaviour {
     private float InputAxisLVert;
     private Vector3 SurfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
     private Vector3 SurfaceAttachPoint { get; set; }
+    private Vector3 ObstacleNormal;
     #endregion
 
     #region SerializedProperties
@@ -166,6 +171,18 @@ public class PlayerData : MonoBehaviour {
         set { CurrentDirection = value; }
     }
 
+    public Vector3 v_currentModelDirection
+    {
+        get { return CurrentModelDirection; }
+        set { CurrentModelDirection = value; }
+    }
+
+    public Vector3 v_currentAirDirection
+    {
+        get { return CurrentAirDirection; }
+        set { CurrentAirDirection = value; }
+    }
+
     public Vector3 v_currentNormal
     {
         get { return CurrentNormal; }
@@ -176,6 +193,18 @@ public class PlayerData : MonoBehaviour {
     {
         get { return CurrentDown; }
         set { CurrentDown = value; }
+    }
+
+    public Vector3 v_frontOffset
+    {
+        get { return FrontVectorOffset; }
+        set { FrontVectorOffset = value; }
+    }
+
+    public Vector3 v_backOffset
+    {
+        get { return BackVectorOffset; }
+        set { BackVectorOffset = value; }
     }
     #endregion
     #region Quaternions
@@ -219,6 +248,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return SurfaceAttachPoint; }
         set { SurfaceAttachPoint = value; }
+    }
+
+    public Vector3 v_currentObstacleNormal
+    {
+        get { return ObstacleNormal; }
+        set { ObstacleNormal = value; }
     }
     #endregion
 }

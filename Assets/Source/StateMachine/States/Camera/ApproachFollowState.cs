@@ -43,7 +43,7 @@ public class ApproachFollowState : iState
     {
         if (cmd == Command.DRAG)
         {
-            // return StateRef.LEAVING;
+            return StateRef.LEAVING;
         }
         else if (cmd == Command.TRACK)
         {

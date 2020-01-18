@@ -21,6 +21,15 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private AngleCalculationCartridge cart_angleCalc;
     private GravityCartridge cart_gravity;
     private IncrementCartridge cart_incr;
+
+    // Cached Calculation items
+    RaycastHit frontHit;
+    RaycastHit backHit;
+    RaycastHit centerHit;
+    RaycastHit forwardHit;
+
+    // TEST REMOVE THIS
+    iMessageClient cl_character;
     #endregion
 
 	/// <summary>
@@ -68,6 +77,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_airMachine.AddState(s_jumping, StateRef.JUMPING);
         c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
         c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
+
+        cl_character = new CharacterMessageClient();
+        MessageServer.Subscribe(ref cl_character);
+
+        EnginePull();
 	}
 	
 	/// <summary>
@@ -94,7 +108,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_playerData.v_currentPosition;
-        transform.rotation = c_playerData.q_currentRotation; // transform.Rotate(c_playerData.q_currentRotation.eulerAngles);   
+        transform.rotation = c_playerData.q_currentRotation;
+
+        debugAccessor.DisplayFloat("Current Velocity", c_playerData.f_currentAirVelocity);
+        debugAccessor.DisplayState("Current Move State", c_accelMachine.GetCurrentState());
     }
 
     /// <summary>
@@ -108,21 +125,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // TODO: ensure that we can pull the direction and the normal from the object
         // OTHERWISE it implies that there is a desync between data and the engine
         c_playerData.v_currentPosition = transform.position;
-        c_playerData.v_currentDirection = transform.forward.normalized;
+        c_playerData.v_currentModelDirection = transform.forward.normalized;
         c_playerData.v_currentNormal = transform.up.normalized;
-        c_playerData.q_currentRotation = transform.rotation;
+        c_playerData.q_currentRotation = transform.rotation; // TODO: RAD TRICKS WILL BREAK THIS ONE TOO
 
-        RaycastHit hitInfo;
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out hitInfo, c_playerData.f_currentRaycastDistance))
-        {
-            c_playerData.v_currentSurfaceNormal = hitInfo.normal;
-            c_playerData.v_currentSurfaceAttachPoint = hitInfo.point;
-        }
-        else
-        {
-            c_playerData.v_currentSurfaceNormal = Vector3.zero;
-        }
-
+        CheckForGround();
         CheckForObstacle();
     }
 
@@ -157,6 +164,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         if (c_playerData.f_inputAxisLVert < 0.0f)
         {
             c_accelMachine.Execute(Command.SLOW);
+
+            // cl_character.SendMessage(MessageID.TEST_MSG_ONE);
         }
         else
         {
@@ -177,9 +186,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_airMachine.Execute(Command.CHARGE);
         }
-        else
+        else if (Input.GetKeyUp(KeyCode.Space))
         {
             c_airMachine.Execute(Command.JUMP);
+            c_accelMachine.Execute(Command.JUMP);
         }
 
         if (c_playerData.f_currentCrashTimer > c_playerData.f_crashRecoveryTime)
@@ -188,7 +198,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_turnMachine.Execute(Command.READY);
             c_airMachine.Execute(Command.READY);
         }
-        else if (c_playerData.b_obstacleInRange)
+        else if (c_playerData.v_currentObstacleNormal.magnitude > Constants.ZERO_F) // nonzero obstacle normal implies collision
         {
             c_accelMachine.Execute(Command.CRASH);
             c_turnMachine.Execute(Command.CRASH);
@@ -205,11 +215,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
         c_playerData.v_currentDirection = transform.forward;
+        c_playerData.v_currentAirDirection = transform.forward;
         c_playerData.v_currentNormal = transform.up;
         c_playerData.v_currentDown = transform.up * -1;
         c_playerData.f_currentSpeed = Constants.ZERO_F;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentForwardRaycastDistance = c_playerData.f_forwardRaycastDistance;
+        c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
         c_playerData.b_obstacleInRange = false;
     }
     #endregion
@@ -219,15 +231,29 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     private void CheckForObstacle()
     {
+        // TODO: if above a certain angle, reorient player. If else, crash
         float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.deltaTime);
-        RaycastHit hitInfo;
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out hitInfo, distance))
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance))
         {
             c_playerData.b_obstacleInRange = true;
+            c_playerData.v_currentObstacleNormal = forwardHit.normal;
         }
         else
         {
             c_playerData.b_obstacleInRange = false;
+            c_playerData.v_currentObstacleNormal = Vector3.zero;
+        }
+    }
+    private void CheckForGround()
+    {
+        // surface normal is vector3.zero if there are no collisions
+        c_playerData.v_currentSurfaceNormal = Vector3.zero;
+
+        // if there are, set the surface normal to the normals of any hit surfaces, the point should be set from the center cast
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance))
+        {
+            c_playerData.v_currentSurfaceAttachPoint = centerHit.point;
+            c_playerData.v_currentSurfaceNormal += centerHit.normal;
         }
     }
 }
