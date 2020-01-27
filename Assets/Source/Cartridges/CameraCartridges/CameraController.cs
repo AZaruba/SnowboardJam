@@ -9,6 +9,8 @@ public class CameraController : MonoBehaviour, iEntityController {
     [SerializeField] private DebugAccessor debugAccessor;
 
     private StateMachine c_StateMachine;
+    private StateMachine sm_translation;
+    private StateMachine sm_orientation;
 
     //cartridge list
     private FocusCartridge cart_focus;
@@ -48,6 +50,7 @@ public class CameraController : MonoBehaviour, iEntityController {
         UpdateStateMachine();
 
         c_StateMachine.Act();
+        sm_orientation.Act();
 
         EngineUpdate();
     }
@@ -55,7 +58,10 @@ public class CameraController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_cameraData.v_currentPosition;
-        transform.forward = c_cameraData.v_currentDirection;}
+        transform.forward = c_cameraData.v_currentDirection;
+
+        debugAccessor.DisplayState("Camera State", c_StateMachine.GetCurrentState());
+    }
 
     public void EnginePull()
     {
@@ -97,6 +103,8 @@ public class CameraController : MonoBehaviour, iEntityController {
             // we have achieved balance!
             c_StateMachine.Execute(Command.TRACK);
         }
+
+        // TODO: Find some check for turning, switch to directed. Switch to targeted otherwise
     }
 
     #region StartupFunctions
@@ -115,6 +123,14 @@ public class CameraController : MonoBehaviour, iEntityController {
         c_StateMachine.AddState(s_freeFollow, StateRef.TRACKING);
         c_StateMachine.AddState(s_approachFollow, StateRef.APPROACHING);
         c_StateMachine.AddState(s_awayFollow, StateRef.LEAVING);
+
+        LookAtDirectionState s_lookDir = new LookAtDirectionState(ref c_cameraData, ref cart_focus);
+        LookAtPositionState s_lookPos = new LookAtPositionState(ref c_cameraData, ref cart_focus);
+        LookAtTargetState s_lookTarget = new LookAtTargetState(ref c_cameraData, ref cart_focus);
+
+        sm_orientation = new StateMachine(s_lookPos, StateRef.POSED);
+        sm_orientation.AddState(s_lookDir, StateRef.DIRECTED);
+        sm_orientation.AddState(s_lookTarget, StateRef.TARGETED);
     }
 
     /// <summary>
@@ -144,3 +160,45 @@ public class CameraController : MonoBehaviour, iEntityController {
     }
     #endregion
 }
+
+/* Notes:
+ *
+ * 1) When rotating the camera around a stationary target, it needs to more aggressively pull BEHIND the character rather than over it
+ * 2) The camera needs to be more aggressive with pointing toward the character's origin
+ *     - the problem is it seems to lag too far behind the target when rotating quickly around it
+ *
+ * 3)
+ *
+ * Intended behavior
+ * 1) Camera should follow behind player's direction of travel
+ *     - This is distinct from a generic third person camera controller
+ *     - The difference is if the character turns around, the camera should
+ *       swing around the radius toward the back of the player
+ * 2) The camera should remain a certain distance off the ground
+ *     - An obvious edge case is when we "push" the camera when a wall is in the way
+ *     - The solution is to "push" until there is only ground below the camera
+ * 3) The camera should attempt to be a certain radius from the player at all times
+ *     - The radius should be overall distance from the player, which ensures the
+ *       camera is always on a sphere around the player
+ * 4) If there is an object in the way of the camera preventing it from being the
+ *    intended distance away from the player, it should be pushed forward to
+ *    ensure it can still see the player
+ *     - The "dragging" of the camera should prevent this function from causing
+ *       a "jump" rather than smooth movement.
+ * 5) The camera should have weight to it, all movement should "lag" behind the
+ *    player
+ *     - Using linear interpolation, the camera should point to a spot between
+ *       the line to the player (dictating its position) and the direction of
+ *       the player, providing weight to turns and adding some "spice"
+ *     - The position should drag behind the player and drag along any surfaces
+ *       it happens to run into, with the intention of making the camera feel
+ *       like a separate entity rather than something attached to the player
+ *       (which it currently is not)
+ * 6) The camera should have a peak angle, where it will simply translate
+ *    more aggressively to compensate
+ *    - This ensures that the camera will allow for "legibility" of the landing
+ *      space while moving down and continue looking smooth going up
+ * 7) The camera should dip while landing to add to the "oomph" of a good trick
+ * 8) The camera's movement and the camera's direction should be governed by
+ *    separate state machines
+ */ 

@@ -26,13 +26,19 @@ public enum Command {
     STARTMOVE,
     #endregion
 
-    #region CameraCommands
+    #region CameraPositionCommands
     APPROACH,
     DRAG,
     TRACK,
     REST,
     SPEEDUP,
     SLOWDOWN,
+    #endregion
+
+    #region CameraOrientationCommands
+    POINT_AT_TARGET,
+    POINT_IN_DIRECTION,
+    POINT_AT_POSITION,
     #endregion
 }
 
@@ -73,6 +79,12 @@ public enum StateRef {
     APPROACHING_FAST,
     LEAVING_FAST,
     TRACKING_FAST,
+    #endregion
+
+    #region CameraOrientationStates
+    TARGETED,
+    DIRECTED,
+    POSED,
     #endregion
 
 }

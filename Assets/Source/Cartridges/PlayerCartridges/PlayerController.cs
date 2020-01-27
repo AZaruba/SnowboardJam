@@ -109,9 +109,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_playerData.q_currentRotation;
-
-        debugAccessor.DisplayFloat("Current Velocity", c_playerData.f_currentAirVelocity);
-        debugAccessor.DisplayState("Current Move State", c_accelMachine.GetCurrentState());
     }
 
     /// <summary>
