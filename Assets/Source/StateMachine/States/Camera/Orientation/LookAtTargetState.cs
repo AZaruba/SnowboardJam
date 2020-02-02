@@ -15,10 +15,12 @@ public class LookAtTargetState : iState
     public void Act()
     {
         Vector3 currentPosition = c_cameraData.v_currentPosition;
-        Vector3 currentTargetPosition = c_cameraData.v_targetPosition;
+        // Vector3 currentTargetPosition = c_cameraData.v_targetPosition;
+        Vector3 currentTargetDirection = c_cameraData.v_targetDirection;
         Vector3 lookVector = c_cameraData.v_currentDirection;
 
-        cart_focus.PointVectorAt(ref currentPosition, ref currentTargetPosition, ref lookVector);
+        // cart_focus.PointVectorAt(ref currentPosition, ref currentTargetPosition, ref lookVector);
+        cart_focus.PointVectorAtLerp(ref currentPosition, currentTargetDirection, Time.deltaTime);
 
         c_cameraData.v_currentDirection = lookVector;
     }

@@ -69,18 +69,6 @@ public class CameraController : MonoBehaviour, iEntityController {
         c_cameraData.v_targetPosition = c_cameraData.t_targetTransform.position +
              c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector;
 
-        RaycastHit hitInfo;
-        if (Physics.Raycast(c_cameraData.v_currentPosition, Vector3.down, out hitInfo, c_cameraData.f_followHeight))
-        {
-            c_cameraData.v_surfaceBelowCameraPosition = hitInfo.point;
-        }
-        else
-        {
-            // TODO: fix this hacky solution for the "no ground below camera" issue
-            Vector3 groundlessPosition = c_cameraData.v_currentPosition;
-            groundlessPosition.y -= c_cameraData.f_followHeight;
-            c_cameraData.v_surfaceBelowCameraPosition = groundlessPosition;
-        }
     }
 
     public void UpdateStateMachine()
@@ -148,16 +136,17 @@ public class CameraController : MonoBehaviour, iEntityController {
         Vector3 targetDirection = c_cameraData.t_targetTransform.forward;
         Quaternion targetRotation = c_cameraData.t_targetTransform.rotation;
 
-        Vector3 cameraPosition = targetPosition -
-            targetRotation * (targetDirection.normalized * c_cameraData.f_followDistance) +
-            (Vector3.up * c_cameraData.f_followHeight);
+        Vector3 cameraPosition = targetPosition +
+            c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector +
+            targetRotation * c_cameraData.v_offsetVector;
 
 
         c_cameraData.q_cameraRotation = transform.rotation;
-        c_cameraData.v_currentPosition = cameraPosition;
         c_cameraData.v_currentDirection = (targetPosition - cameraPosition).normalized;
         c_cameraData.v_targetPosition = targetPosition +
             c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector;
+
+        c_cameraData.v_currentPosition = cameraPosition;
         c_cameraData.v_targetDirection = targetDirection.normalized;
         c_cameraData.f_followDistance = c_cameraData.v_offsetVector.magnitude;
     }
@@ -173,35 +162,21 @@ public class CameraController : MonoBehaviour, iEntityController {
  * 3)
  *
  * Intended behavior
- * 1) Camera should follow behind player's direction of travel
- *     - This is distinct from a generic third person camera controller
- *     - The difference is if the character turns around, the camera should
- *       swing around the radius toward the back of the player
+ *
  * 2) The camera should remain a certain distance off the ground
  *     - An obvious edge case is when we "push" the camera when a wall is in the way
  *     - The solution is to "push" until there is only ground below the camera
- * 3) The camera should attempt to be a certain radius from the player at all times
- *     - The radius should be overall distance from the player, which ensures the
- *       camera is always on a sphere around the player
  * 4) If there is an object in the way of the camera preventing it from being the
  *    intended distance away from the player, it should be pushed forward to
  *    ensure it can still see the player
  *     - The "dragging" of the camera should prevent this function from causing
  *       a "jump" rather than smooth movement.
- * 5) The camera should have weight to it, all movement should "lag" behind the
- *    player
- *     - Using linear interpolation, the camera should point to a spot between
- *       the line to the player (dictating its position) and the direction of
- *       the player, providing weight to turns and adding some "spice"
- *     - The position should drag behind the player and drag along any surfaces
- *       it happens to run into, with the intention of making the camera feel
- *       like a separate entity rather than something attached to the player
- *       (which it currently is not)
  * 6) The camera should have a peak angle, where it will simply translate
  *    more aggressively to compensate
  *    - This ensures that the camera will allow for "legibility" of the landing
  *      space while moving down and continue looking smooth going up
  * 7) The camera should dip while landing to add to the "oomph" of a good trick
- * 8) The camera's movement and the camera's direction should be governed by
- *    separate state machines
+ *
+ * ENHANCEMENTS:
+ *  - The camera should not stay closer to the camera when moving
  */ 

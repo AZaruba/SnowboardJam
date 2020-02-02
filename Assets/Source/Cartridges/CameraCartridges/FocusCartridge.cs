@@ -11,6 +11,6 @@ public class FocusCartridge
 
     public void PointVectorAtLerp(ref Vector3 lookVectorOut, Vector3 targetLookVector, float inertia = 0.5f)
     {
-        lookVectorOut = Vector3.Lerp(lookVectorOut, targetLookVector, inertia);
+        lookVectorOut = Vector3.Lerp(lookVectorOut, (lookVectorOut + targetLookVector).normalized, inertia); // normalized composite of camera direction and desired player direction
     }
 }

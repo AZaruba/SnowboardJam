@@ -260,4 +260,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
  * 2) AIR Crashing as a separate mechanic
  * 3) Angle reorientation when hitting angled walls as an alternative to crashing
  * 4) BIG TASK: implement switch stance/coming back down from a half pipe type of ramp
+ * 5) BUG FIX: Jumping up launches the player forward, the transition needs to be fixed
+ * 6) ENHANCEMENT: Jumping should have a bigger pop/environments need to accomodate more air time
  */ 
