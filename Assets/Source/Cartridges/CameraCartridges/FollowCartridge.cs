@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class FollowCartridge {
 
-    public void ApproachTarget(ref Vector3 subjectPos, Vector3 destPos, float inertia = 0.5f)
+    public void ApproachTarget2(ref Vector3 subjectPos, Vector3 destPos, float inertia = 0.5f)
     {
         subjectPos = Vector3.Lerp(subjectPos, destPos, inertia);
     }
 
-    public void LeaveTarget(ref Vector3 subjectPos, Vector3 destPos, float inertia = 0.5f)
+    public void LeaveTarget2(ref Vector3 subjectPos, Vector3 destPos, float inertia = 0.5f)
     {
         subjectPos = Vector3.Lerp(destPos, subjectPos, inertia);
+    }
+
+    public void ApproachTarget(ref Vector3 subjectPosition, Vector3 targetPosition, Vector3 offsetVector, float inertia = 0.5f)
+    {
+        subjectPosition = Vector3.Lerp(subjectPosition, targetPosition + offsetVector, inertia);
     }
 
     /// <summary>

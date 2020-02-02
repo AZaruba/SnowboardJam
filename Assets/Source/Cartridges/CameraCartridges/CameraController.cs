@@ -8,7 +8,6 @@ public class CameraController : MonoBehaviour, iEntityController {
     [SerializeField] private CameraData c_cameraData;
     [SerializeField] private DebugAccessor debugAccessor;
 
-    private StateMachine c_StateMachine;
     private StateMachine sm_translation;
     private StateMachine sm_orientation;
 
@@ -49,7 +48,7 @@ public class CameraController : MonoBehaviour, iEntityController {
 
         UpdateStateMachine();
 
-        c_StateMachine.Act();
+        sm_translation.Act();
         sm_orientation.Act();
 
         EngineUpdate();
@@ -60,13 +59,15 @@ public class CameraController : MonoBehaviour, iEntityController {
         transform.position = c_cameraData.v_currentPosition;
         transform.forward = c_cameraData.v_currentDirection;
 
-        debugAccessor.DisplayState("Camera State", c_StateMachine.GetCurrentState());
+        debugAccessor.DisplayState("Camera State", sm_translation.GetCurrentState());
     }
 
     public void EnginePull()
     {
-        c_cameraData.v_targetPosition = c_cameraData.t_targetTransform.position;
         c_cameraData.q_targetRotation = c_cameraData.t_targetTransform.rotation;
+        c_cameraData.q_cameraRotation = transform.rotation;
+        c_cameraData.v_targetPosition = c_cameraData.t_targetTransform.position +
+             c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector;
 
         RaycastHit hitInfo;
         if (Physics.Raycast(c_cameraData.v_currentPosition, Vector3.down, out hitInfo, c_cameraData.f_followHeight))
@@ -92,16 +93,16 @@ public class CameraController : MonoBehaviour, iEntityController {
 
         if (trueDistance > followDistance)
         {
-            c_StateMachine.Execute(Command.APPROACH);
+            sm_translation.Execute(Command.APPROACH);
         } 
         else if (trueDistance < followDistance)
         {
-            c_StateMachine.Execute(Command.DRAG);
+            sm_translation.Execute(Command.DRAG);
         } 
         else
         {
             // we have achieved balance!
-            c_StateMachine.Execute(Command.TRACK);
+            sm_translation.Execute(Command.TRACK);
         }
 
         // TODO: Find some check for turning, switch to directed. Switch to targeted otherwise
@@ -114,15 +115,13 @@ public class CameraController : MonoBehaviour, iEntityController {
     /// </summary>
     void InitializeStateMachine()
     {
-        StationaryLookAtState s_stationary = new StationaryLookAtState (ref c_cameraData, ref cart_focus);
-        FreeFollowState s_freeFollow = new FreeFollowState(ref c_cameraData, ref cart_focus, ref cart_angle, ref cart_follow);
-        ApproachFollowState s_approachFollow = new ApproachFollowState(ref c_cameraData, ref cart_focus, ref cart_angle, ref cart_follow);
-        AwayFollowState s_awayFollow = new AwayFollowState(ref c_cameraData, ref cart_focus, ref cart_angle, ref cart_follow);
+        FreeFollowState s_freeFollow = new FreeFollowState(ref c_cameraData, ref cart_angle, ref cart_follow);
+        ApproachFollowState s_approachFollow = new ApproachFollowState(ref c_cameraData, ref cart_follow);
+        AwayFollowState s_awayFollow = new AwayFollowState(ref c_cameraData, ref cart_follow);
 
-        c_StateMachine = new StateMachine (s_stationary, StateRef.STATIONARY);
-        c_StateMachine.AddState(s_freeFollow, StateRef.TRACKING);
-        c_StateMachine.AddState(s_approachFollow, StateRef.APPROACHING);
-        c_StateMachine.AddState(s_awayFollow, StateRef.LEAVING);
+        sm_translation = new StateMachine(s_freeFollow, StateRef.TRACKING);
+        sm_translation.AddState(s_approachFollow, StateRef.APPROACHING);
+        sm_translation.AddState(s_awayFollow, StateRef.LEAVING);
 
         LookAtDirectionState s_lookDir = new LookAtDirectionState(ref c_cameraData, ref cart_focus);
         LookAtPositionState s_lookPos = new LookAtPositionState(ref c_cameraData, ref cart_focus);
@@ -153,10 +152,14 @@ public class CameraController : MonoBehaviour, iEntityController {
             targetRotation * (targetDirection.normalized * c_cameraData.f_followDistance) +
             (Vector3.up * c_cameraData.f_followHeight);
 
+
+        c_cameraData.q_cameraRotation = transform.rotation;
         c_cameraData.v_currentPosition = cameraPosition;
         c_cameraData.v_currentDirection = (targetPosition - cameraPosition).normalized;
-        c_cameraData.v_targetPosition = targetPosition;
+        c_cameraData.v_targetPosition = targetPosition +
+            c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector;
         c_cameraData.v_targetDirection = targetDirection.normalized;
+        c_cameraData.f_followDistance = c_cameraData.v_offsetVector.magnitude;
     }
     #endregion
 }
