@@ -40,6 +40,13 @@ public enum Command {
     POINT_IN_DIRECTION,
     POINT_AT_POSITION,
     #endregion
+
+    #region
+    START_TRICK,
+    SCORE_TRICK,
+    END_TRICK,
+    READY_TRICK,
+    #endregion
 }
 
 public enum StateRef {
@@ -59,7 +66,6 @@ public enum StateRef {
     CHARGING,
     AIRBORNE,
     JUMPING,
-    TRICKING,
     LANDING,
     #endregion
 
@@ -85,6 +91,13 @@ public enum StateRef {
     TARGETED,
     DIRECTED,
     POSED,
+    #endregion
+
+    #region TrickStates
+    TRICK_READY,
+    TRICK_TRANSITION,
+    TRICKING,
+    TRICK_DISABLED
     #endregion
 
 }

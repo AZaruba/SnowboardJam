@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private StateMachine c_turnMachine;
     private StateMachine c_airMachine;
     private StateMachine c_accelMachine;
+    private StateMachine sm_tricking;
 
     // cartridge list
     private AccelerationCartridge cart_f_acceleration;
@@ -78,6 +79,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
         c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
 
+        InitializeStateMachines();
+
         cl_character = new CharacterMessageClient();
         MessageServer.Subscribe(ref cl_character);
 
@@ -109,6 +112,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_playerData.q_currentRotation;
+
+        debugAccessor.DisplayState("Trick State", sm_tricking.GetCurrentState());
     }
 
     /// <summary>
@@ -147,6 +152,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
             c_airMachine.Execute(Command.LAND);
+            sm_tricking.Execute(Command.LAND);
         }
 
         if (Mathf.Abs(c_playerData.f_inputAxisTurn) > 0.0f)
@@ -187,6 +193,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_airMachine.Execute(Command.JUMP);
             c_accelMachine.Execute(Command.JUMP);
+            sm_tricking.Execute(Command.READY_TRICK);
         }
 
         if (c_playerData.f_currentCrashTimer > c_playerData.f_crashRecoveryTime)
@@ -253,7 +260,24 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_playerData.v_currentSurfaceNormal += centerHit.normal;
         }
     }
+    #region StartupFunctions
+    private void InitializeStateMachines()
+    {
+        TrickDisabledState s_trickDisabled = new TrickDisabledState();
+        TrickReadyState s_trickReady = new TrickReadyState();
+        TrickTransitionState s_trickTransition = new TrickTransitionState();
+        TrickingState s_tricking = new TrickingState();
+
+        sm_tricking = new StateMachine(s_trickDisabled, StateRef.TRICK_DISABLED);
+        sm_tricking.AddState(s_trickReady, StateRef.TRICK_READY);
+        sm_tricking.AddState(s_tricking, StateRef.TRICKING);
+        sm_tricking.AddState(s_trickTransition, StateRef.TRICK_TRANSITION);
+    }
+
+    #endregion
 }
+
+
 
 /* TODO LIST:
  * 1) When Crashing, we need to figure out how to reset the timer without looping into a crash again
@@ -262,4 +286,4 @@ public class PlayerController : MonoBehaviour, iEntityController {
  * 4) BIG TASK: implement switch stance/coming back down from a half pipe type of ramp
  * 5) BUG FIX: Jumping up launches the player forward, the transition needs to be fixed
  * 6) ENHANCEMENT: Jumping should have a bigger pop/environments need to accomodate more air time
- */ 
+ */
