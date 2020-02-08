@@ -5,7 +5,6 @@ using UnityEngine;
 public class CameraData : MonoBehaviour {
 
     #region Members
-    [SerializeField] private float FollowDistance;
     [SerializeField] private float FollowHeight;
     [SerializeField] private Vector3 OffsetVector;
     [SerializeField] private Vector3 TargetOffsetVector;
@@ -13,6 +12,7 @@ public class CameraData : MonoBehaviour {
 
     private float FieldOfView;
     private float CameraAngle;
+    private float FollowDistance;
 
     private Vector3 CurrentPosition;
     private Vector3 CurrentDirection;
@@ -22,6 +22,7 @@ public class CameraData : MonoBehaviour {
 
     private Vector3 SurfaceBelowCameraPosition;
 
+    private Quaternion CameraRotation;
     private Quaternion TargetRotation;
     #endregion
 
@@ -98,6 +99,12 @@ public class CameraData : MonoBehaviour {
     {
         get { return TargetRotation; }
         set { TargetRotation = value; }
+    }
+
+    public Quaternion q_cameraRotation
+    {
+        get { return CameraRotation; }
+        set { CameraRotation = value; }
     }
 
     public Vector3 v_surfaceBelowCameraPosition
