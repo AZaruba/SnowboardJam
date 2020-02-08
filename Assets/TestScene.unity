@@ -640,7 +640,7 @@ MonoBehaviour:
   Acceleration: 20
   BrakePower: 20
   TurnSpeed: 100
-  JumpPower: 15
+  JumpPower: 25
   BaseJumpPower: 5
   JumpChargeRate: 5
   GravityFactor: 30
@@ -806,10 +806,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd4e9e3d1e6794411a31e23d950ed9f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FollowDistance: 6
   FollowHeight: 2
-  OffsetVector: {x: 0, y: 0, z: -2}
-  TargetOffsetVector: {x: 0, y: 0.5, z: 5}
+  OffsetVector: {x: 0, y: 0.5, z: -3}
+  TargetOffsetVector: {x: 0, y: 0.5, z: 0}
   TargetTransform: {fileID: 734568625}
 --- !u!114 &745530434
 MonoBehaviour:
