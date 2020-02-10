@@ -579,6 +579,7 @@ GameObject:
   - component: {fileID: 734568627}
   - component: {fileID: 734568626}
   - component: {fileID: 734568623}
+  - component: {fileID: 734568628}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -699,7 +700,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   c_playerData: {fileID: 734568623}
+  trickData: {fileID: 734568628}
   debugAccessor: {fileID: 734568626}
+--- !u!114 &734568628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734568621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8efefe5e251a1456fa7c380330a24ae1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DownTrick: 1
+  LeftTrick: 4
+  RightTrick: 7
+  UpTrick: 10
 --- !u!1 &745530428
 GameObject:
   m_ObjectHideFlags: 0

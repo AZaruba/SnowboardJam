@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     #region Members
     // Serialized items
     [SerializeField] private PlayerData   c_playerData;
+    [SerializeField] private TrickData trickData;
     [SerializeField] private DebugAccessor debugAccessor;
 
     // private members
@@ -101,6 +102,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_accelMachine.Act();
         c_turnMachine.Act();
         c_airMachine.Act();
+        sm_tricking.Act();
 
         EngineUpdate();
 	}
@@ -196,6 +198,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.READY_TRICK);
         }
 
+        if (Input.GetKey(KeyCode.K))
+        {
+            sm_tricking.Execute(Command.START_TRICK);
+            sm_tricking.Execute(Command.SCORE_TRICK);
+        }
+        else if (Input.GetKeyUp(KeyCode.K))
+        {
+            sm_tricking.Execute(Command.END_TRICK);
+        }
+
         if (c_playerData.f_currentCrashTimer > c_playerData.f_crashRecoveryTime)
         {
             c_accelMachine.Execute(Command.READY);
@@ -263,10 +275,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
     #region StartupFunctions
     private void InitializeStateMachines()
     {
-        TrickDisabledState s_trickDisabled = new TrickDisabledState();
+        InitializeTrickMachine();
+    }
+
+    private void InitializeTrickMachine()
+    {
+        IncrementCartridge cart_increment = new IncrementCartridge();
+
+        TrickDisabledState s_trickDisabled = new TrickDisabledState(ref trickData);
         TrickReadyState s_trickReady = new TrickReadyState();
         TrickTransitionState s_trickTransition = new TrickTransitionState();
-        TrickingState s_tricking = new TrickingState();
+        TrickingState s_tricking = new TrickingState(ref trickData, ref cart_increment);
 
         sm_tricking = new StateMachine(s_trickDisabled, StateRef.TRICK_DISABLED);
         sm_tricking.AddState(s_trickReady, StateRef.TRICK_READY);
@@ -286,4 +305,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
  * 4) BIG TASK: implement switch stance/coming back down from a half pipe type of ramp
  * 5) BUG FIX: Jumping up launches the player forward, the transition needs to be fixed
  * 6) ENHANCEMENT: Jumping should have a bigger pop/environments need to accomodate more air time
+ *
+ * REFACTORING EFFORTS:
+ * 1) Take player data and split it up among multiple classes for compartmentalization
+ * 2) Move input to a data structure and pull from the engine to put input on the same
+ *    schedule as the rest of engine input
  */

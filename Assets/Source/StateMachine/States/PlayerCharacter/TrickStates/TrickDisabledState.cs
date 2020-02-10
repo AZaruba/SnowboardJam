@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class TrickDisabledState : iState
 {
+    private TrickData trickData;
+
+    public TrickDisabledState(ref TrickData dataIn)
+    {
+        trickData = dataIn;
+    }
 
     public void Act()
     {
@@ -12,7 +18,8 @@ public class TrickDisabledState : iState
 
     public void TransitionAct()
     {
-
+        Debug.Log("Points from Trick " + trickData.trick_right + ": " + Mathf.RoundToInt(trickData.i_trickPoints));
+        trickData.i_trickPoints = 0;
     }
 
     public StateRef GetNextState(Command cmd)
