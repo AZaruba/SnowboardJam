@@ -151,10 +151,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else
         {
+            // should happen before we execute
+            if (trickData.i_trickPoints > 0)
+            {
+                // TODO: Fix rounding
+                cl_character.SendMessage(MessageID.SCORE_EDIT, new Message(Mathf.RoundToInt(trickData.i_trickPoints)));
+            }
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
             c_airMachine.Execute(Command.LAND);
             sm_tricking.Execute(Command.LAND);
+
         }
 
         if (Mathf.Abs(c_playerData.f_inputAxisTurn) > 0.0f)

@@ -19,7 +19,6 @@ public class CameraMessageClient : iMessageClient
 
     public bool RecieveMessage(MessageID id, Message message)
     {
-        Debug.Log("Camera Recieved " + id);
         return true;
     }
 

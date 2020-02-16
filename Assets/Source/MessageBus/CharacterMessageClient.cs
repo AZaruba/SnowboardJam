@@ -19,7 +19,6 @@ public class CharacterMessageClient : iMessageClient
 
     public bool RecieveMessage(MessageID id, Message message)
     {
-        Debug.Log("Character Recieved " + id);
         return true;
     }
 }

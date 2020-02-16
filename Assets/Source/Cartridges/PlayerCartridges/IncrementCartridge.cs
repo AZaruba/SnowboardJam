@@ -19,6 +19,18 @@ public class IncrementCartridge
         }
     }
 
+    public void Increment(ref int value, int delta, int cap = int.MaxValue)
+    {
+        if (value >= cap)
+        {
+            value = cap;
+        }
+        else
+        {
+            value += delta;
+        }
+    }
+
 
     public void Reset(ref float value)
     {

@@ -7,11 +7,12 @@ public class ScoreMessageClient : iMessageClient
 {
     // should we just store the message then let classes access that directly?
     ClientID clientID;
-    private int currentScore;
+    private ScoreDisplayData data_out;
 
-    public ScoreMessageClient()
+    public ScoreMessageClient(ref ScoreDisplayData scoreData)
     {
         clientID = ClientID.SCORE_CLIENT;
+        data_out = scoreData;
     }
 
     public bool SendMessage(MessageID id, Message message)
@@ -23,14 +24,9 @@ public class ScoreMessageClient : iMessageClient
     {
         if (id == MessageID.SCORE_EDIT)
         {
-            currentScore += message.getInt();
+            data_out.i_currentScore += message.getInt();
             return true;
         }
         return false;
-    }
-
-    public int getCurrentScore()
-    {
-        return currentScore;
     }
 }
