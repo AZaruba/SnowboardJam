@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: b639dd319c62a406d9acd325aa500d54
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Ferrite Core DX
+  fontNames:
+  - Ferrite Core DX
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 59e255d8264044bf6a1721623a3be69b, type: 3}
+  - {fileID: 12800000, guid: 034514e93265445da99ddd8d52447eae, type: 3}
+  - {fileID: 12800000, guid: 5254d2ac52e1445ab818e18d62d14769, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

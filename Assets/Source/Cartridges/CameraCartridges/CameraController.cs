@@ -33,7 +33,7 @@ public class CameraController : MonoBehaviour, iEntityController {
         cl_camera = new CameraMessageClient();
         MessageServer.Subscribe(ref cl_camera);
 
-        cl_camera.SendMessage(MessageID.TEST_MSG_TWO);
+        cl_camera.SendMessage(MessageID.TEST_MSG_TWO, new Message(0.0f));
     }
 	
     /// <summary>

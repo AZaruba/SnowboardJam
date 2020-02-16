@@ -11,13 +11,13 @@ public class CameraMessageClient : iMessageClient
         clientID = ClientID.CAMERA_CLIENT;
     }
 
-    public bool SendMessage(MessageID id)
+    public bool SendMessage(MessageID id, Message message)
     {
-        MessageServer.SendMessage(id);
+        MessageServer.SendMessage(id, message);
         return true;
     }
 
-    public bool RecieveMessage(MessageID id)
+    public bool RecieveMessage(MessageID id, Message message)
     {
         Debug.Log("Camera Recieved " + id);
         return true;

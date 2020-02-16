@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MessageServer
 {
+    // TODO: Add message-by-message subscription
     static List<iMessageClient> l_subscribers;
 
     /// <summary>
@@ -11,11 +12,11 @@ public class MessageServer
     /// </summary>
     /// <param name="id">The ID of the message</param>
     /// <returns>True if message is valid</returns>
-    public static bool SendMessage(MessageID id)
+    public static bool SendMessage(MessageID id, Message message)
     {
         foreach (iMessageClient subscriber in l_subscribers)
         {
-            subscriber.RecieveMessage(id);
+            subscriber.RecieveMessage(id, message);
         }
         return true;
     }
