@@ -78,7 +78,7 @@ public class ScoreDisplayController : MonoBehaviour, iEntityController
     private void InitializeMessageClient()
     {
         cl_score = new ScoreMessageClient(ref data_scoreDisplay);
-        MessageServer.Subscribe(ref cl_score);
+        MessageServer.Subscribe(ref cl_score, MessageID.SCORE_EDIT);
     }
     #endregion
 }

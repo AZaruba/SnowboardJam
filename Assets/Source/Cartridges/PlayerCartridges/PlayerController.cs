@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeStateMachines();
 
         cl_character = new CharacterMessageClient();
-        MessageServer.Subscribe(ref cl_character);
+        MessageServer.Subscribe(ref cl_character, MessageID.TEST_MSG_TWO);
 
         EnginePull();
 	}

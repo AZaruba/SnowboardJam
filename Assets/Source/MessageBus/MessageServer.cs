@@ -6,6 +6,7 @@ public class MessageServer
 {
     // TODO: Add message-by-message subscription
     static List<iMessageClient> l_subscribers;
+    static Dictionary<MessageID, List<iMessageClient>> m_subscribers;
 
     /// <summary>
     /// Sends a message to all subscribed clients
@@ -14,6 +15,11 @@ public class MessageServer
     /// <returns>True if message is valid</returns>
     public static bool SendMessage(MessageID id, Message message)
     {
+        if (!m_subscribers.TryGetValue(id, out l_subscribers))
+        {
+            return false;
+        }
+
         foreach (iMessageClient subscriber in l_subscribers)
         {
             subscriber.RecieveMessage(id, message);
@@ -26,18 +32,27 @@ public class MessageServer
     /// Will skip adding the client if it is already subscribed
     /// </summary>
     /// <param name="client"></param>
-    public static void Subscribe(ref iMessageClient client)
+    public static void Subscribe(ref iMessageClient client, MessageID messageID)
     {
-        if (l_subscribers == null)
+        if (m_subscribers == null)
         {
-            l_subscribers = new List<iMessageClient>();
+            m_subscribers = new Dictionary<MessageID, List<iMessageClient>>();
         }
 
-        if (l_subscribers.Contains(client))
+        if (m_subscribers.ContainsKey(messageID))
         {
-            return;
+            if (!m_subscribers.TryGetValue(messageID, out l_subscribers))
+            {
+                // this should never happen
+            }
+            l_subscribers.Add(client);
         }
-        l_subscribers.Add(client);
+        else
+        {
+            l_subscribers = new List<iMessageClient>();
+            l_subscribers.Add(client);
+            m_subscribers.Add(messageID, l_subscribers);
+        }
     }
 
     /// <summary>
@@ -45,8 +60,13 @@ public class MessageServer
     /// if it is in the list.
     /// </summary>
     /// <param name="client"></param>
-    public static void Unsubscribe(ref iMessageClient client)
+    public static void Unsubscribe(ref iMessageClient client, MessageID messageID)
     {
+        if (!m_subscribers.TryGetValue(messageID, out l_subscribers))
+        {
+            return;
+        }
+
         if (l_subscribers.Contains(client))
         {
             l_subscribers.Remove(client);

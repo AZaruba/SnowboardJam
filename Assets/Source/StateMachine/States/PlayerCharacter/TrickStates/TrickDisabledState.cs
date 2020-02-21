@@ -18,7 +18,6 @@ public class TrickDisabledState : iState
 
     public void TransitionAct()
     {
-        Debug.Log("Points from Trick " + trickData.trick_right + ": " + Mathf.RoundToInt(trickData.i_trickPoints));
         trickData.i_trickPoints = 0;
     }
 
