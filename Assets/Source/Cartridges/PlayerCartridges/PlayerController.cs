@@ -149,6 +149,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.FALL);
             c_turnMachine.Execute(Command.FALL);
             c_airMachine.Execute(Command.FALL);
+            sm_tricking.Execute(Command.READY_TRICK);
         }
         else
         {
