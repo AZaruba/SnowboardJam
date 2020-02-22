@@ -49,7 +49,6 @@ public class StateMachine {
         StateRef e_nextState = i_currentState.GetNextState(cmd);
         bool foundState = l_validStates.TryGetValue(e_nextState, out i_currentState);
 
-
         if (!foundState)
         {
             Debug.Log("ERROR: State Not Found!");

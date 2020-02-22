@@ -409,6 +409,112 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d20bd3b04be96594183d580f62e7235a, type: 3}
+--- !u!1 &558779296
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 558779297}
+  - component: {fileID: 558779299}
+  - component: {fileID: 558779298}
+  - component: {fileID: 558779301}
+  - component: {fileID: 558779300}
+  m_Layer: 5
+  m_Name: ScoreDisplay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &558779297
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558779296}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1418095439}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 168, y: -24}
+  m_SizeDelta: {x: 300, y: 52}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &558779298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558779296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: e4a7fe10b2d4e42a2a06ce7a3afc957e, type: 3}
+    m_FontSize: 28
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 2
+    m_MaxSize: 40
+    m_Alignment: 3
+    m_AlignByGeometry: 1
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 1234567890
+--- !u!222 &558779299
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558779296}
+  m_CullTransparentMesh: 0
+--- !u!114 &558779300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558779296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41ba7d1136d9343a48fc3472866c9879, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScoreTickRate: 1
+--- !u!114 &558779301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558779296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a378537950b6d4fe083ecffd261cd52e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreText: {fileID: 558779298}
+  data_scoreDisplay: {fileID: 558779300}
 --- !u!1 &566021018
 GameObject:
   m_ObjectHideFlags: 0
@@ -579,6 +685,8 @@ GameObject:
   - component: {fileID: 734568627}
   - component: {fileID: 734568626}
   - component: {fileID: 734568623}
+  - component: {fileID: 734568628}
+  - component: {fileID: 734568629}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -699,7 +807,47 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   c_playerData: {fileID: 734568623}
+  trickData: {fileID: 734568628}
+  c_inputData: {fileID: 734568629}
   debugAccessor: {fileID: 734568626}
+--- !u!114 &734568628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734568621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8efefe5e251a1456fa7c380330a24ae1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DownTrick: 1
+  LeftTrick: 4
+  RightTrick: 7
+  UpTrick: 10
+--- !u!114 &734568629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734568621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 398d6f0f6b8314a13972ea7c6fc17bcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Trick1: 107
+  Trick2: 108
+  Trick3: 105
+  Trick4: 106
+  JumpButton: 32
+  TuckButton: 0
+  HorizMoveAxisName: Horizontal
+  VertMoveAxisName: Vertical
+  TuckAxisName: 
+  JumpAxisName: 
 --- !u!1 &745530428
 GameObject:
   m_ObjectHideFlags: 0
@@ -1171,6 +1319,7 @@ RectTransform:
   - {fileID: 1182894705}
   - {fileID: 1023008797}
   - {fileID: 566021019}
+  - {fileID: 558779297}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
