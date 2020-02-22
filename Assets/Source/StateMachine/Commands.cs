@@ -41,11 +41,17 @@ public enum Command {
     POINT_AT_POSITION,
     #endregion
 
-    #region
+    #region TrickCommands
     START_TRICK,
     SCORE_TRICK,
     END_TRICK,
     READY_TRICK,
+    #endregion
+
+    #region ScoreDisplayCommands
+    INCREMENT_SCORE,
+    STOP_SCORE,
+    PAUSE_SCORE,
     #endregion
 }
 
@@ -97,7 +103,13 @@ public enum StateRef {
     TRICK_READY,
     TRICK_TRANSITION,
     TRICKING,
-    TRICK_DISABLED
+    TRICK_DISABLED,
+    #endregion
+
+    #region ScoreDisplayStates
+    SCORE_PAUSED,
+    SCORE_INCREASING,
+    SCORE_STAY,
     #endregion
 
 }

@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface iMessageClient
 {
-    bool SendMessage(MessageID id);
-    bool RecieveMessage(MessageID id);
+    bool SendMessage(MessageID id, Message message);
+    bool RecieveMessage(MessageID id, Message message);
 }
