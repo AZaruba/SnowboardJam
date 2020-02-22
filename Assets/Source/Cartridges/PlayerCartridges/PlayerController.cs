@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     // Serialized items
     [SerializeField] private PlayerData   c_playerData;
     [SerializeField] private TrickData trickData;
+    [SerializeField] private InputData c_inputData;
     [SerializeField] private DebugAccessor debugAccessor;
 
     // private members
@@ -123,8 +124,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EnginePull()
     {
-        c_playerData.f_inputAxisTurn = Input.GetAxis("Horizontal");
-        c_playerData.f_inputAxisLVert = Input.GetAxis("Vertical");
+        c_playerData.f_inputAxisTurn = Input.GetAxis(c_inputData.a_hMove);
+        c_playerData.f_inputAxisLVert = Input.GetAxis(c_inputData.a_vMove);
 
         // TODO: ensure that we can pull the direction and the normal from the object
         // OTHERWISE it implies that there is a desync between data and the engine
@@ -176,8 +177,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         if (c_playerData.f_inputAxisLVert < 0.0f)
         {
             c_accelMachine.Execute(Command.SLOW);
-
-            // cl_character.SendMessage(MessageID.TEST_MSG_ONE);
         }
         else
         {
@@ -194,7 +193,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         // TODO: integrate this keypress into the player data
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(c_inputData.k_jump))
         {
             c_airMachine.Execute(Command.CHARGE);
         }
@@ -205,12 +204,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.READY_TRICK);
         }
 
-        if (Input.GetKey(KeyCode.K))
+        if (Input.GetKey(c_inputData.k_trick1))
         {
             sm_tricking.Execute(Command.START_TRICK);
             sm_tricking.Execute(Command.SCORE_TRICK);
         }
-        else if (Input.GetKeyUp(KeyCode.K))
+        else if (Input.GetKeyUp(c_inputData.k_trick1))
         {
             sm_tricking.Execute(Command.END_TRICK);
         }
