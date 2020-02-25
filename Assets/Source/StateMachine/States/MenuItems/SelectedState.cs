@@ -21,6 +21,7 @@ public class SelectedState : iState
     public void TransitionAct()
     {
         c_activeData.v_itemPosition = c_activeData.v_targetItemPosition;
+        c_activeData.c_currentColor = c_activeData.c_targetColor;
     }
 
     public StateRef GetNextState(Command cmd)

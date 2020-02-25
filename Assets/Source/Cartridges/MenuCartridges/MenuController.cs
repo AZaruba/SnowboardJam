@@ -10,6 +10,8 @@ public class MenuController : MonoBehaviour
 
     void Start()
     {
+        SetMenuDefaults();
+
         i_activeMenuItemIndex = 0;
         c_activeMenuItem = l_menuItems[i_activeMenuItemIndex];
         c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
@@ -17,17 +19,26 @@ public class MenuController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetAxis("Vertical") > 0 && i_activeMenuItemIndex < l_menuItems.Count - 1)
+        if (Input.GetKeyDown(KeyCode.W))
         {
             c_activeMenuItem.ExecuteStateMachineCommand(Command.UNSELECT);
-            i_activeMenuItemIndex++;
+
+            // bug fix: modulo negative numbers produces an incorrect result
+            if (i_activeMenuItemIndex == 0)
+            {
+                i_activeMenuItemIndex = l_menuItems.Count - 1;
+            }
+            else
+            {
+                i_activeMenuItemIndex = Mathf.Abs((i_activeMenuItemIndex - 1) % l_menuItems.Count);
+            }
             c_activeMenuItem = l_menuItems[i_activeMenuItemIndex];
             c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
         }
-        else if (Input.GetAxis("Vertical") < 0 && i_activeMenuItemIndex > 0)
+        else if (Input.GetKeyDown(KeyCode.S))
         {
             c_activeMenuItem.ExecuteStateMachineCommand(Command.UNSELECT);
-            i_activeMenuItemIndex--;
+            i_activeMenuItemIndex = Mathf.Abs((i_activeMenuItemIndex + 1) % l_menuItems.Count);
             c_activeMenuItem = l_menuItems[i_activeMenuItemIndex];
             c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
         }
@@ -36,13 +47,16 @@ public class MenuController : MonoBehaviour
             c_activeMenuItem.ExecuteMenuCommand();
         }
     }
+
+    private void SetMenuDefaults()
+    {
+        MenuSelectionData.SetNextScene(1);
+    }
 }
 
 /* TODO / Improving the menu controller
  * 1. Get rid of hardcoded axes and input
- * 2. implement cartridges (as the confusing position bug proved they ARE generally a good idea
  * 3. Get rid of constants
- * 4. Ensure menus can scale
- * 5. Bi-directional/grid based menus
+ * 5. grid based menus
  */
  

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MenuItemController : MonoBehaviour, iEntityController
 {
     [SerializeField] private BasicMenuItemData ItemData;
-    [SerializeField] private RectTransform t_itemTransform;
-    [SerializeField] private Text t_itemText;
+    [SerializeField] private RectTransform ItemTransform;
+    [SerializeField] private Text ItemText;
+    [SerializeField] private MenuCommand MenuAction;
+
     private MenuItemActiveData c_itemActiveData;
 
     private StateMachine sm_menuItem;
@@ -30,8 +33,8 @@ public class MenuItemController : MonoBehaviour, iEntityController
 
     public void EngineUpdate()
     {
-        t_itemTransform.anchoredPosition = c_itemActiveData.v_itemPosition;
-        t_itemText.color = c_itemActiveData.c_currentColor;
+        ItemTransform.anchoredPosition = c_itemActiveData.v_itemPosition;
+        ItemText.color = c_itemActiveData.c_currentColor;
     }
 
     public void EnginePull()
@@ -55,15 +58,25 @@ public class MenuItemController : MonoBehaviour, iEntityController
 
     public void ExecuteMenuCommand()
     {
-
+        switch (MenuAction)
+        {
+            case MenuCommand.EXIT_GAME:
+                Application.Quit();
+                break;
+            case MenuCommand.CONFIRM:
+                SceneManager.LoadScene(MenuSelectionData.GetNextScene(), LoadSceneMode.Single);
+                break;
+        }
     }
 
     private void InitializeStateMachine()
     {
+        LerpCartridge cart_lerp = new LerpCartridge();
+
         SelectedState s_selected = new SelectedState(ref ItemData, ref c_itemActiveData);
-        PostselectedState s_postSelected = new PostselectedState(ref ItemData, ref c_itemActiveData);
+        PostselectedState s_postSelected = new PostselectedState(ref ItemData, ref c_itemActiveData, ref cart_lerp);
         UnselectedState s_unselected = new UnselectedState(ref ItemData, ref c_itemActiveData);
-        PreselectedState s_preselected = new PreselectedState(ref ItemData, ref c_itemActiveData);
+        PreselectedState s_preselected = new PreselectedState(ref ItemData, ref c_itemActiveData, ref cart_lerp);
 
         sm_menuItem = new StateMachine(s_unselected, StateRef.ITEM_UNSELECTED);
         sm_menuItem.AddState(s_postSelected, StateRef.ITEM_POSTSELECTED);
@@ -74,9 +87,9 @@ public class MenuItemController : MonoBehaviour, iEntityController
     private void InitializeData()
     {
         c_itemActiveData = new MenuItemActiveData();
-        c_itemActiveData.v_itemPosition = t_itemTransform.anchoredPosition;
-        c_itemActiveData.v_targetItemPosition = t_itemTransform.anchoredPosition;
-        c_itemActiveData.v_origin = t_itemTransform.anchoredPosition;
+        c_itemActiveData.v_itemPosition = ItemTransform.anchoredPosition;
+        c_itemActiveData.v_targetItemPosition = ItemTransform.anchoredPosition;
+        c_itemActiveData.v_origin = ItemTransform.anchoredPosition;
         c_itemActiveData.c_currentColor = ItemData.UnselectedColor;
     }
 }

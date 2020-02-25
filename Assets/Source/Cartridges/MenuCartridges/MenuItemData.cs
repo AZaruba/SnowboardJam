@@ -7,9 +7,9 @@ public class MenuItemActiveData
     private Vector2 ItemPosition;
     private Vector2 TargetItemPosition;
     private Color CurrentColor;
+    private Color TargetColor;
 
     private Vector2 OriginPosition;
-    private MenuCommand Command;
 
     public Vector2 v_itemPosition
     {
@@ -29,15 +29,15 @@ public class MenuItemActiveData
         set { OriginPosition = value; }
     }
 
-    public MenuCommand c_menuCommand
-    {
-        get { return Command; }
-        set { Command = value; }
-    }
-
     public Color c_currentColor
     {
         get { return CurrentColor; }
         set { CurrentColor = value; }
+    }
+
+    public Color c_targetColor
+    {
+        get { return TargetColor; }
+        set { TargetColor = value; }
     }
 }
