@@ -53,6 +53,12 @@ public enum Command {
     STOP_SCORE,
     PAUSE_SCORE,
     #endregion
+
+    #region MenuCommands
+    SELECT,
+    UNSELECT,
+    END_TRANSITION,
+    #endregion
 }
 
 public enum StateRef {
@@ -112,4 +118,10 @@ public enum StateRef {
     SCORE_STAY,
     #endregion
 
+    #region MenuItemStates
+    ITEM_SELECTED,
+    ITEM_PRESELECTED,
+    ITEM_UNSELECTED,
+    ITEM_POSTSELECTED,
+    #endregion
 }
