@@ -69,7 +69,8 @@ public class JumpingState : iState
         }
         else
         {
-            currentAirVelocity = jumpCharge + (previousDirection.y * currentVelocity); // what's wrong with the air velocity?
+            currentAirVelocity = jumpCharge + (previousDirection.y * currentVelocity);
+            currentVelocity = nextDirection.magnitude;
         }
 
         c_playerData.v_currentDirection = nextDirection.normalized;
