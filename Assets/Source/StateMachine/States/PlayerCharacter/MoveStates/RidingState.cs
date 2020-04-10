@@ -33,8 +33,8 @@ public class RidingState : iState {
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         cart_f_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed);
-        cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
-        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
+        //cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
+        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation); // only align when normal is different
         cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;

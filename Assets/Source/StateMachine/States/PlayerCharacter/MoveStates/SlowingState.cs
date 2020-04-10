@@ -30,7 +30,7 @@ public class SlowingState : iState
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         cart_f_acceleration.Decelerate(ref currentVelocity, deceleration);
-        cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
+        // cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
         cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
 

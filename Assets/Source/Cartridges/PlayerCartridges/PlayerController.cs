@@ -116,7 +116,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_playerData.q_currentRotation;
 
-        debugAccessor.DisplayState("Trick State", sm_tricking.GetCurrentState());
+        debugAccessor.DisplayState("Ground State", c_airMachine.GetCurrentState());
+        debugAccessor.DisplayVector3("Transform Right", transform.right);
     }
 
     /// <summary>
@@ -269,14 +270,35 @@ public class PlayerController : MonoBehaviour, iEntityController {
     }
     private void CheckForGround()
     {
-        // surface normal is vector3.zero if there are no collisions
-        c_playerData.v_currentSurfaceNormal = Vector3.zero;
-
+        /* NOTES FOR HERE:
+         * 
+         * check down AND forward?
+         * Check the delta in surface normals and if it's too great, yeet the player into the air
+         *
+         */
         // if there are, set the surface normal to the normals of any hit surfaces, the point should be set from the center cast
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance))
+        // c_playerData.v_currentDown
+        if (Physics.Raycast(c_playerData.v_currentPosition, Vector3.down, out centerHit, c_playerData.f_currentRaycastDistance))
         {
-            c_playerData.v_currentSurfaceAttachPoint = centerHit.point;
-            c_playerData.v_currentSurfaceNormal += centerHit.normal;
+            if (!c_playerData.v_currentSurfaceNormal.Equals(centerHit.normal))
+            {
+                debugAccessor.DisplayFloat("Found Angle", Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right));
+                if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right*-1) > 20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed))) // angle should get smaller as we get faster
+                {
+                    c_playerData.v_currentSurfaceNormal = Vector3.zero;
+                }
+                else
+                {
+                    c_playerData.v_currentSurfaceAttachPoint = centerHit.point;
+                    c_playerData.v_currentSurfaceNormal = centerHit.normal;
+                }
+            }
+
+        }
+        else
+        {
+            // surface normal is vector3.zero if there are no collisions
+            c_playerData.v_currentSurfaceNormal = Vector3.zero;
         }
     }
     #region StartupFunctions
