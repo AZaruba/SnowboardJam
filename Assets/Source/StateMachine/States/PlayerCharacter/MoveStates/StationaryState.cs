@@ -29,7 +29,6 @@ public class StationaryState : iState {
         Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref currentRotation);
 
         c_playerData.v_currentNormal = currentNormal.normalized;
@@ -39,7 +38,6 @@ public class StationaryState : iState {
         c_playerData.q_currentRotation = currentRotation;
         c_playerData.f_currentSpeed = Constants.ZERO_F;
         c_playerData.f_currentCrashTimer = Constants.ZERO_F;
-        // surface normal does not need to be updated
     }
 
     /// <summary>

@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         AerialState s_aerial = new AerialState(ref c_playerData, ref cart_gravity, ref cart_velocity);
         JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState();
+        GroundedState s_grounded = new GroundedState(ref c_playerData);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
@@ -118,6 +118,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Ground State", c_airMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Transform Right", transform.right);
+        debugAccessor.DisplayFloat("Jump Charge", c_playerData.f_currentJumpCharge);
     }
 
     /// <summary>
@@ -278,11 +279,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
          */
         // if there are, set the surface normal to the normals of any hit surfaces, the point should be set from the center cast
         // c_playerData.v_currentDown
-        if (Physics.Raycast(c_playerData.v_currentPosition, Vector3.down, out centerHit, c_playerData.f_currentRaycastDistance))
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance))
         {
             if (!c_playerData.v_currentSurfaceNormal.Equals(centerHit.normal))
             {
-                debugAccessor.DisplayFloat("Found Angle", Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right));
                 if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right*-1) > 20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed))) // angle should get smaller as we get faster
                 {
                     c_playerData.v_currentSurfaceNormal = Vector3.zero;

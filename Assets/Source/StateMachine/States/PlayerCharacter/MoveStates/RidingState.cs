@@ -26,17 +26,19 @@ public class RidingState : iState {
         float f_acceleration = c_playerData.f_acceleration;
         float topSpeed = c_playerData.f_topSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
+        Vector3 previousPosition = currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
+        Vector3 previousNormal = currentNormal;
         Vector3 currentSurfaceNormal = c_playerData.v_currentSurfaceNormal;
         Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         cart_f_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed);
-        //cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation); // only align when normal is different
         cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
-
+        cart_velocity.SurfaceAdjustment(ref currentPosition, previousPosition, currentSurfacePosition, previousNormal, currentSurfaceNormal, currentRotation);
+        
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.f_acceleration = f_acceleration;
         c_playerData.v_currentPosition = currentPosition;
