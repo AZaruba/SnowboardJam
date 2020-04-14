@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         AerialState s_aerial = new AerialState(ref c_playerData, ref cart_gravity, ref cart_velocity);
         JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState(ref c_playerData);
+        GroundedState s_grounded = new GroundedState(ref c_playerData, ref cart_velocity);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
