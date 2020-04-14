@@ -301,6 +301,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_playerData.v_currentSurfaceNormal = Vector3.zero;
         }
     }
+
+    private void CheckForZone()
+    {
+        LayerMask lm_zoneMask = LayerMask.GetMask("Zones");
+        float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.deltaTime);
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance, lm_zoneMask))
+        {
+            // notify that we have collided with a zone, grab the zone's ID and send corresponding message
+        }
+    }
+
     #region StartupFunctions
     private void InitializeStateMachines()
     {
