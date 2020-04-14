@@ -17,10 +17,25 @@ public class VelocityCartridge {
         position += direction.normalized * velocity * Time.deltaTime;
     }
 
-    // TODO: character's center is currently at the bottom, that should be rectified
+    /* the Raycast Adjustment should rotate the player around an axis point until they are in the right position
+     * The reason for a rotation is to ensure that any adjustment keeps the POSITION DELTA the same.
+     * 
+     * Theoretically, if the player is travelling parallel to the surface, this adjustment should be zero
+     * and can either be short circuited for performance OR left as-is
+     * 
+     */ 
+    public void SurfaceAdjustment(ref Vector3 position, Vector3 previousPosition, Vector3 point, Vector3 normal, Vector3 surfaceNormal, Quaternion currentRotation)
+    {
+        if (normal == surfaceNormal)
+        {
+            return;
+        }
+
+        position = point + currentRotation * new Vector3(0, 1.1f, 0);
+    }
+
     public void RaycastAdjustment(ref Vector3 surfacePoint, ref Vector3 currentPosition, ref Quaternion currentRotation)
     {
-        // TODO: Rotate the offset of the character size
         currentPosition = surfacePoint + currentRotation * new Vector3(0,1.1f,0);
     }
     #endregion

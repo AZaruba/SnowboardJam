@@ -35,15 +35,15 @@ public class JumpingState : iState
 
         c_playerData.v_currentPosition = position;
         c_playerData.f_currentAirVelocity = airVelocity;
-
         c_playerData.v_currentAirDirection = Vector3.Normalize(position - oldPosition);
-        if (airVelocity < Constants.ZERO_F)
+        c_playerData.v_currentDown = c_playerData.v_currentAirDirection;
+        if (airVelocity <= Constants.ZERO_F)
         {
             c_playerData.f_currentRaycastDistance = (Mathf.Abs(airVelocity) * Time.deltaTime) + c_playerData.f_raycastDistance;
         }
         else
         {
-            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance - (airVelocity * Time.deltaTime);
+            c_playerData.f_currentRaycastDistance = Constants.ZERO_F;
         }
     }
 
@@ -69,7 +69,8 @@ public class JumpingState : iState
         }
         else
         {
-            currentAirVelocity = jumpCharge + (previousDirection.y * currentVelocity); // what's wrong with the air velocity?
+            currentAirVelocity = jumpCharge + (previousDirection.y * currentVelocity);
+            currentVelocity = nextDirection.magnitude;
         }
 
         c_playerData.v_currentDirection = nextDirection.normalized;
