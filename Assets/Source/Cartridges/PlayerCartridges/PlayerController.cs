@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private StateMachine c_accelMachine;
     private StateMachine sm_tricking;
 
+    private PlayerPositionData c_positionData;
+
     // cartridge list
     private AccelerationCartridge cart_f_acceleration;
     private VelocityCartridge cart_velocity;
@@ -137,6 +139,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.q_currentRotation = transform.rotation; // TODO: RAD TRICKS WILL BREAK THIS ONE TOO
 
         CheckForGround();
+        CheckForZone();
         CheckForObstacle();
     }
 
@@ -237,6 +240,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     void SetDefaultPlayerData()
     {
+        c_positionData = new PlayerPositionData();
+
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
         c_playerData.v_currentDirection = transform.forward;
@@ -257,8 +262,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void CheckForObstacle()
     {
         // TODO: if above a certain angle, reorient player. If else, crash
+        LayerMask lm_env = LayerMask.GetMask("Environment");
         float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.deltaTime);
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance))
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance, lm_env))
         {
             c_playerData.b_obstacleInRange = true;
             c_playerData.v_currentObstacleNormal = forwardHit.normal;
@@ -279,7 +285,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
          */
         // if there are, set the surface normal to the normals of any hit surfaces, the point should be set from the center cast
         // c_playerData.v_currentDown
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance))
+        LayerMask lm_env = LayerMask.GetMask("Environment");
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance, lm_env))
         {
             if (!c_playerData.v_currentSurfaceNormal.Equals(centerHit.normal))
             {
@@ -309,6 +316,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance, lm_zoneMask))
         {
             // notify that we have collided with a zone, grab the zone's ID and send corresponding message
+            ZoneController controller = GameMasterController.LookupZoneController(forwardHit.transform);
+            if (controller != null)
+            {
+                c_positionData.u_zone = controller.u_zoneId;
+                Debug.Log(c_positionData.u_zone);
+            }
         }
     }
 
