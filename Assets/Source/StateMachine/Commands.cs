@@ -59,6 +59,12 @@ public enum Command {
     UNSELECT,
     END_TRANSITION,
     #endregion
+
+    #region TimerCommands
+    START_TIMER_UP,
+    START_TIMER_DOWN,
+    STOP_TIMER,
+    #endregion
 }
 
 public enum StateRef {
@@ -66,6 +72,7 @@ public enum StateRef {
     ERROR_STATE = -1,
     START_STATE,
     DISABLED,
+    PAUSED,
 
     #region PlayerStates
     IDLE,
@@ -123,5 +130,10 @@ public enum StateRef {
     ITEM_PRESELECTED,
     ITEM_UNSELECTED,
     ITEM_POSTSELECTED,
+    #endregion
+
+    #region TimerStates
+    TIMER_INCR,
+    TIMER_DECR,
     #endregion
 }
