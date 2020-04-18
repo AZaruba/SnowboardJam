@@ -7,9 +7,12 @@ public class TimerController : MonoBehaviour
 {
     // TODO: how do we grab the time for the current level if different levels have different time limits?
     private TimerData c_timerData;
+    private StateData c_stateData;
     private StateMachine sm_timer;
 
     private IncrementCartridge cart_incr;
+
+    private iMessageClient cl_timer;
 
     // DEBUG: implement UI-backend messaging if there are reasons to, as it keeps the architecture consistent
     [SerializeField] private Text timerText;
@@ -19,11 +22,17 @@ public class TimerController : MonoBehaviour
     {
         SetDefaultTimerData();
         InitializeStateMachine();
+        InitializeMessageClient();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!c_stateData.b_updateState)
+        {
+            return;
+        }
+
         sm_timer.Act();
         float displayTime = c_timerData.f_currentTime;
         int minutes = (int)displayTime / 60;
@@ -36,7 +45,10 @@ public class TimerController : MonoBehaviour
     private void SetDefaultTimerData()
     {
         c_timerData = new TimerData();
+        c_stateData = new StateData();
+
         c_timerData.f_currentTime = 0.0f;
+        c_stateData.b_updateState = true;
     }
 
     private void InitializeStateMachine()
@@ -48,6 +60,12 @@ public class TimerController : MonoBehaviour
 
         sm_timer = new StateMachine(s_timeIncr, StateRef.TIMER_INCR);
         sm_timer.AddState(s_timeDecr, StateRef.TIMER_DECR);
+    }
+
+    private void InitializeMessageClient()
+    {
+        cl_timer = new TimerMessageClient(ref c_stateData);
+        MessageServer.Subscribe(ref cl_timer, MessageID.PAUSE);
     }
 
     private void UpdateStateMachine()

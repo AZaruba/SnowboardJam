@@ -5,10 +5,12 @@ using UnityEngine;
 public class CharacterMessageClient : iMessageClient
 {
     ClientID clientID;
+    StateData c_stateData;
 
-    public CharacterMessageClient()
+    public CharacterMessageClient(ref StateData dataIn)
     {
         clientID = ClientID.CHARACTER_CLIENT;
+        c_stateData = dataIn;
     }
 
     public bool SendMessage(MessageID id, Message message)
@@ -19,6 +21,11 @@ public class CharacterMessageClient : iMessageClient
 
     public bool RecieveMessage(MessageID id, Message message)
     {
+        if (id == MessageID.PAUSE)
+        {
+            c_stateData.b_updateState = message.getInt() == 0;
+        }
+
         return true;
     }
 }
