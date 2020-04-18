@@ -44,7 +44,7 @@ public class StateMachine {
     /// <summary>
     /// Executes a command on the state machine, changing the state
     /// </summary>
-    public void Execute(Command cmd, bool ForceTransition = false)
+    public void Execute(Command cmd, bool SkipTransition = false, bool ForceTransition = false)
     {
         StateRef e_nextState = i_currentState.GetNextState(cmd);
         bool foundState = l_validStates.TryGetValue(e_nextState, out i_currentState);
@@ -52,6 +52,13 @@ public class StateMachine {
         if (!foundState)
         {
             Debug.Log("ERROR: State Not Found!");
+            return;
+        }
+
+        // when pausing and unpausing, we want to skip the transition action as, in terms of game physics, the state shouldn't change
+        if (SkipTransition)
+        {
+            sr_currentStateRef = e_nextState;
             return;
         }
 

@@ -5,6 +5,7 @@ using UnityEngine;
 public enum MessageID
 {
     ERROR_MSG = -1,
+    PAUSE,
     TEST_MSG_ONE,
     TEST_MSG_TWO,
     SCORE_EDIT,
@@ -16,6 +17,7 @@ public enum ClientID
     CHARACTER_CLIENT,
     CAMERA_CLIENT,
     SCORE_CLIENT,
+    TIMER_CLIENT,
 }
 
 public class Message
@@ -24,6 +26,13 @@ public class Message
     private float f_data;
     private string s_data;
 
+    public Message(int iIn = int.MaxValue, float fIn = float.MaxValue, string sIn = "")
+    {
+        this.i_data = iIn;
+        this.f_data = fIn;
+        this.s_data = sIn;
+    }
+    
     public Message(int dataIn)
     {
         i_data = dataIn;

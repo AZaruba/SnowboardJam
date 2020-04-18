@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private InputData c_inputData;
     [SerializeField] private DebugAccessor debugAccessor;
 
+    private StateData c_stateData;
+
     // private members
     private StateMachine c_turnMachine;
     private StateMachine c_airMachine;
@@ -84,10 +86,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
 
         InitializeStateMachines();
-
-        cl_character = new CharacterMessageClient();
-        MessageServer.Subscribe(ref cl_character, MessageID.TEST_MSG_TWO);
-
+        InitializeMessageClient();
         EnginePull();
 	}
 	
@@ -98,6 +97,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
 	void Update ()
     {
+        if (!c_stateData.b_updateState)
+        {
+            return;
+        }
+
         EnginePull();
 
         UpdateStateMachine();
@@ -241,6 +245,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     void SetDefaultPlayerData()
     {
         c_positionData = new PlayerPositionData();
+        c_stateData = new StateData();
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
@@ -253,6 +258,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.f_currentForwardRaycastDistance = c_playerData.f_forwardRaycastDistance;
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
         c_playerData.b_obstacleInRange = false;
+
+        c_stateData.b_updateState = true;
     }
     #endregion
 
@@ -346,6 +353,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
         sm_tricking.AddState(s_trickTransition, StateRef.TRICK_TRANSITION);
     }
 
+    private void InitializeMessageClient()
+    {
+        cl_character = new CharacterMessageClient(ref c_stateData);
+        MessageServer.Subscribe(ref cl_character, MessageID.PAUSE);
+    }
     #endregion
 }
 

@@ -8,6 +8,8 @@ public class CameraController : MonoBehaviour, iEntityController {
     [SerializeField] private CameraData c_cameraData;
     [SerializeField] private DebugAccessor debugAccessor;
 
+    private StateData c_stateData;
+
     private StateMachine sm_translation;
     private StateMachine sm_orientation;
 
@@ -16,7 +18,6 @@ public class CameraController : MonoBehaviour, iEntityController {
     private AngleAdjustmentCartridge cart_angle;
     private FollowCartridge cart_follow;
 
-    // TEST REMOVE THIS
     iMessageClient cl_camera;
     #endregion
 
@@ -30,8 +31,11 @@ public class CameraController : MonoBehaviour, iEntityController {
         InitializeCartridges();
         InitializeStateMachine();
 
-        cl_camera = new CameraMessageClient();
-        MessageServer.Subscribe(ref cl_camera, MessageID.TEST_MSG_ONE);
+        c_stateData = new StateData();
+        c_stateData.b_updateState = true;
+
+        cl_camera = new CameraMessageClient(ref c_stateData);
+        MessageServer.Subscribe(ref cl_camera, MessageID.PAUSE);
 
         cl_camera.SendMessage(MessageID.TEST_MSG_TWO, new Message(0.0f));
     }
@@ -43,7 +47,11 @@ public class CameraController : MonoBehaviour, iEntityController {
     /// </summary>
 	void LateUpdate ()
     {
-        // TODO: the camera drags a fair amount behind, what is the reason for this?
+        if (!c_stateData.b_updateState)
+        {
+            return;
+        }
+        
         EnginePull();
 
         UpdateStateMachine();
