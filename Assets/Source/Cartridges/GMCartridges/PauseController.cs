@@ -5,6 +5,8 @@ using UnityEngine;
 public class PauseController : MonoBehaviour
 {
     bool isPaused;
+    [SerializeField] ControllerInputData ControllerData;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,7 +17,8 @@ public class PauseController : MonoBehaviour
     void Update()
     {
         // TODO: Input system update
-        if (Input.GetKeyDown(KeyCode.P))
+        if (GlobalInputController.GetInputValue(ControllerData.PauseButton) == KeyValue.PRESSED ||
+            GlobalInputController.GetInputValue(ControllerData.PauseKey) == KeyValue.PRESSED)
         {
             Message pauseMessage = new Message((isPaused ? 0 : 1)); // if we want to pause, send 1, otherwise 0
             isPaused = !isPaused;

@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     // Serialized items
     [SerializeField] private PlayerData   c_playerData;
     [SerializeField] private TrickData trickData;
-    [SerializeField] private InputData c_inputData;
+    [SerializeField] private ControllerInputData c_inputData;
     [SerializeField] private DebugAccessor debugAccessor;
 
     private StateData c_stateData;
@@ -122,7 +122,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_playerData.q_currentRotation;
 
-        debugAccessor.DisplayState("Ground State", c_airMachine.GetCurrentState());
+        debugAccessor.DisplayState("Move State", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Transform Right", transform.right);
         debugAccessor.DisplayFloat("Jump Charge", c_playerData.f_currentJumpCharge);
     }
@@ -132,8 +132,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EnginePull()
     {
-        c_playerData.f_inputAxisTurn = Input.GetAxis(c_inputData.a_hMove);
-        c_playerData.f_inputAxisLVert = Input.GetAxis(c_inputData.a_vMove);
+        c_playerData.f_inputAxisTurn = GlobalInputController.GetInputValue(c_inputData.LeftHorizontalAxis);
+        c_playerData.f_inputAxisLVert = GlobalInputController.GetInputValue(c_inputData.LeftVerticalAxis);
 
         // TODO: ensure that we can pull the direction and the normal from the object
         // OTHERWISE it implies that there is a desync between data and the engine
@@ -184,7 +184,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_turnMachine.Execute(Command.RIDE);
         }
 
-        if (c_playerData.f_inputAxisLVert < 0.0f)
+        if (GlobalInputController.GetInputValue(c_inputData.LeftVerticalAxis) < 0.0f)
         {
             c_accelMachine.Execute(Command.SLOW);
         }
@@ -192,7 +192,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_accelMachine.Execute(Command.RIDE);
         }
-        if (c_playerData.f_inputAxisLVert > 0.0f)
+        if (GlobalInputController.GetInputValue(c_inputData.LeftVerticalAxis) > 0.0f)
         {
             c_accelMachine.Execute(Command.STARTMOVE);
         }
@@ -203,23 +203,23 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         // TODO: integrate this keypress into the player data
-        if (Input.GetKey(c_inputData.k_jump))
+        if (GlobalInputController.GetInputValue(c_inputData.JumpButton) == KeyValue.PRESSED)
         {
             c_airMachine.Execute(Command.CHARGE);
         }
-        else if (Input.GetKeyUp(KeyCode.Space))
+        else if (GlobalInputController.GetInputValue(c_inputData.JumpButton) == KeyValue.UP)
         {
             c_airMachine.Execute(Command.JUMP);
             c_accelMachine.Execute(Command.JUMP);
             sm_tricking.Execute(Command.READY_TRICK);
         }
 
-        if (Input.GetKey(c_inputData.k_trick1))
+        if (GlobalInputController.GetInputValue(c_inputData.LTrickButton) == KeyValue.PRESSED)
         {
             sm_tricking.Execute(Command.START_TRICK);
             sm_tricking.Execute(Command.SCORE_TRICK);
         }
-        else if (Input.GetKeyUp(c_inputData.k_trick1))
+        else if (GlobalInputController.GetInputValue(c_inputData.LTrickButton) == KeyValue.UP)
         {
             sm_tricking.Execute(Command.END_TRICK);
         }
