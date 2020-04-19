@@ -314,6 +314,8 @@ GameObject:
   m_Component:
   - component: {fileID: 243559130}
   - component: {fileID: 243559131}
+  - component: {fileID: 243559133}
+  - component: {fileID: 243559132}
   m_Layer: 0
   m_Name: GameMaster
   m_TagString: Untagged
@@ -347,6 +349,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36502295601550e4a9f6d7cfad01fcb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ControllerData: {fileID: 243559133}
+--- !u!114 &243559132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 243559129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c60078fe03322894fa90a2816b6809f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ControllerData: {fileID: 243559133}
+--- !u!114 &243559133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 243559129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecd7603718845f49a971ee3f5ddaeea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  JumpButton: 355
+  JumpKey: 32
+  TuckButton: 0
+  TuckKey: 0
+  DTrickButton: 350
+  DTrickKey: 107
+  LTrickButton: 352
+  LTrickKey: 106
+  RTrickButton: 0
+  RTrickKey: 0
+  UTrickButton: 0
+  UTrickKey: 0
+  PauseButton: 337
+  PauseKey: 112
+  LeftHorizontalAxis: Horizontal
+  LeftVerticalAxis: Vertical
 --- !u!1 &330615603
 GameObject:
   m_ObjectHideFlags: 0
@@ -830,7 +874,6 @@ GameObject:
   - component: {fileID: 734568626}
   - component: {fileID: 734568623}
   - component: {fileID: 734568628}
-  - component: {fileID: 734568629}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -946,7 +989,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   c_playerData: {fileID: 734568623}
   trickData: {fileID: 734568628}
-  c_inputData: {fileID: 734568629}
+  c_inputData: {fileID: 243559133}
   debugAccessor: {fileID: 734568626}
 --- !u!114 &734568628
 MonoBehaviour:
@@ -964,28 +1007,6 @@ MonoBehaviour:
   LeftTrick: 4
   RightTrick: 7
   UpTrick: 10
---- !u!114 &734568629
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734568621}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 398d6f0f6b8314a13972ea7c6fc17bcf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Trick1: 107
-  Trick2: 108
-  Trick3: 105
-  Trick4: 106
-  JumpButton: 32
-  TuckButton: 0
-  HorizMoveAxisName: Horizontal
-  VertMoveAxisName: Vertical
-  TuckAxisName: 
-  JumpAxisName: 
 --- !u!1 &745530428
 GameObject:
   m_ObjectHideFlags: 0

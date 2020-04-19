@@ -5,6 +5,7 @@ using UnityEngine;
 public class MenuController : MonoBehaviour
 {
     [SerializeField] private List<MenuItemController> l_menuItems;
+    [SerializeField] private ControllerInputData keyList;
     private MenuItemController c_activeMenuItem;
     private int i_activeMenuItemIndex;
 
@@ -42,7 +43,7 @@ public class MenuController : MonoBehaviour
             c_activeMenuItem = l_menuItems[i_activeMenuItemIndex];
             c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
         }
-        if (Input.GetKeyDown(KeyCode.K))
+        if (GlobalInputController.GetInputValue(keyList.DTrickButton) == KeyValue.PRESSED)
         {
             c_activeMenuItem.ExecuteMenuCommand();
         }
