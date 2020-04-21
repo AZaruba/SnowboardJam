@@ -701,7 +701,7 @@ MonoBehaviour:
   DTrickButton: 350
   DTrickKey: 107
   LTrickButton: 352
-  LTrickKey: 107
+  LTrickKey: 106
   RTrickButton: 0
   RTrickKey: 0
   UTrickButton: 0
@@ -758,6 +758,7 @@ MonoBehaviour:
   - {fileID: 1804759389}
   - {fileID: 411721146}
   keyList: {fileID: 800220883}
+  ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
 --- !u!4 &1606982854
 Transform:
   m_ObjectHideFlags: 0

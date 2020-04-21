@@ -1,4 +1,6 @@
 ﻿using System;
+using UnityEditorInternal;
+
 public class IncrementCartridge
 {
     /// <summary>
@@ -49,6 +51,21 @@ public class IncrementCartridge
         }
     }
 
+    public void Rotate(ref int value, int delta, int cap = int.MaxValue, int min = 0)
+    {
+        if (value == min && delta < 0)
+        {
+            value = cap - 1;
+        }
+        else if (value == cap && delta > 0)
+        {
+            value = min;
+        }
+        else
+        {
+            value += delta;
+        }
+    }
 
     public void Reset(ref float value)
     {
