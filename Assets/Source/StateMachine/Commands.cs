@@ -60,6 +60,12 @@ public enum Command {
     END_TRANSITION,
     #endregion
 
+    #region MenuInputCommands
+    MENU_TICK_INPUT,
+    MENU_READY,
+    MENU_IDLE,
+    #endregion
+
     #region TimerCommands
     START_TIMER_UP,
     START_TIMER_DOWN,
@@ -123,6 +129,12 @@ public enum StateRef {
     SCORE_PAUSED,
     SCORE_INCREASING,
     SCORE_STAY,
+    #endregion
+
+    #region MenuInputStates
+    MENU_WAIT,
+    MENU_READY,
+    MENU_TICK,
     #endregion
 
     #region MenuItemStates
