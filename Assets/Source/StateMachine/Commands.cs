@@ -62,8 +62,7 @@ public enum Command {
 
     #region MenuInputCommands
     MENU_TICK_INPUT,
-    MENU_WAIT_INPUT,
-    MENU_TICK_INPUT_LONG,
+    MENU_READY,
     MENU_IDLE,
     #endregion
 

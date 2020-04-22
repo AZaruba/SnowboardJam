@@ -20,7 +20,7 @@ public class MenuTickState : iState
 
     public StateRef GetNextState(Command cmd)
     {
-        if (cmd == Command.MENU_WAIT_INPUT)
+        if (cmd == Command.MENU_IDLE)
         {
             return StateRef.MENU_WAIT;
         }

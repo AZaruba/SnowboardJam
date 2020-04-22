@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92eff247482e57c40b37120538a23c14, type: 3}
   m_Name: BasicMenuControllerData
   m_EditorClassIdentifier: 
-  ShortTickTime: 0.2
+  ShortTickTime: 0.3
   LongTickTime: 1

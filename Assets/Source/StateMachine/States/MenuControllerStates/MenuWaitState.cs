@@ -26,15 +26,9 @@ public class MenuWaitState : iState
 
     public StateRef GetNextState(Command cmd)
     {
-        if (cmd == Command.MENU_IDLE)
+        if (cmd == Command.MENU_READY)
         {
-            c_activeData.f_currentMenuWaitCount = c_data.LongTickTime;
             return StateRef.MENU_READY;
-        }
-        if (cmd == Command.MENU_TICK_INPUT)
-        {
-            c_activeData.f_currentMenuWaitCount = c_data.ShortTickTime;
-            return StateRef.MENU_TICK;
         }
         return StateRef.MENU_WAIT;
     }

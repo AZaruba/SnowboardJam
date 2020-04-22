@@ -57,7 +57,7 @@ public class IncrementCartridge
         {
             value = cap - 1;
         }
-        else if (value == cap && delta > 0)
+        else if (value == (cap - 1) && delta > 0)
         {
             value = min;
         }

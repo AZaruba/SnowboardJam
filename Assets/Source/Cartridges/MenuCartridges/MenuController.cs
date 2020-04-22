@@ -58,7 +58,7 @@ public class MenuController : MonoBehaviour
         {
             c_activeMenuData.i_menuDir = -1; // menus are often organized top to bottom
         }
-        else if (inputAxisValue < 0.5f)
+        else if (inputAxisValue < -0.5f)
         {
             c_activeMenuData.i_menuDir = 1;
         }
@@ -88,8 +88,22 @@ public class MenuController : MonoBehaviour
 
     void UpdateStateMachine()
     {
-        // solve the conditions for each transition tomorrow, we're tired and should wind down!
-        // TODO
+        if (float.Equals(c_activeMenuData.f_currentMenuTickCount,c_activeMenuData.f_currentMenuWaitCount))
+        {
+            sm_menuInput.Execute(Command.MENU_READY);
+        }
+        else
+        {
+            sm_menuInput.Execute(Command.MENU_IDLE);
+        }
+        if (c_activeMenuData.i_menuDir != 0)
+        {
+            sm_menuInput.Execute(Command.MENU_TICK_INPUT);
+        }
+        else
+        {
+            sm_menuInput.Execute(Command.MENU_READY);
+        }
     }
 
     private void InitializeData()
@@ -97,7 +111,7 @@ public class MenuController : MonoBehaviour
         c_activeMenuData = new ActiveMenuData();
 
         c_activeMenuData.f_currentMenuTickCount = 0.0f;
-        c_activeMenuData.f_currentMenuWaitCount = Constants.ZERO_F;
+        c_activeMenuData.f_currentMenuWaitCount = ControllerData.ShortTickTime;
         c_activeMenuData.i_activeMenuItemIndex = i_activeMenuItemIndex;
         c_activeMenuData.i_menuItemCount = l_menuItems.Count;
         c_activeMenuData.i_menuDir = 0;

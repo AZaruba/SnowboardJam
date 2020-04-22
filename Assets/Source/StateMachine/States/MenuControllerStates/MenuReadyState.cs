@@ -27,7 +27,6 @@ public class MenuReadyState : iState
 
     public void TransitionAct()
     {
-        c_activeData.f_currentMenuTickCount = Constants.ZERO_F;
-        c_activeData.f_currentMenuWaitCount = Constants.ZERO_F;
+
     }
 }
