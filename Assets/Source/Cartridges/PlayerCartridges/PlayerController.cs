@@ -155,6 +155,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (c_stateData.b_courseFinished == true)
         {
+            if (c_playerData.v_currentSurfaceNormal.normalized != Vector3.zero)
+            {
+                c_accelMachine.Execute(Command.LAND);
+                c_turnMachine.Execute(Command.LAND);
+                c_airMachine.Execute(Command.LAND);
+                sm_tricking.Execute(Command.LAND);
+            }
             c_accelMachine.Execute(Command.SLOW);
             c_turnMachine.Execute(Command.RIDE);
             if (c_playerData.f_currentSpeed < 0.0f)
