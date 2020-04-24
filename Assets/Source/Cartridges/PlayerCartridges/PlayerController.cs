@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     #region Members
     // Serialized items
-    [SerializeField] private PlayerData   c_playerData;
+    [SerializeField] private PlayerData c_playerData;
     [SerializeField] private TrickData trickData;
     [SerializeField] private ControllerInputData c_inputData;
     [SerializeField] private DebugAccessor debugAccessor;
@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private StateMachine sm_tricking;
 
     private PlayerPositionData c_positionData;
+    private EntityData c_entityData;
 
     // cartridge list
     private AccelerationCartridge cart_f_acceleration;
@@ -39,23 +40,23 @@ public class PlayerController : MonoBehaviour, iEntityController {
     iMessageClient cl_character;
     #endregion
 
-	/// <summary>
+    /// <summary>
     /// Start this instance. Initializes all valid states for this object
     /// then adds them to the state machine
     /// </summary>
-	void Start ()
+    void Start()
     {
         SetDefaultPlayerData();
-        cart_gravity = new GravityCartridge ();
-        cart_angleCalc = new AngleCalculationCartridge ();
-        cart_velocity = new VelocityCartridge ();
-        cart_f_acceleration = new AccelerationCartridge ();
+        cart_gravity = new GravityCartridge();
+        cart_angleCalc = new AngleCalculationCartridge();
+        cart_velocity = new VelocityCartridge();
+        cart_f_acceleration = new AccelerationCartridge();
         cart_handling = new HandlingCartridge();
         cart_incr = new IncrementCartridge();
 
         MoveAerialState s_moveAerial = new MoveAerialState();
-        StationaryState s_stationary = new StationaryState (ref c_playerData, ref cart_angleCalc, ref cart_velocity);
-        RidingState s_riding = new RidingState (ref c_playerData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity);
+        StationaryState s_stationary = new StationaryState(ref c_playerData, ref cart_angleCalc, ref cart_velocity);
+        RidingState s_riding = new RidingState(ref c_playerData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity);
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
@@ -88,14 +89,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeStateMachines();
         InitializeMessageClient();
         EnginePull();
-	}
-	
-	/// <summary>
+    }
+
+    /// <summary>
     /// Update this instance. States perform actions on data, the data is then
     /// used for object-level functions (such as translations) and then the
     /// state is updated.
     /// </summary>
-	void Update ()
+    void Update()
     {
         if (!c_stateData.b_updateState)
         {
@@ -112,7 +113,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         sm_tricking.Act();
 
         EngineUpdate();
-	}
+    }
 
     /// <summary>
     /// Updates the object's state within the engine.
@@ -152,6 +153,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void UpdateStateMachine()
     {
+        if (c_stateData.b_courseFinished == true)
+        {
+            c_accelMachine.Execute(Command.SLOW);
+            c_turnMachine.Execute(Command.RIDE);
+            if (c_playerData.f_currentSpeed < 0.0f)
+            {
+                c_accelMachine.Execute(Command.STOP);
+                // we should completely stop do something now that we're done
+            }
+            return;
+        }
         // current issue, these commands don't work out great
         if (c_playerData.v_currentSurfaceNormal.normalized == Vector3.zero)
         {
@@ -246,6 +258,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         c_positionData = new PlayerPositionData();
         c_stateData = new StateData();
+        c_entityData = new EntityData();
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
@@ -260,6 +273,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.b_obstacleInRange = false;
 
         c_stateData.b_updateState = true;
+        c_stateData.b_courseFinished = false;
     }
     #endregion
 
@@ -286,18 +300,20 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         /* NOTES FOR HERE:
          * 
-         * check down AND forward?
+         * check down AND forward: we can use this to get a smooth interpolation of the change in angle
+         * 1) check the angle formed by player pointing down and downHit->fwdHit
+         * 2) take this angle, rotate the player by the difference between that and 90 (as 90 would imply alignment)
+         * 3) if downHit doesn't give us the right height, adjust the height
+         * 
          * Check the delta in surface normals and if it's too great, yeet the player into the air
          *
          */
-        // if there are, set the surface normal to the normals of any hit surfaces, the point should be set from the center cast
-        // c_playerData.v_currentDown
         LayerMask lm_env = LayerMask.GetMask("Environment");
         if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance, lm_env))
         {
             if (!c_playerData.v_currentSurfaceNormal.Equals(centerHit.normal))
             {
-                if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right*-1) > 20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed))) // angle should get smaller as we get faster
+                if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right * -1) > 20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed))) // angle should get smaller as we get faster
                 {
                     c_playerData.v_currentSurfaceNormal = Vector3.zero;
                 }
@@ -324,11 +340,25 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             // notify that we have collided with a zone, grab the zone's ID and send corresponding message
             ZoneController controller = GameMasterController.LookupZoneController(forwardHit.transform);
-            if (controller != null)
+            if (controller != null && c_positionData.u_zone != controller.u_zoneId)
             {
                 c_positionData.u_zone = controller.u_zoneId;
-                Debug.Log(c_positionData.u_zone);
+                ZoneAction();
             }
+        }
+    }
+
+    private void ZoneAction()
+    {
+        if (c_positionData.u_zone == uint.MaxValue)
+        {
+            return;
+        }
+
+        if (ZoneController.GetZoneType(c_positionData.u_zone) == ZoneType.FINISH_LINE)
+        {
+            Message playerFinished = new Message(c_entityData.u_entityID);
+            MessageServer.SendMessage(MessageID.PLAYER_FINISHED, playerFinished);
         }
     }
 
@@ -355,24 +385,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeMessageClient()
     {
-        cl_character = new CharacterMessageClient(ref c_stateData);
+        cl_character = new CharacterMessageClient(ref c_stateData, ref c_entityData);
         MessageServer.Subscribe(ref cl_character, MessageID.PAUSE);
+        MessageServer.Subscribe(ref cl_character, MessageID.PLAYER_FINISHED);
     }
     #endregion
 }
-
-
-
-/* TODO LIST:
- * 1) When Crashing, we need to figure out how to reset the timer without looping into a crash again
- * 2) AIR Crashing as a separate mechanic
- * 3) Angle reorientation when hitting angled walls as an alternative to crashing
- * 4) BIG TASK: implement switch stance/coming back down from a half pipe type of ramp
- * 5) BUG FIX: Jumping up launches the player forward, the transition needs to be fixed
- * 6) ENHANCEMENT: Jumping should have a bigger pop/environments need to accomodate more air time
- *
- * REFACTORING EFFORTS:
- * 1) Take player data and split it up among multiple classes for compartmentalization
- * 2) Move input to a data structure and pull from the engine to put input on the same
- *    schedule as the rest of engine input
- */

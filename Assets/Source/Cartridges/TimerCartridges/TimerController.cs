@@ -66,6 +66,7 @@ public class TimerController : MonoBehaviour
     {
         cl_timer = new TimerMessageClient(ref c_stateData);
         MessageServer.Subscribe(ref cl_timer, MessageID.PAUSE);
+        MessageServer.Subscribe(ref cl_timer, MessageID.PLAYER_FINISHED);
     }
 
     private void UpdateStateMachine()
