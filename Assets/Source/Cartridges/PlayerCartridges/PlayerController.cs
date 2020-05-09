@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private PlayerData c_playerData;
     [SerializeField] private TrickData trickData;
     [SerializeField] private ControllerInputData c_inputData;
+    [SerializeField] private Animator PlayerAnimator;
     [SerializeField] private DebugAccessor debugAccessor;
 
     private StateData c_stateData;
@@ -126,6 +127,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
         debugAccessor.DisplayState("Move State", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Transform Right", transform.right);
         debugAccessor.DisplayFloat("Jump Charge", c_playerData.f_currentJumpCharge);
+
+        UpdateAnimator();
+    }
+
+    /// <summary>
+    /// Updates the animator's states using information from the player data
+    /// </summary>
+    private void UpdateAnimator()
+    {
+        PlayerAnimator.SetFloat("TurnAnalogue", c_playerData.f_inputAxisTurn);
     }
 
     /// <summary>
@@ -336,6 +347,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             // surface normal is vector3.zero if there are no collisions
             c_playerData.v_currentSurfaceNormal = Vector3.zero;
+        }
+
+        Vector3 fwdVec = c_playerData.v_currentDown.normalized + c_playerData.v_currentDirection.normalized;
+        if (Physics.Raycast(c_playerData.v_currentPosition, fwdVec, out frontHit, 100f, lm_env))
+        {
+            // if we have a hit, check to see the difference between sqrt(2) and the hit divided by player height
+            float frontHitDist = ((frontHit.point - c_playerData.v_currentPosition).magnitude) / 1.1f;
+            if (Mathf.Abs(Mathf.Sqrt(2) - frontHitDist) > 0.005f)
+            {
+                
+            }
         }
     }
 
