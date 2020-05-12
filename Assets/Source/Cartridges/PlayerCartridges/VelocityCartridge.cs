@@ -32,6 +32,21 @@ public class VelocityCartridge {
         }
 
         position = point + currentRotation * new Vector3(0, 1.1f, 0);
+
+        /* Rotate the current position around the current contact point until the distance to the fwd point is sqrt(2)
+         * 
+         */
+        Vector3 positionOnSurface = position - point;
+
+
+    }
+     
+
+    public void SurfaceAdjustment(ref Vector3 position, Vector3 point, Vector3 forwardPoint, float angleDifference)
+    {
+        Vector3 positionVector = position - point;
+        Vector3 forwardVector = forwardPoint - point;
+
     }
 
     public void RaycastAdjustment(ref Vector3 surfacePoint, ref Vector3 currentPosition, ref Quaternion currentRotation)

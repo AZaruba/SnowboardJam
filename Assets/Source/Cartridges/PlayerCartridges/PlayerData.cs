@@ -25,6 +25,7 @@ public class PlayerData : MonoBehaviour {
     private float CrashTimer;
     private float CurrentRaycastDistance;
     private float CurrentForwardRaycastDistance;
+    private float SurfaceAngleDifference;
 
     private Vector3 CurrentPosition;
     private Vector3 CurrentDirection;
@@ -45,6 +46,7 @@ public class PlayerData : MonoBehaviour {
     private float InputAxisLVert;
     private Vector3 SurfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
     private Vector3 SurfaceAttachPoint { get; set; }
+    private Vector3 CurrentForwardPoint { get; set; }
     private Vector3 ObstacleNormal;
     #endregion
 
@@ -131,6 +133,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return CrashRecoveryTime; }
         set { CrashRecoveryTime = value; }
+    }
+
+    public float f_surfaceAngleDifference
+    {
+        get { return SurfaceAngleDifference; }
+        set { SurfaceAngleDifference = value; }
     }
     #endregion
     #region SerializedActives
@@ -248,6 +256,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return SurfaceAttachPoint; }
         set { SurfaceAttachPoint = value; }
+    }
+
+    public Vector3 v_currentForwardPoint
+    {
+        get { return CurrentForwardPoint; }
+        set { CurrentForwardPoint = value; }
     }
 
     public Vector3 v_currentObstacleNormal

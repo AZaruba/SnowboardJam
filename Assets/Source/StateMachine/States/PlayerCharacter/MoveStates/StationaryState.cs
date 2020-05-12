@@ -22,6 +22,7 @@ public class StationaryState : iState {
 
     public void TransitionAct()
     {
+        float angleDifference = c_playerData.f_surfaceAngleDifference;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Vector3 currentForward = c_playerData.v_currentDirection;
@@ -29,7 +30,7 @@ public class StationaryState : iState {
         Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref currentRotation);
+        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref currentRotation, angleDifference);
 
         c_playerData.v_currentNormal = currentNormal.normalized;
         c_playerData.v_currentDown = currentNormal.normalized * -1;

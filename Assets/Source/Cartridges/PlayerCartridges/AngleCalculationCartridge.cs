@@ -10,20 +10,29 @@ public class AngleCalculationCartridge
     /// <param name="targetNormal">Target normal.</param>
     /// <param name="currentNormal">Current normal.</param>
     /// <param name="currentForward">Current forward.</param>
-    public void AlignRotationWithSurface(ref Vector3 targetNormal, ref Vector3 currentNormal, ref Vector3 currentForward, ref Quaternion resultRotation)
+    public void AlignRotationWithSurface(ref Vector3 targetNormal, ref Vector3 currentNormal, ref Vector3 currentForward, ref Quaternion resultRotation, float rotationAngle)
     {
-        Vector3 targetForward = Vector3.ProjectOnPlane(currentForward, targetNormal);
-        Quaternion normalRotation = Quaternion.LookRotation(targetForward, targetNormal);
+        if (rotationAngle < 0.05f)
+        {
+            return;
+        }
 
-        resultRotation = normalRotation;
-        currentForward = targetForward.normalized;
-        currentNormal = targetNormal.normalized;
+        Vector3 axis = resultRotation * Vector3.Cross(currentForward.normalized, currentNormal.normalized).normalized;
+
+        resultRotation = resultRotation * Quaternion.AngleAxis(rotationAngle, axis.normalized);
+        currentForward = resultRotation * Vector3.forward; // what the heck is wrong here?
+        currentNormal = resultRotation * Vector3.up;
     }
 
     // TODO: This needs to be rethought as simply moving to an attach point isn't a one-size-fits-all solution
     public void MoveToAttachPoint(ref Vector3 currentPosition, ref Vector3 attachPoint)
     {
         currentPosition = attachPoint; // Vector3.Lerp(currentPosition,attachPoint, 0.1f);
+    }
+
+    public void AlignOrientationWithSurface(ref Vector3 playerPosition, ref Quaternion playerOrientation, Vector3 downwardHitPoint, Vector3 forwardHitPoint, Vector3 surfaceNormal, float lerpValue)
+    {
+        
     }
 
     /// <summary>

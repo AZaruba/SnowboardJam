@@ -25,6 +25,7 @@ public class GroundedState : iState
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Vector3 currentSurfaceNormal = c_playerData.v_currentSurfaceNormal;
         Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
+        Vector3 currentForwardPosition = c_playerData.v_currentForwardPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;

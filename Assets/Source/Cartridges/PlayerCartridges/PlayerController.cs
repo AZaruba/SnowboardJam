@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, iEntityController {
@@ -125,8 +126,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = c_playerData.q_currentRotation;
 
         debugAccessor.DisplayState("Move State", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Transform Right", transform.right);
-        debugAccessor.DisplayFloat("Jump Charge", c_playerData.f_currentJumpCharge);
+        debugAccessor.DisplayVector3("Cross N/F", Vector3.Cross(c_playerData.v_currentNormal, c_playerData.v_currentDirection));
+        debugAccessor.DisplayFloat("Angle Difference", c_playerData.f_surfaceAngleDifference);
 
         UpdateAnimator();
     }
@@ -287,7 +288,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.f_currentSpeed = Constants.ZERO_F;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentForwardRaycastDistance = c_playerData.f_forwardRaycastDistance;
-        c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
+        c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance; 
+        c_playerData.f_surfaceAngleDifference = 0.0f;
         c_playerData.b_obstacleInRange = false;
 
         c_stateData.b_updateState = true;
@@ -329,17 +331,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
         LayerMask lm_env = LayerMask.GetMask("Environment");
         if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance, lm_env))
         {
-            if (!c_playerData.v_currentSurfaceNormal.Equals(centerHit.normal))
+            if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right * -1) > 20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed))) // angle should get smaller as we get faster
             {
-                if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right * -1) > 20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed))) // angle should get smaller as we get faster
-                {
-                    c_playerData.v_currentSurfaceNormal = Vector3.zero;
-                }
-                else
-                {
-                    c_playerData.v_currentSurfaceAttachPoint = centerHit.point;
-                    c_playerData.v_currentSurfaceNormal = centerHit.normal;
-                }
+                c_playerData.v_currentSurfaceNormal = Vector3.zero;
+            }
+            else
+            {
+                c_playerData.v_currentSurfaceAttachPoint = centerHit.point;
+                c_playerData.v_currentSurfaceNormal = centerHit.normal;
             }
 
         }
@@ -347,16 +346,23 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             // surface normal is vector3.zero if there are no collisions
             c_playerData.v_currentSurfaceNormal = Vector3.zero;
+            return;
         }
 
         Vector3 fwdVec = c_playerData.v_currentDown.normalized + c_playerData.v_currentDirection.normalized;
         if (Physics.Raycast(c_playerData.v_currentPosition, fwdVec, out frontHit, 100f, lm_env))
         {
             // if we have a hit, check to see the difference between sqrt(2) and the hit divided by player height
-            float frontHitDist = ((frontHit.point - c_playerData.v_currentPosition).magnitude) / 1.1f;
+            float frontHitDist = ((frontHit.point - c_playerData.v_currentPosition).magnitude) / 1.1f; // Height is posing an issue with getting the angle accurate
+            c_playerData.v_currentForwardPoint = frontHit.point;
             if (Mathf.Abs(Mathf.Sqrt(2) - frontHitDist) > 0.005f)
             {
-                
+                Vector3 resultDir = frontHit.point - c_playerData.v_currentSurfaceAttachPoint;
+                c_playerData.f_surfaceAngleDifference = Vector3.Angle(c_playerData.v_currentDirection, resultDir);
+            }
+            else
+            {
+                c_playerData.f_surfaceAngleDifference = 0.0f;
             }
         }
     }

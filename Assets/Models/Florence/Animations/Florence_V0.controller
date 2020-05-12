@@ -17,9 +17,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 1.0080602
-  m_TransitionOffset: 0.0031094495
-  m_ExitTime: 0
+  m_TransitionDuration: 0.5622106
+  m_TransitionOffset: 0
+  m_ExitTime: 0.000000037765766
   m_HasExitTime: 0
   m_HasFixedDuration: 0
   m_InterruptionSource: 0
@@ -276,7 +276,7 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0.25
-  m_TransitionOffset: 0
+  m_TransitionOffset: 0.7488002
   m_ExitTime: 0.75
   m_HasExitTime: 1
   m_HasFixedDuration: 1
@@ -298,8 +298,8 @@ AnimatorStateTransition:
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0.25
-  m_TransitionOffset: 0
-  m_ExitTime: 0.75
+  m_TransitionOffset: 0.38972673
+  m_ExitTime: 0.38654763
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -372,13 +372,13 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: JumpPressed
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -642,7 +642,7 @@ AnimatorStateMachine:
     m_Position: {x: 600, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4142197431419015668}
-    m_Position: {x: 280, y: -30, z: 0}
+    m_Position: {x: 290, y: -50, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7577479753314664828}
     m_Position: {x: 490, y: 10, z: 0}
