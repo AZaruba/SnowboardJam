@@ -126,7 +126,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = c_playerData.q_currentRotation;
 
         debugAccessor.DisplayState("Move State", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Cross N/F", Vector3.Cross(c_playerData.v_currentNormal, c_playerData.v_currentDirection));
+        debugAccessor.DisplayVector3("Cross N/F", Vector3.Cross(c_playerData.v_currentDirection, c_playerData.v_currentNormal));
         debugAccessor.DisplayFloat("Angle Difference", c_playerData.f_surfaceAngleDifference);
 
         UpdateAnimator();
@@ -138,6 +138,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void UpdateAnimator()
     {
         PlayerAnimator.SetFloat("TurnAnalogue", c_playerData.f_inputAxisTurn);
+        PlayerAnimator.SetBool("JumpPressed", c_airMachine.GetCurrentState() == StateRef.CHARGING);
     }
 
     /// <summary>
@@ -358,7 +359,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             if (Mathf.Abs(Mathf.Sqrt(2) - frontHitDist) > 0.005f)
             {
                 Vector3 resultDir = frontHit.point - c_playerData.v_currentSurfaceAttachPoint;
-                c_playerData.f_surfaceAngleDifference = Vector3.Angle(c_playerData.v_currentDirection, resultDir);
+                c_playerData.f_surfaceAngleDifference = Vector3.SignedAngle(c_playerData.v_currentDirection, resultDir, Vector3.Cross(c_playerData.v_currentNormal, c_playerData.v_currentDirection));
             }
             else
             {

@@ -12,15 +12,15 @@ public class AngleCalculationCartridge
     /// <param name="currentForward">Current forward.</param>
     public void AlignRotationWithSurface(ref Vector3 targetNormal, ref Vector3 currentNormal, ref Vector3 currentForward, ref Quaternion resultRotation, float rotationAngle)
     {
-        if (rotationAngle < 0.05f)
+        if (Mathf.Abs(rotationAngle) < 0.05f)
         {
             return;
         }
 
-        Vector3 axis = resultRotation * Vector3.Cross(currentForward.normalized, currentNormal.normalized).normalized;
+        Vector3 axis = Vector3.Cross(Vector3.up, Vector3.forward); // when the player is "misaligned" with the surface normal, this breaks
 
         resultRotation = resultRotation * Quaternion.AngleAxis(rotationAngle, axis.normalized);
-        currentForward = resultRotation * Vector3.forward; // what the heck is wrong here?
+        currentForward = resultRotation * Vector3.forward;
         currentNormal = resultRotation * Vector3.up;
     }
 
