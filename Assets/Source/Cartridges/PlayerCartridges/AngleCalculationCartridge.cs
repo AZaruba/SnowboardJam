@@ -30,9 +30,14 @@ public class AngleCalculationCartridge
         currentPosition = attachPoint; // Vector3.Lerp(currentPosition,attachPoint, 0.1f);
     }
 
-    public void AlignOrientationWithSurface(ref Vector3 playerPosition, ref Quaternion playerOrientation, Vector3 downwardHitPoint, Vector3 forwardHitPoint, Vector3 surfaceNormal, float lerpValue)
+    public void AlignOrientationWithSurface(ref Vector3 currentNormal, ref Vector3 currentForward, ref Quaternion resultRotation, Vector3 targetNormal)
     {
-        
+        Vector3 targetForward = Vector3.ProjectOnPlane(currentForward, targetNormal);
+        Quaternion normalRotation = Quaternion.LookRotation(targetForward, targetNormal);
+
+        resultRotation = normalRotation;
+        currentForward = targetForward.normalized;
+        currentNormal = targetNormal;
     }
 
     /// <summary>

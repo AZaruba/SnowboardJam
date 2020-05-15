@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         AerialState s_aerial = new AerialState(ref c_playerData, ref cart_gravity, ref cart_velocity);
         JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState(ref c_playerData, ref cart_velocity);
+        GroundedState s_grounded = new GroundedState(ref c_playerData, ref cart_velocity, ref cart_angleCalc);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
@@ -335,6 +335,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right * -1) > 20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed))) // angle should get smaller as we get faster
             {
                 c_playerData.v_currentSurfaceNormal = Vector3.zero;
+                return;
             }
             else
             {
@@ -351,7 +352,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         Vector3 fwdVec = c_playerData.v_currentDown.normalized + c_playerData.v_currentDirection.normalized;
-        if (Physics.Raycast(c_playerData.v_currentPosition, fwdVec, out frontHit, 100f, lm_env))
+        if (Physics.Raycast(c_playerData.v_currentPosition, fwdVec, out frontHit, 2f, lm_env))
         {
             // if we have a hit, check to see the difference between sqrt(2) and the hit divided by player height
             float frontHitDist = ((frontHit.point - c_playerData.v_currentPosition).magnitude) / 1.1f; // Height is posing an issue with getting the angle accurate

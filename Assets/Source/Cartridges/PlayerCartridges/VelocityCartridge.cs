@@ -17,28 +17,9 @@ public class VelocityCartridge {
         position += direction.normalized * velocity * Time.deltaTime;
     }
 
-    /* the Raycast Adjustment should rotate the player around an axis point until they are in the right position
-     * The reason for a rotation is to ensure that any adjustment keeps the POSITION DELTA the same.
-     * 
-     * Theoretically, if the player is travelling parallel to the surface, this adjustment should be zero
-     * and can either be short circuited for performance OR left as-is
-     * 
-     */ 
-    public void SurfaceAdjustment(ref Vector3 position, Vector3 previousPosition, Vector3 point, Vector3 normal, Vector3 surfaceNormal, Quaternion currentRotation)
+    public void SurfaceAdjustment(ref Vector3 position, Vector3 point, Quaternion currentRotation)
     {
-        if (normal == surfaceNormal)
-        {
-            return;
-        }
-
-        position = point + currentRotation * new Vector3(0, 1.1f, 0);
-
-        /* Rotate the current position around the current contact point until the distance to the fwd point is sqrt(2)
-         * 
-         */
-        Vector3 positionOnSurface = position - point;
-
-
+        position = Vector3.Lerp(position, point + currentRotation * new Vector3(0, 1.1f, 0), 0.5f);
     }
      
 

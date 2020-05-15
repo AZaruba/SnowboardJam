@@ -36,8 +36,8 @@ public class SlowingState : iState
 
         cart_f_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
+        cart_velocity.SurfaceAdjustment(ref currentPosition, currentSurfacePosition, currentRotation);
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
-        cart_velocity.SurfaceAdjustment(ref currentPosition, currentSurfacePosition, currentForwardPosition, angleDifference);
 
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.v_currentPosition = currentPosition;
