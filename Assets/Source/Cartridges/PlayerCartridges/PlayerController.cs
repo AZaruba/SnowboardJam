@@ -125,7 +125,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_playerData.q_currentRotation;
 
-        debugAccessor.DisplayState("Move State", c_accelMachine.GetCurrentState());
+        debugAccessor.DisplayState("Air State", c_airMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Cross N/F", Vector3.Cross(c_playerData.v_currentDirection, c_playerData.v_currentNormal));
         debugAccessor.DisplayFloat("Angle Difference", c_playerData.f_surfaceAngleDifference);
 
@@ -292,6 +292,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance; 
         c_playerData.f_surfaceAngleDifference = 0.0f;
         c_playerData.b_obstacleInRange = false;
+        c_playerData.v_currentForwardNormal = transform.up;
 
         c_stateData.b_updateState = true;
         c_stateData.b_courseFinished = false;
@@ -357,6 +358,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             // if we have a hit, check to see the difference between sqrt(2) and the hit divided by player height
             float frontHitDist = ((frontHit.point - c_playerData.v_currentPosition).magnitude) / 1.1f; // Height is posing an issue with getting the angle accurate
             c_playerData.v_currentForwardPoint = frontHit.point;
+            c_playerData.v_currentForwardNormal = frontHit.normal;
             if (Mathf.Abs(Mathf.Sqrt(2) - frontHitDist) > 0.005f)
             {
                 Vector3 resultDir = frontHit.point - c_playerData.v_currentSurfaceAttachPoint;

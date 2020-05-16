@@ -20,15 +20,19 @@ public class GroundedState : iState
 
     }
 
+    /* BUG:
+     * In this transition, since the player's direction of travel is backwards from the way they were 
+     * traveling if going uphill to uphill, this leads to a rotational mismatch
+     * 
+     * Refactoring air travel will help a lot in this regard
+     * 
+     */ 
     public void TransitionAct()
     {
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
-        Vector3 previousPosition = currentPosition;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Vector3 currentSurfaceNormal = c_playerData.v_currentSurfaceNormal;
-        Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
-        Vector3 currentForwardPosition = c_playerData.v_currentForwardPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;

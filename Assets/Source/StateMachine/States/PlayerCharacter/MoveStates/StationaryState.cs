@@ -26,8 +26,7 @@ public class StationaryState : iState {
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Vector3 currentForward = c_playerData.v_currentDirection;
-        Vector3 currentSurfaceNormal = c_playerData.v_currentSurfaceNormal;
-        Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
+        Vector3 currentSurfaceNormal = c_playerData.v_currentForwardNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref currentRotation, angleDifference);

@@ -16,10 +16,10 @@ public class AngleCalculationCartridge
         {
             return;
         }
+        Vector3 targetForward = Vector3.ProjectOnPlane(currentForward, targetNormal);
+        Quaternion normalRotation = Quaternion.LookRotation(targetForward, targetNormal);
 
-        Vector3 axis = Vector3.Cross(Vector3.up, Vector3.forward); // when the player is "misaligned" with the surface normal, this breaks
-
-        resultRotation = resultRotation * Quaternion.AngleAxis(rotationAngle, axis.normalized);
+        resultRotation = Quaternion.RotateTowards(resultRotation, normalRotation, Mathf.Abs(rotationAngle)); // Quaternion.AngleAxis(rotationAngle, axis.normalized);
         currentForward = resultRotation * Vector3.forward;
         currentNormal = resultRotation * Vector3.up;
     }

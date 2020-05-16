@@ -25,13 +25,10 @@ public class SlowingState : iState
         float angleDifference = c_playerData.f_surfaceAngleDifference;
         float slowScaling = c_playerData.f_inputAxisLVert * - 1;
         Vector3 currentPosition = c_playerData.v_currentPosition;
-        Vector3 previousPosition = currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
-        Vector3 previousNormal = currentNormal;
-        Vector3 currentSurfaceNormal = c_playerData.v_currentSurfaceNormal;
+        Vector3 currentSurfaceNormal = c_playerData.v_currentForwardNormal;
         Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
-        Vector3 currentForwardPosition = c_playerData.v_currentForwardPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         cart_f_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);

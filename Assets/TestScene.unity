@@ -926,10 +926,10 @@ MonoBehaviour:
   Acceleration: 20
   BrakePower: 20
   TurnSpeed: 100
-  JumpPower: 15
+  JumpPower: 5
   BaseJumpPower: 10
   JumpChargeRate: 5
-  GravityFactor: 30
+  GravityFactor: 20
   TerminalVelocity: 40
   CrashRecoveryTime: 2
   BackVectorOffset: {x: 0, y: 0, z: 0.5}

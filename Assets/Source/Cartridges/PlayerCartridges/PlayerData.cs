@@ -47,6 +47,7 @@ public class PlayerData : MonoBehaviour {
     private Vector3 SurfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
     private Vector3 SurfaceAttachPoint { get; set; }
     private Vector3 CurrentForwardPoint { get; set; }
+    private Vector3 CurrentForwardNormal { get; set; }
     private Vector3 ObstacleNormal;
     #endregion
 
@@ -262,6 +263,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return CurrentForwardPoint; }
         set { CurrentForwardPoint = value; }
+    }
+
+    public Vector3 v_currentForwardNormal
+    {
+        get { return CurrentForwardNormal; }
+        set { CurrentForwardNormal = value; }
     }
 
     public Vector3 v_currentObstacleNormal

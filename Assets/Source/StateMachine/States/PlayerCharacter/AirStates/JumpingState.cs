@@ -89,10 +89,6 @@ public class JumpingState : iState
             {
                 c_playerData.v_currentDirection = c_playerData.v_currentAirDirection.normalized;
             }
-            else
-            {
-                c_playerData.v_currentDirection = c_playerData.v_currentModelDirection;
-            }
             c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
             return StateRef.GROUNDED;
         }
