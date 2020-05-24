@@ -17,6 +17,12 @@ public class VelocityCartridge {
         position += direction.normalized * velocity * Time.deltaTime;
     }
 
+    public void UpdateAerialPosition(ref Vector3 position, Vector3 lateralDir, float verticalVelocity, float lateralVelocity)
+    {
+        position += lateralDir * lateralVelocity * Time.deltaTime;
+        position += Vector3.up * verticalVelocity * Time.deltaTime;
+    }
+
     public void SurfaceAdjustment(ref Vector3 position, Vector3 point, Quaternion currentRotation)
     {
         position = Vector3.Lerp(position, point + currentRotation * new Vector3(0, 1.1f, 0), 0.5f);

@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private DebugAccessor debugAccessor;
 
     private StateData c_stateData;
+    private AerialMoveData c_aerialMoveData;
 
     // private members
     private StateMachine c_turnMachine;
@@ -66,7 +67,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         CarvingState s_carving = new CarvingState(ref c_playerData, ref cart_handling);
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
 
-        AerialState s_aerial = new AerialState(ref c_playerData, ref cart_gravity, ref cart_velocity);
+        AerialState s_aerial = new AerialState(ref c_playerData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
         JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
         GroundedState s_grounded = new GroundedState(ref c_playerData, ref cart_velocity, ref cart_angleCalc);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
@@ -126,8 +127,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = c_playerData.q_currentRotation;
 
         debugAccessor.DisplayState("Air State", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Cross N/F", Vector3.Cross(c_playerData.v_currentDirection, c_playerData.v_currentNormal));
-        debugAccessor.DisplayFloat("Angle Difference", c_playerData.f_surfaceAngleDifference);
+        debugAccessor.DisplayVector3("Air Dir", c_aerialMoveData.v_lateralDirection);
+        debugAccessor.DisplayFloat("Vertical Velocity", c_aerialMoveData.f_verticalVelocity);
 
         UpdateAnimator();
     }
@@ -278,6 +279,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         c_positionData = new PlayerPositionData();
         c_stateData = new StateData();
+        c_aerialMoveData = new AerialMoveData();
         c_entityData = new EntityData();
 
         c_playerData.v_currentPosition = transform.position;
