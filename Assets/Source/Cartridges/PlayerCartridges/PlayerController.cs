@@ -244,6 +244,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_airMachine.Execute(Command.JUMP);
             c_accelMachine.Execute(Command.JUMP);
+            c_turnMachine.Execute(Command.JUMP);
             sm_tricking.Execute(Command.READY_TRICK);
         }
 

@@ -82,7 +82,7 @@ public class AerialState : iState {
         float groundVel = c_playerData.f_currentSpeed;
 
         float vertVel = (latDir.y/latDir.magnitude) * groundVel;
-        float latVel = (Mathf.Abs(latDir.x + latDir.z)/latDir.magnitude) * groundVel;
+        float latVel = (Mathf.Abs(latDir.x) + Mathf.Abs(latDir.z))/latDir.magnitude * groundVel;
 
         vertVel += c_playerData.f_currentJumpCharge; // * latDir.y?
 
