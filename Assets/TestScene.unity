@@ -926,7 +926,7 @@ MonoBehaviour:
   Acceleration: 20
   BrakePower: 20
   TurnSpeed: 100
-  JumpPower: 5
+  JumpPower: 15
   BaseJumpPower: 10
   JumpChargeRate: 5
   GravityFactor: 20
@@ -1103,13 +1103,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745530428}
-  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
-  m_LocalPosition: {x: -3, y: 8, z: -10}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -90, y: -50, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &745530433
 MonoBehaviour:
   m_ObjectHideFlags: 0
