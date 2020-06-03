@@ -28,7 +28,7 @@ public class JumpingState : iState
         Vector3 position = c_playerData.v_currentPosition;
         Vector3 oldPosition = position;
 
-        cart_gravity.UpdateAirVelocity(ref airVelocity, ref gravity, ref terminalVelocity);
+        cart_gravity.UpdateAirVelocity(ref airVelocity, gravity, terminalVelocity);
         cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
         position.y += airVelocity * Time.deltaTime;
         currentAirDir.y = airVelocity;
@@ -88,10 +88,6 @@ public class JumpingState : iState
             if (Vector3.Distance(c_playerData.v_currentAirDirection.normalized * -1, c_playerData.v_currentSurfaceNormal) > 0.05f)
             {
                 c_playerData.v_currentDirection = c_playerData.v_currentAirDirection.normalized;
-            }
-            else
-            {
-                c_playerData.v_currentDirection = c_playerData.v_currentModelDirection;
             }
             c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
             return StateRef.GROUNDED;

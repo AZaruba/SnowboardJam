@@ -9,6 +9,7 @@ public enum MessageID
     TEST_MSG_ONE,
     TEST_MSG_TWO,
     SCORE_EDIT,
+    PLAYER_FINISHED,
 }
 
 public enum ClientID
@@ -22,6 +23,7 @@ public enum ClientID
 
 public class Message
 {
+    private uint u_data;
     private int i_data;
     private float f_data;
     private string s_data;
@@ -31,6 +33,11 @@ public class Message
         this.i_data = iIn;
         this.f_data = fIn;
         this.s_data = sIn;
+    }
+
+    public Message(uint dataIn)
+    {
+        u_data = dataIn;
     }
     
     public Message(int dataIn)
@@ -46,6 +53,11 @@ public class Message
     public Message(string dataIn)
     {
         s_data = dataIn;
+    }
+
+    public uint getUint()
+    {
+        return u_data;
     }
 
     public int getInt()

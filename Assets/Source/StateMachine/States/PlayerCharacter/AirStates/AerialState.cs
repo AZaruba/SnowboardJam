@@ -7,74 +7,84 @@ public class AerialState : iState {
     private GravityCartridge cart_gravity;
     private VelocityCartridge cart_velocity;
     private PlayerData c_playerData;
+    private AerialMoveData c_aerialMoveData;
 
-    public AerialState(ref PlayerData playerData, ref GravityCartridge cart_grav, ref VelocityCartridge cart_vel)
+    public AerialState(ref PlayerData playerData, ref AerialMoveData moveData, ref GravityCartridge cart_grav, ref VelocityCartridge cart_vel)
     {
         this.c_playerData = playerData;
+        this.c_aerialMoveData = moveData;
         this.cart_gravity = cart_grav;
         this.cart_velocity = cart_vel;
     }
 
-    // TODO: add horizontal movement that takes minimal external input here
     public void Act()
     {
-        float airVelocity = c_playerData.f_currentAirVelocity;
+        float vertVelocity = c_aerialMoveData.f_verticalVelocity;
+        float latVelocity = c_aerialMoveData.f_lateralVelocity;
+
         float gravity = c_playerData.f_gravity;
         float terminalVelocity = c_playerData.f_terminalVelocity;
-        float currentSpeed = c_playerData.f_currentSpeed;
 
-        Vector3 currentDir = c_playerData.v_currentDirection;
-        Vector3 position = c_playerData.v_currentPosition;
-        Vector3 oldPosition = position;
+        Vector3 lateralDir = c_aerialMoveData.v_lateralDirection;
+        Vector3 playerPos = c_playerData.v_currentPosition;
 
-        cart_gravity.UpdateAirVelocity(ref airVelocity, ref gravity, ref terminalVelocity);
-        cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
-        position.y += airVelocity * Time.deltaTime;
+        cart_gravity.UpdateAirVelocity(ref vertVelocity, gravity, terminalVelocity);
+        cart_velocity.UpdateAerialPosition(ref playerPos, lateralDir, vertVelocity, latVelocity);
 
-        c_playerData.v_currentPosition = position;
-        c_playerData.f_currentAirVelocity = airVelocity;
-        c_playerData.v_currentAirDirection = Vector3.Normalize(position - oldPosition);
-        c_playerData.v_currentDown = c_playerData.v_currentAirDirection;
-        if (airVelocity <= Constants.ZERO_F)
+        if (vertVelocity <= Constants.ZERO_F)
         {
-            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance + Mathf.Abs(airVelocity) * Time.deltaTime;
+            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance + Mathf.Abs(vertVelocity) * Time.deltaTime;
         }
         else
         {
             c_playerData.f_currentRaycastDistance = Constants.ZERO_F;
         }
+
+        c_playerData.v_currentPosition = playerPos;
+        c_aerialMoveData.f_verticalVelocity = vertVelocity;
     }
 
     public void TransitionAct()
     {
-        Vector3 previousDirection = c_playerData.v_currentDirection;
-        float currentVelocity = c_playerData.f_currentSpeed;
-        float airVelocity = previousDirection.y * currentVelocity;
-        Vector3 airDirection = previousDirection;
-        airDirection.Normalize();
+        /* Fixing this up:
+         *
+         * 1) there should be a small hop in the normal direction
+         * 2) any boost from jump charge should go straight up
+         *
+         */ 
 
-        previousDirection.y = Constants.ZERO_F; // "flatten direction"
+        Vector3 latDir = c_playerData.v_currentDirection.normalized;
+        float groundVel = c_playerData.f_currentSpeed;
 
-        // scale velocity by the change in magnitude so we don't go faster in a direction
-        // float magnitudeFactor = previousDirection.magnitude / c_playerData.v_currentDirection.magnitude;
+        float vertVel = (latDir.y/latDir.magnitude) * groundVel;
+        float latVel = (Mathf.Abs(latDir.x) + Mathf.Abs(latDir.z))/latDir.magnitude * groundVel;
 
-        c_playerData.f_currentAirVelocity = airVelocity;
-        c_playerData.v_currentDirection = previousDirection.normalized;
-        c_playerData.v_currentAirDirection = airDirection;
-        c_playerData.f_currentSpeed *= previousDirection.magnitude;
-        c_playerData.v_currentDown = Vector3.down;
-        c_playerData.f_currentJumpCharge = Constants.ZERO_F;
+        vertVel += c_playerData.f_currentJumpCharge; // * latDir.y?
+
+        c_aerialMoveData.f_verticalVelocity = vertVel;
+        c_aerialMoveData.f_lateralVelocity = latVel;
+
+        // the lateral direction should be flattened
+        latDir.y = 0.0f;
+        latDir.Normalize();
+        c_aerialMoveData.v_lateralDirection = latDir;
     }
 
+    // TODO: Fix behavior when we he the ground, we're back to just bumping back up
     public StateRef GetNextState(Command cmd)
     {
         if (cmd == Command.LAND)
         {
-            if (Vector3.Distance(c_playerData.v_currentAirDirection.normalized * -1,c_playerData.v_currentSurfaceNormal) > 0.05f)
+            Vector3 horizontalDir = c_aerialMoveData.v_lateralDirection * c_aerialMoveData.f_lateralVelocity;
+            horizontalDir.y = c_aerialMoveData.f_verticalVelocity;
+
+            // if these vectors are equal, then we are landing on a like-plane of the one we jumped off of
+            Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_playerData.v_currentSurfaceNormal);
+            if (horizontalDir.normalized != c_playerData.v_currentSurfaceNormal*-1)
             {
-                c_playerData.v_currentDirection = c_playerData.v_currentAirDirection.normalized;
+                c_playerData.v_currentDirection = projectedDir.normalized;
             }
-            c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
+            c_playerData.f_currentSpeed = projectedDir.magnitude;
             return StateRef.GROUNDED;
         }
         if (cmd == Command.CRASH)

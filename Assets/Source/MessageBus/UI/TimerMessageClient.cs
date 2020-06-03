@@ -25,6 +25,13 @@ public class TimerMessageClient : iMessageClient
             c_stateData.b_updateState = message.getInt() == 0;
             return true;
         }
+
+        // Multiplayer tip: ALL players need to be finished to stop the timer, if a player finishes just send a timestamp to the player
+        if (id == MessageID.PLAYER_FINISHED)
+        {
+            c_stateData.b_updateState = false;
+            return true;
+        }
         return false;
     }
 }
