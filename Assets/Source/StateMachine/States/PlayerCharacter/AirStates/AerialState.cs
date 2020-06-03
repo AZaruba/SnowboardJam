@@ -46,6 +46,12 @@ public class AerialState : iState {
 
     public void TransitionAct()
     {
+        /* Fixing this up:
+         *
+         * 1) there should be a small hop in the normal direction
+         * 2) any boost from jump charge should go straight up
+         *
+         */ 
 
         Vector3 latDir = c_playerData.v_currentDirection.normalized;
         float groundVel = c_playerData.f_currentSpeed;
@@ -69,19 +75,16 @@ public class AerialState : iState {
     {
         if (cmd == Command.LAND)
         {
-            /*
-            // take normalize vertDir and latDir, that is our new direction.
-            Vector3 newDirection = c_aerialMoveData.v_lateralDirection.normalized * c_aerialMoveData.f_lateralVelocity;
-            newDirection.y = c_aerialMoveData.f_lateralVelocity;
+            Vector3 horizontalDir = c_aerialMoveData.v_lateralDirection * c_aerialMoveData.f_lateralVelocity;
+            horizontalDir.y = c_aerialMoveData.f_verticalVelocity;
 
-            if (!float.Equals(newDirection.magnitude, Constants.ZERO_F))
+            // if these vectors are equal, then we are landing on a like-plane of the one we jumped off of
+            Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_playerData.v_currentSurfaceNormal);
+            if (horizontalDir.normalized != c_playerData.v_currentSurfaceNormal*-1)
             {
-                c_playerData.v_currentDirection = newDirection.normalized;
+                c_playerData.v_currentDirection = projectedDir.normalized;
             }
-
-            c_playerData.f_currentSpeed = newDirection.magnitude;
-            */
-
+            c_playerData.f_currentSpeed = projectedDir.magnitude;
             return StateRef.GROUNDED;
         }
         if (cmd == Command.CRASH)
