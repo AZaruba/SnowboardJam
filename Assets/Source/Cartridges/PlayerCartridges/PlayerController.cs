@@ -323,20 +323,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
     }
     private void CheckForGround()
     {
-        /* NOTES FOR HERE:
-         * 
-         * check down AND forward: we can use this to get a smooth interpolation of the change in angle
-         * 1) check the angle formed by player pointing down and downHit->fwdHit
-         * 2) take this angle, rotate the player by the difference between that and 90 (as 90 would imply alignment)
-         * 3) if downHit doesn't give us the right height, adjust the height
-         * 
-         * Check the delta in surface normals and if it's too great, yeet the player into the air
-         *
-         */
         LayerMask lm_env = LayerMask.GetMask("Environment");
         if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance, lm_env))
         {
-            if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right * -1) > 20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed))) // angle should get smaller as we get faster
+            if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right * -1) >
+                Mathf.Max(20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed)), 0.0f)) // angle should get smaller as we get faster
             {
                 c_playerData.v_currentSurfaceNormal = Vector3.zero;
                 return;
