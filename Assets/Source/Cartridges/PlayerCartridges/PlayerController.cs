@@ -236,11 +236,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         // TODO: integrate this keypress into the player data
-        if (GlobalInputController.GetInputValue(c_inputData.JumpButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputValue(c_inputData.JumpKey) == KeyValue.PRESSED)
         {
             c_airMachine.Execute(Command.CHARGE);
         }
-        else if (GlobalInputController.GetInputValue(c_inputData.JumpButton) == KeyValue.UP)
+        else if (GlobalInputController.GetInputValue(c_inputData.JumpKey) == KeyValue.UP)
         {
             c_airMachine.Execute(Command.JUMP);
             c_accelMachine.Execute(Command.JUMP);
