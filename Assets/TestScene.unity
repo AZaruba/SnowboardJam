@@ -926,8 +926,8 @@ MonoBehaviour:
   Acceleration: 20
   BrakePower: 20
   TurnSpeed: 100
-  JumpPower: 10
-  BaseJumpPower: 5
+  JumpPower: 12
+  BaseJumpPower: 8
   JumpChargeRate: 5
   GravityFactor: 20
   TerminalVelocity: 40

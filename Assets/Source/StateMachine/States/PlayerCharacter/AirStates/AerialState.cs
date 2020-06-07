@@ -46,7 +46,7 @@ public class AerialState : iState {
 
     public void TransitionAct()
     {
-        Vector3 jumpVector = c_playerData.v_currentNormal * c_playerData.f_currentJumpCharge;
+        Vector3 jumpVector = Vector3.Lerp(c_playerData.v_currentNormal * c_playerData.f_currentJumpCharge, Vector3.up * c_playerData.f_currentJumpCharge, 0.5f);
         Vector3 directVector = c_playerData.v_currentDirection * c_playerData.f_currentSpeed;
 
         Vector3 totalAerialVector = jumpVector + directVector;
@@ -63,6 +63,7 @@ public class AerialState : iState {
         latDir.y = 0.0f;
         latDir.Normalize();
         c_aerialMoveData.v_lateralDirection = latDir;
+        c_playerData.v_currentDown = Vector3.down;
     }
 
     // TODO: Fix behavior when we he the ground, we're back to just bumping back up

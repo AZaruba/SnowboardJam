@@ -127,8 +127,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = c_playerData.q_currentRotation;
 
         debugAccessor.DisplayState("Air State", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Air Dir", c_aerialMoveData.v_lateralDirection);
-        debugAccessor.DisplayFloat("Vertical Velocity", c_aerialMoveData.f_verticalVelocity);
+        debugAccessor.DisplayVector3("Current Down", c_playerData.v_currentDown);
+        debugAccessor.DisplayFloat("Lateral Velocity", c_aerialMoveData.f_lateralVelocity);
 
         UpdateAnimator();
     }
