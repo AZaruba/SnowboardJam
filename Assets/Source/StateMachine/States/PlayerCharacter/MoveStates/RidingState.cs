@@ -5,23 +5,29 @@ using UnityEngine;
 public class RidingState : iState {
 
     AngleCalculationCartridge cart_angleCalc;
-    AccelerationCartridge     cart_f_acceleration;
+    AccelerationCartridge     cart_acceleration;
     VelocityCartridge         cart_velocity;
-    PlayerData c_playerData;
+    SurfaceInfluenceCartridge cart_surfInf;
 
-    public RidingState(ref PlayerData playerData, ref AngleCalculationCartridge angleCalc,
-        ref AccelerationCartridge f_acceleration,
-        ref VelocityCartridge velocity)
+    PlayerData c_playerData;
+    PlayerPositionData c_playerPositionData;
+
+    public RidingState(ref PlayerData playerData, ref PlayerPositionData positionData, 
+        ref AngleCalculationCartridge angleCalc, ref AccelerationCartridge acceleration, 
+        ref VelocityCartridge velocity,ref SurfaceInfluenceCartridge surfInf)
     {
         this.c_playerData = playerData;
+        this.c_playerPositionData = positionData;
         this.cart_angleCalc = angleCalc;
-        this.cart_f_acceleration = f_acceleration;
+        this.cart_acceleration = acceleration;
         this.cart_velocity = velocity;
+        this.cart_surfInf = surfInf;
     }
 
     public void Act()
     {
         // check for angle when implemented
+        bool isReversed = c_playerPositionData.b_modelReversed;
         float currentVelocity = c_playerData.f_currentSpeed;
         float f_acceleration = c_playerData.f_acceleration;
         float topSpeed = c_playerData.f_topSpeed;
@@ -33,10 +39,12 @@ public class RidingState : iState {
         Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_f_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed);
+        cart_surfInf.PullVelocity(ref currentVelocity, currentSurfaceNormal, Vector3.up, currentDir);
+        cart_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed);
+        cart_acceleration.FlipDirection(ref isReversed, ref currentVelocity, ref currentDir);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
         cart_velocity.SurfaceAdjustment(ref currentPosition, currentSurfacePosition, currentRotation);
-        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
+        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity, isReversed);
         
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.f_acceleration = f_acceleration;
@@ -45,6 +53,7 @@ public class RidingState : iState {
         c_playerData.v_currentDown = currentNormal.normalized * -1;
         c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
+        c_playerPositionData.b_modelReversed = isReversed;
     }
 
     public void TransitionAct()

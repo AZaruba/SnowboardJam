@@ -4,22 +4,29 @@ using UnityEngine;
 
 public class SlowingState : iState
 {
-    AccelerationCartridge cart_f_acceleration;
+    AccelerationCartridge cart_acceleration;
     VelocityCartridge cart_velocity;
     AngleCalculationCartridge cart_angleCalc;
-    PlayerData c_playerData;
+    SurfaceInfluenceCartridge cart_surfInf;
 
-    public SlowingState(ref PlayerData playerData, ref VelocityCartridge vel, 
-        ref AccelerationCartridge accel, ref AngleCalculationCartridge angleCalc)
+    PlayerData c_playerData;
+    PlayerPositionData c_playerPositionData;
+
+    public SlowingState(ref PlayerData playerData, ref PlayerPositionData positionData, 
+        ref VelocityCartridge vel, ref AccelerationCartridge accel, 
+        ref AngleCalculationCartridge angleCalc, ref SurfaceInfluenceCartridge surfInf)
     {
-        c_playerData = playerData;
-        cart_velocity = vel;
-        cart_f_acceleration = accel;
-        cart_angleCalc = angleCalc;
+        this.c_playerData = playerData;
+        this.c_playerPositionData = positionData;
+        this.cart_velocity = vel;
+        this.cart_acceleration = accel;
+        this.cart_angleCalc = angleCalc;
+        this.cart_surfInf = surfInf;
     }
     public void Act()
     {
         // check for angle when implemented
+        bool isReversed = c_playerPositionData.b_modelReversed;
         float currentVelocity = c_playerData.f_currentSpeed;
         float deceleration = c_playerData.f_brakePower;
         float angleDifference = c_playerData.f_surfaceAngleDifference;
@@ -31,7 +38,10 @@ public class SlowingState : iState
         Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_f_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);
+        // TODO: Fix bug in which decelerating downhill speeds us up
+        cart_surfInf.PullVelocity(ref currentVelocity, currentSurfaceNormal, Vector3.up, currentDir);
+        cart_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);
+        cart_acceleration.FlipDirection(ref isReversed, ref currentVelocity, ref currentDir);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
         cart_velocity.SurfaceAdjustment(ref currentPosition, currentSurfacePosition, currentRotation);
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
@@ -42,6 +52,7 @@ public class SlowingState : iState
         c_playerData.v_currentDown = currentNormal.normalized * -1;
         c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
+        c_playerPositionData.b_modelReversed = isReversed;
     }
 
     public void TransitionAct()
