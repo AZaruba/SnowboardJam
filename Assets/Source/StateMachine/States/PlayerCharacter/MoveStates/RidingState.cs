@@ -39,9 +39,9 @@ public class RidingState : iState {
         Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_surfInf.PullVelocity(ref currentVelocity, currentSurfaceNormal, Vector3.up, currentDir);
-        cart_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed);
-        cart_acceleration.FlipDirection(ref isReversed, ref currentVelocity, ref currentDir);
+        cart_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed); 
+        cart_surfInf.PullDirectionVector(ref currentDir, currentSurfaceNormal, Vector3.up, 0.0f, ref currentVelocity);
+        // cart_acceleration.CapSpeed(ref currentVelocity, topSpeed);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
         cart_velocity.SurfaceAdjustment(ref currentPosition, currentSurfacePosition, currentRotation);
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity, isReversed);

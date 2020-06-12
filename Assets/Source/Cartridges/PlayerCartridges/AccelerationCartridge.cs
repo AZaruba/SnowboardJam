@@ -26,6 +26,28 @@ public class AccelerationCartridge {
     }
 
     /// <summary>
+    /// Ensures the current speed of the character does not go above a hard cap
+    /// </summary>
+    /// <param name="velocity">The current velocity</param>
+    /// <param name="maxVelocity">The velocity cap</param>
+    public void CapSpeed(ref float velocity, float maxVelocity)
+    {
+        if (velocity > maxVelocity)
+            velocity = maxVelocity;
+    }
+
+    /// <summary>
+    /// Ensures the speed does not go below a hard cap
+    /// </summary>
+    /// <param name="velocity">The current velocity</param>
+    /// <param name="maxVelocity">The velocity minimum</param>
+    public void CapSpeedMin(ref float velocity, float maxVelocity)
+    {
+        if (velocity < maxVelocity)
+            velocity = maxVelocity;
+    }
+
+    /// <summary>
     /// If an object needs to move backwards (on an engine level, the use case for this would be the player riding switch)
     /// </summary>
     /// <param name="reversed">Whether the direction is forward or backward relative to the model.</param>

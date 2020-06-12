@@ -13,9 +13,17 @@ public class SurfaceInfluenceCartridge
     /// <param name="up">The relative up vector. As surfaceNormal approaches up, the effect will diminish</param>
     /// <param name="influenceValue">The magnitude of the rotation. Not explicitly an angle.</param>
     /// <param name="currentSpeed">The velocity of the influenced object. As speed increases, the influence decreases</param>
-    public void PullDirectionVector(ref Vector3 currentDir, Vector3 surfaceNormal, Vector3 up, float influenceValue, float currentSpeed)
+    public void PullDirectionVector(ref Vector3 currentDir, Vector3 surfaceNormal, Vector3 up, float influenceValue, ref float currentSpeed, float currentBrake = 0.0f)
     {
+        Vector3 scaledDirection = currentDir * currentSpeed;
 
+        float magnitude = Vector3.Angle(up, currentDir) - 90 - currentBrake;
+        Vector3 scaledPull = Vector3.Reflect(currentDir, surfaceNormal) * magnitude * Time.deltaTime;
+
+        scaledDirection += scaledPull;
+
+        currentDir = scaledDirection.normalized;
+        currentSpeed = scaledDirection.magnitude;
     }
 
     /// <summary>
@@ -28,12 +36,7 @@ public class SurfaceInfluenceCartridge
     /// <param name="currentDir">The current direction of travel. Used to determine whether to increase or decrease speed</param>
     public void PullVelocity(ref float speedValue, Vector3 surfaceNormal, Vector3 up, Vector3 currentDir)
     {
-        // TODO: fix how this influence works (as it currently allows the player to FREELY accelerate on flat ground, which is incorrect)
-        // thought: what if the acceleration was purely based on flat land acceleration, so it would be FASTER downhill but slower uphill?
-        if (surfaceNormal == up)
-        {
-            return; // flat surface, no speed influence
-        }
+        Vector3 scaledDirection = currentDir * speedValue;
 
         float magnitude = Vector3.Angle(up, currentDir) - 90;
 

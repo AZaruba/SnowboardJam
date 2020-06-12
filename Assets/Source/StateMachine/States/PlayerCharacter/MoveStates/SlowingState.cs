@@ -28,6 +28,7 @@ public class SlowingState : iState
         // check for angle when implemented
         bool isReversed = c_playerPositionData.b_modelReversed;
         float currentVelocity = c_playerData.f_currentSpeed;
+        float topSpeed = c_playerData.f_topSpeed;
         float deceleration = c_playerData.f_brakePower;
         float angleDifference = c_playerData.f_surfaceAngleDifference;
         float slowScaling = c_playerData.f_inputAxisLVert * - 1;
@@ -38,10 +39,9 @@ public class SlowingState : iState
         Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        // TODO: Fix bug in which decelerating downhill speeds us up
-        cart_surfInf.PullVelocity(ref currentVelocity, currentSurfaceNormal, Vector3.up, currentDir);
         cart_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);
-        cart_acceleration.FlipDirection(ref isReversed, ref currentVelocity, ref currentDir);
+        cart_surfInf.PullDirectionVector(ref currentDir, currentSurfaceNormal, Vector3.up, 0.0f, ref currentVelocity, deceleration * slowScaling);
+        // cart_acceleration.CapSpeed(ref currentVelocity, topSpeed);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
         cart_velocity.SurfaceAdjustment(ref currentPosition, currentSurfacePosition, currentRotation);
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
