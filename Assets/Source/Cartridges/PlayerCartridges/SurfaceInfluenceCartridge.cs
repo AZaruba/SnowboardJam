@@ -17,11 +17,10 @@ public class SurfaceInfluenceCartridge
     {
         Vector3 scaledDirection = currentDir * currentSpeed;
 
-        float magnitude = Vector3.Angle(up, currentDir) - 90 - currentBrake;
-        Vector3 scaledPull = Vector3.Reflect(currentDir, surfaceNormal) * magnitude * Time.deltaTime;
+        Vector3 scaledPull = (surfaceNormal - up) * 50 * Time.deltaTime; // TODO: Constant removal
 
         scaledDirection += scaledPull;
-
+         
         currentDir = scaledDirection.normalized;
         currentSpeed = scaledDirection.magnitude;
     }
