@@ -11,9 +11,10 @@ public class VelocityCartridge {
     }
 
     // Test function: We update the character's position via the rotation, why not do it here?
-    public void UpdatePositionTwo(ref Vector3 position, ref Quaternion rotation, ref float velocity)
+    public void UpdatePositionTwo(ref Vector3 position, ref Quaternion rotation, ref float velocity, bool reversed = false)
     {
         Vector3 direction = rotation * Vector3.forward;
+        direction *= reversed ? -1 : 1;
         position += direction.normalized * velocity * Time.deltaTime;
     }
 

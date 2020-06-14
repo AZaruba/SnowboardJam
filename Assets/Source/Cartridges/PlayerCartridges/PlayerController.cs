@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private AngleCalculationCartridge cart_angleCalc;
     private GravityCartridge cart_gravity;
     private IncrementCartridge cart_incr;
+    private SurfaceInfluenceCartridge cart_surfInf;
 
     // Cached Calculation items
     RaycastHit frontHit;
@@ -56,11 +57,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_f_acceleration = new AccelerationCartridge();
         cart_handling = new HandlingCartridge();
         cart_incr = new IncrementCartridge();
+        cart_surfInf = new SurfaceInfluenceCartridge();
 
         MoveAerialState s_moveAerial = new MoveAerialState();
         StationaryState s_stationary = new StationaryState(ref c_playerData, ref cart_angleCalc, ref cart_velocity);
-        RidingState s_riding = new RidingState(ref c_playerData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity);
-        SlowingState s_slowing = new SlowingState(ref c_playerData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc);
+        RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
+        SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
         StraightState s_straight = new StraightState();
@@ -126,9 +128,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_playerData.q_currentRotation;
 
-        debugAccessor.DisplayState("Air State", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Current Down", c_playerData.v_currentDown);
-        debugAccessor.DisplayFloat("Lateral Velocity", c_aerialMoveData.f_lateralVelocity);
+        debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
+        debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
+        debugAccessor.DisplayFloat("Current Velocity", c_playerData.f_currentSpeed);
 
         UpdateAnimator();
     }
@@ -236,11 +238,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         // TODO: integrate this keypress into the player data
-        if (GlobalInputController.GetInputValue(c_inputData.JumpKey) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputValue(c_inputData.JumpButton) == KeyValue.PRESSED)
         {
             c_airMachine.Execute(Command.CHARGE);
         }
-        else if (GlobalInputController.GetInputValue(c_inputData.JumpKey) == KeyValue.UP)
+        else if (GlobalInputController.GetInputValue(c_inputData.JumpButton) == KeyValue.UP)
         {
             c_airMachine.Execute(Command.JUMP);
             c_accelMachine.Execute(Command.JUMP);
@@ -278,7 +280,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     void SetDefaultPlayerData()
     {
-        c_positionData = new PlayerPositionData();
+        c_positionData = new PlayerPositionData(transform.position, transform.forward);
         c_stateData = new StateData();
         c_aerialMoveData = new AerialMoveData();
         c_entityData = new EntityData();

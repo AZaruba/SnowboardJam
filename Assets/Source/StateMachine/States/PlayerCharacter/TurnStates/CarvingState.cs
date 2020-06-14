@@ -20,7 +20,7 @@ public class CarvingState : iState {
     public void Act()
     {
         Vector3 currentDir = c_playerData.v_currentDirection;
-        Vector3 currentNormal = c_playerData.v_currentNormal;
+        Vector3 currentNormal = c_playerData.v_currentSurfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         float inputAxis = c_playerData.f_inputAxisTurn * c_playerData.f_turnSpeed;
