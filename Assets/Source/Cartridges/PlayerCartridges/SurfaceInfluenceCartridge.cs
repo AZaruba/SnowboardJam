@@ -17,7 +17,7 @@ public class SurfaceInfluenceCartridge
     {
         Vector3 scaledDirection = currentDir * currentSpeed;
 
-        Vector3 scaledPull = (surfaceNormal - up) * 50 * Time.deltaTime; // TODO: Constant removal
+        Vector3 scaledPull = (surfaceNormal - up) * (30 - currentBrake) * Time.deltaTime; // TODO: Constant removal
 
         scaledDirection += scaledPull;
          
