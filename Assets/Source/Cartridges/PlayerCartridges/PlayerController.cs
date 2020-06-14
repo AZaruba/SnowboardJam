@@ -232,7 +232,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.STARTMOVE);
         }
 
-        if (c_playerData.f_currentSpeed <= 0.0f)
+        if (c_playerData.f_currentSpeed <= 0.02f)
         {
             c_accelMachine.Execute(Command.STOP);
         }

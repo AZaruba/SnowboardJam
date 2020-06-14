@@ -52,18 +52,17 @@ public class AerialState : iState {
         Vector3 totalAerialVector = jumpVector + directVector;
 
         float vertVel = totalAerialVector.y;
-        float latVel = Mathf.Abs(totalAerialVector.x + totalAerialVector.z);
 
         Vector3 latDir = totalAerialVector;
 
-        c_aerialMoveData.f_verticalVelocity = vertVel;
-        c_aerialMoveData.f_lateralVelocity = latVel;
-
         // the lateral direction should be flattened
         latDir.y = 0.0f;
+        float latVel = latDir.magnitude;
         latDir.Normalize();
         c_aerialMoveData.v_lateralDirection = latDir;
         c_playerData.v_currentDown = Vector3.down;
+        c_aerialMoveData.f_verticalVelocity = vertVel;
+        c_aerialMoveData.f_lateralVelocity = latVel;
     }
 
     // TODO: Fix behavior when we he the ground, we're back to just bumping back up
