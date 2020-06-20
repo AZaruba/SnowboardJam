@@ -926,11 +926,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TopSpeed: 20
-  Acceleration: 15
+  Acceleration: 5
   BrakePower: 30
   TurnSpeed: 100
-  JumpPower: 12
-  BaseJumpPower: 8
+  JumpPower: 10
+  BaseJumpPower: 5
   JumpChargeRate: 5
   GravityFactor: 20
   TerminalVelocity: 40
