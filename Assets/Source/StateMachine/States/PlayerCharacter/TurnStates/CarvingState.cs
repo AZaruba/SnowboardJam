@@ -6,19 +6,26 @@ using UnityEngine;
 public class CarvingState : iState {
 
     HandlingCartridge         cart_handling;
+    SurfaceInfluenceCartridge cart_surfInf;
     PlayerData                c_playerData;
+    PlayerPositionData        c_positionData;
 
     //TODO: Investigate breaking out certain actions into a separate state machine
     //TODO: Give player data to the state machine and possibly the states by reference
     public CarvingState(ref PlayerData playerData,
-                        ref HandlingCartridge handling)
+                        ref PlayerPositionData positionData,
+                        ref HandlingCartridge handling,
+                        ref SurfaceInfluenceCartridge surfInf)
     {
         this.c_playerData = playerData;
+        this.c_positionData = positionData;
         this.cart_handling = handling;
+        this.cart_surfInf = surfInf;
     }
 
     public void Act()
     {
+        bool isReversed = c_positionData.b_modelReversed;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentSurfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
@@ -26,9 +33,13 @@ public class CarvingState : iState {
         float inputAxis = c_playerData.f_inputAxisTurn * c_playerData.f_turnSpeed;
 
         cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
+        Quaternion currentModelRotation = currentRotation;
+        cart_surfInf.SwitchOrientation(ref currentModelRotation, isReversed);
 
         c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
+
+        c_positionData.q_currentModelRotation = currentModelRotation;
     }
 
     public void TransitionAct()

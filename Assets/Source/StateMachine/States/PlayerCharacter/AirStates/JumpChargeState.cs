@@ -38,7 +38,6 @@ public class JumpChargeState : iState
         }
         if (cmd == Command.JUMP)
         {
-            c_playerData.f_currentJumpCharge = 0.0f;
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.CRASH)

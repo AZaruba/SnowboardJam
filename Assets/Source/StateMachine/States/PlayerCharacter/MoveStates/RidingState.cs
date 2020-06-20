@@ -45,7 +45,7 @@ public class RidingState : iState {
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
         cart_velocity.SurfaceAdjustment(ref currentPosition, currentSurfacePosition, currentRotation);
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity, isReversed);
-        
+
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.f_acceleration = f_acceleration;
         c_playerData.v_currentPosition = currentPosition;
