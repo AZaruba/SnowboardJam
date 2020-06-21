@@ -152,12 +152,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.f_inputAxisTurn = GlobalInputController.GetInputValue(c_inputData.LeftHorizontalAxis);
         c_playerData.f_inputAxisLVert = GlobalInputController.GetInputValue(c_inputData.LeftVerticalAxis);
 
-        // TODO: ensure that we can pull the direction and the normal from the object
-        // OTHERWISE it implies that there is a desync between data and the engine
-        c_playerData.v_currentPosition = transform.position;
-        c_playerData.v_currentNormal = transform.up.normalized;
-        c_positionData.q_currentModelRotation = transform.rotation;
-
         CheckForGround();
         CheckForZone();
         CheckForObstacle();

@@ -26,7 +26,6 @@ public class SlowingState : iState
     public void Act()
     {
         // check for angle when implemented
-        bool isReversed = c_playerPositionData.b_modelReversed;
         float currentVelocity = c_playerData.f_currentSpeed;
         float topSpeed = c_playerData.f_topSpeed;
         float deceleration = c_playerData.f_brakePower;
@@ -52,7 +51,6 @@ public class SlowingState : iState
         c_playerData.v_currentDown = currentNormal.normalized * -1;
         c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
-        c_playerPositionData.b_modelReversed = isReversed;
     }
 
     public void TransitionAct()

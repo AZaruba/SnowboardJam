@@ -44,8 +44,10 @@ public class GroundedState : iState
         cart_surfInf.SwitchReverse(ref isReversed, currentRotation, currentModelRotation);
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentDirection = currentDir;
+        c_playerData.v_currentNormal = currentNormal;
         c_playerData.q_currentRotation = currentRotation;
         c_positionData.b_modelReversed = isReversed;
+
     }
 
     public StateRef GetNextState(Command cmd)

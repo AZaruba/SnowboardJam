@@ -27,7 +27,6 @@ public class RidingState : iState {
     public void Act()
     {
         // check for angle when implemented
-        bool isReversed = c_playerPositionData.b_modelReversed;
         float currentVelocity = c_playerData.f_currentSpeed;
         float f_acceleration = c_playerData.f_acceleration;
         float topSpeed = c_playerData.f_topSpeed;
@@ -44,7 +43,7 @@ public class RidingState : iState {
         // cart_acceleration.CapSpeed(ref currentVelocity, topSpeed);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
         cart_velocity.SurfaceAdjustment(ref currentPosition, currentSurfacePosition, currentRotation);
-        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity, isReversed);
+        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.f_acceleration = f_acceleration;
@@ -53,7 +52,6 @@ public class RidingState : iState {
         c_playerData.v_currentDown = currentNormal.normalized * -1;
         c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
-        c_playerPositionData.b_modelReversed = isReversed;
     }
 
     public void TransitionAct()

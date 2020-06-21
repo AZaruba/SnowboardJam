@@ -21,12 +21,10 @@ public class StraightState : iState
     public void Act()
     {
         Quaternion currentRotation = c_playerData.q_currentRotation;
-        bool isReversed = c_positionData.b_modelReversed;
 
-        Quaternion currentModelRotation = currentRotation;
-        cart_surfInf.SwitchOrientation(ref currentModelRotation, isReversed);
+        Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
-        c_positionData.q_currentModelRotation = currentModelRotation;
+        c_positionData.q_currentModelRotation = Quaternion.Lerp(currentRotation, currentModelRotation, Constants.LERP_DEFAULT);
     }
 
     public void TransitionAct()

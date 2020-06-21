@@ -25,21 +25,18 @@ public class CarvingState : iState {
 
     public void Act()
     {
-        bool isReversed = c_positionData.b_modelReversed;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentSurfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
+        Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
         float inputAxis = c_playerData.f_inputAxisTurn * c_playerData.f_turnSpeed;
 
         cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
-        Quaternion currentModelRotation = currentRotation;
-        cart_surfInf.SwitchOrientation(ref currentModelRotation, isReversed);
 
         c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
-
-        c_positionData.q_currentModelRotation = currentModelRotation;
+        c_positionData.q_currentModelRotation = Quaternion.Lerp(currentRotation, currentModelRotation, Constants.LERP_DEFAULT);
     }
 
     public void TransitionAct()

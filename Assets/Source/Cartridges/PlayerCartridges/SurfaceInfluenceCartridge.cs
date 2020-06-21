@@ -20,7 +20,7 @@ public class SurfaceInfluenceCartridge
         Vector3 scaledPull = (surfaceNormal - up) * (30 - currentBrake) * Time.deltaTime; // TODO: Constant removal
 
         scaledDirection += scaledPull;
-         
+
         currentDir = scaledDirection.normalized;
         currentSpeed = scaledDirection.magnitude;
     }
@@ -28,15 +28,5 @@ public class SurfaceInfluenceCartridge
     public void SwitchReverse(ref bool isReverse, Quaternion travelRotation, Quaternion modelRotation)
     {
         isReverse = Mathf.Abs(Quaternion.Angle(travelRotation, modelRotation)) > 90f;
-    }
-
-    /// <summary>
-    /// Flips an orientation represented by a quaternion. Common use case is flipping to switch stance
-    /// </summary>
-    /// <param name="modelRotation">The orientation to be flipped</param>
-    /// <param name="isReverse">Whether the rotation should be "forward" or "backward"</param>
-    public void SwitchOrientation(ref Quaternion modelRotation, bool isReverse)
-    {
-        modelRotation = isReverse ? Quaternion.Inverse(modelRotation) : modelRotation;
     }
 }
