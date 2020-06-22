@@ -6,15 +6,21 @@ using UnityEngine;
 public class CarvingState : iState {
 
     HandlingCartridge         cart_handling;
+    SurfaceInfluenceCartridge cart_surfInf;
     PlayerData                c_playerData;
+    PlayerPositionData        c_positionData;
 
     //TODO: Investigate breaking out certain actions into a separate state machine
     //TODO: Give player data to the state machine and possibly the states by reference
     public CarvingState(ref PlayerData playerData,
-                        ref HandlingCartridge handling)
+                        ref PlayerPositionData positionData,
+                        ref HandlingCartridge handling,
+                        ref SurfaceInfluenceCartridge surfInf)
     {
         this.c_playerData = playerData;
+        this.c_positionData = positionData;
         this.cart_handling = handling;
+        this.cart_surfInf = surfInf;
     }
 
     public void Act()
@@ -22,6 +28,7 @@ public class CarvingState : iState {
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentSurfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
+        Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
         float inputAxis = c_playerData.f_inputAxisTurn * c_playerData.f_turnSpeed;
 
@@ -29,6 +36,7 @@ public class CarvingState : iState {
 
         c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
+        c_positionData.q_currentModelRotation = Quaternion.Lerp(currentRotation, currentModelRotation, Constants.LERP_DEFAULT);
     }
 
     public void TransitionAct()

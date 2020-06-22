@@ -7,6 +7,7 @@ public class PlayerPositionData
     private uint OccupiedZone;
     private Vector3 ModelDirection;
     private Vector3 ModelPosition;
+    private Quaternion ModelRotation;
 
     private bool ModelReversed;
 
@@ -34,6 +35,12 @@ public class PlayerPositionData
     {
         get { return ModelPosition; }
         set { ModelPosition = value; }
+    }
+
+    public Quaternion q_currentModelRotation
+    {
+        get { return ModelRotation; }
+        set { ModelRotation = value; }
     }
 
     public bool b_modelReversed

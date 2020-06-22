@@ -65,13 +65,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
-        StraightState s_straight = new StraightState();
-        CarvingState s_carving = new CarvingState(ref c_playerData, ref cart_handling);
+        StraightState s_straight = new StraightState(ref c_playerData, ref c_positionData, ref cart_surfInf);
+        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_positionData, ref cart_handling, ref cart_surfInf);
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
 
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
         JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState(ref c_playerData, ref cart_velocity, ref cart_angleCalc);
+        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
@@ -126,11 +126,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_playerData.v_currentPosition;
-        transform.rotation = c_playerData.q_currentRotation;
+        transform.rotation = c_positionData.q_currentModelRotation;
 
         debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
-        debugAccessor.DisplayFloat("Current Velocity", c_playerData.f_currentSpeed);
+        debugAccessor.DisplayVector3("Target dir", c_playerData.v_currentDirection);
+        debugAccessor.DisplayFloat("Current Jump Charge", c_playerData.f_currentJumpCharge);
 
         UpdateAnimator();
     }
@@ -151,13 +151,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         c_playerData.f_inputAxisTurn = GlobalInputController.GetInputValue(c_inputData.LeftHorizontalAxis);
         c_playerData.f_inputAxisLVert = GlobalInputController.GetInputValue(c_inputData.LeftVerticalAxis);
-
-        // TODO: ensure that we can pull the direction and the normal from the object
-        // OTHERWISE it implies that there is a desync between data and the engine
-        c_playerData.v_currentPosition = transform.position;
-        c_playerData.v_currentModelDirection = transform.forward.normalized;
-        c_playerData.v_currentNormal = transform.up.normalized;
-        c_playerData.q_currentRotation = transform.rotation; // TODO: RAD TRICKS WILL BREAK THIS ONE TOO
 
         CheckForGround();
         CheckForZone();
