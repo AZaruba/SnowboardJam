@@ -10,6 +10,17 @@ public class ActiveMenuData
     private float CurrentMenuWaitTime;
     private int MenuDirection;
 
+    private bool ShowMenu;
+
+    private Vector2 CurrentPosition;
+    private Vector2 TargetPosition;
+
+    public bool b_showMenu
+    {
+        get { return ShowMenu; }
+        set { ShowMenu = value; }
+    }
+
     public int i_activeMenuItemIndex
     {
         get { return ActiveMenuItemIndex; }
@@ -37,5 +48,17 @@ public class ActiveMenuData
     {
         get { return CurrentMenuWaitTime; }
         set { CurrentMenuWaitTime = value; }
+    }
+
+    public Vector2 v_currentPosition
+    {
+        get { return CurrentPosition; }
+        set { CurrentPosition = value; }
+    }
+
+    public Vector2 v_targetPosition
+    {
+        get { return TargetPosition; }
+        set { TargetPosition = value; }
     }
 }

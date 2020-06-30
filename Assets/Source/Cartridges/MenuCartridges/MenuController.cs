@@ -28,31 +28,6 @@ public class MenuController : MonoBehaviour
 
     void Update()
     {
-        /*
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            c_activeMenuItem.ExecuteStateMachineCommand(Command.UNSELECT);
-
-            // bug fix: modulo negative numbers produces an incorrect result
-            if (i_activeMenuItemIndex == 0)
-            {
-                i_activeMenuItemIndex = l_menuItems.Count - 1;
-            }
-            else
-            {
-                i_activeMenuItemIndex = Mathf.Abs((i_activeMenuItemIndex - 1) % l_menuItems.Count);
-            }
-            c_activeMenuItem = l_menuItems[i_activeMenuItemIndex];
-            c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
-        }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-            c_activeMenuItem.ExecuteStateMachineCommand(Command.UNSELECT);
-            i_activeMenuItemIndex = Mathf.Abs((i_activeMenuItemIndex + 1) % l_menuItems.Count);
-            c_activeMenuItem = l_menuItems[i_activeMenuItemIndex];
-            c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
-        }
-        */
         float inputAxisValue = GlobalInputController.GetInputValue(keyList.LeftVerticalAxis);
         if (inputAxisValue > 0.5f)
         {
@@ -115,11 +90,17 @@ public class MenuController : MonoBehaviour
         c_activeMenuData.i_activeMenuItemIndex = i_activeMenuItemIndex;
         c_activeMenuData.i_menuItemCount = l_menuItems.Count;
         c_activeMenuData.i_menuDir = 0;
+        c_activeMenuData.b_showMenu = true;
     }
 
+    /// <summary>
+    /// Initialize the menu's state machine and cartridges, by creating new cartridges, 
+    /// providing each state with access to the necessary cartridges and organizing the states into the machine
+    /// </summary>
     private void InitializeStateMachine()
     {
         cart_incr = new IncrementCartridge();
+
         MenuReadyState s_ready = new MenuReadyState(ref c_activeMenuData);
         MenuWaitState s_wait = new MenuWaitState(ref ControllerData, ref c_activeMenuData, ref cart_incr);
         MenuTickState s_tick = new MenuTickState(ref c_activeMenuData, ref cart_incr);

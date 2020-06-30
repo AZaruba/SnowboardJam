@@ -18,6 +18,10 @@ public class MenuReadyState : iState
 
     public StateRef GetNextState(Command cmd)
     {
+        if (cmd == Command.MENU_HIDE)
+        {
+            return StateRef.MENU_DISABLED;
+        }
         if (cmd == Command.MENU_TICK_INPUT)
         {
             return StateRef.MENU_TICK;

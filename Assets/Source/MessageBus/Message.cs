@@ -19,6 +19,7 @@ public enum ClientID
     CAMERA_CLIENT,
     SCORE_CLIENT,
     TIMER_CLIENT,
+    PAUSE_MENU_CLIENT,
 }
 
 public class Message

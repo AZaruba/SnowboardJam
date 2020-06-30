@@ -8,5 +8,7 @@ public enum MenuCommand
     EXIT_GAME,
     BACK,
     CONFIRM,
+    RESTART,
+    CHANGE_SCENE,
     EDIT_DATA,
 }
