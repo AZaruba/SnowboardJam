@@ -10,6 +10,7 @@ public class MenuItemController : MonoBehaviour, iEntityController
     [SerializeField] private RectTransform ItemTransform;
     [SerializeField] private Text ItemText;
     [SerializeField] private MenuCommand MenuAction;
+    [SerializeField] private int NextSceneId;
 
     private MenuItemActiveData c_itemActiveData;
 
@@ -63,8 +64,18 @@ public class MenuItemController : MonoBehaviour, iEntityController
             case MenuCommand.EXIT_GAME:
                 Application.Quit();
                 break;
+            case MenuCommand.RESTART:
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
+                break;
+            case MenuCommand.CHANGE_SCENE:
+                if (c_itemActiveData.i_nextScene > -1)
+                {
+                    SceneManager.LoadScene(c_itemActiveData.i_nextScene, LoadSceneMode.Single);
+                }
+                break;
+            case MenuCommand.RESUME:
+                break;
             case MenuCommand.CONFIRM:
-                SceneManager.LoadScene(MenuSelectionData.GetNextScene(), LoadSceneMode.Single);
                 break;
         }
     }
@@ -91,5 +102,7 @@ public class MenuItemController : MonoBehaviour, iEntityController
         c_itemActiveData.v_targetItemPosition = ItemTransform.anchoredPosition;
         c_itemActiveData.v_origin = ItemTransform.anchoredPosition;
         c_itemActiveData.c_currentColor = ItemData.UnselectedColor;
+
+        c_itemActiveData.i_nextScene = NextSceneId;
     }
 }

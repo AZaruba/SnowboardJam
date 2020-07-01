@@ -215,7 +215,8 @@ MonoBehaviour:
   ItemData: {fileID: 11400000, guid: 7cfdfcecb7055a4418729f872e1e3aeb, type: 2}
   ItemTransform: {fileID: 18999759}
   ItemText: {fileID: 18999760}
-  MenuAction: 5
+  MenuAction: 4
+  NextSceneId: -1
 --- !u!1 &44771477
 GameObject:
   m_ObjectHideFlags: 0
@@ -1647,7 +1648,8 @@ MonoBehaviour:
   ItemData: {fileID: 11400000, guid: 7cfdfcecb7055a4418729f872e1e3aeb, type: 2}
   ItemTransform: {fileID: 1129842970}
   ItemText: {fileID: 1129842971}
-  MenuAction: 0
+  MenuAction: 5
+  NextSceneId: 0
 --- !u!1 &1182894704
 GameObject:
   m_ObjectHideFlags: 0
@@ -2250,4 +2252,5 @@ MonoBehaviour:
   ItemData: {fileID: 11400000, guid: 7cfdfcecb7055a4418729f872e1e3aeb, type: 2}
   ItemTransform: {fileID: 2024415121}
   ItemText: {fileID: 2024415122}
-  MenuAction: 2
+  MenuAction: 3
+  NextSceneId: -1

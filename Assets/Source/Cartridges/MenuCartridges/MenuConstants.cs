@@ -9,6 +9,7 @@ public enum MenuCommand
     BACK,
     CONFIRM,
     RESTART,
+    RESUME,
     CHANGE_SCENE,
     EDIT_DATA,
 }
