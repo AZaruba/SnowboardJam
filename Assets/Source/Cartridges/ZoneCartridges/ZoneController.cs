@@ -22,6 +22,16 @@ public class ZoneController : MonoBehaviour
         TypeLookup.Add(intIn, typeIn);
     }
 
+    public static void RemoveZoneFromLookup(uint intIn)
+    {
+        bool removed = TypeLookup.Remove(intIn);
+
+        if (!removed)
+        {
+            // handle error
+        }
+    }
+
     public static ZoneType GetZoneType(uint idIn)
     {
         ZoneType typeOut;
@@ -36,6 +46,11 @@ public class ZoneController : MonoBehaviour
     {
         GameMasterController.AddZoneToList(ref this_transform, this);
         AddZoneToLookup(ZoneId, Type);
+    }
+
+    private void OnDestroy()
+    {
+        RemoveZoneFromLookup(ZoneId);
     }
 
     public ZoneType e_type

@@ -64,6 +64,8 @@ public enum Command {
     MENU_TICK_INPUT,
     MENU_READY,
     MENU_IDLE,
+    MENU_SHOW,
+    MENU_HIDE,
     #endregion
 
     #region TimerCommands
@@ -132,9 +134,12 @@ public enum StateRef {
     #endregion
 
     #region MenuInputStates
+    MENU_DISABLED,
     MENU_WAIT,
     MENU_READY,
     MENU_TICK,
+    MENU_HIDDEN,
+    MENU_SHOWN,
     #endregion
 
     #region MenuItemStates

@@ -46,28 +46,22 @@ public class AerialState : iState {
 
     public void TransitionAct()
     {
-        /* Fixing this up:
-         *
-         * 1) there should be a small hop in the normal direction
-         * 2) any boost from jump charge should go straight up
-         *
-         */ 
+        Vector3 jumpVector = Vector3.up * c_playerData.f_currentJumpCharge;
+        Vector3 directVector = c_playerData.v_currentDirection * c_playerData.f_currentSpeed;
 
-        Vector3 latDir = c_playerData.v_currentDirection.normalized;
-        float groundVel = c_playerData.f_currentSpeed;
-
-        float vertVel = (latDir.y/latDir.magnitude) * groundVel;
-        float latVel = (Mathf.Abs(latDir.x) + Mathf.Abs(latDir.z))/latDir.magnitude * groundVel;
-
-        vertVel += c_playerData.f_currentJumpCharge; // * latDir.y?
-
-        c_aerialMoveData.f_verticalVelocity = vertVel;
-        c_aerialMoveData.f_lateralVelocity = latVel;
+        Vector3 totalAerialVector = jumpVector + directVector;
+        Vector3 latDir = totalAerialVector;
+        float vertVel = totalAerialVector.y;
 
         // the lateral direction should be flattened
         latDir.y = 0.0f;
+        float latVel = latDir.magnitude;
         latDir.Normalize();
+
         c_aerialMoveData.v_lateralDirection = latDir;
+        c_aerialMoveData.f_verticalVelocity = vertVel;
+        c_aerialMoveData.f_lateralVelocity = latVel;
+        c_playerData.v_currentDown = Vector3.down;
     }
 
     // TODO: Fix behavior when we he the ground, we're back to just bumping back up

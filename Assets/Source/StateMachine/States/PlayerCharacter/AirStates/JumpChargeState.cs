@@ -31,9 +31,9 @@ public class JumpChargeState : iState
 
     public StateRef GetNextState(Command cmd)
     {
-        // TODO: differentiate between jumping and falling
         if (cmd == Command.FALL)
         {
+            c_playerData.f_currentJumpCharge = 0.0f;
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.JUMP)

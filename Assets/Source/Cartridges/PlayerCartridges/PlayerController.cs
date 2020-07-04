@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private AngleCalculationCartridge cart_angleCalc;
     private GravityCartridge cart_gravity;
     private IncrementCartridge cart_incr;
+    private SurfaceInfluenceCartridge cart_surfInf;
 
     // Cached Calculation items
     RaycastHit frontHit;
@@ -56,20 +57,21 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_f_acceleration = new AccelerationCartridge();
         cart_handling = new HandlingCartridge();
         cart_incr = new IncrementCartridge();
+        cart_surfInf = new SurfaceInfluenceCartridge();
 
         MoveAerialState s_moveAerial = new MoveAerialState();
         StationaryState s_stationary = new StationaryState(ref c_playerData, ref cart_angleCalc, ref cart_velocity);
-        RidingState s_riding = new RidingState(ref c_playerData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity);
-        SlowingState s_slowing = new SlowingState(ref c_playerData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc);
+        RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
+        SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
-        StraightState s_straight = new StraightState();
-        CarvingState s_carving = new CarvingState(ref c_playerData, ref cart_handling);
+        StraightState s_straight = new StraightState(ref c_playerData, ref c_positionData, ref cart_surfInf);
+        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_positionData, ref cart_handling, ref cart_surfInf);
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
 
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
         JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState(ref c_playerData, ref cart_velocity, ref cart_angleCalc);
+        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
@@ -124,11 +126,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_playerData.v_currentPosition;
-        transform.rotation = c_playerData.q_currentRotation;
+        transform.rotation = c_positionData.q_currentModelRotation;
 
-        debugAccessor.DisplayState("Air State", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Air Dir", c_aerialMoveData.v_lateralDirection);
-        debugAccessor.DisplayFloat("Vertical Velocity", c_aerialMoveData.f_verticalVelocity);
+        debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
+        debugAccessor.DisplayVector3("Target dir", c_playerData.v_currentDirection);
+        debugAccessor.DisplayFloat("Current Jump Charge", c_playerData.f_currentJumpCharge);
 
         UpdateAnimator();
     }
@@ -149,13 +151,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         c_playerData.f_inputAxisTurn = GlobalInputController.GetInputValue(c_inputData.LeftHorizontalAxis);
         c_playerData.f_inputAxisLVert = GlobalInputController.GetInputValue(c_inputData.LeftVerticalAxis);
-
-        // TODO: ensure that we can pull the direction and the normal from the object
-        // OTHERWISE it implies that there is a desync between data and the engine
-        c_playerData.v_currentPosition = transform.position;
-        c_playerData.v_currentModelDirection = transform.forward.normalized;
-        c_playerData.v_currentNormal = transform.up.normalized;
-        c_playerData.q_currentRotation = transform.rotation; // TODO: RAD TRICKS WILL BREAK THIS ONE TOO
 
         CheckForGround();
         CheckForZone();
@@ -230,7 +225,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.STARTMOVE);
         }
 
-        if (c_playerData.f_currentSpeed <= 0.0f)
+        if (c_playerData.f_currentSpeed <= 0.02f)
         {
             c_accelMachine.Execute(Command.STOP);
         }
@@ -278,7 +273,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     void SetDefaultPlayerData()
     {
-        c_positionData = new PlayerPositionData();
+        c_positionData = new PlayerPositionData(transform.position, transform.forward);
         c_stateData = new StateData();
         c_aerialMoveData = new AerialMoveData();
         c_entityData = new EntityData();
@@ -323,20 +318,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
     }
     private void CheckForGround()
     {
-        /* NOTES FOR HERE:
-         * 
-         * check down AND forward: we can use this to get a smooth interpolation of the change in angle
-         * 1) check the angle formed by player pointing down and downHit->fwdHit
-         * 2) take this angle, rotate the player by the difference between that and 90 (as 90 would imply alignment)
-         * 3) if downHit doesn't give us the right height, adjust the height
-         * 
-         * Check the delta in surface normals and if it's too great, yeet the player into the air
-         *
-         */
         LayerMask lm_env = LayerMask.GetMask("Environment");
         if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance, lm_env))
         {
-            if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right * -1) > 20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed))) // angle should get smaller as we get faster
+            if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right * -1) >
+                Mathf.Max(20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed)), 0.0f)) // angle should get smaller as we get faster
             {
                 c_playerData.v_currentSurfaceNormal = Vector3.zero;
                 return;

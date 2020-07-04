@@ -5,18 +5,23 @@ using UnityEngine;
 public class RidingState : iState {
 
     AngleCalculationCartridge cart_angleCalc;
-    AccelerationCartridge     cart_f_acceleration;
+    AccelerationCartridge     cart_acceleration;
     VelocityCartridge         cart_velocity;
-    PlayerData c_playerData;
+    SurfaceInfluenceCartridge cart_surfInf;
 
-    public RidingState(ref PlayerData playerData, ref AngleCalculationCartridge angleCalc,
-        ref AccelerationCartridge f_acceleration,
-        ref VelocityCartridge velocity)
+    PlayerData c_playerData;
+    PlayerPositionData c_playerPositionData;
+
+    public RidingState(ref PlayerData playerData, ref PlayerPositionData positionData, 
+        ref AngleCalculationCartridge angleCalc, ref AccelerationCartridge acceleration, 
+        ref VelocityCartridge velocity,ref SurfaceInfluenceCartridge surfInf)
     {
         this.c_playerData = playerData;
+        this.c_playerPositionData = positionData;
         this.cart_angleCalc = angleCalc;
-        this.cart_f_acceleration = f_acceleration;
+        this.cart_acceleration = acceleration;
         this.cart_velocity = velocity;
+        this.cart_surfInf = surfInf;
     }
 
     public void Act()
@@ -33,11 +38,13 @@ public class RidingState : iState {
         Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_f_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed);
+        cart_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed); 
+        cart_surfInf.PullDirectionVector(ref currentDir, currentSurfaceNormal, Vector3.up, 0.0f, ref currentVelocity);
+        // cart_acceleration.CapSpeed(ref currentVelocity, topSpeed);
         cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
         cart_velocity.SurfaceAdjustment(ref currentPosition, currentSurfacePosition, currentRotation);
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
-        
+
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.f_acceleration = f_acceleration;
         c_playerData.v_currentPosition = currentPosition;
