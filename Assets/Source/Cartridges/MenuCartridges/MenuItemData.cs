@@ -11,6 +11,8 @@ public class MenuItemActiveData
 
     private Vector2 OriginPosition;
 
+    private int NextScene;
+
     public Vector2 v_itemPosition
     {
         get { return ItemPosition; }
@@ -39,5 +41,11 @@ public class MenuItemActiveData
     {
         get { return TargetColor; }
         set { TargetColor = value; }
+    }
+
+    public int i_nextScene
+    {
+        get { return NextScene; }
+        set { NextScene = value; }
     }
 }

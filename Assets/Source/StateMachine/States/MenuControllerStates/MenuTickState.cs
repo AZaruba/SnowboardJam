@@ -20,6 +20,10 @@ public class MenuTickState : iState
 
     public StateRef GetNextState(Command cmd)
     {
+        if (cmd == Command.MENU_HIDE)
+        {
+            return StateRef.MENU_DISABLED;
+        }
         if (cmd == Command.MENU_IDLE)
         {
             return StateRef.MENU_WAIT;

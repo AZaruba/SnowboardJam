@@ -257,6 +257,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -298,6 +299,7 @@ MonoBehaviour:
   ItemTransform: {fileID: 411721143}
   ItemText: {fileID: 411721144}
   MenuAction: 0
+  NextSceneId: 0
 --- !u!1 &434950573
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,7 +334,8 @@ MonoBehaviour:
   ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 434950577}
   ItemText: {fileID: 434950575}
-  MenuAction: 2
+  MenuAction: 5
+  NextSceneId: 1
 --- !u!114 &434950575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,6 +351,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -827,6 +831,7 @@ MonoBehaviour:
   ItemTransform: {fileID: 1804759388}
   ItemText: {fileID: 1804759390}
   MenuAction: 2
+  NextSceneId: 0
 --- !u!114 &1804759390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -842,6 +847,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

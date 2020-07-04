@@ -26,6 +26,10 @@ public class MenuWaitState : iState
 
     public StateRef GetNextState(Command cmd)
     {
+        if (cmd == Command.MENU_HIDE)
+        {
+            return StateRef.MENU_DISABLED;
+        }
         if (cmd == Command.MENU_READY)
         {
             return StateRef.MENU_READY;

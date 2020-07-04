@@ -1,16 +1,56 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+
+public class PauseControllerData
+{
+    private bool IsPaused;
+
+    public bool b_isPaused
+    {
+        get { return IsPaused; }
+        set { IsPaused = value; }
+    }
+}
+
+public class PauseMessageClient : iMessageClient
+{
+    PauseControllerData c_data;
+
+    public PauseMessageClient(ref PauseControllerData dataIn)
+    {
+        this.c_data = dataIn;
+    }
+
+    public bool RecieveMessage(MessageID id, Message message)
+    {
+        if (id == MessageID.PAUSE)
+        {
+            c_data.b_isPaused = !c_data.b_isPaused;
+            return true;
+        }
+        return false;
+    }
+
+    public bool SendMessage(MessageID id, Message message)
+    {
+        throw new System.NotImplementedException();
+    }
+}
 
 public class PauseController : MonoBehaviour
 {
-    bool isPaused;
     [SerializeField] ControllerInputData ControllerData;
+    PauseControllerData c_data;
+    iMessageClient c_client;
 
     // Start is called before the first frame update
     void Start()
     {
-        isPaused = false;
+        c_data = new PauseControllerData();
+        c_data.b_isPaused = false;
+        InitializeClient();
     }
 
     // Update is called once per frame
@@ -20,9 +60,15 @@ public class PauseController : MonoBehaviour
         if (GlobalInputController.GetInputValue(ControllerData.PauseButton) == KeyValue.PRESSED ||
             GlobalInputController.GetInputValue(ControllerData.PauseKey) == KeyValue.PRESSED)
         {
-            Message pauseMessage = new Message((isPaused ? 0 : 1)); // if we want to pause, send 1, otherwise 0
-            isPaused = !isPaused;
+            Message pauseMessage = new Message((c_data.b_isPaused ? 0 : 1)); // if we want to pause, send 1, otherwise 0
+            //isPaused = !isPaused;
             MessageServer.SendMessage(MessageID.PAUSE, pauseMessage);
         }
+    }
+
+    private void InitializeClient()
+    {
+        c_client = new PauseMessageClient(ref c_data);
+        MessageServer.Subscribe(ref c_client, MessageID.PAUSE);
     }
 }
