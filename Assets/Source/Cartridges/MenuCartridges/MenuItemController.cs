@@ -74,6 +74,7 @@ public class MenuItemController : MonoBehaviour, iEntityController
                 }
                 break;
             case MenuCommand.RESUME:
+                MessageServer.SendMessage(MessageID.PAUSE, new Message(0));
                 break;
             case MenuCommand.CONFIRM:
                 break;
