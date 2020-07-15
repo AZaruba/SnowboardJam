@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class PauseMenuController : MonoBehaviour
 {
-    [SerializeField] private List<MenuItemController> MenuItems;
+    [SerializeField] private List<TextMenuItemController> MenuItems;
     [SerializeField] private ControllerInputData keyList;
     [SerializeField] private BasicMenuControllerData ControllerData;
     [SerializeField] private RectTransform rectTransform;
     private StateMachine sm_menuInput;
     private StateMachine sm_pauseMenu;
 
-    private MenuItemController c_activeMenuItem;
+    private iMenuItemController c_activeMenuItem;
     private ActiveMenuData c_activeMenuData;
     private IncrementCartridge cart_incr;
     private LerpCartridge cart_lerp;

@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class MenuController : MonoBehaviour
 {
-    [SerializeField] private List<MenuItemController> l_menuItems;
+    [SerializeField] private List<iMenuItemController> l_menuItems;
     [SerializeField] private ControllerInputData keyList;
     [SerializeField] private BasicMenuControllerData ControllerData;
     private StateMachine sm_menuInput;
-    private MenuItemController c_activeMenuItem;
+    private iMenuItemController c_activeMenuItem;
     private ActiveMenuData c_activeMenuData;
     private IncrementCartridge cart_incr;
 
