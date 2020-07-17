@@ -5,13 +5,14 @@ using UnityEngine;
 
 public class MenuController : MonoBehaviour
 {
-    [SerializeField] private List<iMenuItemController> l_menuItems;
+    [SerializeField] private List<iMenuItemController> MenuItems;
     [SerializeField] private ControllerInputData keyList;
     [SerializeField] private BasicMenuControllerData ControllerData;
     private StateMachine sm_menuInput;
     private iMenuItemController c_activeMenuItem;
     private ActiveMenuData c_activeMenuData;
     private IncrementCartridge cart_incr;
+    
 
     private int i_activeMenuItemIndex;
 
@@ -22,7 +23,7 @@ public class MenuController : MonoBehaviour
         InitializeStateMachine();
 
         i_activeMenuItemIndex = 0;
-        c_activeMenuItem = l_menuItems[i_activeMenuItemIndex];
+        c_activeMenuItem = MenuItems[i_activeMenuItemIndex];
         c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
     }
 
@@ -56,7 +57,7 @@ public class MenuController : MonoBehaviour
         {
             c_activeMenuItem.ExecuteStateMachineCommand(Command.UNSELECT);
             i_activeMenuItemIndex = c_activeMenuData.i_activeMenuItemIndex;
-            c_activeMenuItem = l_menuItems[i_activeMenuItemIndex];
+            c_activeMenuItem = MenuItems[i_activeMenuItemIndex];
             c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
         }
     }
@@ -88,7 +89,7 @@ public class MenuController : MonoBehaviour
         c_activeMenuData.f_currentMenuTickCount = 0.0f;
         c_activeMenuData.f_currentMenuWaitCount = ControllerData.ShortTickTime;
         c_activeMenuData.i_activeMenuItemIndex = i_activeMenuItemIndex;
-        c_activeMenuData.i_menuItemCount = l_menuItems.Count;
+        c_activeMenuData.i_menuItemCount = MenuItems.Count;
         c_activeMenuData.i_menuDir = 0;
         c_activeMenuData.b_showMenu = true;
     }
@@ -115,10 +116,4 @@ public class MenuController : MonoBehaviour
         MenuSelectionData.SetNextScene(1);
     }
 }
-
-/* TODO / Improving the menu controller
- * 1. Get rid of hardcoded axes and input
- * 3. Get rid of constants
- * 5. grid based menus
- */
  

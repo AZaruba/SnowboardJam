@@ -4,17 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class TextMenuItemController : MonoBehaviour, iMenuItemController, iEntityController
+public class ImageMenuItemController : iMenuItemController, iEntityController
 {
     [SerializeField] private BasicMenuItemData ItemData;
     [SerializeField] private RectTransform ItemTransform;
-    [SerializeField] private Text ItemText;
+    [SerializeField] private Image ItemImage;
     [SerializeField] private MenuCommand MenuAction;
     [SerializeField] private int NextSceneId;
 
-    private MenuItemActiveData c_itemActiveData;
-
     private StateMachine sm_menuItem;
+    private MenuItemActiveData c_itemActiveData;
 
     // Start is called before the first frame update
     void Awake()
@@ -35,7 +34,7 @@ public class TextMenuItemController : MonoBehaviour, iMenuItemController, iEntit
     public void EngineUpdate()
     {
         ItemTransform.anchoredPosition = c_itemActiveData.v_itemPosition;
-        ItemText.color = c_itemActiveData.c_currentColor;
+        ItemImage.color = c_itemActiveData.c_currentColor;
     }
 
     public void EnginePull()
@@ -52,12 +51,7 @@ public class TextMenuItemController : MonoBehaviour, iMenuItemController, iEntit
         }
     }
 
-    public void ExecuteStateMachineCommand(Command cmd)
-    {
-        sm_menuItem.Execute(cmd);
-    }
-
-    public void ExecuteMenuCommand()
+    public override void ExecuteMenuCommand()
     {
         switch (MenuAction)
         {
@@ -68,7 +62,7 @@ public class TextMenuItemController : MonoBehaviour, iMenuItemController, iEntit
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
                 break;
             case MenuCommand.CHANGE_SCENE:
-                if (c_itemActiveData.i_nextScene > -1)
+                if (c_itemActiveData.i_nextScene > -1 && c_itemActiveData.i_nextScene < SceneManager.sceneCountInBuildSettings)
                 {
                     SceneManager.LoadScene(c_itemActiveData.i_nextScene, LoadSceneMode.Single);
                 }
@@ -81,7 +75,12 @@ public class TextMenuItemController : MonoBehaviour, iMenuItemController, iEntit
         }
     }
 
-    public void InitializeStateMachine()
+    public override void ExecuteStateMachineCommand(Command cmd)
+    {
+        sm_menuItem.Execute(cmd);
+    }
+
+    public override void InitializeStateMachine()
     {
         LerpCartridge cart_lerp = new LerpCartridge();
 
@@ -96,7 +95,7 @@ public class TextMenuItemController : MonoBehaviour, iMenuItemController, iEntit
         sm_menuItem.AddState(s_preselected, StateRef.ITEM_PRESELECTED);
     }
 
-    public void InitializeData()
+    public override void InitializeData()
     {
         c_itemActiveData = new MenuItemActiveData();
         c_itemActiveData.v_itemPosition = ItemTransform.anchoredPosition;

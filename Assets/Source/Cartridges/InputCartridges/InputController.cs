@@ -18,7 +18,6 @@ public static class GlobalInputController
 
     private static Dictionary<KeyCode, KeyValue> DigitalInputData;
     private static Dictionary<string, float> AnalogInputData;
-    // TODO: Add menu analog input (the single tick then "scroll" update)
 
     public static bool InitializeInput(ControllerInputData dataIn)
     {
