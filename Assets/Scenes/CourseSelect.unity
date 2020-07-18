@@ -650,7 +650,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 408570272}
-  - component: {fileID: 408570270}
   - component: {fileID: 408570271}
   m_Layer: 0
   m_Name: GameMaster
@@ -659,34 +658,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &408570270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 408570269}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecd7603718845f49a971ee3f5ddaeea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  JumpButton: 350
-  JumpKey: 32
-  TuckButton: 0
-  TuckKey: 0
-  DTrickButton: 107
-  DTrickKey: 256
-  LTrickButton: 258
-  LTrickKey: 259
-  RTrickButton: 108
-  RTrickKey: 256
-  UTrickButton: 0
-  UTrickKey: 0
-  PauseButton: 112
-  PauseKey: 27
-  LeftHorizontalAxis: Horizontal
-  LeftVerticalAxis: Vertical
 --- !u!114 &408570271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -699,7 +670,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c60078fe03322894fa90a2816b6809f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ControllerData: {fileID: 408570270}
+  ControllerData: {fileID: 0}
 --- !u!4 &408570272
 Transform:
   m_ObjectHideFlags: 0
@@ -940,7 +911,6 @@ MonoBehaviour:
   - {fileID: 49730911}
   - {fileID: 359392494}
   - {fileID: 1166354014}
-  keyList: {fileID: 408570270}
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
 --- !u!4 &1086049783
 Transform:

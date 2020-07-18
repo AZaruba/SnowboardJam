@@ -75,7 +75,9 @@ public class MessageServer
 
     public static void OnSceneChange()
     {
-        l_subscribers.Clear();
-        m_subscribers.Clear();
+        if (m_subscribers != null)
+        {
+            m_subscribers.Clear();
+        }
     }
 }

@@ -212,6 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546458d1956454638a7d82860c699d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HelpText: 
   ItemData: {fileID: 11400000, guid: 7cfdfcecb7055a4418729f872e1e3aeb, type: 2}
   ItemTransform: {fileID: 18999759}
   ItemText: {fileID: 18999760}
@@ -445,7 +446,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36502295601550e4a9f6d7cfad01fcb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ControllerData: {fileID: 243559133}
 --- !u!114 &243559132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1263,7 +1263,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   c_playerData: {fileID: 734568623}
   trickData: {fileID: 734568628}
-  c_inputData: {fileID: 243559133}
   PlayerAnimator: {fileID: 734568624}
   debugAccessor: {fileID: 734568626}
 --- !u!114 &734568628
@@ -1537,7 +1536,6 @@ MonoBehaviour:
   - {fileID: 18999762}
   - {fileID: 2024415124}
   - {fileID: 1129842973}
-  keyList: {fileID: 243559133}
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   rectTransform: {fileID: 646103461}
 --- !u!4 &1112036340
@@ -1645,10 +1643,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546458d1956454638a7d82860c699d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HelpText: 
   ItemData: {fileID: 11400000, guid: 7cfdfcecb7055a4418729f872e1e3aeb, type: 2}
   ItemTransform: {fileID: 1129842970}
   ItemText: {fileID: 1129842971}
-  MenuAction: 0
+  MenuAction: 5
   NextSceneId: 0
 --- !u!1 &1182894704
 GameObject:
@@ -2249,6 +2248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546458d1956454638a7d82860c699d94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HelpText: 
   ItemData: {fileID: 11400000, guid: 7cfdfcecb7055a4418729f872e1e3aeb, type: 2}
   ItemTransform: {fileID: 2024415121}
   ItemText: {fileID: 2024415122}

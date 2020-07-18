@@ -14,19 +14,21 @@ public enum KeyValue
 public static class GlobalInputController
 {
 
-    private static ControllerInputData ControllerData;
+    public static ControllerInputData ControllerData;
+    private static bool InputInitialized = false;
 
     private static Dictionary<KeyCode, KeyValue> DigitalInputData;
     private static Dictionary<string, float> AnalogInputData;
 
-    public static bool InitializeInput(ControllerInputData dataIn)
+    public static bool InitializeInput()
     {
-        ControllerData = dataIn;
-
-        if (DigitalInputData != null && AnalogInputData != null)
+        if (InputInitialized)
         {
             return false;
         }
+
+        DefineInputs();
+
         DigitalInputData = new Dictionary<KeyCode, KeyValue>();
 
         DigitalInputData.Add(ControllerData.JumpButton, KeyValue.IDLE);
@@ -44,7 +46,37 @@ public static class GlobalInputController
         AnalogInputData.Add(ControllerData.LeftHorizontalAxis, 0);
         AnalogInputData.Add(ControllerData.LeftVerticalAxis, 0);
 
+        InputInitialized = true;
         return true;
+    }
+
+    public static void DefineInputs()
+    {
+        ControllerData = new ControllerInputData();
+
+        ControllerData.JumpButton = DefaultControls.DefaultJump;
+        ControllerData.JumpKey = DefaultControls.DefaultJumpKey;
+
+        ControllerData.TuckButton = DefaultControls.DefaultTuck;
+        ControllerData.TuckKey = DefaultControls.DefaultTuckKey;
+
+        ControllerData.DTrickButton = DefaultControls.DefaultTrickD;
+        ControllerData.DTrickKey = DefaultControls.DefaultTrickDKey;
+
+        ControllerData.LTrickButton = DefaultControls.DefaultTrickL;
+        ControllerData.LTrickKey = DefaultControls.DefaultTrickLKey;
+
+        ControllerData.RTrickButton = DefaultControls.DefaultTrickR;
+        ControllerData.RTrickKey = DefaultControls.DefaultTrickRKey;
+
+        ControllerData.UTrickButton = DefaultControls.DefaultTrickU;
+        ControllerData.UTrickKey = DefaultControls.DefaultTrickUKey;
+
+        ControllerData.PauseButton = DefaultControls.DefaultPause;
+        ControllerData.PauseKey = DefaultControls.DefaultPauseKey;
+
+        ControllerData.LeftHorizontalAxis = DefaultControls.DefaultLHoriz;
+        ControllerData.LeftVerticalAxis = DefaultControls.DefaultLVerti;
     }
 
     public static KeyValue GetInputValue(KeyCode keyIn)
@@ -119,16 +151,36 @@ public static class GlobalInputController
 
 public class InputController : MonoBehaviour
 {
-    [SerializeField] ControllerInputData ControllerData;
-
     private void Start()
     {
-        GlobalInputController.InitializeInput(ControllerData);
+        GlobalInputController.InitializeInput();
     }
 
     private void Update()
     {
         GlobalInputController.UpdateInput();
     }
+}
+
+public static class DefaultControls
+{
+    public static KeyCode DefaultPause = KeyCode.P;
+    public static KeyCode DefaultTrickU = KeyCode.I;
+    public static KeyCode DefaultTrickR = KeyCode.L;
+    public static KeyCode DefaultTrickL = KeyCode.J;
+    public static KeyCode DefaultTrickD = KeyCode.K;
+    public static KeyCode DefaultJump = KeyCode.Space;
+    public static KeyCode DefaultTuck = KeyCode.E;
+    public static string DefaultLHoriz = "Horizontal";
+    public static string DefaultLVerti = "Vertical";
+
+    public static KeyCode DefaultPauseKey = KeyCode.Alpha0;
+    public static KeyCode DefaultTrickUKey = KeyCode.Alpha1;
+    public static KeyCode DefaultTrickRKey = KeyCode.Alpha2;
+    public static KeyCode DefaultTrickLKey = KeyCode.Alpha3;
+    public static KeyCode DefaultTrickDKey = KeyCode.Alpha4;
+    public static KeyCode DefaultJumpKey = KeyCode.Alpha5;
+    public static KeyCode DefaultTuckKey = KeyCode.Alpha6;
+
 }
 

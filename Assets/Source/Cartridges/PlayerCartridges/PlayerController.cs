@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     // Serialized items
     [SerializeField] private PlayerData c_playerData;
     [SerializeField] private TrickData trickData;
-    [SerializeField] private ControllerInputData c_inputData;
     [SerializeField] private Animator PlayerAnimator;
     [SerializeField] private DebugAccessor debugAccessor;
 
@@ -149,8 +148,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EnginePull()
     {
-        c_playerData.f_inputAxisTurn = GlobalInputController.GetInputValue(c_inputData.LeftHorizontalAxis);
-        c_playerData.f_inputAxisLVert = GlobalInputController.GetInputValue(c_inputData.LeftVerticalAxis);
+        c_playerData.f_inputAxisTurn = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftHorizontalAxis);
+        c_playerData.f_inputAxisLVert = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis);
 
         CheckForGround();
         CheckForZone();
@@ -212,7 +211,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_turnMachine.Execute(Command.RIDE);
         }
 
-        if (GlobalInputController.GetInputValue(c_inputData.LeftVerticalAxis) < 0.0f)
+        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis) < 0.0f)
         {
             c_accelMachine.Execute(Command.SLOW);
         }
@@ -220,7 +219,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_accelMachine.Execute(Command.RIDE);
         }
-        if (GlobalInputController.GetInputValue(c_inputData.LeftVerticalAxis) > 0.0f)
+        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis) > 0.0f)
         {
             c_accelMachine.Execute(Command.STARTMOVE);
         }
@@ -231,11 +230,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         // TODO: integrate this keypress into the player data
-        if (GlobalInputController.GetInputValue(c_inputData.JumpButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.JumpButton) == KeyValue.PRESSED)
         {
             c_airMachine.Execute(Command.CHARGE);
         }
-        else if (GlobalInputController.GetInputValue(c_inputData.JumpButton) == KeyValue.UP)
+        else if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.JumpButton) == KeyValue.UP)
         {
             c_airMachine.Execute(Command.JUMP);
             c_accelMachine.Execute(Command.JUMP);
@@ -243,12 +242,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.READY_TRICK);
         }
 
-        if (GlobalInputController.GetInputValue(c_inputData.LTrickButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.PRESSED)
         {
             sm_tricking.Execute(Command.START_TRICK);
             sm_tricking.Execute(Command.SCORE_TRICK);
         }
-        else if (GlobalInputController.GetInputValue(c_inputData.LTrickButton) == KeyValue.UP)
+        else if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.UP)
         {
             sm_tricking.Execute(Command.END_TRICK);
         }

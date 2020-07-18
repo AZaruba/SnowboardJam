@@ -6,7 +6,6 @@ using UnityEngine;
 public class MenuController : MonoBehaviour
 {
     [SerializeField] private List<iMenuItemController> MenuItems;
-    [SerializeField] private ControllerInputData keyList;
     [SerializeField] private BasicMenuControllerData ControllerData;
     private StateMachine sm_menuInput;
     private iMenuItemController c_activeMenuItem;
@@ -30,7 +29,7 @@ public class MenuController : MonoBehaviour
 
     void Update()
     {
-        float inputAxisValue = GlobalInputController.GetInputValue(keyList.LeftVerticalAxis);
+        float inputAxisValue = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis);
         if (inputAxisValue > 0.5f)
         {
             c_activeMenuData.i_menuDir = -1; // menus are often organized top to bottom
@@ -45,7 +44,7 @@ public class MenuController : MonoBehaviour
         }
 
 
-        if (GlobalInputController.GetInputValue(keyList.DTrickButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
         {
             c_activeMenuItem.ExecuteMenuCommand();
         }
