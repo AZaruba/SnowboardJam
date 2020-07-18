@@ -64,6 +64,7 @@ public class ImageMenuItemController : iMenuItemController, iEntityController
             case MenuCommand.CHANGE_SCENE:
                 if (c_itemActiveData.i_nextScene > -1 && c_itemActiveData.i_nextScene < SceneManager.sceneCountInBuildSettings)
                 {
+                    MessageServer.OnSceneChange();
                     SceneManager.LoadScene(c_itemActiveData.i_nextScene, LoadSceneMode.Single);
                 }
                 break;

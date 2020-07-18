@@ -8,7 +8,10 @@ public enum MessageID
     PAUSE,
     TEST_MSG_ONE,
     TEST_MSG_TWO,
+
+// UI message IDs
     SCORE_EDIT,
+    MENU_ITEM_CHANGED,
     PLAYER_FINISHED,
 }
 
@@ -20,6 +23,7 @@ public enum ClientID
     SCORE_CLIENT,
     TIMER_CLIENT,
     PAUSE_MENU_CLIENT,
+    HELP_TEXT_CLIENT,
 }
 
 public class Message

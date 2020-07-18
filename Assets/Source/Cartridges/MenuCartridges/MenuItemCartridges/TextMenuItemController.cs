@@ -70,6 +70,7 @@ public class TextMenuItemController : iMenuItemController, iEntityController
             case MenuCommand.CHANGE_SCENE:
                 if (c_itemActiveData.i_nextScene > -1)
                 {
+                    MessageServer.OnSceneChange();
                     SceneManager.LoadScene(c_itemActiveData.i_nextScene, LoadSceneMode.Single);
                 }
                 break;
