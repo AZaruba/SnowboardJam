@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class MenuItemController : MonoBehaviour, iEntityController
+public class TextMenuItemController : iMenuItemController, iEntityController
 {
     [SerializeField] private BasicMenuItemData ItemData;
     [SerializeField] private RectTransform ItemTransform;
@@ -17,7 +17,7 @@ public class MenuItemController : MonoBehaviour, iEntityController
     private StateMachine sm_menuItem;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         InitializeData();
         InitializeStateMachine();
@@ -52,12 +52,12 @@ public class MenuItemController : MonoBehaviour, iEntityController
         }
     }
 
-    public void ExecuteStateMachineCommand(Command cmd)
+    public override void ExecuteStateMachineCommand(Command cmd)
     {
         sm_menuItem.Execute(cmd);
     }
 
-    public void ExecuteMenuCommand()
+    public override void ExecuteMenuCommand()
     {
         switch (MenuAction)
         {
@@ -70,6 +70,7 @@ public class MenuItemController : MonoBehaviour, iEntityController
             case MenuCommand.CHANGE_SCENE:
                 if (c_itemActiveData.i_nextScene > -1)
                 {
+                    MessageServer.OnSceneChange();
                     SceneManager.LoadScene(c_itemActiveData.i_nextScene, LoadSceneMode.Single);
                 }
                 break;
@@ -81,7 +82,7 @@ public class MenuItemController : MonoBehaviour, iEntityController
         }
     }
 
-    private void InitializeStateMachine()
+    public override void InitializeStateMachine()
     {
         LerpCartridge cart_lerp = new LerpCartridge();
 
@@ -96,7 +97,7 @@ public class MenuItemController : MonoBehaviour, iEntityController
         sm_menuItem.AddState(s_preselected, StateRef.ITEM_PRESELECTED);
     }
 
-    private void InitializeData()
+    public override void InitializeData()
     {
         c_itemActiveData = new MenuItemActiveData();
         c_itemActiveData.v_itemPosition = ItemTransform.anchoredPosition;

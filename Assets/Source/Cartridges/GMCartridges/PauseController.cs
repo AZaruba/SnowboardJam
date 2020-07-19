@@ -41,7 +41,6 @@ public class PauseMessageClient : iMessageClient
 
 public class PauseController : MonoBehaviour
 {
-    [SerializeField] ControllerInputData ControllerData;
     PauseControllerData c_data;
     iMessageClient c_client;
 
@@ -57,8 +56,8 @@ public class PauseController : MonoBehaviour
     void Update()
     {
         // TODO: Input system update
-        if (GlobalInputController.GetInputValue(ControllerData.PauseButton) == KeyValue.PRESSED ||
-            GlobalInputController.GetInputValue(ControllerData.PauseKey) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.PauseButton) == KeyValue.PRESSED ||
+            GlobalInputController.GetInputValue(GlobalInputController.ControllerData.PauseKey) == KeyValue.PRESSED)
         {
             Message pauseMessage = new Message((c_data.b_isPaused ? 0 : 1)); // if we want to pause, send 1, otherwise 0
             //isPaused = !isPaused;

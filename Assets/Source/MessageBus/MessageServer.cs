@@ -72,4 +72,12 @@ public class MessageServer
             l_subscribers.Remove(client);
         }
     }
+
+    public static void OnSceneChange()
+    {
+        if (m_subscribers != null)
+        {
+            m_subscribers.Clear();
+        }
+    }
 }

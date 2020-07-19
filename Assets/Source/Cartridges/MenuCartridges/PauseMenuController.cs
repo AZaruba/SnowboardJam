@@ -5,14 +5,13 @@ using UnityEngine;
 
 public class PauseMenuController : MonoBehaviour
 {
-    [SerializeField] private List<MenuItemController> MenuItems;
-    [SerializeField] private ControllerInputData keyList;
+    [SerializeField] private List<TextMenuItemController> MenuItems;
     [SerializeField] private BasicMenuControllerData ControllerData;
     [SerializeField] private RectTransform rectTransform;
     private StateMachine sm_menuInput;
     private StateMachine sm_pauseMenu;
 
-    private MenuItemController c_activeMenuItem;
+    private iMenuItemController c_activeMenuItem;
     private ActiveMenuData c_activeMenuData;
     private IncrementCartridge cart_incr;
     private LerpCartridge cart_lerp;
@@ -37,7 +36,7 @@ public class PauseMenuController : MonoBehaviour
         rectTransform.anchoredPosition = c_activeMenuData.v_currentPosition;
         if (c_activeMenuData.b_showMenu == true)
         {
-            float inputAxisValue = GlobalInputController.GetInputValue(keyList.LeftVerticalAxis);
+            float inputAxisValue = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis);
             if (inputAxisValue > 0.5f)
             {
                 c_activeMenuData.i_menuDir = -1; // menus are often organized top to bottom
@@ -51,7 +50,7 @@ public class PauseMenuController : MonoBehaviour
                 c_activeMenuData.i_menuDir = 0;
             }
 
-            if (GlobalInputController.GetInputValue(keyList.DTrickButton) == KeyValue.PRESSED)
+            if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
             {
                 c_activeMenuItem.ExecuteMenuCommand();
             }
