@@ -10,6 +10,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CharacterAttributeData", menuName = "Charater Attribute Data")]
 public class CharacterAttributeData : ScriptableObject
 {
+    public int MaxStats = 10;
+
     #region PUBLIC_VARIABLES
     public string Name;
     public CharacterSelection selectionId;

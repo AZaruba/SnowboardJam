@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: Allow clients to only subscribe to certain senders/filter out messages (see multiple-menus problem)
 public class MessageServer
 {
-    // TODO: Add message-by-message subscription
     static List<iMessageClient> l_subscribers;
     static Dictionary<MessageID, List<iMessageClient>> m_subscribers;
 

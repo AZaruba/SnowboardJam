@@ -10,8 +10,6 @@ public class CarvingState : iState {
     PlayerData                c_playerData;
     PlayerPositionData        c_positionData;
 
-    //TODO: Investigate breaking out certain actions into a separate state machine
-    //TODO: Give player data to the state machine and possibly the states by reference
     public CarvingState(ref PlayerData playerData,
                         ref PlayerPositionData positionData,
                         ref HandlingCartridge handling,

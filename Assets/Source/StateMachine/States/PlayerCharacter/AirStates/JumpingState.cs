@@ -16,7 +16,6 @@ public class JumpingState : iState
         this.cart_velocity = cart_vel;
     }
 
-    // TODO: add horizontal movement that takes minimal external input here
     public void Act()
     {
         float airVelocity = c_playerData.f_currentAirVelocity;

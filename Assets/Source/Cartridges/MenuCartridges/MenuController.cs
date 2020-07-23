@@ -24,7 +24,7 @@ public class MenuController : MonoBehaviour
         i_activeMenuItemIndex = 0;
         c_activeMenuItem = MenuItems[i_activeMenuItemIndex];
         c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
-        c_activeMenuItem.OnItemActive();
+        c_activeMenuItem.OnItemActive(i_activeMenuItemIndex);
     }
 
     void Update()
@@ -59,7 +59,7 @@ public class MenuController : MonoBehaviour
             i_activeMenuItemIndex = c_activeMenuData.i_activeMenuItemIndex;
             c_activeMenuItem = MenuItems[i_activeMenuItemIndex];
             c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
-            c_activeMenuItem.OnItemActive();
+            c_activeMenuItem.OnItemActive(i_activeMenuItemIndex);
         }
     }
 

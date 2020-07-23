@@ -12,4 +12,5 @@ public enum MenuCommand
     RESUME,
     CHANGE_SCENE,
     EDIT_DATA,
+    UPDATE_GAME_DATA,
 }

@@ -40,6 +40,13 @@ public class Message
         this.s_data = sIn;
     }
 
+    public Message(string sIn = "", int iIn = int.MaxValue, float fIn = float.MaxValue)
+    {
+        this.i_data = iIn;
+        this.f_data = fIn;
+        this.s_data = sIn;
+    }
+
     public Message(uint dataIn)
     {
         u_data = dataIn;
