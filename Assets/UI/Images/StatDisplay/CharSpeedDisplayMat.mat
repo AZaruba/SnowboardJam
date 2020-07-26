@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: CharSpeedDisplayMat
-  m_Shader: {fileID: 51, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 10751, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: _ALPHATEST_ON _GLOSSYREFLECTIONS_OFF _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
     _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
@@ -59,7 +59,7 @@ Material:
     m_Floats:
     - _BumpScale: 1
     - _ColorMask: 15
-    - _Cutoff: 0.975
+    - _Cutoff: 0.71428275
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 0

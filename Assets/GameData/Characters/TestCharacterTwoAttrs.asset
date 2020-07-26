@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b4b59f0a504a498ea96d1651ad0a131, type: 3}
   m_Name: TestCharacterTwoAttrs
   m_EditorClassIdentifier: 
+  MaxStats: 7
   Name: Right Guy
   selectionId: 1
   Speed: 5
