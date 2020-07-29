@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class ModelMenuItemController : iMenuItemController, iEntityController
 {
-    [SerializeField] private BasicMenuItemData ItemData;
     [SerializeField] private MenuCommand MenuAction;
     [SerializeField] CharacterSelection currentCharacter;
     [SerializeField] CharacterAttributeData attributes;
@@ -62,6 +61,7 @@ public class ModelMenuItemController : iMenuItemController, iEntityController
                 break;
             case MenuCommand.UPDATE_GAME_DATA:
                 GlobalGameData.playerOneCharacter = currentCharacter;
+                MessageServer.SendMessage(MessageID.CHARACTER_SELECTED, new Message((uint)PlayerID.PLAYER1));
                 break;
         }
     }

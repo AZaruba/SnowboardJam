@@ -1,4 +1,13 @@
 ﻿
+public enum PlayerID
+{
+    ERROR_PLAYER = -1,
+    PLAYER_AI,
+    PLAYER1,
+    PLAYER2,
+    PLAYER3,
+    PLAYER4,
+}
 public enum CharacterSelection
 {
     ERROR_CHARACTER = -1,

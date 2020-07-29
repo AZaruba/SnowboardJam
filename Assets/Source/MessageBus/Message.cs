@@ -13,6 +13,11 @@ public enum MessageID
     SCORE_EDIT,
     MENU_ITEM_CHANGED,
     PLAYER_FINISHED,
+
+// Scene State Message IDs
+    CHARACTER_SELECTED,
+    CHARACTER_UNSELECTED,
+    ALL_CHARACTERS_SELECTED,
 }
 
 public enum ClientID

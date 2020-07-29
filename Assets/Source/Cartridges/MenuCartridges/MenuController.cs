@@ -43,6 +43,10 @@ public class MenuController : MonoBehaviour
             c_activeMenuData.i_menuDir = 0;
         }
 
+        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.RTrickButton) == KeyValue.PRESSED)
+        {
+            // return to previous menu
+        }
 
         if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
         {
