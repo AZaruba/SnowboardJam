@@ -1,4 +1,13 @@
 ﻿
+public enum Scene
+{
+    ERROR_SCENE = -1,
+    MAIN_MENU,
+    CHARACTER_SELECT,
+    COURSE_SELECT,
+    TEST_TRACK,
+}
+
 public enum PlayerID
 {
     ERROR_PLAYER = -1,

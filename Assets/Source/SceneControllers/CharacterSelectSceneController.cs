@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CharacterSelectSceneController : MonoBehaviour
 {
@@ -28,7 +29,13 @@ public class CharacterSelectSceneController : MonoBehaviour
             bool b_allCharactersReady = PollForReadyPlayers();
             if (b_allCharactersReady)
             {
-                // go!
+                // some kind of feedback here
+
+                /* Send Message to play ready animations
+                 * then when animations are done, a message is sent saying "load the next scene"
+                 * Then the secene is loaded here
+                 */
+                LoadCourseSelect();
             }
             else
             {
@@ -48,5 +55,10 @@ public class CharacterSelectSceneController : MonoBehaviour
             }
         }
         return true;
+    }
+
+    private void LoadCourseSelect()
+    {
+        SceneManager.LoadScene((int)Scene.COURSE_SELECT);
     }
 }

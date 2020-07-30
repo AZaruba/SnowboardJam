@@ -10,7 +10,7 @@ public class TextMenuItemController : iMenuItemController, iEntityController
     [SerializeField] private RectTransform ItemTransform;
     [SerializeField] private Text ItemText;
     [SerializeField] private MenuCommand MenuAction;
-    [SerializeField] private int NextSceneId;
+    [SerializeField] private Scene NextSceneId;
 
     private MenuItemActiveData c_itemActiveData;
 
@@ -105,6 +105,6 @@ public class TextMenuItemController : iMenuItemController, iEntityController
         c_itemActiveData.v_origin = ItemTransform.anchoredPosition;
         c_itemActiveData.c_currentColor = ItemData.UnselectedColor;
 
-        c_itemActiveData.i_nextScene = NextSceneId;
+        c_itemActiveData.i_nextScene = (int)NextSceneId;
     }
 }

@@ -15,6 +15,11 @@ public class MessageServer
     /// <returns>True if message is valid</returns>
     public static bool SendMessage(MessageID id, Message message)
     {
+        if (m_subscribers == null)
+        {
+            return false;
+        }
+
         if (!m_subscribers.TryGetValue(id, out l_subscribers))
         {
             return false;
@@ -78,6 +83,10 @@ public class MessageServer
         if (m_subscribers != null)
         {
             m_subscribers.Clear();
+        }
+        else
+        {
+            m_subscribers = new Dictionary<MessageID, List<iMessageClient>>();
         }
     }
 }

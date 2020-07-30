@@ -217,7 +217,7 @@ MonoBehaviour:
   ItemTransform: {fileID: 18999759}
   ItemText: {fileID: 18999760}
   MenuAction: 4
-  NextSceneId: 0
+  NextSceneId: -1
 --- !u!1 &44771477
 GameObject:
   m_ObjectHideFlags: 0
@@ -458,7 +458,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c60078fe03322894fa90a2816b6809f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ControllerData: {fileID: 243559133}
 --- !u!114 &243559133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2253,4 +2252,4 @@ MonoBehaviour:
   ItemTransform: {fileID: 2024415121}
   ItemText: {fileID: 2024415122}
   MenuAction: 3
-  NextSceneId: 1
+  NextSceneId: 3
