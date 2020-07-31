@@ -43,13 +43,11 @@ public class ScoreDisplayController : MonoBehaviour, iEntityController
 
     }
 
-    // TODO: Add scoreDisplay data
     public void EngineUpdate()
     {
         scoreText.text = data_scoreDisplay.i_displayScore.ToString();
     }
 
-    // TODO: Add state machine for adding score
     public void UpdateStateMachine()
     {
         if (data_scoreDisplay.i_displayScore == data_scoreDisplay.i_currentScore)

@@ -24,7 +24,7 @@ public class MenuController : MonoBehaviour
         i_activeMenuItemIndex = 0;
         c_activeMenuItem = MenuItems[i_activeMenuItemIndex];
         c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
-        c_activeMenuItem.OnItemActive();
+        c_activeMenuItem.OnItemActive(i_activeMenuItemIndex);
     }
 
     void Update()
@@ -43,6 +43,10 @@ public class MenuController : MonoBehaviour
             c_activeMenuData.i_menuDir = 0;
         }
 
+        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.RTrickButton) == KeyValue.PRESSED)
+        {
+            // return to previous menu
+        }
 
         if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
         {
@@ -59,7 +63,7 @@ public class MenuController : MonoBehaviour
             i_activeMenuItemIndex = c_activeMenuData.i_activeMenuItemIndex;
             c_activeMenuItem = MenuItems[i_activeMenuItemIndex];
             c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
-            c_activeMenuItem.OnItemActive();
+            c_activeMenuItem.OnItemActive(i_activeMenuItemIndex);
         }
     }
 

@@ -242,7 +242,7 @@ MonoBehaviour:
   ItemTransform: {fileID: 49730910}
   ItemImage: {fileID: 49730912}
   MenuAction: 5
-  NextSceneId: 2
+  NextSceneId: -1
 --- !u!114 &49730912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -520,7 +520,7 @@ MonoBehaviour:
   ItemTransform: {fileID: 359392493}
   ItemImage: {fileID: 359392495}
   MenuAction: 5
-  NextSceneId: 3
+  NextSceneId: -1
 --- !u!114 &359392495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -670,7 +670,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c60078fe03322894fa90a2816b6809f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ControllerData: {fileID: 0}
 --- !u!4 &408570272
 Transform:
   m_ObjectHideFlags: 0
@@ -939,7 +938,7 @@ GameObject:
   - component: {fileID: 1166354015}
   - component: {fileID: 1166354014}
   m_Layer: 5
-  m_Name: BackToMainMenu
+  m_Name: BackToCharacterSelect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -981,7 +980,7 @@ MonoBehaviour:
   ItemTransform: {fileID: 1166354013}
   ItemText: {fileID: 1166354015}
   MenuAction: 5
-  NextSceneId: 0
+  NextSceneId: 1
 --- !u!114 &1166354015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1170,7 +1169,7 @@ MonoBehaviour:
   ItemTransform: {fileID: 2118436614}
   ItemImage: {fileID: 2118436616}
   MenuAction: 5
-  NextSceneId: 1
+  NextSceneId: 3
 --- !u!114 &2118436616
 MonoBehaviour:
   m_ObjectHideFlags: 0

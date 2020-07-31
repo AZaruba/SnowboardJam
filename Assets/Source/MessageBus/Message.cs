@@ -13,6 +13,11 @@ public enum MessageID
     SCORE_EDIT,
     MENU_ITEM_CHANGED,
     PLAYER_FINISHED,
+
+// Scene State Message IDs
+    CHARACTER_SELECTED,
+    CHARACTER_UNSELECTED,
+    ALL_CHARACTERS_SELECTED,
 }
 
 public enum ClientID
@@ -33,7 +38,19 @@ public class Message
     private float f_data;
     private string s_data;
 
-    public Message(int iIn = int.MaxValue, float fIn = float.MaxValue, string sIn = "")
+    public Message()
+    {
+
+    }
+
+    public Message(int iIn, float fIn = float.MaxValue, string sIn = "")
+    {
+        this.i_data = iIn;
+        this.f_data = fIn;
+        this.s_data = sIn;
+    }
+
+    public Message(string sIn, int iIn = int.MaxValue, float fIn = float.MaxValue)
     {
         this.i_data = iIn;
         this.f_data = fIn;

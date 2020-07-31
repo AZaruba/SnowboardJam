@@ -229,7 +229,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.STOP);
         }
 
-        // TODO: integrate this keypress into the player data
         if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.JumpButton) == KeyValue.PRESSED)
         {
             c_airMachine.Execute(Command.CHARGE);
