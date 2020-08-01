@@ -1,0 +1,61 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SpinningState : iState
+{
+    private TrickPhysicsData c_physData;
+    private PlayerPositionData c_playerPosData;
+
+    private HandlingCartridge cart_rotation;
+    private IncrementCartridge cart_incr;
+
+    public SpinningState(ref TrickPhysicsData dataIn, ref PlayerPositionData posIn,
+                         ref HandlingCartridge handleIn, ref IncrementCartridge incrIn)
+    {
+        this.c_physData = dataIn;
+        this.c_playerPosData = posIn;
+        this.cart_rotation = handleIn;
+        this.cart_incr = incrIn;
+    }
+
+    public void Act()
+    {
+        Quaternion currentRotation = c_playerPosData.q_currentModelRotation;
+
+        Vector3 playerForward = c_playerPosData.v_modelDirection;
+        Vector3 spinAxis = currentRotation * Vector3.up;
+        Vector3 flipAxis = currentRotation * Vector3.right;
+
+        float currentSpinRate = c_physData.f_currentSpinRate;
+        float currentFlipRate = c_physData.f_currentFlipRate;
+
+        float currentSpinDegrees = currentSpinRate * Time.deltaTime * 360f;
+        float currentFlipDegrees = currentFlipRate * Time.deltaTime * 360f;
+
+        cart_rotation.Turn(ref playerForward, ref spinAxis, ref currentSpinDegrees, ref currentRotation);
+        cart_rotation.Turn(ref playerForward, ref flipAxis, ref currentFlipDegrees, ref currentRotation);
+        cart_incr.Decrement(ref currentFlipRate, c_physData.f_flipDecay * Time.deltaTime, c_physData.f_minFlipRate);
+        cart_incr.Decrement(ref currentSpinRate, c_physData.f_spinDecay * Time.deltaTime, c_physData.f_minSpinRate);
+
+        c_playerPosData.q_currentModelRotation = currentRotation;
+        c_physData.f_currentFlipRate = currentFlipRate;
+        c_physData.f_currentSpinRate = currentSpinRate;
+    }
+
+    public StateRef GetNextState(Command cmd)
+    {
+        if (cmd == Command.CRASH ||
+            cmd == Command.LAND)
+        {
+            return StateRef.SPIN_IDLE;
+        }
+        return StateRef.SPINNING;
+    }
+
+    public void TransitionAct()
+    {
+        c_physData.f_currentFlipRate = c_physData.f_currentFlipCharge;
+        c_physData.f_currentSpinRate = c_physData.f_currentSpinCharge;
+    }
+}

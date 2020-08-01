@@ -8,7 +8,7 @@ public class CameraData : MonoBehaviour {
     [SerializeField] private float FollowHeight;
     [SerializeField] private Vector3 OffsetVector;
     [SerializeField] private Vector3 TargetOffsetVector;
-    [SerializeField] private Transform TargetTransform;
+    [SerializeField] private PlayerController PlayerTarget;
 
     private float FieldOfView;
     private float CameraAngle;
@@ -27,6 +27,12 @@ public class CameraData : MonoBehaviour {
     #endregion
 
     #region SerializedProperties
+    public PlayerController c_targetController
+    {
+        get { return PlayerTarget; }
+
+    }
+
     public float f_followDistance
     {
         get { return FollowDistance; }
@@ -49,12 +55,6 @@ public class CameraData : MonoBehaviour {
     {
         get { return TargetOffsetVector; }
         set { TargetOffsetVector = value; }
-    }
-
-    public Transform t_targetTransform
-    {
-        get { return TargetTransform; }
-        set { TargetTransform = value; }
     }
     #endregion
 

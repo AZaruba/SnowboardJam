@@ -127,6 +127,12 @@ public enum StateRef {
     TRICK_DISABLED,
     #endregion
 
+    #region SpinStates
+    SPIN_IDLE,
+    SPINNING,
+    SPIN_CHARGE,
+    #endregion
+
     #region ScoreDisplayStates
     SCORE_PAUSED,
     SCORE_INCREASING,

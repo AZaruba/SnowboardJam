@@ -11,15 +11,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private TrickData trickData;
     [SerializeField] private Animator PlayerAnimator;
     [SerializeField] private DebugAccessor debugAccessor;
+    [SerializeField] private CharacterAttributeData Attributes;
 
     private StateData c_stateData;
     private AerialMoveData c_aerialMoveData;
+    private TrickPhysicsData c_trickPhysicsData;
 
     // private members
     private StateMachine c_turnMachine;
     private StateMachine c_airMachine;
     private StateMachine c_accelMachine;
     private StateMachine sm_tricking;
+    private StateMachine sm_trickPhys;
 
     private PlayerPositionData c_positionData;
     private EntityData c_entityData;
@@ -115,6 +118,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_turnMachine.Act();
         c_airMachine.Act();
         sm_tricking.Act();
+        sm_trickPhys.Act();
 
         EngineUpdate();
     }
@@ -127,9 +131,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_positionData.q_currentModelRotation;
 
-        debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
+        debugAccessor.DisplayState("Spin State", sm_trickPhys.GetCurrentState());
         debugAccessor.DisplayVector3("Target dir", c_playerData.v_currentDirection);
-        debugAccessor.DisplayFloat("Current Jump Charge", c_playerData.f_currentJumpCharge);
+        debugAccessor.DisplayFloat("Current Spin Rate", c_trickPhysicsData.f_currentSpinRate);
 
         UpdateAnimator();
     }
@@ -199,6 +203,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_turnMachine.Execute(Command.LAND);
             c_airMachine.Execute(Command.LAND);
             sm_tricking.Execute(Command.LAND);
+            sm_trickPhys.Execute(Command.LAND);
 
         }
 
@@ -232,12 +237,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
         if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.JumpButton) == KeyValue.PRESSED)
         {
             c_airMachine.Execute(Command.CHARGE);
+            sm_trickPhys.Execute(Command.CHARGE);
         }
         else if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.JumpButton) == KeyValue.UP)
         {
             c_airMachine.Execute(Command.JUMP);
             c_accelMachine.Execute(Command.JUMP);
             c_turnMachine.Execute(Command.JUMP);
+            sm_trickPhys.Execute(Command.JUMP);
             sm_tricking.Execute(Command.READY_TRICK);
         }
 
@@ -262,6 +269,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.CRASH);
             c_turnMachine.Execute(Command.CRASH);
             c_airMachine.Execute(Command.CRASH);
+            sm_trickPhys.Execute(Command.CRASH);
         }
     }
 
@@ -271,6 +279,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     void SetDefaultPlayerData()
     {
+        c_trickPhysicsData = new TrickPhysicsData(Attributes.Tricks, Attributes.MaxStats);
         c_positionData = new PlayerPositionData(transform.position, transform.forward);
         c_stateData = new StateData();
         c_aerialMoveData = new AerialMoveData();
@@ -392,16 +401,26 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void InitializeStateMachines()
     {
         InitializeTrickMachine();
+        InitializeTrickPhysicsMachine();
+    }
+
+    private void InitializeTrickPhysicsMachine()
+    {
+        SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData);
+        SpinChargeState s_spinCharge = new SpinChargeState(ref c_trickPhysicsData, ref cart_incr);
+        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_handling, ref cart_incr);
+
+        sm_trickPhys = new StateMachine(s_spinIdle, StateRef.SPIN_IDLE);
+        sm_trickPhys.AddState(s_spinCharge, StateRef.SPIN_CHARGE);
+        sm_trickPhys.AddState(s_spinning, StateRef.SPINNING);
     }
 
     private void InitializeTrickMachine()
     {
-        IncrementCartridge cart_increment = new IncrementCartridge();
-
         TrickDisabledState s_trickDisabled = new TrickDisabledState(ref trickData);
         TrickReadyState s_trickReady = new TrickReadyState();
         TrickTransitionState s_trickTransition = new TrickTransitionState();
-        TrickingState s_tricking = new TrickingState(ref trickData, ref cart_increment);
+        TrickingState s_tricking = new TrickingState(ref trickData, ref cart_incr);
 
         sm_tricking = new StateMachine(s_trickDisabled, StateRef.TRICK_DISABLED);
         sm_tricking.AddState(s_trickReady, StateRef.TRICK_READY);
@@ -414,6 +433,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cl_character = new CharacterMessageClient(ref c_stateData, ref c_entityData);
         MessageServer.Subscribe(ref cl_character, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_character, MessageID.PLAYER_FINISHED);
+    }
+    #endregion
+
+    #region DataSharingFunctions
+    public PlayerPositionData SharePositionData()
+    {
+        return this.c_positionData;
+    }
+
+    public PlayerData SharePlayerData()
+    {
+        return this.c_playerData;
     }
     #endregion
 }
