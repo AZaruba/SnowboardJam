@@ -124,7 +124,7 @@ public static class GlobalInputController
 
     public static void CheckAndSetValue(string axisNameIn)
     {
-        float frameValue = Input.GetAxis(axisNameIn);
+        float frameValue = Input.GetAxisRaw(axisNameIn);
 
         if (AnalogInputData.ContainsKey(axisNameIn))
         {

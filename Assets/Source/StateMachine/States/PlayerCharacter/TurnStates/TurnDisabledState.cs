@@ -20,10 +20,6 @@ public class TurnDisabledState : iState
         {
             return StateRef.RIDING;
         }
-        if (cmd == Command.READY)
-        {
-            return StateRef.RIDING;
-        }
         return StateRef.DISABLED;
     }
 }

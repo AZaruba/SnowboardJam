@@ -8,14 +8,17 @@ public class CarvingState : iState {
     HandlingCartridge         cart_handling;
     SurfaceInfluenceCartridge cart_surfInf;
     PlayerData                c_playerData;
+    PlayerInputData           c_playerInputData;
     PlayerPositionData        c_positionData;
 
     public CarvingState(ref PlayerData playerData,
+                        ref PlayerInputData inputData,
                         ref PlayerPositionData positionData,
                         ref HandlingCartridge handling,
                         ref SurfaceInfluenceCartridge surfInf)
     {
         this.c_playerData = playerData;
+        this.c_playerInputData = inputData;
         this.c_positionData = positionData;
         this.cart_handling = handling;
         this.cart_surfInf = surfInf;
@@ -28,7 +31,7 @@ public class CarvingState : iState {
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
-        float inputAxis = c_playerData.f_inputAxisTurn * c_playerData.f_turnSpeed;
+        float inputAxis = c_playerInputData.f_inputAxisLHoriz * c_playerData.f_turnSpeed;
 
         cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
 
@@ -44,13 +47,15 @@ public class CarvingState : iState {
 
     public StateRef GetNextState(Command cmd)
     {
-        if (cmd == Command.CRASH)
+        if (cmd == Command.CRASH ||
+            cmd == Command.JUMP ||
+            cmd == Command.FALL)
         {
             return StateRef.DISABLED;
         }
-        if (cmd == Command.FALL)
+        if (cmd == Command.CHARGE)
         {
-            return StateRef.DISABLED;
+            return StateRef.CHARGING;
         }
         if (cmd == Command.RIDE)
         {

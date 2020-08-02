@@ -35,8 +35,8 @@ public class SpinningState : iState
 
         cart_rotation.Turn(ref playerForward, ref spinAxis, ref currentSpinDegrees, ref currentRotation);
         cart_rotation.Turn(ref playerForward, ref flipAxis, ref currentFlipDegrees, ref currentRotation);
-        cart_incr.Decrement(ref currentFlipRate, c_physData.f_flipDecay * Time.deltaTime, c_physData.f_minFlipRate);
-        cart_incr.Decrement(ref currentSpinRate, c_physData.f_spinDecay * Time.deltaTime, c_physData.f_minSpinRate);
+        cart_incr.Decrement(ref currentFlipRate, c_physData.f_flipDecay * Time.deltaTime, 0.0f);
+        cart_incr.Decrement(ref currentSpinRate, c_physData.f_spinDecay * Time.deltaTime, 0.0f);
 
         c_playerPosData.q_currentModelRotation = currentRotation;
         c_physData.f_currentFlipRate = currentFlipRate;

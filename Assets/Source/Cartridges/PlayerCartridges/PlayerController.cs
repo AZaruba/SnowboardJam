@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private StateData c_stateData;
     private AerialMoveData c_aerialMoveData;
     private TrickPhysicsData c_trickPhysicsData;
+    private PlayerInputData c_inputData;
 
     // private members
     private StateMachine c_turnMachine;
@@ -60,38 +61,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_handling = new HandlingCartridge();
         cart_incr = new IncrementCartridge();
         cart_surfInf = new SurfaceInfluenceCartridge();
-
-        MoveAerialState s_moveAerial = new MoveAerialState();
-        StationaryState s_stationary = new StationaryState(ref c_playerData, ref cart_angleCalc, ref cart_velocity);
-        RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
-        SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
-        CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
-
-        StraightState s_straight = new StraightState(ref c_playerData, ref c_positionData, ref cart_surfInf);
-        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_positionData, ref cart_handling, ref cart_surfInf);
-        TurnDisabledState s_turnDisabled = new TurnDisabledState();
-
-        AerialState s_aerial = new AerialState(ref c_playerData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
-        JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
-        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
-        AirDisabledState s_airDisabled = new AirDisabledState();
-
-        c_accelMachine = new StateMachine(s_stationary, StateRef.STATIONARY);
-        c_accelMachine.AddState(s_riding, StateRef.RIDING);
-        c_accelMachine.AddState(s_slowing, StateRef.STOPPING);
-        c_accelMachine.AddState(s_moveAerial, StateRef.AIRBORNE);
-        c_accelMachine.AddState(s_crashed, StateRef.CRASHED);
-
-        c_turnMachine = new StateMachine(s_straight, StateRef.RIDING);
-        c_turnMachine.AddState(s_carving, StateRef.CARVING);
-        c_turnMachine.AddState(s_turnDisabled, StateRef.DISABLED);
-
-        c_airMachine = new StateMachine(s_grounded, StateRef.GROUNDED);
-        c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
-        c_airMachine.AddState(s_jumping, StateRef.JUMPING);
-        c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
-        c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
 
         InitializeStateMachines();
         InitializeMessageClient();
@@ -143,7 +112,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     private void UpdateAnimator()
     {
-        PlayerAnimator.SetFloat("TurnAnalogue", c_playerData.f_inputAxisTurn);
+        PlayerAnimator.SetFloat("TurnAnalogue", c_inputData.f_inputAxisLHoriz);
         PlayerAnimator.SetBool("JumpPressed", c_airMachine.GetCurrentState() == StateRef.CHARGING);
     }
 
@@ -152,8 +121,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EnginePull()
     {
-        c_playerData.f_inputAxisTurn = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftHorizontalAxis);
-        c_playerData.f_inputAxisLVert = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis);
+        c_inputData.f_inputAxisLHoriz = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftHorizontalAxis);
+        c_inputData.f_inputAxisLVert = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis);
 
         CheckForGround();
         CheckForZone();
@@ -207,7 +176,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         }
 
-        if (Mathf.Abs(c_playerData.f_inputAxisTurn) > 0.0f)
+        if (Mathf.Abs(c_inputData.f_inputAxisLHoriz) > 0.0f)
         {
             c_turnMachine.Execute(Command.TURN);
         }
@@ -237,6 +206,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.JumpButton) == KeyValue.PRESSED)
         {
             c_airMachine.Execute(Command.CHARGE);
+            c_turnMachine.Execute(Command.CHARGE);
             sm_trickPhys.Execute(Command.CHARGE);
         }
         else if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.JumpButton) == KeyValue.UP)
@@ -281,6 +251,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         c_trickPhysicsData = new TrickPhysicsData(Attributes.Tricks, Attributes.MaxStats);
         c_positionData = new PlayerPositionData(transform.position, transform.forward);
+        c_inputData = new PlayerInputData();
         c_stateData = new StateData();
         c_aerialMoveData = new AerialMoveData();
         c_entityData = new EntityData();
@@ -400,14 +371,63 @@ public class PlayerController : MonoBehaviour, iEntityController {
     #region StartupFunctions
     private void InitializeStateMachines()
     {
+        InitializeAccelMachine();
+        InitializeAirMachine();
+        InitializeTurnMachine();
         InitializeTrickMachine();
         InitializeTrickPhysicsMachine();
+    }
+
+    private void InitializeAccelMachine()
+    {
+        MoveAerialState s_moveAerial = new MoveAerialState();
+        StationaryState s_stationary = new StationaryState(ref c_playerData, ref cart_angleCalc, ref cart_velocity);
+        RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
+        SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
+        CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
+
+        c_accelMachine = new StateMachine(s_stationary, StateRef.STATIONARY);
+        c_accelMachine.AddState(s_riding, StateRef.RIDING);
+        c_accelMachine.AddState(s_slowing, StateRef.STOPPING);
+        c_accelMachine.AddState(s_moveAerial, StateRef.AIRBORNE);
+        c_accelMachine.AddState(s_crashed, StateRef.CRASHED);
+
+
+    }
+
+    private void InitializeAirMachine()
+    {
+        AerialState s_aerial = new AerialState(ref c_playerData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
+        JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
+        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
+        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
+        AirDisabledState s_airDisabled = new AirDisabledState();
+
+        c_airMachine = new StateMachine(s_grounded, StateRef.GROUNDED);
+        c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
+        c_airMachine.AddState(s_jumping, StateRef.JUMPING);
+        c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
+        c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
+    }
+
+    private void InitializeTurnMachine()
+    {
+        StraightState s_straight = new StraightState(ref c_playerData, ref c_positionData, ref cart_surfInf);
+        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_inputData, ref c_positionData, ref cart_handling, ref cart_surfInf);
+        TurnDisabledState s_turnDisabled = new TurnDisabledState();
+        TurnChargeState s_turnCharge = new TurnChargeState(ref c_playerData, ref c_positionData, ref cart_surfInf);
+
+        c_turnMachine = new StateMachine(s_straight, StateRef.RIDING);
+        c_turnMachine.AddState(s_carving, StateRef.CARVING);
+        c_turnMachine.AddState(s_turnCharge, StateRef.CHARGING);
+        c_turnMachine.AddState(s_turnDisabled, StateRef.DISABLED);
+
     }
 
     private void InitializeTrickPhysicsMachine()
     {
         SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData);
-        SpinChargeState s_spinCharge = new SpinChargeState(ref c_trickPhysicsData, ref cart_incr);
+        SpinChargeState s_spinCharge = new SpinChargeState(ref c_trickPhysicsData, ref c_inputData, ref cart_incr);
         SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_handling, ref cart_incr);
 
         sm_trickPhys = new StateMachine(s_spinIdle, StateRef.SPIN_IDLE);

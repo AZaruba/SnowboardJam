@@ -7,8 +7,12 @@ public class IncrementCartridge
     /// <param name="timer">The float storing the value</param>
     /// <param name="time">The amount to incremement the value</param>
     /// <param name="max">The optional cap for the increment operation</param>
-    public void Increment(ref float value, float delta, float cap = float.MaxValue)
+    public void Increment(ref float value, float delta, float cap = float.MaxValue, float floor = float.MinValue)
     {
+        if (value < floor)
+        {
+            value = floor;
+        }
         if (value >= cap)
         {
             value = cap;
