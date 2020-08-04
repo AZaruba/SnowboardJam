@@ -100,9 +100,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_positionData.q_currentModelRotation;
 
-        debugAccessor.DisplayState("Spin State", sm_trickPhys.GetCurrentState());
+        debugAccessor.DisplayState("Spin State", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Target dir", c_playerData.v_currentDirection);
-        debugAccessor.DisplayFloat("Current Spin Rate", c_trickPhysicsData.f_currentSpinRate);
+        debugAccessor.DisplayFloat("Current Spin Rate", c_trickPhysicsData.f_currentSpinCharge);
 
         UpdateAnimator();
     }
@@ -205,6 +205,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.JumpButton) == KeyValue.PRESSED)
         {
+            c_accelMachine.Execute(Command.CHARGE);
             c_airMachine.Execute(Command.CHARGE);
             c_turnMachine.Execute(Command.CHARGE);
             sm_trickPhys.Execute(Command.CHARGE);
@@ -383,6 +384,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         MoveAerialState s_moveAerial = new MoveAerialState();
         StationaryState s_stationary = new StationaryState(ref c_playerData, ref cart_angleCalc, ref cart_velocity);
         RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
+        RidingChargeState s_ridingCharge = new RidingChargeState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
@@ -391,6 +393,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_accelMachine.AddState(s_slowing, StateRef.STOPPING);
         c_accelMachine.AddState(s_moveAerial, StateRef.AIRBORNE);
         c_accelMachine.AddState(s_crashed, StateRef.CRASHED);
+        c_accelMachine.AddState(s_ridingCharge, StateRef.CHARGING);
 
 
     }

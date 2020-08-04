@@ -33,7 +33,7 @@ public class CarvingState : iState {
 
         float inputAxis = c_playerInputData.f_inputAxisLHoriz * c_playerData.f_turnSpeed;
 
-        cart_handling.Turn(ref currentDir, ref currentNormal, ref inputAxis, ref currentRotation);
+        cart_handling.Turn(ref currentDir, Vector3.up, ref inputAxis, ref currentRotation);
 
         c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;

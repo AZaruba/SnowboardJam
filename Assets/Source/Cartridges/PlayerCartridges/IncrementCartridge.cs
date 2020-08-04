@@ -1,4 +1,5 @@
-﻿
+﻿using UnityEngine;
+
 public class IncrementCartridge
 {
     /// <summary>
@@ -29,7 +30,7 @@ public class IncrementCartridge
     /// <param name="timer">The float storing the value</param>
     /// <param name="time">The amount to decremement the value</param>
     /// <param name="max">The optional cap for the decrement operation</param>
-    public void Decrement(ref float value, float delta, float cap = float.MaxValue)
+    public void Decrement(ref float value, float delta, float cap = float.MinValue)
     {
         if (value <= cap)
         {
@@ -39,6 +40,21 @@ public class IncrementCartridge
         {
             value -= delta;
         }
+    }
+
+    /// <summary>
+    /// Decrememnts and absolute value. Pulls positive and negative values to zero
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="delta"></param>
+    /// <param name="cap"></param>
+    public void DecrementAbs(ref float value, float delta, float cap = float.MinValue)
+    {
+        int sign = (value > 0.0f) ? 1 : -1;
+        float absVal = Mathf.Abs(value);
+
+        Decrement(ref absVal, delta, cap);
+        value = absVal * sign;
     }
 
     public void Increment(ref int value, int delta, int cap = int.MaxValue)
@@ -62,6 +78,29 @@ public class IncrementCartridge
         else if (value == (cap - 1) && delta > 0)
         {
             value = min;
+        }
+        else
+        {
+            value += delta;
+        }
+    }
+
+    /// <summary>
+    /// Increments or decrements a value to approach the minimum or maximum
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="delta"></param>
+    /// <param name="minimum"></param>
+    /// <param name="maximum"></param>
+    public void IncrementTethered(ref float value, float delta, float minimum = float.MinValue, float maximum = float.MaxValue)
+    {
+        if (value <= minimum)
+        {
+            value = minimum;
+        }
+        else if (value >= maximum)
+        {
+            value = maximum;
         }
         else
         {

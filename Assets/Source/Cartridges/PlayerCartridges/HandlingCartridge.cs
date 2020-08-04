@@ -12,9 +12,9 @@ public class HandlingCartridge {
     /// <param name="direction">The object's current direction.</param>
     /// <param name="handling">The object's handling value, which should be an axis plus a multiplier.</param>
     /// <param name="gripFactor">Grip should potentially affect handling</param>
-    public void Turn(ref Vector3 direction, ref Vector3 normal, ref float handling, ref Quaternion currentRotation, float gripFactor = 1.0f)
+    public void Turn(ref Vector3 direction, Vector3 normal, ref float handling, ref Quaternion currentRotation, float gripFactor = 1.0f)
     {
-        Quaternion newRotation = Quaternion.AngleAxis(handling * Time.deltaTime, Vector3.up); // BUG: turning rate decreases as we approach horizontal orientation
+        Quaternion newRotation = Quaternion.AngleAxis(handling * Time.deltaTime, normal); // BUG: turning rate decreases as we approach horizontal orientation
         direction = newRotation * direction;
         currentRotation = currentRotation * newRotation;
     }

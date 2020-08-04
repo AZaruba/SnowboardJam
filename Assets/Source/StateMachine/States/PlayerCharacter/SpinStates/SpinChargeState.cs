@@ -20,11 +20,11 @@ public class SpinChargeState : iState
         float currentSpinCharge = c_trickPhys.f_currentSpinCharge;
         float currentFlipCharge = c_trickPhys.f_currentFlipCharge;
 
-        float flipChargeRate = c_trickPhys.f_flipIncrement * Mathf.Abs(c_playerInput.f_inputAxisLVert);
-        float spinChargeRate = c_trickPhys.f_spinIncrement * Mathf.Abs(c_playerInput.f_inputAxisLHoriz);
+        float flipChargeRate = c_trickPhys.f_flipIncrement * c_playerInput.f_inputAxisLVert;
+        float spinChargeRate = c_trickPhys.f_spinIncrement * c_playerInput.f_inputAxisLHoriz;
 
-        cart_incr.Increment(ref currentSpinCharge, spinChargeRate * Time.deltaTime, c_trickPhys.f_maxSpinRate, c_trickPhys.f_minSpinRate * c_playerInput.f_inputAxisLHoriz);
-        cart_incr.Increment(ref currentFlipCharge, flipChargeRate * Time.deltaTime, c_trickPhys.f_maxFlipRate, c_trickPhys.f_minFlipRate * c_playerInput.f_inputAxisLVert);
+        cart_incr.IncrementTethered(ref currentSpinCharge, spinChargeRate * Time.deltaTime, c_trickPhys.f_maxSpinRate *-1, c_trickPhys.f_maxSpinRate);
+        cart_incr.IncrementTethered(ref currentFlipCharge, flipChargeRate * Time.deltaTime, c_trickPhys.f_maxFlipRate *-1, c_trickPhys.f_maxFlipRate);
 
         c_trickPhys.f_currentFlipCharge = currentFlipCharge;
         c_trickPhys.f_currentSpinCharge = currentSpinCharge;

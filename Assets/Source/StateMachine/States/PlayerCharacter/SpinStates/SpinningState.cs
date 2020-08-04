@@ -24,8 +24,8 @@ public class SpinningState : iState
         Quaternion currentRotation = c_playerPosData.q_currentModelRotation;
 
         Vector3 playerForward = c_playerPosData.v_modelDirection;
-        Vector3 spinAxis = currentRotation * Vector3.up;
-        Vector3 flipAxis = currentRotation * Vector3.right;
+        Vector3 spinAxis = Vector3.up;
+        Vector3 flipAxis = Vector3.right;
 
         float currentSpinRate = c_physData.f_currentSpinRate;
         float currentFlipRate = c_physData.f_currentFlipRate;
@@ -33,10 +33,10 @@ public class SpinningState : iState
         float currentSpinDegrees = currentSpinRate * Time.deltaTime * 360f;
         float currentFlipDegrees = currentFlipRate * Time.deltaTime * 360f;
 
-        cart_rotation.Turn(ref playerForward, ref spinAxis, ref currentSpinDegrees, ref currentRotation);
-        cart_rotation.Turn(ref playerForward, ref flipAxis, ref currentFlipDegrees, ref currentRotation);
-        cart_incr.Decrement(ref currentFlipRate, c_physData.f_flipDecay * Time.deltaTime, 0.0f);
-        cart_incr.Decrement(ref currentSpinRate, c_physData.f_spinDecay * Time.deltaTime, 0.0f);
+        cart_rotation.Turn(ref playerForward, flipAxis, ref currentFlipDegrees, ref currentRotation);
+        cart_rotation.Turn(ref playerForward, spinAxis, ref currentSpinDegrees, ref currentRotation);
+        cart_incr.DecrementAbs(ref currentFlipRate, c_physData.f_flipDecay * Time.deltaTime, 0.0f);
+        cart_incr.DecrementAbs(ref currentSpinRate, c_physData.f_spinDecay * Time.deltaTime, 0.0f);
 
         c_playerPosData.q_currentModelRotation = currentRotation;
         c_physData.f_currentFlipRate = currentFlipRate;

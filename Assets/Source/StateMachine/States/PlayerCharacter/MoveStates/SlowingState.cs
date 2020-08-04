@@ -74,6 +74,10 @@ public class SlowingState : iState
         {
             return StateRef.RIDING;
         }
+        if (cmd == Command.CHARGE)
+        {
+            return StateRef.CHARGING;
+        }
         if (cmd == Command.STOP)
         {
             return StateRef.STATIONARY;
