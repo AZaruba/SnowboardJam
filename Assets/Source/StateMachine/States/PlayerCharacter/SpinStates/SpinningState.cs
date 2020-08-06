@@ -30,15 +30,16 @@ public class SpinningState : iState
         float currentSpinRate = c_physData.f_currentSpinRate;
         float currentFlipRate = c_physData.f_currentFlipRate;
 
-        float currentSpinDegrees = currentSpinRate * Time.deltaTime * 360f;
-        float currentFlipDegrees = currentFlipRate * Time.deltaTime * 360f;
+        float currentSpinDegrees = currentSpinRate * 360f;
+        float currentFlipDegrees = currentFlipRate * 360f;
 
-        cart_rotation.Turn(ref playerForward, flipAxis, ref currentFlipDegrees, ref currentRotation);
         cart_rotation.Turn(ref playerForward, spinAxis, ref currentSpinDegrees, ref currentRotation);
+        cart_rotation.Turn(ref playerForward, flipAxis, ref currentFlipDegrees, ref currentRotation);
         cart_incr.DecrementAbs(ref currentFlipRate, c_physData.f_flipDecay * Time.deltaTime, 0.0f);
         cart_incr.DecrementAbs(ref currentSpinRate, c_physData.f_spinDecay * Time.deltaTime, 0.0f);
 
         c_playerPosData.q_currentModelRotation = currentRotation;
+        c_playerPosData.v_modelDirection = playerForward;
         c_physData.f_currentFlipRate = currentFlipRate;
         c_physData.f_currentSpinRate = currentSpinRate;
     }
@@ -49,6 +50,10 @@ public class SpinningState : iState
             cmd == Command.LAND)
         {
             return StateRef.SPIN_IDLE;
+        }
+        if (cmd == Command.SPIN_STOP)
+        {
+            return StateRef.SPIN_RESET;
         }
         return StateRef.SPINNING;
     }

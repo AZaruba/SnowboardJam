@@ -20,10 +20,12 @@ public class TrickPhysicsData
     private float MinimumFlipRate;
     private float MaximumFlipRate;
     private float CurrentFlipRate;
+
     private float CurrentFlipCharge;
     private float FlipIncrement;
     private float FlipDecay;
 
+    private float ResetRate;
     #endregion
 
     #region Accessors
@@ -98,6 +100,12 @@ public class TrickPhysicsData
         get { return FlipDecay; }
         set { FlipDecay = value; }
     }
+
+    public float f_resetRate
+    {
+        get { return ResetRate; }
+        set { ResetRate = value; }
+    }
     #endregion
 
     #region Constructor
@@ -105,19 +113,21 @@ public class TrickPhysicsData
     {
         float TrickStatRatio = (float)TrickStat / (float)MaxTrickStat;
 
-        this.MinimumFlipRate = TrickStatRatio * 50f;
-        this.MaximumFlipRate = TrickStatRatio * 100f;
+        this.MinimumFlipRate = TrickStatRatio * 1.0f;
+        this.MaximumFlipRate = TrickStatRatio * 2.0f;
         this.CurrentFlipRate = 0.0f;
         this.CurrentFlipCharge = 0.0f;
-        this.FlipDecay = TrickStatRatio * 20f;
-        this.FlipIncrement = TrickStatRatio * 50f;
+        this.FlipDecay = TrickStatRatio * 0.2f;
+        this.FlipIncrement = TrickStatRatio * 0.5f;
 
-        this.MinimumSpinRate = TrickStatRatio * 50f;
-        this.MaximumSpinRate = TrickStatRatio * 150f;
+        this.MinimumSpinRate = TrickStatRatio * 1.0f;
+        this.MaximumSpinRate = TrickStatRatio * 2.5f;
         this.CurrentSpinRate = 0.0f;
         this.CurrentSpinCharge = 0.0f;
-        this.SpinDecay = TrickStatRatio * 20f;
-        this.SpinIncrement = TrickStatRatio * 50f;
+        this.SpinDecay = TrickStatRatio * 0.2f;
+        this.SpinIncrement = TrickStatRatio * 0.5f;
+
+        this.ResetRate = TrickStatRatio * 300f;
     }
     #endregion
 }

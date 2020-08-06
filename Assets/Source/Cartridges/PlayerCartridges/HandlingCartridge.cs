@@ -14,9 +14,19 @@ public class HandlingCartridge {
     /// <param name="gripFactor">Grip should potentially affect handling</param>
     public void Turn(ref Vector3 direction, Vector3 normal, ref float handling, ref Quaternion currentRotation, float gripFactor = 1.0f)
     {
-        Quaternion newRotation = Quaternion.AngleAxis(handling * Time.deltaTime, normal); // BUG: turning rate decreases as we approach horizontal orientation
+        Quaternion newRotation = Quaternion.AngleAxis(handling * Time.deltaTime, normal);
         direction = newRotation * direction;
         currentRotation = currentRotation * newRotation;
+    }
+
+    /// <summary>
+    /// Applies a pre-calculated rotation to an already rotated object
+    /// </summary>
+    /// <param name="target">The orientation of the object</param>
+    /// <param name="rotation"></param>
+    public void ApplyRotation(ref Quaternion target, ref Quaternion rotation)
+    {
+        rotation = target * rotation;
     }
 
     // TODO: Include a function for turning the model and NOT the direction of travel.
