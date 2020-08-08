@@ -6,17 +6,20 @@ public class SpinningState : iState
 {
     private TrickPhysicsData c_physData;
     private PlayerPositionData c_playerPosData;
+    private ScoringData c_scoringData;
 
     private HandlingCartridge cart_rotation;
     private IncrementCartridge cart_incr;
 
     public SpinningState(ref TrickPhysicsData dataIn, ref PlayerPositionData posIn,
-                         ref HandlingCartridge handleIn, ref IncrementCartridge incrIn)
+                         ref HandlingCartridge handleIn, ref IncrementCartridge incrIn,
+                         ref ScoringData scoringIn)
     {
         this.c_physData = dataIn;
         this.c_playerPosData = posIn;
         this.cart_rotation = handleIn;
         this.cart_incr = incrIn;
+        this.c_scoringData = scoringIn;
     }
 
     public void Act()
@@ -42,6 +45,8 @@ public class SpinningState : iState
         c_playerPosData.v_modelDirection = playerForward;
         c_physData.f_currentFlipRate = currentFlipRate;
         c_physData.f_currentSpinRate = currentSpinRate;
+        c_scoringData.f_currentSpinDegrees += currentSpinDegrees * Time.deltaTime;
+        c_scoringData.f_currentFlipDegrees += currentFlipDegrees * Time.deltaTime;
     }
 
     public StateRef GetNextState(Command cmd)

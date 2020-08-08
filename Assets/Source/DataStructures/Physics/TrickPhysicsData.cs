@@ -127,7 +127,7 @@ public class TrickPhysicsData
         this.SpinDecay = TrickStatRatio * 0.2f;
         this.SpinIncrement = TrickStatRatio * 0.5f;
 
-        this.ResetRate = TrickStatRatio * 300f;
+        this.ResetRate = TrickStatRatio * 3f;
     }
     #endregion
 }

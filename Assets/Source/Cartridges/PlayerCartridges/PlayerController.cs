@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private AerialMoveData c_aerialMoveData;
     private TrickPhysicsData c_trickPhysicsData;
     private PlayerInputData c_inputData;
+    private ScoringData c_scoringData;
 
     // private members
     private StateMachine c_turnMachine;
@@ -104,7 +105,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Spin State", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Target dir", c_playerData.v_currentDirection);
-        debugAccessor.DisplayFloat("Current Spin Rate", c_trickPhysicsData.f_currentSpinCharge);
+        debugAccessor.DisplayFloat("Current Spin Degrees", c_scoringData.f_currentSpinTarget);
 
         UpdateAnimator();
     }
@@ -260,6 +261,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         c_trickPhysicsData = new TrickPhysicsData(Attributes.Tricks, Attributes.MaxStats);
         c_positionData = new PlayerPositionData(transform.position, transform.forward);
+        c_scoringData = new ScoringData();
         c_inputData = new PlayerInputData();
         c_stateData = new StateData();
         c_aerialMoveData = new AerialMoveData();
@@ -437,10 +439,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeTrickPhysicsMachine()
     {
-        SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData);
+        SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData, ref c_scoringData);
         SpinChargeState s_spinCharge = new SpinChargeState(ref c_trickPhysicsData, ref c_inputData, ref cart_incr);
-        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_handling, ref cart_incr);
-        SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref cart_quatern);
+        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_handling, ref cart_incr, ref c_scoringData);
+        SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref cart_handling, ref c_scoringData);
 
         sm_trickPhys = new StateMachine(s_spinIdle, StateRef.SPIN_IDLE);
         sm_trickPhys.AddState(s_spinCharge, StateRef.SPIN_CHARGE);

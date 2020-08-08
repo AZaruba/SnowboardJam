@@ -29,6 +29,25 @@ public class HandlingCartridge {
         rotation = target * rotation;
     }
 
-    // TODO: Include a function for turning the model and NOT the direction of travel.
+    /// <summary>
+    /// Takes the current orientation of the player and checks to see if it matches the desired
+    /// orientation for finishing a spin/flip combo
+    /// </summary>
+    /// <param name="currentQ">The current rotation of the plyaer model</param>
+    /// <param name="targetFwd">The direction of  travel/direction identifying "not spinning"</param>
+    /// <param name="spinRate">The current spin rate</param>
+    /// <param name="flipRate">The current flip rate</param>
+    public void ValidateSpinRotation(float spinDegrees, float flipDegrees, float spinTarget, float flipTarget, ref float spinRate, ref float flipRate)
+    {
+        if (Mathf.Abs(spinDegrees) >= Mathf.Abs(spinTarget))
+        {
+            spinRate = 0.0f;
+        }
+
+        if (Mathf.Abs(flipDegrees) >= Mathf.Abs(flipTarget))
+        {
+            flipRate = 0.0f;
+        }
+    }
     #endregion
 }
