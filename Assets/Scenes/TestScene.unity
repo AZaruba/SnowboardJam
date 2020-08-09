@@ -1264,6 +1264,7 @@ MonoBehaviour:
   trickData: {fileID: 734568628}
   PlayerAnimator: {fileID: 734568624}
   debugAccessor: {fileID: 734568626}
+  Attributes: {fileID: 11400000, guid: 8cc161773a8de422bbefb45a2b53afc3, type: 2}
 --- !u!114 &734568628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1342,7 +1343,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 77.7892
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1367,13 +1368,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745530428}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -70, y: -40, z: -20}
+  m_LocalRotation: {x: 0.084186025, y: 0.25783423, z: -0.02255758, w: 0.9622502}
+  m_LocalPosition: {x: -120, y: -39, z: -12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 10, y: 30, z: 0}
 --- !u!114 &745530433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1389,7 +1390,7 @@ MonoBehaviour:
   FollowHeight: 2
   OffsetVector: {x: 0, y: 0.5, z: -3}
   TargetOffsetVector: {x: 0, y: 0.5, z: 0}
-  TargetTransform: {fileID: 734568625}
+  PlayerTarget: {fileID: 734568627}
 --- !u!114 &745530434
 MonoBehaviour:
   m_ObjectHideFlags: 0

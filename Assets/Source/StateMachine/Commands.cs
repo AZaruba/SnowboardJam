@@ -20,6 +20,7 @@ public enum Command {
     FALL,
     JUMP,
     READY,
+    SPIN_STOP,
     #endregion
 
     #region PlayerMoveCommands
@@ -125,6 +126,13 @@ public enum StateRef {
     TRICK_TRANSITION,
     TRICKING,
     TRICK_DISABLED,
+    #endregion
+
+    #region SpinStates
+    SPIN_IDLE,
+    SPINNING,
+    SPIN_CHARGE,
+    SPIN_RESET,
     #endregion
 
     #region ScoreDisplayStates

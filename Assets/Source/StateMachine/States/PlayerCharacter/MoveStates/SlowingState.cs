@@ -10,13 +10,19 @@ public class SlowingState : iState
     SurfaceInfluenceCartridge cart_surfInf;
 
     PlayerData c_playerData;
+    PlayerInputData c_playerInputData;
     PlayerPositionData c_playerPositionData;
 
-    public SlowingState(ref PlayerData playerData, ref PlayerPositionData positionData, 
-        ref VelocityCartridge vel, ref AccelerationCartridge accel, 
-        ref AngleCalculationCartridge angleCalc, ref SurfaceInfluenceCartridge surfInf)
+    public SlowingState(ref PlayerData playerData,
+                        ref PlayerInputData inputData,
+                        ref PlayerPositionData positionData, 
+                        ref VelocityCartridge vel,
+                        ref AccelerationCartridge accel, 
+                        ref AngleCalculationCartridge angleCalc,
+                        ref SurfaceInfluenceCartridge surfInf)
     {
         this.c_playerData = playerData;
+        this.c_playerInputData = inputData;
         this.c_playerPositionData = positionData;
         this.cart_velocity = vel;
         this.cart_acceleration = accel;
@@ -30,7 +36,7 @@ public class SlowingState : iState
         float topSpeed = c_playerData.f_topSpeed;
         float deceleration = c_playerData.f_brakePower;
         float angleDifference = c_playerData.f_surfaceAngleDifference;
-        float slowScaling = c_playerData.f_inputAxisLVert * - 1;
+        float slowScaling = c_playerInputData.f_inputAxisLVert * - 1;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
@@ -67,6 +73,10 @@ public class SlowingState : iState
         if (cmd == Command.RIDE)
         {
             return StateRef.RIDING;
+        }
+        if (cmd == Command.CHARGE)
+        {
+            return StateRef.CHARGING;
         }
         if (cmd == Command.STOP)
         {

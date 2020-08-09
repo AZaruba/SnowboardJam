@@ -42,8 +42,6 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float ForwardRaycastDistance;
     private bool JumpBtnPressed;
     private bool ObstacleInRange;
-    private float InputAxisTurn { get; set; }
-    private float InputAxisLVert;
     private Vector3 SurfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
     private Vector3 SurfaceAttachPoint { get; set; }
     private Vector3 CurrentForwardPoint { get; set; }
@@ -235,17 +233,6 @@ public class PlayerData : MonoBehaviour {
         get { return ObstacleInRange; }
         set { ObstacleInRange = value; }
     }
-    public float f_inputAxisTurn
-    {
-        get { return InputAxisTurn; }
-        set { InputAxisTurn = value; }
-    }
-
-    public float f_inputAxisLVert
-    {
-        get { return InputAxisLVert; }
-        set { InputAxisLVert = value; }
-    }
 
     public Vector3 v_currentSurfaceNormal
     {
@@ -277,4 +264,31 @@ public class PlayerData : MonoBehaviour {
         set { ObstacleNormal = value; }
     }
     #endregion
+}
+
+public class PlayerInputData
+{
+    private float InputAxisLHoriz;
+    private float InputAxisLVert;
+
+    public float f_inputAxisLHoriz
+    {
+        get { return InputAxisLHoriz; }
+        set { InputAxisLHoriz = value; }
+    }
+
+    public float f_inputAxisLVert
+    {
+        get { return InputAxisLVert; }
+        set { InputAxisLVert = value; }
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public PlayerInputData()
+    {
+        f_inputAxisLHoriz = 0.0f;
+        f_inputAxisLVert = 0.0f;
+    }
 }

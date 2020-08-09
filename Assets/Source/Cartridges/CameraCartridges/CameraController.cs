@@ -70,9 +70,14 @@ public class CameraController : MonoBehaviour, iEntityController {
 
     public void EnginePull()
     {
-        c_cameraData.q_targetRotation = c_cameraData.t_targetTransform.rotation;
+        PlayerData playerDataIn = c_cameraData.c_targetController.SharePlayerData();
+        Vector3 targetPosition = playerDataIn.v_currentPosition;
+        Vector3 targetDirection = playerDataIn.v_currentDirection;
+        Quaternion targetRotation = playerDataIn.q_currentRotation;
+
+        c_cameraData.q_targetRotation = targetRotation; 
         c_cameraData.q_cameraRotation = transform.rotation;
-        c_cameraData.v_targetPosition = c_cameraData.t_targetTransform.position +
+        c_cameraData.v_targetPosition = targetPosition +
              c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector;
 
     }
@@ -138,9 +143,10 @@ public class CameraController : MonoBehaviour, iEntityController {
 
     void SetDefaultCameraData()
     {
-        Vector3 targetPosition = c_cameraData.t_targetTransform.position;
-        Vector3 targetDirection = c_cameraData.t_targetTransform.forward;
-        Quaternion targetRotation = c_cameraData.t_targetTransform.rotation;
+        PlayerData playerDataIn = c_cameraData.c_targetController.SharePlayerData();
+        Vector3 targetPosition = playerDataIn.v_currentPosition;
+        Vector3 targetDirection = playerDataIn.v_currentDirection;
+        Quaternion targetRotation = playerDataIn.q_currentRotation;
 
         Vector3 cameraPosition = targetPosition +
             c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector +
