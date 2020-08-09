@@ -26,6 +26,8 @@ public class TrickPhysicsData
     private float FlipDecay;
 
     private float ResetRate;
+
+    private Quaternion StartRotation;
     #endregion
 
     #region Accessors
@@ -106,6 +108,12 @@ public class TrickPhysicsData
         get { return ResetRate; }
         set { ResetRate = value; }
     }
+
+    public Quaternion q_startRotation
+    {
+        get { return StartRotation; }
+        set { StartRotation = value; }
+    }
     #endregion
 
     #region Constructor
@@ -128,6 +136,8 @@ public class TrickPhysicsData
         this.SpinIncrement = TrickStatRatio * 0.5f;
 
         this.ResetRate = TrickStatRatio * 3f;
+
+        this.StartRotation = Quaternion.identity;
     }
     #endregion
 }

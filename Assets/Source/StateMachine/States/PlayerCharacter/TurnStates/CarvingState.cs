@@ -31,7 +31,7 @@ public class CarvingState : iState {
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
-        float inputAxis = c_playerInputData.f_inputAxisLHoriz * c_playerData.f_turnSpeed;
+        float inputAxis = c_playerInputData.f_inputAxisLHoriz * c_playerData.f_turnSpeed * Time.deltaTime;
 
         cart_handling.Turn(ref currentDir, Vector3.up, ref inputAxis, ref currentRotation);
 

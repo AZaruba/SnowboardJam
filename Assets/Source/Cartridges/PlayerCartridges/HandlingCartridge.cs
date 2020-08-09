@@ -14,7 +14,7 @@ public class HandlingCartridge {
     /// <param name="gripFactor">Grip should potentially affect handling</param>
     public void Turn(ref Vector3 direction, Vector3 normal, ref float handling, ref Quaternion currentRotation, float gripFactor = 1.0f)
     {
-        Quaternion newRotation = Quaternion.AngleAxis(handling * Time.deltaTime, normal);
+        Quaternion newRotation = Quaternion.AngleAxis(handling, normal);
         direction = newRotation * direction;
         currentRotation = currentRotation * newRotation;
     }
@@ -27,6 +27,11 @@ public class HandlingCartridge {
     public void ApplyRotation(ref Quaternion target, ref Quaternion rotation)
     {
         rotation = target * rotation;
+    }
+
+    public void SetRotation(ref Quaternion rotationOut, Quaternion rotationIn)
+    {
+        rotationOut = rotationIn;
     }
 
     /// <summary>

@@ -11,7 +11,7 @@ public class SpinSnapState : iState
 
     private AerialMoveData c_aerialMoveData;
     private PlayerPositionData c_playerPosData;
-    private TrickPhysicsData c_trickPhys;
+    private TrickPhysicsData c_physData;
     private ScoringData c_scoringData;
 
     private HandlingCartridge cart_rotation;
@@ -24,42 +24,40 @@ public class SpinSnapState : iState
     {
         this.c_aerialMoveData = aerialIn;
         this.c_playerPosData = playerPosIn;
-        this.c_trickPhys = trickIn;
+        this.c_physData = trickIn;
         this.cart_rotation = handleIn;
         this.c_scoringData = scoringIn;
     }
 
     public void Act()
     {
-        Quaternion currentOrientation = c_playerPosData.q_currentModelRotation;
-
-        float spinRate = c_trickPhys.f_currentSpinRate;
-        float flipRate = c_trickPhys.f_currentFlipRate;
-        float spinAmount = c_scoringData.f_currentSpinDegrees;
-        float flipAmount = c_scoringData.f_currentFlipDegrees;
-        float spinCeiling = c_scoringData.f_currentSpinTarget;
-        float flipCeiling = c_scoringData.f_currentFlipTarget;
+        Quaternion root = c_physData.q_startRotation;
+        Quaternion currentRotation = c_physData.q_startRotation;
 
         Vector3 playerForward = c_playerPosData.v_modelDirection;
         Vector3 spinAxis = Vector3.up;
         Vector3 flipAxis = Vector3.right;
 
-        float currentSpinRate = c_trickPhys.f_currentSpinRate;
-        float currentFlipRate = c_trickPhys.f_currentFlipRate;
+        float spinCeiling = c_scoringData.f_currentSpinTarget;
+        float flipCeiling = c_scoringData.f_currentFlipTarget;
 
-        float currentSpinDegrees = currentSpinRate * 360f;
-        float currentFlipDegrees = currentFlipRate * 360f;
+        float currentSpinRate = c_physData.f_currentSpinRate;
+        float currentFlipRate = c_physData.f_currentFlipRate;
 
-        cart_rotation.ValidateSpinRotation(spinAmount, flipAmount, spinCeiling, flipCeiling, ref spinRate, ref flipRate);
-        cart_rotation.Turn(ref playerForward, spinAxis, ref currentSpinDegrees, ref currentOrientation);
-        cart_rotation.Turn(ref playerForward, flipAxis, ref currentFlipDegrees, ref currentOrientation);
+        float currentSpinDegrees = c_scoringData.f_currentSpinDegrees;
+        float currentFlipDegrees = c_scoringData.f_currentFlipDegrees;
 
-        c_playerPosData.q_currentModelRotation = currentOrientation;
+        cart_rotation.Turn(ref playerForward, flipAxis, ref currentFlipDegrees, ref root);
+        cart_rotation.Turn(ref playerForward, spinAxis, ref currentSpinDegrees, ref root);
+        cart_rotation.SetRotation(ref currentRotation, root);
+        cart_rotation.ValidateSpinRotation(currentSpinDegrees, currentFlipDegrees, spinCeiling, flipCeiling, ref currentSpinRate, ref currentFlipRate);
+
+        c_playerPosData.q_currentModelRotation = currentRotation;
         c_playerPosData.v_modelDirection = playerForward;
-        c_trickPhys.f_currentSpinRate = spinRate;
-        c_trickPhys.f_currentFlipRate = flipRate;
-        c_scoringData.f_currentSpinDegrees += currentSpinDegrees * Time.deltaTime;
-        c_scoringData.f_currentFlipDegrees += currentFlipDegrees * Time.deltaTime;
+        c_physData.f_currentFlipRate = currentFlipRate;
+        c_physData.f_currentSpinRate = currentSpinRate;
+        c_scoringData.f_currentSpinDegrees += currentSpinRate * 360f * Time.deltaTime;
+        c_scoringData.f_currentFlipDegrees += currentFlipRate * 360f * Time.deltaTime;
     }
 
     public StateRef GetNextState(Command cmd)
@@ -75,25 +73,25 @@ public class SpinSnapState : iState
     public void TransitionAct()
     {
         // nothing to do!
-        if (c_trickPhys.f_currentSpinRate > 0)
+        if (c_physData.f_currentSpinRate > 0)
         {
-            c_trickPhys.f_currentSpinRate = c_trickPhys.f_resetRate;
+            c_physData.f_currentSpinRate = c_physData.f_resetRate;
             c_scoringData.f_currentSpinTarget = Mathf.Ceil(c_scoringData.f_currentSpinDegrees / 180) * 180;
         }
-        else if (c_trickPhys.f_currentSpinRate < 0)
+        else if (c_physData.f_currentSpinRate < 0)
         {
-            c_trickPhys.f_currentSpinRate = c_trickPhys.f_resetRate * -1;
+            c_physData.f_currentSpinRate = c_physData.f_resetRate * -1;
             c_scoringData.f_currentSpinTarget = Mathf.Floor(c_scoringData.f_currentSpinDegrees / 180) * 180;
         }
 
-        if (c_trickPhys.f_currentFlipRate > 0)
+        if (c_physData.f_currentFlipRate > 0)
         {
-            c_trickPhys.f_currentFlipRate = c_trickPhys.f_resetRate;
+            c_physData.f_currentFlipRate = c_physData.f_resetRate;
             c_scoringData.f_currentFlipTarget = Mathf.Ceil(c_scoringData.f_currentFlipDegrees / 360) * 360;
         }
-        else if (c_trickPhys.f_currentFlipRate < 0)
+        else if (c_physData.f_currentFlipRate < 0)
         {
-            c_trickPhys.f_currentFlipRate = c_trickPhys.f_resetRate * -1;
+            c_physData.f_currentFlipRate = c_physData.f_resetRate * -1;
             c_scoringData.f_currentFlipTarget = Mathf.Floor(c_scoringData.f_currentFlipDegrees / 360) * 360;
         }
 
