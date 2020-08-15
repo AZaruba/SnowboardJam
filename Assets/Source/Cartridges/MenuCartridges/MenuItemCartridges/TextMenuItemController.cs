@@ -11,6 +11,7 @@ public class TextMenuItemController : iMenuItemController, iEntityController
     [SerializeField] private Text ItemText;
     [SerializeField] private MenuCommand MenuAction;
     [SerializeField] private Scene NextSceneId;
+    [SerializeField] private MenuController ChildMenuController;
 
     private MenuItemActiveData c_itemActiveData;
 
@@ -76,6 +77,16 @@ public class TextMenuItemController : iMenuItemController, iEntityController
                 break;
             case MenuCommand.RESUME:
                 MessageServer.SendMessage(MessageID.PAUSE, new Message(0));
+                break;
+            case MenuCommand.MENU_BACK:
+                MessageServer.SendMessage(MessageID.MENU_BACK, new Message());
+                break;
+            case MenuCommand.MENU_FORWARD:
+                if (ChildMenuController == null)
+                {
+                    return;
+                }
+                MessageServer.SendMessage(MessageID.MENU_FORWARD, new Message(ChildMenuController.GetSuperMenuIndex()));
                 break;
             case MenuCommand.CONFIRM:
                 break;

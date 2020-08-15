@@ -18,6 +18,10 @@ public enum MessageID
     CHARACTER_SELECTED,
     CHARACTER_UNSELECTED,
     ALL_CHARACTERS_SELECTED,
+
+// Nested Menu message IDs
+    MENU_FORWARD,
+    MENU_BACK,
 }
 
 public enum ClientID

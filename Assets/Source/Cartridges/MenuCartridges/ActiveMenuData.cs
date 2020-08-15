@@ -14,6 +14,7 @@ public class ActiveMenuData
 
     private Vector2 CurrentPosition;
     private Vector2 TargetPosition;
+    private float CurrentOpacity;
 
     public bool b_showMenu
     {
@@ -60,5 +61,11 @@ public class ActiveMenuData
     {
         get { return TargetPosition; }
         set { TargetPosition = value; }
+    }
+
+    public float f_currentOpacity
+    {
+        get { return CurrentOpacity; }
+        set { CurrentOpacity = value; }
     }
 }

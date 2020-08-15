@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92eff247482e57c40b37120538a23c14, type: 3}
-  m_Name: BasicMenuControllerData
+  m_Name: PauseMenuControllerData
   m_EditorClassIdentifier: 
   ShortTickTime: 0.3
   LongTickTime: 1
-  DisabledPosition: {x: -1040, y: -270}
-  EnabledPosition: {x: 200, y: -270}
+  DisabledPosition: {x: -1040, y: 0}
+  EnabledPosition: {x: 20, y: 0}
   EnabledOpacity: 1
   DisabledOpacity: 0
