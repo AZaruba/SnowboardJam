@@ -651,6 +651,7 @@ GameObject:
   m_Component:
   - component: {fileID: 408570272}
   - component: {fileID: 408570271}
+  - component: {fileID: 408570270}
   m_Layer: 0
   m_Name: GameMaster
   m_TagString: Untagged
@@ -658,6 +659,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &408570270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408570269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d9b4dfefce0e437aa3cc2b3cf7344c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MenuControllers:
+  - {fileID: 1086049782}
 --- !u!114 &408570271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -911,6 +926,8 @@ MonoBehaviour:
   - {fileID: 359392494}
   - {fileID: 1166354014}
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
+  rectTransform: {fileID: 179301109}
+  IsDefault: 1
 --- !u!4 &1086049783
 Transform:
   m_ObjectHideFlags: 0
@@ -981,6 +998,7 @@ MonoBehaviour:
   ItemText: {fileID: 1166354015}
   MenuAction: 5
   NextSceneId: 1
+  ChildMenuController: {fileID: 0}
 --- !u!114 &1166354015
 MonoBehaviour:
   m_ObjectHideFlags: 0
