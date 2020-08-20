@@ -7,3 +7,19 @@ static class Constants
 
     public const float PERPENDICULAR_F = 90f;
 }
+
+public enum DataTarget
+{
+    // VideoSettings
+    ERROR_TARGET = -1,
+    VERT_RESOLUTION,
+    ASPECT_RATIO,
+    RENDER_MULTIPLIER,
+    VIDEO_QUALITY,
+
+    AUDIO_ENABLED,
+    MASTER_AUDIO_LEVEL,
+    MUSIC_LEVEL,
+    VOICE_LEVEL,
+    SFX_LEVEL,
+}

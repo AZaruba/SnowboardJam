@@ -1164,7 +1164,7 @@ GameObject:
   - component: {fileID: 800220883}
   - component: {fileID: 800220882}
   m_Layer: 0
-  m_Name: InputMaster
+  m_Name: InputController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
