@@ -19,9 +19,12 @@ public struct CourseRecordInfo
 /// </summary>
 public struct VideoSettings
 {
-    public int VerticalResolution;
-    public int AspectRatio;
+    public int VerticalResolution; // eliminate
+    public int HorizontalResolution; // eliminate
+
+    public Resolution ScreenRes;
     public int RenderMultiplier;
+    public FullScreenMode ScreenMode;
 
     public VideoQuality Quality;
 }
@@ -70,9 +73,10 @@ public static class PlayerPrefsNames
 {
     // Video settings
     public static string VertRes = "VerticalResolution";
-    public static string AspectR = "AspectRatio";
+    public static string HoriRes = "HorizontalResolution";
     public static string RenderMult = "RenderMultiplier";
     public static string VQuality = "VideoQuality";
+    public static string FSMode = "FullScreenMode";
 
     public static string AudioEn = "AudioEnabled";
 
@@ -104,17 +108,19 @@ public static class GlobalGameData
         {
             case DataTarget.VERT_RESOLUTION:
                 videoSettings.VerticalResolution = value;
-                break;
-            case DataTarget.ASPECT_RATIO:
-                videoSettings.AspectRatio = value;
+                Screen.SetResolution(videoSettings.VerticalResolution, videoSettings.HorizontalResolution, videoSettings.ScreenMode);
+                SaveVideoSettings();
                 break;
             case DataTarget.RENDER_MULTIPLIER:
                 videoSettings.RenderMultiplier = value;
+                SaveVideoSettings();
                 break;
             case DataTarget.VIDEO_QUALITY:
                 videoSettings.Quality = (VideoQuality)value;
+                SaveVideoSettings();
                 break;
         }
+        Debug.Log("data updated int");
         return true;
     }
     public static bool SetSettingsValue(DataTarget target, float value)
@@ -123,17 +129,22 @@ public static class GlobalGameData
         {
             case DataTarget.MASTER_AUDIO_LEVEL:
                 audioSettings.MasterAudioLevel = value;
+                SaveAudioSettings();
                 break;
             case DataTarget.MUSIC_LEVEL:
                 audioSettings.MusicLevel = value;
+                SaveAudioSettings();
                 break;
             case DataTarget.VOICE_LEVEL:
                 audioSettings.VoiceLevel = value;
+                SaveAudioSettings();
                 break;
             case DataTarget.SFX_LEVEL:
                 audioSettings.SfxLevel = value;
+                SaveAudioSettings();
                 break;
         }
+        Debug.Log("data updated float");
         return true;
     }
     public static bool SetSettingsValue(DataTarget target, bool value)
@@ -142,8 +153,10 @@ public static class GlobalGameData
         {
             case DataTarget.AUDIO_ENABLED:
                 audioSettings.AudioEnabled = value;
+                SaveAudioSettings();
                 break;
         }
+        Debug.Log("data updated bool");
         return true;
     }
 
@@ -165,10 +178,11 @@ public static class GlobalGameData
 
     public static bool SaveVideoSettings()
     {
-        PlayerPrefs.SetInt(PlayerPrefsNames.AspectR, videoSettings.AspectRatio);
-        PlayerPrefs.SetInt(PlayerPrefsNames.VertRes, videoSettings.VerticalResolution);
+        PlayerPrefs.SetInt(PlayerPrefsNames.VertRes, videoSettings.ScreenRes.height);
+        PlayerPrefs.SetInt(PlayerPrefsNames.HoriRes, videoSettings.ScreenRes.width);
         PlayerPrefs.SetInt(PlayerPrefsNames.RenderMult, videoSettings.RenderMultiplier);
         PlayerPrefs.SetInt(PlayerPrefsNames.VQuality, (int)videoSettings.Quality);
+        PlayerPrefs.SetInt(PlayerPrefsNames.FSMode, (int)videoSettings.ScreenMode);
         PlayerPrefs.Save();
         return true;
     }
@@ -178,19 +192,21 @@ public static class GlobalGameData
         bool status = true;
         int intVal;
 
-        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.AspectR);
-        if (intVal == default)
-        {
-            status = false;
-        }
-        videoSettings.AspectRatio = intVal;
-
+        Resolution resOut = new Resolution();
         intVal = PlayerPrefs.GetInt(PlayerPrefsNames.VertRes);
         if (intVal == default)
         {
             status = false;
         }
-        videoSettings.VerticalResolution = intVal;
+       resOut.height = intVal;
+
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.HoriRes);
+        if (intVal == default)
+        {
+            status = false;
+        }
+        resOut.width = intVal;
+        videoSettings.ScreenRes = resOut;
 
         intVal = PlayerPrefs.GetInt(PlayerPrefsNames.RenderMult);
         if (intVal == default)
@@ -263,5 +279,18 @@ public static class GlobalGameData
         audioSettings.SfxLevel = floatVal;
 
         return status;
+    }
+
+    public static void CheckAndSetDefaults()
+    {
+        if (PlayerPrefs.GetInt(PlayerPrefsNames.FSMode) == default)
+        {
+            // set defaults
+        }
+        else
+        {
+            LoadAudioSettings();
+            LoadVideoSettings();
+        }
     }
 }
