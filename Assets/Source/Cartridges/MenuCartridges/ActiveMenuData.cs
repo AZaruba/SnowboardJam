@@ -11,6 +11,7 @@ public class ActiveMenuData
     private int MenuDirection;
 
     private bool ShowMenu;
+    private bool MenuActive;
 
     private Vector2 CurrentPosition;
     private Vector2 TargetPosition;
@@ -20,6 +21,12 @@ public class ActiveMenuData
     {
         get { return ShowMenu; }
         set { ShowMenu = value; }
+    }
+
+    public bool b_menuActive
+    {
+        get { return MenuActive; }
+        set { MenuActive = value; }
     }
 
     public int i_activeMenuItemIndex

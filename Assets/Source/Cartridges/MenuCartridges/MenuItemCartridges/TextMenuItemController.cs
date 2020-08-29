@@ -62,6 +62,7 @@ public class TextMenuItemController : iMenuItemController, iEntityController
 
     public override void ExecuteMenuCommand()
     {
+        GlobalInputController.LockInput();
         switch (MenuAction)
         {
             case MenuCommand.EXIT_GAME:
@@ -103,6 +104,7 @@ public class TextMenuItemController : iMenuItemController, iEntityController
                 }
                 // open data editor, wait for return
                 ChildEditController.Activate(DataItem);
+                MessageServer.SendMessage(MessageID.EDIT_START, new Message());
                 break;
         }
     }

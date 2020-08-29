@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShortTickTime: 0.3
   LongTickTime: 1
-  DisabledPosition: {x: -1040, y: -270}
+  DisabledPosition: {x: -2040, y: -270}
   EnabledPosition: {x: 200, y: -270}
   EnabledOpacity: 1
   DisabledOpacity: 0

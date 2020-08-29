@@ -6,6 +6,8 @@ static class Constants
     public const float LERP_DEFAULT = 0.5f;
 
     public const float PERPENDICULAR_F = 90f;
+
+    public const int ZERO = 0;
 }
 
 public enum DataTarget

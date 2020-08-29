@@ -53,6 +53,7 @@ public class ImageMenuItemController : iMenuItemController, iEntityController
 
     public override void ExecuteMenuCommand()
     {
+        GlobalInputController.LockInput();
         switch (MenuAction)
         {
             case MenuCommand.EXIT_GAME:

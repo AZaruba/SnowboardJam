@@ -10,12 +10,17 @@ public enum KeyValue
     UP,
     PRESSED,
     HELD,
+    NEED_RESET,
 }
 public static class GlobalInputController
 {
 
     public static ControllerInputData ControllerData;
     private static bool InputInitialized = false;
+
+    private static bool InputLocked = false;
+    private static float InputLockTimer = 0.0f;
+    private static float InputLockTimeLimit = 0.25f;
 
     private static Dictionary<KeyCode, KeyValue> DigitalInputData;
     private static Dictionary<string, float> AnalogInputData;
@@ -122,6 +127,14 @@ public static class GlobalInputController
         }
     }
 
+    public static void ResetKey(KeyCode keyIn)
+    {
+        if (DigitalInputData.ContainsKey(keyIn))
+        {
+            DigitalInputData[keyIn] = KeyValue.NEED_RESET;
+        }
+    }
+
     public static void CheckAndSetValue(string axisNameIn)
     {
         float frameValue = Input.GetAxisRaw(axisNameIn);
@@ -152,6 +165,53 @@ public static class GlobalInputController
         CheckAndSetValue(ControllerData.LeftVerticalAxis);
         CheckAndSetValue(ControllerData.LeftHorizontalAxis);
     }
+
+    public static void FlushInputs()
+    {
+        ResetKey(ControllerData.JumpButton);
+        ResetKey(ControllerData.JumpKey);
+
+        ResetKey(ControllerData.LTrickButton);
+        ResetKey(ControllerData.LTrickKey);
+
+        ResetKey(ControllerData.RTrickButton);
+        ResetKey(ControllerData.RTrickKey);
+
+        ResetKey(ControllerData.DTrickButton);
+        ResetKey(ControllerData.DTrickKey);
+
+        ResetKey(ControllerData.PauseButton);
+        ResetKey(ControllerData.PauseKey);
+    }
+
+    public static void LockConfirm()
+    {
+        ResetKey(ControllerData.DTrickButton);
+    }
+
+    public static void LockInput()
+    {
+        InputLocked = true;
+        FlushInputs();
+    }
+
+    public static bool InputIsLocked()
+    {
+        return InputLocked;
+    }
+
+    public static IEnumerator StartLockTimer()
+    {
+        while (InputLockTimer < InputLockTimeLimit)
+        {
+            InputLockTimer += Time.deltaTime;
+            yield return null;
+        }
+
+        InputLockTimer = 0.0f;
+        InputLocked = false;
+        UpdateInput();
+    }
 }
 
 public class InputController : MonoBehaviour
@@ -159,10 +219,18 @@ public class InputController : MonoBehaviour
     private void Start()
     {
         GlobalInputController.InitializeInput();
+        if (GlobalInputController.InputIsLocked())
+        {
+            StartCoroutine(GlobalInputController.StartLockTimer());
+        }
     }
 
     private void Update()
     {
+        if (GlobalInputController.InputIsLocked())
+        {
+            return;
+        }
         GlobalInputController.UpdateInput();
     }
 }

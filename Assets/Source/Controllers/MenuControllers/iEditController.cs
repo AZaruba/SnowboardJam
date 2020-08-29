@@ -5,12 +5,15 @@ using UnityEngine;
 public abstract class iEditController : MonoBehaviour
 {
     [SerializeField] TextMenuItemController parent;
+    [SerializeField] public BasicMenuControllerData ControllerData;
 
-    private DataTarget CurrentTarget;
-    private StateMachine sm_editController;
+    public DataTarget CurrentTarget;
+    public StateMachine sm_editController;
+    public EditControllerData c_controllerData;
 
     private void Start()
     {
+        InitializeData();
         InitializeStateMachine();
     }
 
@@ -31,6 +34,7 @@ public abstract class iEditController : MonoBehaviour
 
     public abstract void ConfirmDataEdit(DataTarget targetIn);
     public abstract void CancelDataEdit();
+    public abstract void InitializeData();
 
     public virtual void Activate(DataTarget targetIn)
     {
@@ -44,10 +48,12 @@ public abstract class iEditController : MonoBehaviour
         sm_editController.Execute(Command.MENU_HIDE);
     }    
 
-    private void InitializeStateMachine()
+    public virtual void InitializeStateMachine()
     {
         sm_editController = new StateMachine();
+
     }
+
 }
 
 /* TODO:

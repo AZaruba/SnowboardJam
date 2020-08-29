@@ -13,6 +13,7 @@ public class MenuController : MonoBehaviour
     private StateMachine sm_menuInput;
     private StateMachine sm_showHide;
 
+    private iMessageClient c_menuClient;
     private iMenuItemController c_activeMenuItem;
     private ActiveMenuData c_activeMenuData;
     private IncrementCartridge cart_incr;
@@ -26,6 +27,7 @@ public class MenuController : MonoBehaviour
         SetMenuDefaults();
         InitializeData();
         InitializeStateMachine();
+        InitializeMessageClient();
 
         i_activeMenuItemIndex = 0;
         c_activeMenuItem = MenuItems[i_activeMenuItemIndex];
@@ -47,6 +49,11 @@ public class MenuController : MonoBehaviour
 
     public void UpdateMenu()
     {
+        if (c_activeMenuData.b_menuActive == false)
+        {
+            return;
+        }
+
         float inputAxisValue = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis);
         if (inputAxisValue > 0.5f)
         {
@@ -133,12 +140,13 @@ public class MenuController : MonoBehaviour
     {
         c_activeMenuData = new ActiveMenuData();
 
-        c_activeMenuData.f_currentMenuTickCount = 0.0f;
+        c_activeMenuData.f_currentMenuTickCount = Constants.ZERO_F;
         c_activeMenuData.f_currentMenuWaitCount = ControllerData.ShortTickTime;
         c_activeMenuData.i_activeMenuItemIndex = i_activeMenuItemIndex;
         c_activeMenuData.i_menuItemCount = MenuItems.Count;
-        c_activeMenuData.i_menuDir = 0;
+        c_activeMenuData.i_menuDir = Constants.ZERO;
         c_activeMenuData.b_showMenu = false;
+        c_activeMenuData.b_menuActive = true;
         c_activeMenuData.v_currentPosition = ControllerData.DisabledPosition;
         c_activeMenuData.v_targetPosition = ControllerData.DisabledPosition;
     }
@@ -167,6 +175,13 @@ public class MenuController : MonoBehaviour
 
         sm_showHide = new StateMachine(s_hide, StateRef.MENU_HIDDEN);
         sm_showHide.AddState(s_show, StateRef.MENU_SHOWN);
+    }
+
+    private void InitializeMessageClient()
+    {
+        c_menuClient = new MenuMessageClient(ref c_activeMenuData);
+        MessageServer.Subscribe(ref c_menuClient, MessageID.EDIT_START);
+        MessageServer.Subscribe(ref c_menuClient, MessageID.EDIT_END);
     }
 
     private void SetMenuDefaults()
