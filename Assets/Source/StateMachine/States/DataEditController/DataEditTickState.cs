@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DataEditTickState : iState
+public class IntEditTickState : iState
 {
-    private ActiveMenuData c_activeData;
+    private EditControllerData c_ctrlData;
     private IncrementCartridge cart_incr;
 
-    public DataEditTickState(ref ActiveMenuData activeDataIn, ref IncrementCartridge incr)
+    public IntEditTickState(ref EditControllerData editIn, ref IncrementCartridge incr)
     {
-        this.c_activeData = activeDataIn;
+        this.c_ctrlData = editIn;
         this.cart_incr = incr;
     }
 
     public void Act()
     {
-        // this happens over the course of one frame
+
     }
 
     public StateRef GetNextState(Command cmd)
@@ -33,12 +33,19 @@ public class DataEditTickState : iState
 
     public void TransitionAct()
     {
-        int activeIndex = c_activeData.i_activeMenuItemIndex;
+        int currentValue = c_ctrlData.i;
 
-        cart_incr.Rotate(ref activeIndex, c_activeData.i_menuDir, c_activeData.i_menuItemCount, 0);
+        if (c_ctrlData.b_increasing)
+        {
+            cart_incr.Increment(ref currentValue, Constants.ONE, c_ctrlData.i_max);
+        }
+        else
+        {
+            cart_incr.Decrement(ref currentValue, Constants.ONE, c_ctrlData.i_min);
+        }
 
-        c_activeData.i_activeMenuItemIndex = activeIndex;
+        c_ctrlData.i = currentValue;
 
-        c_activeData.f_currentMenuTickCount = Constants.ZERO_F;
+        c_ctrlData.f_currentTickTime = Constants.ZERO_F;
     }
 }

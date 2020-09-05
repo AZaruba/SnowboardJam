@@ -4,10 +4,12 @@ static class Constants
     public const float ZERO_F = 0.0f;
     public const float VECTOR_2_TOLERANCE = 0.1f;
     public const float LERP_DEFAULT = 0.5f;
+    public const float DATA_EDIT_TICK_TIME = 0.05f;
 
     public const float PERPENDICULAR_F = 90f;
 
     public const int ZERO = 0;
+    public const int ONE = 1;
 }
 
 public enum DataTarget

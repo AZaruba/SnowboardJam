@@ -46,10 +46,10 @@ public struct AudioSettings
 {
     public bool AudioEnabled;
 
-    public float MasterAudioLevel;
-    public float MusicLevel;
-    public float VoiceLevel;
-    public float SfxLevel;
+    public int MasterAudioLevel;
+    public int MusicLevel;
+    public int VoiceLevel;
+    public int SfxLevel;
 }
 
 /// <summary>
@@ -102,6 +102,32 @@ public static class GlobalGameData
     public static VideoSettings videoSettings;
     public static AudioSettings audioSettings;
 
+    public static int GetSettingsInt(DataTarget targetIn)
+    {
+        switch (targetIn)
+        {
+            case DataTarget.MASTER_AUDIO_LEVEL:
+                return audioSettings.MasterAudioLevel;
+            case DataTarget.MUSIC_LEVEL:
+                return audioSettings.MusicLevel;
+            case DataTarget.VOICE_LEVEL:
+                return audioSettings.VoiceLevel;
+            case DataTarget.SFX_LEVEL:
+                return audioSettings.SfxLevel;
+        }
+        return default;
+    }
+
+    public static bool GetSettingsBool(DataTarget targetIn)
+    {
+        return false;
+    }
+
+    public static float GetSettingsFloat(DataTarget targetIn)
+    {
+        return default;
+    }
+
     public static bool SetSettingsValue(DataTarget target, int value)
     {
         switch(target)
@@ -119,14 +145,6 @@ public static class GlobalGameData
                 videoSettings.Quality = (VideoQuality)value;
                 SaveVideoSettings();
                 break;
-        }
-        Debug.Log("data updated int");
-        return true;
-    }
-    public static bool SetSettingsValue(DataTarget target, float value)
-    {
-        switch (target)
-        {
             case DataTarget.MASTER_AUDIO_LEVEL:
                 audioSettings.MasterAudioLevel = value;
                 SaveAudioSettings();
@@ -143,6 +161,15 @@ public static class GlobalGameData
                 audioSettings.SfxLevel = value;
                 SaveAudioSettings();
                 break;
+        }
+        Debug.Log("data updated int");
+        return true;
+    }
+    public static bool SetSettingsValue(DataTarget target, float value)
+    {
+        switch (target)
+        {
+            // no floats currently
         }
         Debug.Log("data updated float");
         return true;
@@ -229,10 +256,10 @@ public static class GlobalGameData
     public static bool SaveAudioSettings()
     {
         PlayerPrefs.SetInt(PlayerPrefsNames.AudioEn, audioSettings.AudioEnabled ? 1 : 0);
-        PlayerPrefs.SetFloat(PlayerPrefsNames.MasterAudioL, audioSettings.MasterAudioLevel);
-        PlayerPrefs.SetFloat(PlayerPrefsNames.MusicL, audioSettings.MusicLevel);
-        PlayerPrefs.SetFloat(PlayerPrefsNames.VoiceL, audioSettings.VoiceLevel);
-        PlayerPrefs.SetFloat(PlayerPrefsNames.SfxL, audioSettings.SfxLevel);
+        PlayerPrefs.SetInt(PlayerPrefsNames.MasterAudioL, audioSettings.MasterAudioLevel);
+        PlayerPrefs.SetInt(PlayerPrefsNames.MusicL, audioSettings.MusicLevel);
+        PlayerPrefs.SetInt(PlayerPrefsNames.VoiceL, audioSettings.VoiceLevel);
+        PlayerPrefs.SetInt(PlayerPrefsNames.SfxL, audioSettings.SfxLevel);
         PlayerPrefs.Save();
         return true;
     }
@@ -241,7 +268,6 @@ public static class GlobalGameData
     {
         bool status = true;
         int intVal;
-        float floatVal;
 
         intVal = PlayerPrefs.GetInt(PlayerPrefsNames.AudioEn);
         if (intVal == default)
@@ -250,47 +276,40 @@ public static class GlobalGameData
         }
         audioSettings.AudioEnabled = intVal == 1 ? true : false;
 
-        floatVal = PlayerPrefs.GetFloat(PlayerPrefsNames.MasterAudioL);
-        if (floatVal == default)
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.MasterAudioL);
+        if (intVal == default)
         {
             status = false;
         }
-        audioSettings.MasterAudioLevel = floatVal;
+        audioSettings.MasterAudioLevel = intVal;
 
-        floatVal = PlayerPrefs.GetInt(PlayerPrefsNames.MusicL);
-        if (floatVal == default)
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.MusicL);
+        if (intVal == default)
         {
             status = false;
         }
-        audioSettings.MusicLevel = floatVal;
+        audioSettings.MusicLevel = intVal;
 
-        floatVal = PlayerPrefs.GetInt(PlayerPrefsNames.VoiceL);
-        if (floatVal == default)
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.VoiceL);
+        if (intVal == default)
         {
             status = false;
         }
-        audioSettings.VoiceLevel = floatVal;
+        audioSettings.VoiceLevel = intVal;
 
-        floatVal = PlayerPrefs.GetInt(PlayerPrefsNames.SfxL);
-        if (floatVal == default)
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.SfxL);
+        if (intVal == default)
         {
             status = false;
         }
-        audioSettings.SfxLevel = floatVal;
+        audioSettings.SfxLevel = intVal;
 
         return status;
     }
 
     public static void CheckAndSetDefaults()
     {
-        if (PlayerPrefs.GetInt(PlayerPrefsNames.FSMode) == default)
-        {
-            // set defaults
-        }
-        else
-        {
-            LoadAudioSettings();
-            LoadVideoSettings();
-        }
+        LoadAudioSettings();
+        LoadVideoSettings();
     }
 }

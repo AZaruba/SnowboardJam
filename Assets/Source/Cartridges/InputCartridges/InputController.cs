@@ -191,7 +191,7 @@ public static class GlobalInputController
 
     public static void LockInput()
     {
-        InputLocked = true;
+        // InputLocked = true;
         FlushInputs();
     }
 
@@ -216,8 +216,10 @@ public static class GlobalInputController
 
 public class InputController : MonoBehaviour
 {
-    private void Start()
+    private void Awake()
     {
+        GlobalGameData.CheckAndSetDefaults();
+
         GlobalInputController.InitializeInput();
         if (GlobalInputController.InputIsLocked())
         {

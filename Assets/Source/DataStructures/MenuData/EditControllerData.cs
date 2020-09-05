@@ -7,12 +7,21 @@ public class EditControllerData
     bool EditorActive;
 
     bool StoredBool;
+
+    int MinInt;
+    int MaxInt;
     int StoredInt;
+
+    float MinFloat;
+    float MaxFloat;
     float StoredFloat;
+
+
     Resolution StoredResolution;
 
-    private float CurrentMenuTickTime;
-    private float CurrentMenuWaitTime;
+    private float CurrentTickTime;
+    private float MaxTickTime;
+    private bool Increasing;
 
     public bool b_editorActive
     {
@@ -31,6 +40,16 @@ public class EditControllerData
         get { return StoredInt; }
         set { StoredInt = value; }
     }
+    public int i_max
+    {
+        get { return MaxInt; }
+        set { MaxInt = value; }
+    }
+    public int i_min
+    {
+        get { return MinInt; }
+        set { MinInt = value; }
+    }
 
     public float f
     {
@@ -44,15 +63,21 @@ public class EditControllerData
         set { StoredResolution = value; }
     }
 
-    public float f_currentMenuTickCount
+    public float f_currentTickTime
     {
-        get { return CurrentMenuTickTime; }
-        set { CurrentMenuTickTime = value; }
+        get { return CurrentTickTime; }
+        set { CurrentTickTime = value; }
     }
 
-    public float f_currentMenuWaitCount
+    public float f_maxTickTime
     {
-        get { return CurrentMenuWaitTime; }
-        set { CurrentMenuWaitTime = value; }
+        get { return MaxTickTime; }
+        set { MaxTickTime = value; }
+    }
+
+    public bool b_increasing
+    {
+        get { return Increasing; }
+        set { Increasing = value; }
     }
 }
