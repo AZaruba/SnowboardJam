@@ -11,6 +11,9 @@ public class TextMenuItemController : iMenuItemController, iEntityController
     [SerializeField] private Text ItemText;
     [SerializeField] private MenuCommand MenuAction;
     [SerializeField] private Scene NextSceneId;
+    [SerializeField] private DataTarget DataItem;
+    [SerializeField] private MenuController ChildMenuController;
+    [SerializeField] private iEditController ChildEditController;
 
     private MenuItemActiveData c_itemActiveData;
 
@@ -59,6 +62,7 @@ public class TextMenuItemController : iMenuItemController, iEntityController
 
     public override void ExecuteMenuCommand()
     {
+        GlobalInputController.LockInput();
         switch (MenuAction)
         {
             case MenuCommand.EXIT_GAME:
@@ -77,7 +81,30 @@ public class TextMenuItemController : iMenuItemController, iEntityController
             case MenuCommand.RESUME:
                 MessageServer.SendMessage(MessageID.PAUSE, new Message(0));
                 break;
+            case MenuCommand.MENU_BACK:
+                MessageServer.SendMessage(MessageID.MENU_BACK, new Message());
+                break;
+            case MenuCommand.MENU_FORWARD:
+                if (ChildMenuController == null)
+                {
+                    return;
+                }
+                MessageServer.SendMessage(MessageID.MENU_FORWARD, new Message(ChildMenuController.GetSuperMenuIndex()));
+                break;
             case MenuCommand.CONFIRM:
+                break;
+            case MenuCommand.EDIT_DATA:
+                if (DataItem == DataTarget.ERROR_TARGET)
+                {
+                    return;
+                }
+                if (ChildEditController == null)
+                {
+                    return;
+                }
+                // open data editor, wait for return
+                ChildEditController.Activate(DataItem);
+                MessageServer.SendMessage(MessageID.EDIT_START, new Message());
                 break;
         }
     }

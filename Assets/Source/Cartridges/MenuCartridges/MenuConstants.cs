@@ -13,4 +13,6 @@ public enum MenuCommand
     CHANGE_SCENE,
     EDIT_DATA,
     UPDATE_GAME_DATA,
+    MENU_FORWARD,
+    MENU_BACK,
 }

@@ -43,6 +43,24 @@ public class IncrementCartridge
     }
 
     /// <summary>
+    /// Decrements the current value by a specified amount
+    /// </summary>
+    /// <param name="timer">The int storing the value</param>
+    /// <param name="time">The amount to decremement the value</param>
+    /// <param name="max">The optional cap for the decrement operation</param>
+    public void Decrement(ref int value, int delta, int cap = int.MinValue)
+    {
+        if (value <= cap)
+        {
+            value = cap;
+        }
+        else
+        {
+            value -= delta;
+        }
+    }
+
+    /// <summary>
     /// Decrememnts and absolute value. Pulls positive and negative values to zero
     /// </summary>
     /// <param name="value"></param>

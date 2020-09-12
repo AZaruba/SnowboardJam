@@ -11,14 +11,22 @@ public class ActiveMenuData
     private int MenuDirection;
 
     private bool ShowMenu;
+    private bool MenuActive;
 
     private Vector2 CurrentPosition;
     private Vector2 TargetPosition;
+    private float CurrentOpacity;
 
     public bool b_showMenu
     {
         get { return ShowMenu; }
         set { ShowMenu = value; }
+    }
+
+    public bool b_menuActive
+    {
+        get { return MenuActive; }
+        set { MenuActive = value; }
     }
 
     public int i_activeMenuItemIndex
@@ -60,5 +68,11 @@ public class ActiveMenuData
     {
         get { return TargetPosition; }
         set { TargetPosition = value; }
+    }
+
+    public float f_currentOpacity
+    {
+        get { return CurrentOpacity; }
+        set { CurrentOpacity = value; }
     }
 }

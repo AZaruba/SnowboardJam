@@ -127,8 +127,8 @@ public class PauseMenuController : MonoBehaviour
         cart_lerp = new LerpCartridge();
 
         MenuDisabledState s_disabled = new MenuDisabledState();
-        MenuHideState s_hidden = new MenuHideState(ref c_activeMenuData, ref cart_lerp);
-        MenuShowState s_shown = new MenuShowState(ref c_activeMenuData, ref cart_lerp);
+        MenuHideState s_hidden = new MenuHideState(ref c_activeMenuData, ref ControllerData, ref cart_lerp);
+        MenuShowState s_shown = new MenuShowState(ref c_activeMenuData, ref ControllerData, ref cart_lerp);
 
         MenuReadyState s_ready = new MenuReadyState(ref c_activeMenuData);
         MenuWaitState s_wait = new MenuWaitState(ref ControllerData, ref c_activeMenuData, ref cart_incr);
