@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 public class ScoringData
 {
     private float CurrentSpinDegrees;
@@ -6,6 +8,17 @@ public class ScoringData
 
     private float SpinTarget;
     private float FlipTarget;
+
+    private float CurrentTrickPoints;
+
+    public List<TrickName> l_trickList;
+    public List<float> l_timeList;
+
+    public float f_currentTrickPoints
+    {
+        get { return CurrentTrickPoints; }
+        set { CurrentTrickPoints = value; }
+    }
 
     public float f_currentSpinDegrees
     {
@@ -38,5 +51,8 @@ public class ScoringData
 
         this.f_currentFlipTarget = 0.0f;
         this.f_currentSpinTarget = 0.0f;
+
+        this.l_timeList = new List<float>();
+        this.l_trickList = new List<TrickName>();
     }
 }

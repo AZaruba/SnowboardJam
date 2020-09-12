@@ -168,8 +168,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             // should happen before we execute
             if (trickData.i_trickPoints > 0)
             {
-                // TODO: Fix rounding
-                cl_character.SendMessage(MessageID.SCORE_EDIT, new Message(Mathf.RoundToInt(trickData.i_trickPoints)));
+                CompileAndSendScore();
             }
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
@@ -228,15 +227,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.READY_TRICK);
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.PRESSED)
-        {
-            sm_tricking.Execute(Command.START_TRICK);
-            sm_tricking.Execute(Command.SCORE_TRICK);
-        }
-        else if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.UP)
-        {
-            sm_tricking.Execute(Command.END_TRICK);
-        }
+        UpdateTrickStateMachine();
 
         if (c_playerData.f_currentCrashTimer > c_playerData.f_crashRecoveryTime)
         {
@@ -454,8 +445,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         TrickDisabledState s_trickDisabled = new TrickDisabledState(ref trickData);
         TrickReadyState s_trickReady = new TrickReadyState();
-        TrickTransitionState s_trickTransition = new TrickTransitionState();
-        TrickingState s_tricking = new TrickingState(ref trickData, ref cart_incr);
+        TrickTransitionState s_trickTransition = new TrickTransitionState(ref trickData, ref c_scoringData);
+        TrickingState s_tricking = new TrickingState(ref trickData, ref c_scoringData, ref cart_incr);
 
         sm_tricking = new StateMachine(s_trickDisabled, StateRef.TRICK_DISABLED);
         sm_tricking.AddState(s_trickReady, StateRef.TRICK_READY);
@@ -482,4 +473,61 @@ public class PlayerController : MonoBehaviour, iEntityController {
         return this.c_playerData;
     }
     #endregion
+
+    #region MessageSendFunctions
+    private void CompileAndSendScore()
+    {
+        TrickMessageData trickDataOut = new TrickMessageData();
+        trickDataOut.FlipDegrees = c_scoringData.f_currentFlipTarget;
+        trickDataOut.SpinDegrees = c_scoringData.f_currentSpinTarget;
+        trickDataOut.FlipAngle = 0.0f;
+        trickDataOut.grabs = c_scoringData.l_trickList;
+        trickDataOut.grabTimes = c_scoringData.l_timeList;
+        trickDataOut.Success = true;
+
+        MessageServer.SendMessage(MessageID.SCORE_EDIT, new Message(trickDataOut));
+    }
+    #endregion
+
+    private void UpdateTrickStateMachine()
+    {
+        bool TrickHit = false;
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.LTrickButton;
+            trickData.t_activeTrickName = trickData.trick_left;
+        }
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.UTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.UTrickButton;
+            trickData.t_activeTrickName = trickData.trick_up;
+        }
+
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.RTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.RTrickButton;
+            trickData.t_activeTrickName = trickData.trick_right;
+        }
+
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.DTrickButton;
+            trickData.t_activeTrickName = trickData.trick_down;
+        }
+
+        if (TrickHit)
+        {
+            sm_tricking.Execute(Command.START_TRICK);
+            sm_tricking.Execute(Command.SCORE_TRICK);
+        }
+        else if (GlobalInputController.GetInputValue(trickData.k_activeTrickKey) == KeyValue.UP)
+        {
+            sm_tricking.Execute(Command.END_TRICK);
+        }
+
+    }
 }

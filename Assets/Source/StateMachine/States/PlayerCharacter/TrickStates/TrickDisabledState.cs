@@ -19,6 +19,7 @@ public class TrickDisabledState : iState
     public void TransitionAct()
     {
         trickData.i_trickPoints = 0;
+        trickData.f_trickTime = Constants.ZERO_F;
     }
 
     public StateRef GetNextState(Command cmd)

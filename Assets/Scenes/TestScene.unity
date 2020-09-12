@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465785, g: 0.49641252, b: 0.574817, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -218,7 +218,9 @@ MonoBehaviour:
   ItemText: {fileID: 18999760}
   MenuAction: 4
   NextSceneId: -1
+  DataItem: 0
   ChildMenuController: {fileID: 0}
+  ChildEditController: {fileID: 0}
 --- !u!1 &44771477
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,7 +414,6 @@ GameObject:
   m_Component:
   - component: {fileID: 243559130}
   - component: {fileID: 243559131}
-  - component: {fileID: 243559133}
   - component: {fileID: 243559132}
   m_Layer: 0
   m_Name: GameMaster
@@ -459,34 +460,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c60078fe03322894fa90a2816b6809f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &243559133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 243559129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecd7603718845f49a971ee3f5ddaeea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  JumpButton: 355
-  JumpKey: 32
-  TuckButton: 0
-  TuckKey: 0
-  DTrickButton: 350
-  DTrickKey: 107
-  LTrickButton: 352
-  LTrickKey: 106
-  RTrickButton: 0
-  RTrickKey: 0
-  UTrickButton: 0
-  UTrickKey: 0
-  PauseButton: 357
-  PauseKey: 112
-  LeftHorizontalAxis: Horizontal
-  LeftVerticalAxis: Vertical
 --- !u!1 &330615603
 GameObject:
   m_ObjectHideFlags: 0
@@ -1650,7 +1623,9 @@ MonoBehaviour:
   ItemText: {fileID: 1129842971}
   MenuAction: 5
   NextSceneId: 0
+  DataItem: 0
   ChildMenuController: {fileID: 0}
+  ChildEditController: {fileID: 0}
 --- !u!1 &1182894704
 GameObject:
   m_ObjectHideFlags: 0
@@ -2261,4 +2236,6 @@ MonoBehaviour:
   ItemText: {fileID: 2024415122}
   MenuAction: 3
   NextSceneId: 3
+  DataItem: 0
   ChildMenuController: {fileID: 0}
+  ChildEditController: {fileID: 0}

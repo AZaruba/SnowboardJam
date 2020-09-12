@@ -39,12 +39,25 @@ public enum ClientID
     HELP_TEXT_CLIENT,
 }
 
+// compile trick data then send it
+public struct TrickMessageData
+{
+    public float SpinDegrees;
+    public float FlipDegrees;
+    public float FlipAngle;
+    public bool Success;
+
+    public List<TrickName> grabs;
+    public List<float> grabTimes;
+}
+
 public class Message
 {
     private uint u_data;
     private int i_data;
     private float f_data;
     private string s_data;
+    private TrickMessageData t_data;
 
     public Message()
     {
@@ -85,6 +98,11 @@ public class Message
         s_data = dataIn;
     }
 
+    public Message(TrickMessageData dataIn)
+    {
+        t_data = dataIn;
+    }
+
     public uint getUint()
     {
         return u_data;
@@ -103,5 +121,10 @@ public class Message
     public string getString()
     {
         return s_data;
+    }
+
+    public TrickMessageData getTrickData()
+    {
+        return t_data;
     }
 }
