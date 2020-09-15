@@ -36,7 +36,5 @@ public class SpinIdleState : iState
 
         c_scoring.f_currentFlipDegrees = 0.0f;
         c_scoring.f_currentSpinDegrees = 0.0f;
-        c_scoring.f_currentFlipTarget = 0.0f;
-        c_scoring.f_currentSpinTarget = 0.0f;
     }
 }

@@ -165,11 +165,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else
         {
-            // should happen before we execute
-            if (trickData.i_trickPoints > 0)
+            // trick should only send when we land a trick
+            if (c_scoringData.b_sendTrick)
             {
                 CompileAndSendScore();
             }
+
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
             c_airMachine.Execute(Command.LAND);
@@ -443,7 +444,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeTrickMachine()
     {
-        TrickDisabledState s_trickDisabled = new TrickDisabledState(ref trickData);
+        TrickDisabledState s_trickDisabled = new TrickDisabledState(ref trickData, ref c_scoringData);
         TrickReadyState s_trickReady = new TrickReadyState();
         TrickTransitionState s_trickTransition = new TrickTransitionState(ref trickData, ref c_scoringData);
         TrickingState s_tricking = new TrickingState(ref trickData, ref c_scoringData, ref cart_incr);
@@ -477,15 +478,36 @@ public class PlayerController : MonoBehaviour, iEntityController {
     #region MessageSendFunctions
     private void CompileAndSendScore()
     {
+        if (c_scoringData.l_trickList.Count == 0 &&
+            c_scoringData.f_currentFlipTarget.Equals(Constants.ZERO_F) &&
+            c_scoringData.f_currentSpinTarget.Equals(Constants.ZERO_F))
+        {
+            Debug.Log("No trick!");
+
+            ResetScoringData();
+            return;
+        }
         TrickMessageData trickDataOut = new TrickMessageData();
         trickDataOut.FlipDegrees = c_scoringData.f_currentFlipTarget;
         trickDataOut.SpinDegrees = c_scoringData.f_currentSpinTarget;
         trickDataOut.FlipAngle = 0.0f;
         trickDataOut.grabs = c_scoringData.l_trickList;
         trickDataOut.grabTimes = c_scoringData.l_timeList;
-        trickDataOut.Success = true;
+        trickDataOut.Success = true; // TODO: implement bails
 
-        MessageServer.SendMessage(MessageID.SCORE_EDIT, new Message(trickDataOut));
+        MessageServer.SendMessage(MessageID.TRICK_FINISHED, new Message(trickDataOut));
+        MessageServer.SendMessage(MessageID.SCORE_EDIT, new Message(0));
+
+        ResetScoringData();
+    }
+
+    private void ResetScoringData()
+    {
+        c_scoringData.f_currentFlipTarget = 0.0f;
+        c_scoringData.f_currentSpinTarget = 0.0f;
+        c_scoringData.l_timeList = new List<float>();
+        c_scoringData.l_trickList = new List<TrickName>();
+        c_scoringData.b_sendTrick = false;
     }
     #endregion
 

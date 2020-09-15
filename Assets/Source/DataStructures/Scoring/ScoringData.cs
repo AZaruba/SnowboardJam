@@ -11,6 +11,8 @@ public class ScoringData
 
     private float CurrentTrickPoints;
 
+    private bool SendTrick;
+
     public List<TrickName> l_trickList;
     public List<float> l_timeList;
 
@@ -44,6 +46,12 @@ public class ScoringData
         set { FlipTarget = value; }
     }
 
+    public bool b_sendTrick
+    {
+        get { return SendTrick; }
+        set { SendTrick = value; }
+    }
+
     public ScoringData()
     {
         this.f_currentFlipDegrees = 0.0f;
@@ -54,5 +62,7 @@ public class ScoringData
 
         this.l_timeList = new List<float>();
         this.l_trickList = new List<TrickName>();
+
+        this.b_sendTrick = false;
     }
 }

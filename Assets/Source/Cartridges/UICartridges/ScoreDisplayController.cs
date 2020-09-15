@@ -9,6 +9,7 @@ public class ScoreDisplayController : MonoBehaviour, iEntityController
     [SerializeField] private ScoreDisplayData data_scoreDisplay;
 
     private StateData c_stateData;
+    private ScoreJudge c_judge;
 
     private iMessageClient cl_score;
     private StateMachine sm_scoring;
@@ -82,6 +83,8 @@ public class ScoreDisplayController : MonoBehaviour, iEntityController
         data_scoreDisplay.i_displayScore = 0;
 
         c_stateData.b_updateState = true;
+
+        c_judge = new ScoreJudge();
     }
 
     private void InitializeMessageClient()

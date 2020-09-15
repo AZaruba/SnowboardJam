@@ -11,6 +11,7 @@ public enum MessageID
 
 // UI message IDs
     SCORE_EDIT,
+    TRICK_FINISHED,
     MENU_ITEM_CHANGED,
     PLAYER_FINISHED,
 
