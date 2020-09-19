@@ -9,33 +9,41 @@ public class TrickData : MonoBehaviour
     [SerializeField] private TrickName RightTrick;
     [SerializeField] private TrickName UpTrick;
 
-    private Trick UpTrickData;
-    private Trick DownTrickData;
-    private Trick LeftTrickData;
-    private Trick RightTrickData;
-
-    private Trick ActiveTrick;
+    private TrickName ActiveTrickName;
+    private KeyCode ActiveTrickKey;
     private float CurrentTrickPoints;
+    private float ActiveTrickTime;
 
     public TrickData()
     {
-        UpTrickData = new Trick(10, 5);
-        DownTrickData = new Trick(10, 5);
-        LeftTrickData = new Trick(10, 5);
-        RightTrickData = new Trick(10, 5);
         CurrentTrickPoints = 0;
+        ActiveTrickName = TrickName.BLANK_TRICK;
+        ActiveTrickTime = Constants.ZERO_F;
+        ActiveTrickKey = KeyCode.None;
     }
 
-    public Trick t_activeTrick
+    public TrickName t_activeTrickName
     {
-        get { return ActiveTrick; }
-        set { ActiveTrick = value; }
+        get { return ActiveTrickName; }
+        set { ActiveTrickName = value; }
+    }
+
+    public KeyCode k_activeTrickKey
+    {
+        get { return ActiveTrickKey; }
+        set { ActiveTrickKey = value; }
     }
 
     public float i_trickPoints
     {
         get { return CurrentTrickPoints; }
         set { CurrentTrickPoints = value; }
+    }
+
+    public float f_trickTime
+    {
+        get { return ActiveTrickTime; }
+        set { ActiveTrickTime = value; }
     }
 
     public TrickName trick_down
@@ -60,29 +68,5 @@ public class TrickData : MonoBehaviour
     {
         get { return UpTrick; }
         set { UpTrick = value; }
-    }
-
-    public Trick trick_data_down
-    {
-        get { return DownTrickData; }
-        set { DownTrickData = value; }
-    }
-
-    public Trick trick_data_left
-    {
-        get { return LeftTrickData; }
-        set { LeftTrickData = value; }
-    }
-
-    public Trick trick_data_right
-    {
-        get { return RightTrickData; }
-        set { RightTrickData = value; }
-    }
-
-    public Trick trick_data_up
-    {
-        get { return UpTrickData; }
-        set { UpTrickData = value; }
     }
 }

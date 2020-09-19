@@ -165,12 +165,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else
         {
-            // should happen before we execute
-            if (trickData.i_trickPoints > 0)
+            // trick should only send when we land a trick
+            if (c_scoringData.b_sendTrick)
             {
-                // TODO: Fix rounding
-                cl_character.SendMessage(MessageID.SCORE_EDIT, new Message(Mathf.RoundToInt(trickData.i_trickPoints)));
+                CompileAndSendScore();
             }
+
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
             c_airMachine.Execute(Command.LAND);
@@ -228,15 +228,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.READY_TRICK);
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.PRESSED)
-        {
-            sm_tricking.Execute(Command.START_TRICK);
-            sm_tricking.Execute(Command.SCORE_TRICK);
-        }
-        else if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.UP)
-        {
-            sm_tricking.Execute(Command.END_TRICK);
-        }
+        UpdateTrickStateMachine();
 
         if (c_playerData.f_currentCrashTimer > c_playerData.f_crashRecoveryTime)
         {
@@ -452,10 +444,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeTrickMachine()
     {
-        TrickDisabledState s_trickDisabled = new TrickDisabledState(ref trickData);
+        TrickDisabledState s_trickDisabled = new TrickDisabledState(ref trickData, ref c_scoringData);
         TrickReadyState s_trickReady = new TrickReadyState();
-        TrickTransitionState s_trickTransition = new TrickTransitionState();
-        TrickingState s_tricking = new TrickingState(ref trickData, ref cart_incr);
+        TrickTransitionState s_trickTransition = new TrickTransitionState(ref trickData, ref c_scoringData);
+        TrickingState s_tricking = new TrickingState(ref trickData, ref c_scoringData, ref cart_incr);
 
         sm_tricking = new StateMachine(s_trickDisabled, StateRef.TRICK_DISABLED);
         sm_tricking.AddState(s_trickReady, StateRef.TRICK_READY);
@@ -482,4 +474,82 @@ public class PlayerController : MonoBehaviour, iEntityController {
         return this.c_playerData;
     }
     #endregion
+
+    #region MessageSendFunctions
+    private void CompileAndSendScore()
+    {
+        if (c_scoringData.l_trickList.Count == 0 &&
+            c_scoringData.f_currentFlipTarget.Equals(Constants.ZERO_F) &&
+            c_scoringData.f_currentSpinTarget.Equals(Constants.ZERO_F))
+        {
+            Debug.Log("No trick!");
+
+            ResetScoringData();
+            return;
+        }
+        TrickMessageData trickDataOut = new TrickMessageData();
+        trickDataOut.FlipDegrees = c_scoringData.f_currentFlipTarget;
+        trickDataOut.SpinDegrees = c_scoringData.f_currentSpinTarget;
+        trickDataOut.FlipAngle = 0.0f;
+        trickDataOut.grabs = c_scoringData.l_trickList;
+        trickDataOut.grabTimes = c_scoringData.l_timeList;
+        trickDataOut.Success = true; // TODO: implement bails
+
+        MessageServer.SendMessage(MessageID.TRICK_FINISHED, new Message(trickDataOut));
+        MessageServer.SendMessage(MessageID.SCORE_EDIT, new Message(0));
+
+        ResetScoringData();
+    }
+
+    private void ResetScoringData()
+    {
+        c_scoringData.f_currentFlipTarget = 0.0f;
+        c_scoringData.f_currentSpinTarget = 0.0f;
+        c_scoringData.l_timeList = new List<float>();
+        c_scoringData.l_trickList = new List<TrickName>();
+        c_scoringData.b_sendTrick = false;
+    }
+    #endregion
+
+    private void UpdateTrickStateMachine()
+    {
+        bool TrickHit = false;
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.LTrickButton;
+            trickData.t_activeTrickName = trickData.trick_left;
+        }
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.UTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.UTrickButton;
+            trickData.t_activeTrickName = trickData.trick_up;
+        }
+
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.RTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.RTrickButton;
+            trickData.t_activeTrickName = trickData.trick_right;
+        }
+
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.DTrickButton;
+            trickData.t_activeTrickName = trickData.trick_down;
+        }
+
+        if (TrickHit)
+        {
+            sm_tricking.Execute(Command.START_TRICK);
+            sm_tricking.Execute(Command.SCORE_TRICK);
+        }
+        else if (GlobalInputController.GetInputValue(trickData.k_activeTrickKey) == KeyValue.UP)
+        {
+            sm_tricking.Execute(Command.END_TRICK);
+        }
+
+    }
 }

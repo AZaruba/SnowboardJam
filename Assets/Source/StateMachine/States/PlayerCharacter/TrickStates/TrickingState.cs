@@ -6,27 +6,28 @@ public class TrickingState : iState
 {
     private IncrementCartridge cart_incr;
 
-    private TrickData trickData;
+    private TrickData c_trickData;
+    private ScoringData c_scoreData;
 
-    public TrickingState(ref TrickData trickIn, ref IncrementCartridge cartIn)
+    public TrickingState(ref TrickData trickIn, ref ScoringData scoreIn, ref IncrementCartridge cartIn)
     {
         cart_incr = cartIn;
-        trickData = trickIn;
+        c_trickData = trickIn;
+        c_scoreData = scoreIn;
     }
 
     public void Act()
     {
-        float points = trickData.i_trickPoints;
-        int pointDelta = trickData.t_activeTrick.pointValue;
+        float trickTime = c_trickData.f_trickTime;
 
-        cart_incr.Increment(ref points, Time.deltaTime * pointDelta);
+        cart_incr.Increment(ref trickTime, Time.deltaTime);
 
-        trickData.i_trickPoints = points;
+        c_trickData.f_trickTime = trickTime;
     }
 
     public void TransitionAct()
     {
-        trickData.t_activeTrick = trickData.trick_data_right;
+
     }
 
     public StateRef GetNextState(Command cmd)
@@ -37,6 +38,11 @@ public class TrickingState : iState
         }
         if (cmd == Command.END_TRICK)
         {
+            c_scoreData.l_trickList.Add(c_trickData.t_activeTrickName);
+            c_scoreData.l_timeList.Add(c_trickData.f_trickTime);
+
+            c_trickData.f_trickTime = Constants.ZERO_F;
+            c_trickData.t_activeTrickName = TrickName.BLANK_TRICK;
             return StateRef.TRICK_TRANSITION;
         }
         return StateRef.TRICKING;
