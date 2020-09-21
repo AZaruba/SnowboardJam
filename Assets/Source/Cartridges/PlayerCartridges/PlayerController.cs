@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Spin State", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Target dir", c_playerData.v_currentDirection);
-        debugAccessor.DisplayFloat("Current Spin Degrees", c_scoringData.f_currentSpinTarget);
+        debugAccessor.DisplayFloat("TurnAnalogue", c_inputData.f_inputAxisLHoriz);
 
         UpdateAnimator();
     }
