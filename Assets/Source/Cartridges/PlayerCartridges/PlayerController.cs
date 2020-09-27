@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private Animator PlayerAnimator;
     [SerializeField] private DebugAccessor debugAccessor;
     [SerializeField] private CharacterAttributeData Attributes;
+    [SerializeField] private AudioSource AudioSource;
+    [SerializeField] private AudioBank SoundBank;
 
     private StateData c_stateData;
     private AerialMoveData c_aerialMoveData;
@@ -29,6 +31,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private PlayerPositionData c_positionData;
     private EntityData c_entityData;
 
+    private AudioController c_audioController;
+    private AudioDTree t_audioStateTree;
+
     // cartridge list
     private AccelerationCartridge cart_f_acceleration;
     private VelocityCartridge cart_velocity;
@@ -45,7 +50,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     RaycastHit centerHit;
     RaycastHit forwardHit;
 
-    // TEST REMOVE THIS
     iMessageClient cl_character;
     #endregion
 
@@ -66,7 +70,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_quatern = new QuaternionCartridge();
 
         InitializeStateMachines();
+        InitializeAudioController();
         InitializeMessageClient();
+
         EnginePull();
     }
 
@@ -108,6 +114,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         debugAccessor.DisplayFloat("TurnAnalogue", c_inputData.f_inputAxisLHoriz);
 
         UpdateAnimator();
+        UpdateAudio();
     }
 
     /// <summary>
@@ -117,6 +124,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         PlayerAnimator.SetFloat("TurnAnalogue", c_inputData.f_inputAxisLHoriz);
         PlayerAnimator.SetBool("JumpPressed", c_airMachine.GetCurrentState() == StateRef.CHARGING);
+    }
+
+    /// <summary>
+    /// Updates the audio controller with the current state, playing the associated sounds
+    /// </summary>
+    private void UpdateAudio()
+    {
+        AudioRef audio = GetAudioState();
+        debugAccessor.DisplayString(audio.ToString());
+        //c_audioController.PlayAudio(GetAudioState());
     }
 
     /// <summary>
@@ -457,9 +474,15 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeMessageClient()
     {
-        cl_character = new CharacterMessageClient(ref c_stateData, ref c_entityData);
+        cl_character = new CharacterMessageClient(ref c_stateData, ref c_entityData, ref c_audioController);
         MessageServer.Subscribe(ref cl_character, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_character, MessageID.PLAYER_FINISHED);
+    }
+
+    private void InitializeAudioController()
+    {
+        c_audioController = new AudioController(SoundBank.AudioReferences, SoundBank.AudioClips, ref AudioSource);
+        BuildAudioStateTree();
     }
     #endregion
 
@@ -551,5 +574,78 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.END_TRICK);
         }
 
+    }
+
+    public AudioRef GetAudioState()
+    {
+        AudioRef foundClip = AudioRef.ERROR_CLIP;
+
+        StateRef airState = c_airMachine.GetCurrentState();
+        StateRef rideState = c_accelMachine.GetCurrentState();
+        StateRef turnState = c_turnMachine.GetCurrentState();
+        StateRef groundState = StateRef.TERR_SNOW; // currently always snow
+
+        // obey the order of the tree: air, ground, turn, terre
+        AudioDTree currentBranch = t_audioStateTree.GetChild(airState);
+        currentBranch = currentBranch.GetChild(rideState);
+        currentBranch = currentBranch.GetChild(turnState);
+        currentBranch = currentBranch.GetChild(groundState);
+
+        foundClip = currentBranch.GetLeaf();
+
+        return foundClip;
+    }
+
+    public void BuildAudioStateTree()
+    {
+        t_audioStateTree = new AudioDTree(StateRef.TREE_ROOT);
+
+        // terrain state, end
+        AudioDTree powderRideLeaf = new AudioDTree(StateRef.TERR_POWDER, AudioRef.RIDE_POWDER);
+        AudioDTree snowRideLeaf = new AudioDTree(StateRef.TERR_SNOW, AudioRef.RIDE_SNOW);
+        AudioDTree iceRideLeaf = new AudioDTree(StateRef.TERR_ICE, AudioRef.RIDE_ICE);
+
+        AudioDTree powderTurnLeaf = new AudioDTree(StateRef.TERR_POWDER, AudioRef.TURN_POWDER);
+        AudioDTree snowTurnLeaf = new AudioDTree(StateRef.TERR_SNOW, AudioRef.TURN_SNOW);
+        AudioDTree iceTurnLeaf = new AudioDTree(StateRef.TERR_ICE, AudioRef.TURN_ICE);
+
+        AudioDTree powderSlowLeaf = new AudioDTree(StateRef.TERR_POWDER, AudioRef.SLOW_POWDER);
+        AudioDTree snowSlowLeaf = new AudioDTree(StateRef.TERR_SNOW, AudioRef.SLOW_SNOW);
+        AudioDTree iceSlowLeaf = new AudioDTree(StateRef.TERR_ICE, AudioRef.SLOW_ICE);
+
+        // turn state
+        AudioDTree turnStraightBranch = new AudioDTree(StateRef.RIDING);
+        AudioDTree turnCarvingBranch = new AudioDTree(StateRef.CARVING);
+
+        // ground state
+        AudioDTree ridingBranch = new AudioDTree(StateRef.RIDING);
+        AudioDTree slowingBranch = new AudioDTree(StateRef.STOPPING);
+        AudioDTree stoppedBranch = new AudioDTree(StateRef.STOPPING, AudioRef.NO_AUDIO);
+
+        // airState
+        AudioDTree groundedBranch = new AudioDTree(StateRef.GROUNDED);
+        AudioDTree airborneBranch = new AudioDTree(StateRef.AIRBORNE, AudioRef.NO_AUDIO);
+
+        slowingBranch.AssignChild(ref powderSlowLeaf);
+        slowingBranch.AssignChild(ref snowSlowLeaf);
+        slowingBranch.AssignChild(ref iceSlowLeaf);
+
+        turnStraightBranch.AssignChild(ref powderRideLeaf);
+        turnStraightBranch.AssignChild(ref snowRideLeaf);
+        turnStraightBranch.AssignChild(ref iceRideLeaf);
+
+        turnCarvingBranch.AssignChild(ref powderTurnLeaf);
+        turnCarvingBranch.AssignChild(ref snowTurnLeaf);
+        turnCarvingBranch.AssignChild(ref iceTurnLeaf);
+
+        ridingBranch.AssignChild(ref turnStraightBranch);
+        ridingBranch.AssignChild(ref turnCarvingBranch);
+
+        groundedBranch.AssignChild(ref ridingBranch);
+        groundedBranch.AssignChild(ref slowingBranch);
+        groundedBranch.AssignChild(ref stoppedBranch);
+
+        t_audioStateTree.AssignChild(ref groundedBranch);
+        t_audioStateTree.AssignChild(ref airborneBranch);
     }
 }

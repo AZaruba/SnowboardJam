@@ -31,4 +31,9 @@ public class DebugAccessor : MonoBehaviour
             debugInstance.DisplayVector3(objName, vec, 1);
         }
     }
+
+    public void DisplayString(string dataIn)
+    {
+        debugInstance.DisplayString(dataIn);
+    }
 }
