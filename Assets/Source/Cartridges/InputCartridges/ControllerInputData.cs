@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ControllerInputData : MonoBehaviour
+public class ControllerInputData
 {
     #region PlayerOneControls
     [SerializeField] public KeyCode JumpButton;

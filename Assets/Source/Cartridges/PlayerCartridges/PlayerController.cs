@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private Animator PlayerAnimator;
     [SerializeField] private DebugAccessor debugAccessor;
     [SerializeField] private CharacterAttributeData Attributes;
+    [SerializeField] private AudioSource AudioSource;
+    [SerializeField] private AudioBank SoundBank;
 
     private StateData c_stateData;
     private AerialMoveData c_aerialMoveData;
@@ -29,6 +31,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private PlayerPositionData c_positionData;
     private EntityData c_entityData;
 
+    private AudioController c_audioController;
+    private AudioDTree t_audioStateTree;
+
     // cartridge list
     private AccelerationCartridge cart_f_acceleration;
     private VelocityCartridge cart_velocity;
@@ -45,7 +50,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     RaycastHit centerHit;
     RaycastHit forwardHit;
 
-    // TEST REMOVE THIS
     iMessageClient cl_character;
     #endregion
 
@@ -66,7 +70,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_quatern = new QuaternionCartridge();
 
         InitializeStateMachines();
+        InitializeAudioController();
         InitializeMessageClient();
+
         EnginePull();
     }
 
@@ -105,9 +111,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Spin State", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Target dir", c_playerData.v_currentDirection);
-        debugAccessor.DisplayFloat("Current Spin Degrees", c_scoringData.f_currentSpinTarget);
+        debugAccessor.DisplayFloat("TurnAnalogue", c_inputData.f_inputAxisLHoriz);
 
         UpdateAnimator();
+        UpdateAudio();
     }
 
     /// <summary>
@@ -117,6 +124,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         PlayerAnimator.SetFloat("TurnAnalogue", c_inputData.f_inputAxisLHoriz);
         PlayerAnimator.SetBool("JumpPressed", c_airMachine.GetCurrentState() == StateRef.CHARGING);
+    }
+
+    /// <summary>
+    /// Updates the audio controller with the current state, playing the associated sounds
+    /// </summary>
+    private void UpdateAudio()
+    {
+        AudioRef audio = GetAudioState();
+        debugAccessor.DisplayString(audio.ToString());
+        //c_audioController.PlayAudio(GetAudioState());
     }
 
     /// <summary>
@@ -165,12 +182,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else
         {
-            // should happen before we execute
-            if (trickData.i_trickPoints > 0)
+            // trick should only send when we land a trick
+            if (c_scoringData.b_sendTrick)
             {
-                // TODO: Fix rounding
-                cl_character.SendMessage(MessageID.SCORE_EDIT, new Message(Mathf.RoundToInt(trickData.i_trickPoints)));
+                CompileAndSendScore();
             }
+
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
             c_airMachine.Execute(Command.LAND);
@@ -228,15 +245,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.READY_TRICK);
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.PRESSED)
-        {
-            sm_tricking.Execute(Command.START_TRICK);
-            sm_tricking.Execute(Command.SCORE_TRICK);
-        }
-        else if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.UP)
-        {
-            sm_tricking.Execute(Command.END_TRICK);
-        }
+        UpdateTrickStateMachine();
 
         if (c_playerData.f_currentCrashTimer > c_playerData.f_crashRecoveryTime)
         {
@@ -452,10 +461,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeTrickMachine()
     {
-        TrickDisabledState s_trickDisabled = new TrickDisabledState(ref trickData);
+        TrickDisabledState s_trickDisabled = new TrickDisabledState(ref trickData, ref c_scoringData);
         TrickReadyState s_trickReady = new TrickReadyState();
-        TrickTransitionState s_trickTransition = new TrickTransitionState();
-        TrickingState s_tricking = new TrickingState(ref trickData, ref cart_incr);
+        TrickTransitionState s_trickTransition = new TrickTransitionState(ref trickData, ref c_scoringData);
+        TrickingState s_tricking = new TrickingState(ref trickData, ref c_scoringData, ref cart_incr);
 
         sm_tricking = new StateMachine(s_trickDisabled, StateRef.TRICK_DISABLED);
         sm_tricking.AddState(s_trickReady, StateRef.TRICK_READY);
@@ -465,9 +474,15 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeMessageClient()
     {
-        cl_character = new CharacterMessageClient(ref c_stateData, ref c_entityData);
+        cl_character = new CharacterMessageClient(ref c_stateData, ref c_entityData, ref c_audioController);
         MessageServer.Subscribe(ref cl_character, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_character, MessageID.PLAYER_FINISHED);
+    }
+
+    private void InitializeAudioController()
+    {
+        c_audioController = new AudioController(SoundBank.AudioReferences, SoundBank.AudioClips, ref AudioSource);
+        BuildAudioStateTree();
     }
     #endregion
 
@@ -482,4 +497,155 @@ public class PlayerController : MonoBehaviour, iEntityController {
         return this.c_playerData;
     }
     #endregion
+
+    #region MessageSendFunctions
+    private void CompileAndSendScore()
+    {
+        if (c_scoringData.l_trickList.Count == 0 &&
+            c_scoringData.f_currentFlipTarget.Equals(Constants.ZERO_F) &&
+            c_scoringData.f_currentSpinTarget.Equals(Constants.ZERO_F))
+        {
+            Debug.Log("No trick!");
+
+            ResetScoringData();
+            return;
+        }
+        TrickMessageData trickDataOut = new TrickMessageData();
+        trickDataOut.FlipDegrees = c_scoringData.f_currentFlipTarget;
+        trickDataOut.SpinDegrees = c_scoringData.f_currentSpinTarget;
+        trickDataOut.FlipAngle = 0.0f;
+        trickDataOut.grabs = c_scoringData.l_trickList;
+        trickDataOut.grabTimes = c_scoringData.l_timeList;
+        trickDataOut.Success = true; // TODO: implement bails
+
+        MessageServer.SendMessage(MessageID.TRICK_FINISHED, new Message(trickDataOut));
+        MessageServer.SendMessage(MessageID.SCORE_EDIT, new Message(0));
+
+        ResetScoringData();
+    }
+
+    private void ResetScoringData()
+    {
+        c_scoringData.f_currentFlipTarget = 0.0f;
+        c_scoringData.f_currentSpinTarget = 0.0f;
+        c_scoringData.l_timeList = new List<float>();
+        c_scoringData.l_trickList = new List<TrickName>();
+        c_scoringData.b_sendTrick = false;
+    }
+    #endregion
+
+    private void UpdateTrickStateMachine()
+    {
+        bool TrickHit = false;
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.LTrickButton;
+            trickData.t_activeTrickName = trickData.trick_left;
+        }
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.UTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.UTrickButton;
+            trickData.t_activeTrickName = trickData.trick_up;
+        }
+
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.RTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.RTrickButton;
+            trickData.t_activeTrickName = trickData.trick_right;
+        }
+
+        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
+        {
+            TrickHit = true;
+            trickData.k_activeTrickKey = GlobalInputController.ControllerData.DTrickButton;
+            trickData.t_activeTrickName = trickData.trick_down;
+        }
+
+        if (TrickHit)
+        {
+            sm_tricking.Execute(Command.START_TRICK);
+            sm_tricking.Execute(Command.SCORE_TRICK);
+        }
+        else if (GlobalInputController.GetInputValue(trickData.k_activeTrickKey) == KeyValue.UP)
+        {
+            sm_tricking.Execute(Command.END_TRICK);
+        }
+
+    }
+
+    public AudioRef GetAudioState()
+    {
+        AudioRef foundClip = AudioRef.ERROR_CLIP;
+
+        StateRef airState = c_airMachine.GetCurrentState();
+        StateRef rideState = c_accelMachine.GetCurrentState();
+        StateRef turnState = c_turnMachine.GetCurrentState();
+        StateRef groundState = StateRef.TERR_SNOW; // currently always snow
+
+        // obey the order of the tree: air, ground, turn, terre
+        AudioDTree currentBranch = t_audioStateTree.GetChild(airState);
+        currentBranch = currentBranch.GetChild(rideState);
+        currentBranch = currentBranch.GetChild(turnState);
+        currentBranch = currentBranch.GetChild(groundState);
+
+        foundClip = currentBranch.GetLeaf();
+
+        return foundClip;
+    }
+
+    public void BuildAudioStateTree()
+    {
+        t_audioStateTree = new AudioDTree(StateRef.TREE_ROOT);
+
+        // terrain state, end
+        AudioDTree powderRideLeaf = new AudioDTree(StateRef.TERR_POWDER, AudioRef.RIDE_POWDER);
+        AudioDTree snowRideLeaf = new AudioDTree(StateRef.TERR_SNOW, AudioRef.RIDE_SNOW);
+        AudioDTree iceRideLeaf = new AudioDTree(StateRef.TERR_ICE, AudioRef.RIDE_ICE);
+
+        AudioDTree powderTurnLeaf = new AudioDTree(StateRef.TERR_POWDER, AudioRef.TURN_POWDER);
+        AudioDTree snowTurnLeaf = new AudioDTree(StateRef.TERR_SNOW, AudioRef.TURN_SNOW);
+        AudioDTree iceTurnLeaf = new AudioDTree(StateRef.TERR_ICE, AudioRef.TURN_ICE);
+
+        AudioDTree powderSlowLeaf = new AudioDTree(StateRef.TERR_POWDER, AudioRef.SLOW_POWDER);
+        AudioDTree snowSlowLeaf = new AudioDTree(StateRef.TERR_SNOW, AudioRef.SLOW_SNOW);
+        AudioDTree iceSlowLeaf = new AudioDTree(StateRef.TERR_ICE, AudioRef.SLOW_ICE);
+
+        // turn state
+        AudioDTree turnStraightBranch = new AudioDTree(StateRef.RIDING);
+        AudioDTree turnCarvingBranch = new AudioDTree(StateRef.CARVING);
+
+        // ground state
+        AudioDTree ridingBranch = new AudioDTree(StateRef.RIDING);
+        AudioDTree slowingBranch = new AudioDTree(StateRef.STOPPING);
+        AudioDTree stoppedBranch = new AudioDTree(StateRef.STOPPING, AudioRef.NO_AUDIO);
+
+        // airState
+        AudioDTree groundedBranch = new AudioDTree(StateRef.GROUNDED);
+        AudioDTree airborneBranch = new AudioDTree(StateRef.AIRBORNE, AudioRef.NO_AUDIO);
+
+        slowingBranch.AssignChild(ref powderSlowLeaf);
+        slowingBranch.AssignChild(ref snowSlowLeaf);
+        slowingBranch.AssignChild(ref iceSlowLeaf);
+
+        turnStraightBranch.AssignChild(ref powderRideLeaf);
+        turnStraightBranch.AssignChild(ref snowRideLeaf);
+        turnStraightBranch.AssignChild(ref iceRideLeaf);
+
+        turnCarvingBranch.AssignChild(ref powderTurnLeaf);
+        turnCarvingBranch.AssignChild(ref snowTurnLeaf);
+        turnCarvingBranch.AssignChild(ref iceTurnLeaf);
+
+        ridingBranch.AssignChild(ref turnStraightBranch);
+        ridingBranch.AssignChild(ref turnCarvingBranch);
+
+        groundedBranch.AssignChild(ref ridingBranch);
+        groundedBranch.AssignChild(ref slowingBranch);
+        groundedBranch.AssignChild(ref stoppedBranch);
+
+        t_audioStateTree.AssignChild(ref groundedBranch);
+        t_audioStateTree.AssignChild(ref airborneBranch);
+    }
 }

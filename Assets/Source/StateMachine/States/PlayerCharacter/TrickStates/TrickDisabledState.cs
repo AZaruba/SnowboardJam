@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class TrickDisabledState : iState
 {
-    private TrickData trickData;
+    private TrickData c_trickData;
+    private ScoringData c_scoringData;
 
-    public TrickDisabledState(ref TrickData dataIn)
+    public TrickDisabledState(ref TrickData dataIn, ref ScoringData scoreIn)
     {
-        trickData = dataIn;
+        this.c_trickData = dataIn;
+        this.c_scoringData = scoreIn;
     }
 
     public void Act()
@@ -18,7 +20,9 @@ public class TrickDisabledState : iState
 
     public void TransitionAct()
     {
-        trickData.i_trickPoints = 0;
+        c_trickData.i_trickPoints = 0;
+        c_trickData.f_trickTime = Constants.ZERO_F;
+        c_scoringData.b_sendTrick = true;
     }
 
     public StateRef GetNextState(Command cmd)

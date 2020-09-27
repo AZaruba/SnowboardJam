@@ -11,6 +11,7 @@ public enum MessageID
 
 // UI message IDs
     SCORE_EDIT,
+    TRICK_FINISHED,
     MENU_ITEM_CHANGED,
     PLAYER_FINISHED,
 
@@ -26,6 +27,10 @@ public enum MessageID
     // Edit Menu Message IDs
     EDIT_START,
     EDIT_END,
+
+    // Audio IDs
+    PLAY_ONE_SHOT,
+    PLAY_AUDIO,
 }
 
 public enum ClientID
@@ -39,12 +44,26 @@ public enum ClientID
     HELP_TEXT_CLIENT,
 }
 
+// compile trick data then send it
+public struct TrickMessageData
+{
+    public float SpinDegrees;
+    public float FlipDegrees;
+    public float FlipAngle;
+    public bool Success;
+
+    public List<TrickName> grabs;
+    public List<float> grabTimes;
+}
+
 public class Message
 {
     private uint u_data;
     private int i_data;
     private float f_data;
     private string s_data;
+    private TrickMessageData t_data;
+    private AudioRef a_data;
 
     public Message()
     {
@@ -85,6 +104,16 @@ public class Message
         s_data = dataIn;
     }
 
+    public Message(TrickMessageData dataIn)
+    {
+        t_data = dataIn;
+    }
+
+    public Message(AudioRef dataIn)
+    {
+        a_data = dataIn;
+    }
+
     public uint getUint()
     {
         return u_data;
@@ -103,5 +132,15 @@ public class Message
     public string getString()
     {
         return s_data;
+    }
+
+    public TrickMessageData getTrickData()
+    {
+        return t_data;
+    }
+
+    public AudioRef getAudioData()
+    {
+        return a_data;
     }
 }

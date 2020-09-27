@@ -47,4 +47,9 @@ public class DebugFunctions : MonoBehaviour {
             vector3_2.text = objName + ": " + vec;
         }
     }
+
+    public void DisplayString(string dataIn)
+    {
+        vector3_2.text = dataIn;
+    }
 }

@@ -1274,7 +1274,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 800220884}
-  - component: {fileID: 800220883}
   - component: {fileID: 800220882}
   m_Layer: 0
   m_Name: InputController
@@ -1295,34 +1294,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c60078fe03322894fa90a2816b6809f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &800220883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 800220881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecd7603718845f49a971ee3f5ddaeea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  JumpButton: 355
-  JumpKey: 32
-  TuckButton: 0
-  TuckKey: 0
-  DTrickButton: 350
-  DTrickKey: 107
-  LTrickButton: 352
-  LTrickKey: 106
-  RTrickButton: 0
-  RTrickKey: 0
-  UTrickButton: 0
-  UTrickKey: 0
-  PauseButton: 357
-  PauseKey: 112
-  LeftHorizontalAxis: Horizontal
-  LeftVerticalAxis: Vertical
 --- !u!4 &800220884
 Transform:
   m_ObjectHideFlags: 0

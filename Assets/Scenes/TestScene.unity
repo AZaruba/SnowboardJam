@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465785, g: 0.49641252, b: 0.574817, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -218,7 +218,9 @@ MonoBehaviour:
   ItemText: {fileID: 18999760}
   MenuAction: 4
   NextSceneId: -1
+  DataItem: 0
   ChildMenuController: {fileID: 0}
+  ChildEditController: {fileID: 0}
 --- !u!1 &44771477
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,7 +414,6 @@ GameObject:
   m_Component:
   - component: {fileID: 243559130}
   - component: {fileID: 243559131}
-  - component: {fileID: 243559133}
   - component: {fileID: 243559132}
   m_Layer: 0
   m_Name: GameMaster
@@ -459,34 +460,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c60078fe03322894fa90a2816b6809f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &243559133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 243559129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fecd7603718845f49a971ee3f5ddaeea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  JumpButton: 355
-  JumpKey: 32
-  TuckButton: 0
-  TuckKey: 0
-  DTrickButton: 350
-  DTrickKey: 107
-  LTrickButton: 352
-  LTrickKey: 106
-  RTrickButton: 0
-  RTrickKey: 0
-  UTrickButton: 0
-  UTrickKey: 0
-  PauseButton: 357
-  PauseKey: 112
-  LeftHorizontalAxis: Horizontal
-  LeftVerticalAxis: Vertical
 --- !u!1 &330615603
 GameObject:
   m_ObjectHideFlags: 0
@@ -521,8 +494,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -20, y: 15}
-  m_SizeDelta: {x: 250, y: 30}
+  m_AnchoredPosition: {x: -20, y: 60}
+  m_SizeDelta: {x: 700, y: 60}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &330615605
 MonoBehaviour:
@@ -545,11 +518,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 35
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
+    m_MinSize: 0
+    m_MaxSize: 50
     m_Alignment: 2
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -830,8 +803,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -20, y: -33}
-  m_SizeDelta: {x: 250, y: 30}
+  m_AnchoredPosition: {x: -20, y: -60}
+  m_SizeDelta: {x: 700, y: 60}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &566021020
 MonoBehaviour:
@@ -854,11 +827,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 35
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
+    m_MinSize: 0
+    m_MaxSize: 50
     m_Alignment: 2
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -1130,6 +1103,8 @@ GameObject:
   - component: {fileID: 734568623}
   - component: {fileID: 734568628}
   - component: {fileID: 734568624}
+  - component: {fileID: 734568629}
+  - component: {fileID: 734568630}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -1266,6 +1241,8 @@ MonoBehaviour:
   PlayerAnimator: {fileID: 734568624}
   debugAccessor: {fileID: 734568626}
   Attributes: {fileID: 11400000, guid: 8cc161773a8de422bbefb45a2b53afc3, type: 2}
+  AudioSource: {fileID: 0}
+  SoundBank: {fileID: 734568630}
 --- !u!114 &734568628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1282,6 +1259,116 @@ MonoBehaviour:
   LeftTrick: 4
   RightTrick: 7
   UpTrick: 10
+--- !u!82 &734568629
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734568621}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &734568630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734568621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98a022e8a38bd41899a0bdd8d3071de7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioReferences: 
+  AudioClips: []
 --- !u!1 &745530428
 GameObject:
   m_ObjectHideFlags: 0
@@ -1440,8 +1527,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -20, y: -17}
-  m_SizeDelta: {x: 250, y: 30}
+  m_AnchoredPosition: {x: -20, y: -20}
+  m_SizeDelta: {x: 700, y: 60}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1023008798
 MonoBehaviour:
@@ -1464,11 +1551,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 35
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
+    m_MinSize: 0
+    m_MaxSize: 50
     m_Alignment: 2
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -1650,7 +1737,9 @@ MonoBehaviour:
   ItemText: {fileID: 1129842971}
   MenuAction: 5
   NextSceneId: 0
+  DataItem: 0
   ChildMenuController: {fileID: 0}
+  ChildEditController: {fileID: 0}
 --- !u!1 &1182894704
 GameObject:
   m_ObjectHideFlags: 0
@@ -1685,8 +1774,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -20, y: -1}
-  m_SizeDelta: {x: 250, y: 30}
+  m_AnchoredPosition: {x: -20, y: 20}
+  m_SizeDelta: {x: 700, y: 60}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1182894706
 MonoBehaviour:
@@ -1709,11 +1798,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 35
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
+    m_MinSize: 0
+    m_MaxSize: 50
     m_Alignment: 2
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -2261,4 +2350,6 @@ MonoBehaviour:
   ItemText: {fileID: 2024415122}
   MenuAction: 3
   NextSceneId: 3
+  DataItem: 0
   ChildMenuController: {fileID: 0}
+  ChildEditController: {fileID: 0}

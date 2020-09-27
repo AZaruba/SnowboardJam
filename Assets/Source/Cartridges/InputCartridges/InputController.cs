@@ -40,12 +40,14 @@ public static class GlobalInputController
         DigitalInputData.Add(ControllerData.LTrickButton, KeyValue.IDLE);
         DigitalInputData.Add(ControllerData.DTrickButton, KeyValue.IDLE);
         DigitalInputData.Add(ControllerData.RTrickButton, KeyValue.IDLE);
+        DigitalInputData.Add(ControllerData.UTrickButton, KeyValue.IDLE);
         DigitalInputData.Add(ControllerData.PauseButton, KeyValue.IDLE);
 
         DigitalInputData.Add(ControllerData.JumpKey, KeyValue.IDLE);
         DigitalInputData.Add(ControllerData.LTrickKey, KeyValue.IDLE);
         DigitalInputData.Add(ControllerData.DTrickKey, KeyValue.IDLE);
         DigitalInputData.Add(ControllerData.RTrickKey, KeyValue.IDLE);
+        DigitalInputData.Add(ControllerData.UTrickKey, KeyValue.IDLE);
         DigitalInputData.Add(ControllerData.PauseKey, KeyValue.IDLE);
 
         AnalogInputData = new Dictionary<string, float>();
@@ -159,6 +161,9 @@ public static class GlobalInputController
         CheckAndSetValue(ControllerData.DTrickButton);
         CheckAndSetValue(ControllerData.DTrickKey);
 
+        CheckAndSetValue(ControllerData.UTrickButton);
+        CheckAndSetValue(ControllerData.UTrickKey);
+
         CheckAndSetValue(ControllerData.PauseButton);
         CheckAndSetValue(ControllerData.PauseKey);
 
@@ -179,6 +184,9 @@ public static class GlobalInputController
 
         ResetKey(ControllerData.DTrickButton);
         ResetKey(ControllerData.DTrickKey);
+
+        ResetKey(ControllerData.UTrickButton);
+        ResetKey(ControllerData.UTrickKey);
 
         ResetKey(ControllerData.PauseButton);
         ResetKey(ControllerData.PauseKey);
