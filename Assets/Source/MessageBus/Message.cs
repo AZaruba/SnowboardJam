@@ -27,6 +27,10 @@ public enum MessageID
     // Edit Menu Message IDs
     EDIT_START,
     EDIT_END,
+
+    // Audio IDs
+    PLAY_ONE_SHOT,
+    PLAY_AUDIO,
 }
 
 public enum ClientID
@@ -59,6 +63,7 @@ public class Message
     private float f_data;
     private string s_data;
     private TrickMessageData t_data;
+    private AudioRef a_data;
 
     public Message()
     {
@@ -104,6 +109,11 @@ public class Message
         t_data = dataIn;
     }
 
+    public Message(AudioRef dataIn)
+    {
+        a_data = dataIn;
+    }
+
     public uint getUint()
     {
         return u_data;
@@ -127,5 +137,10 @@ public class Message
     public TrickMessageData getTrickData()
     {
         return t_data;
+    }
+
+    public AudioRef getAudioData()
+    {
+        return a_data;
     }
 }

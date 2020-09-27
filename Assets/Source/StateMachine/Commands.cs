@@ -161,4 +161,12 @@ public enum StateRef {
     TIMER_INCR,
     TIMER_DECR,
     #endregion
+
+    #region TerrainStates
+    TERR_SNOW,
+    TERR_ICE,
+    TERR_POWDER,
+    #endregion
+
+    TREE_ROOT,
 }

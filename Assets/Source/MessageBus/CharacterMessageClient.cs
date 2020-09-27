@@ -7,12 +7,14 @@ public class CharacterMessageClient : iMessageClient
     ClientID clientID;
     StateData c_stateData;
     EntityData c_entityData;
+    AudioController c_audioController;
 
-    public CharacterMessageClient(ref StateData dataIn, ref EntityData entDataIn)
+    public CharacterMessageClient(ref StateData dataIn, ref EntityData entDataIn, ref AudioController audioIn)
     {
         clientID = ClientID.CHARACTER_CLIENT;
-        c_stateData = dataIn;
-        c_entityData = entDataIn;
+        this.c_stateData = dataIn;
+        this.c_entityData = entDataIn;
+        this.c_audioController = audioIn;
     }
 
     public bool SendMessage(MessageID id, Message message)
@@ -30,6 +32,14 @@ public class CharacterMessageClient : iMessageClient
         if (id == MessageID.PLAYER_FINISHED && message.getUint() == c_entityData.u_entityID)
         {
             c_stateData.b_courseFinished = true;
+        }
+        if (id == MessageID.PLAY_AUDIO)
+        {
+            c_audioController.PlayAudio(message.getAudioData());
+        }
+        if (id == MessageID.PLAY_ONE_SHOT)
+        {
+            c_audioController.PlayOneShot(message.getAudioData());
         }
 
         return true;
