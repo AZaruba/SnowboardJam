@@ -6,13 +6,13 @@ using UnityEngine.UI;
 
 public class IntegerEditController : iEditController
 {
-    [SerializeField] int DefaultValue;
-    [SerializeField] int MinimumValue;
-    [SerializeField] int MaximumValue;
-    [SerializeField] Text ValueDisplay;
+    [SerializeField] public int DefaultValue;
+    [SerializeField] public int MinimumValue;
+    [SerializeField] public int MaximumValue;
+    [SerializeField] public Text ValueDisplay;
 
-    private int i_currentValue;
-    private int i_lastStoredValue;
+    public int i_currentValue;
+    public int i_lastStoredValue;
 
     private IncrementCartridge cart_incr;
 
@@ -87,7 +87,7 @@ public class IntegerEditController : iEditController
         EnginePush();
     }
 
-    public void EnginePush()
+    public virtual void EnginePush()
     {
         ValueDisplay.text = c_controllerData.i.ToString();
     }

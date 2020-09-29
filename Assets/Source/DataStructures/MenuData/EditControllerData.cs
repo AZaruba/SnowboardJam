@@ -16,7 +16,6 @@ public class EditControllerData
     float MaxFloat;
     float StoredFloat;
 
-
     Resolution StoredResolution;
 
     private float CurrentTickTime;
