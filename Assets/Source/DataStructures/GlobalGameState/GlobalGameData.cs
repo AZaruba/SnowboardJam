@@ -26,17 +26,7 @@ public struct VideoSettings
     public int RenderMultiplier;
     public FullScreenMode ScreenMode;
 
-    public VideoQuality Quality;
-}
-
-public enum VideoQuality
-{
-    ERROR_QUALITY = -1,
-    LOWEST,
-    LOW,
-    MEDIUM,
-    HIGH,
-    HIGHEST,
+    public int Quality;
 }
 
 /// <summary>
@@ -156,7 +146,8 @@ public static class GlobalGameData
                 SaveVideoSettings();
                 break;
             case DataTarget.VIDEO_QUALITY:
-                videoSettings.Quality = (VideoQuality)value;
+                videoSettings.Quality = value;
+                QualitySettings.SetQualityLevel(videoSettings.Quality);
                 SaveVideoSettings();
                 break;
             case DataTarget.MASTER_AUDIO_LEVEL:
@@ -176,7 +167,6 @@ public static class GlobalGameData
                 SaveAudioSettings();
                 break;
         }
-        Debug.Log("data updated int");
         return true;
     }
     public static bool SetSettingsValue(DataTarget target, float value)
@@ -185,7 +175,6 @@ public static class GlobalGameData
         {
             // no floats currently
         }
-        Debug.Log("data updated float");
         return true;
     }
     public static bool SetSettingsValue(DataTarget target, bool value)
@@ -197,7 +186,6 @@ public static class GlobalGameData
                 SaveAudioSettings();
                 break;
         }
-        Debug.Log("data updated bool");
         return true;
     }
 
@@ -233,7 +221,7 @@ public static class GlobalGameData
         int intVal;
 
         intVal = PlayerPrefs.GetInt(PlayerPrefsNames.ScreenResIdx);
-        if (intVal == default)
+        if (intVal == default || intVal >= Screen.resolutions.Length || intVal < 0)
         {
             status = false;
             videoSettings.ScreenResIndex = -1;
@@ -257,15 +245,27 @@ public static class GlobalGameData
         }
 
         intVal = PlayerPrefs.GetInt(PlayerPrefsNames.VQuality);
-        if (intVal == default)
+        if (intVal == default || intVal >= QualitySettings.names.Length)
         {
             status = false;
-            videoSettings.Quality = VideoQuality.MEDIUM;
+            videoSettings.Quality = 0;
         }
         else
         {
-            videoSettings.Quality = (VideoQuality)intVal;
+            videoSettings.Quality = intVal;
         }
+
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.FSMode);
+        if (intVal == default || intVal > 3 || intVal < 0)
+        {
+            status = false;
+            videoSettings.ScreenMode = (int)FullScreenMode.ExclusiveFullScreen;
+        }
+        else
+        {
+            videoSettings.ScreenMode = (FullScreenMode)intVal;
+        }
+            
 
         return status;
     }
