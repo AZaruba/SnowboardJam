@@ -12,6 +12,27 @@ public enum KeyValue
     HELD,
     NEED_RESET,
 }
+
+public enum ControlAction
+{
+    ERROR_ACTION = -1,
+    JUMP,
+    CROUCH,
+    DOWN_GRAB,
+    LEFT_GRAB,
+    RIGHT_GRAB,
+    UP_GRAB,
+
+    TURN_AXIS,
+    SPIN_AXIS,
+    SLOW_AXIS,
+    FLIP_AXIS,
+
+    CONFIRM,
+    BACK,
+    PAUSE,
+}
+
 public static class GlobalInputController
 {
 
@@ -22,8 +43,12 @@ public static class GlobalInputController
     private static float InputLockTimer = 0.0f;
     private static float InputLockTimeLimit = 0.25f;
 
-    private static Dictionary<KeyCode, KeyValue> DigitalInputData;
-    private static Dictionary<string, float> AnalogInputData;
+    private static Dictionary<ControlAction, KeyCode> DigitalActionInput;
+    private static Dictionary<ControlAction, KeyValue> DigitalActionValue;
+    private static Dictionary<ControlAction, string> AnalogActionInput;
+    private static Dictionary<ControlAction, float> AnalogActionValue;
+    //private static Dictionary<KeyCode, KeyValue> DigitalInputData;
+    //private static Dictionary<string, float> AnalogInputData;
 
     public static bool InitializeInput()
     {
@@ -34,27 +59,6 @@ public static class GlobalInputController
 
         DefineInputs();
 
-        DigitalInputData = new Dictionary<KeyCode, KeyValue>();
-
-        DigitalInputData.Add(ControllerData.JumpButton, KeyValue.IDLE);
-        DigitalInputData.Add(ControllerData.LTrickButton, KeyValue.IDLE);
-        DigitalInputData.Add(ControllerData.DTrickButton, KeyValue.IDLE);
-        DigitalInputData.Add(ControllerData.RTrickButton, KeyValue.IDLE);
-        DigitalInputData.Add(ControllerData.UTrickButton, KeyValue.IDLE);
-        DigitalInputData.Add(ControllerData.PauseButton, KeyValue.IDLE);
-
-        DigitalInputData.Add(ControllerData.JumpKey, KeyValue.IDLE);
-        DigitalInputData.Add(ControllerData.LTrickKey, KeyValue.IDLE);
-        DigitalInputData.Add(ControllerData.DTrickKey, KeyValue.IDLE);
-        DigitalInputData.Add(ControllerData.RTrickKey, KeyValue.IDLE);
-        DigitalInputData.Add(ControllerData.UTrickKey, KeyValue.IDLE);
-        DigitalInputData.Add(ControllerData.PauseKey, KeyValue.IDLE);
-
-        AnalogInputData = new Dictionary<string, float>();
-
-        AnalogInputData.Add(ControllerData.LeftHorizontalAxis, 0);
-        AnalogInputData.Add(ControllerData.LeftVerticalAxis, 0);
-
         InputInitialized = true;
         return true;
     }
@@ -63,31 +67,74 @@ public static class GlobalInputController
     {
         ControllerData = new ControllerInputData();
 
-        ControllerData.JumpButton = DefaultControls.DefaultJump;
-        ControllerData.JumpKey = DefaultControls.DefaultJumpKey;
+        DigitalActionInput = new Dictionary<ControlAction, KeyCode>();
+        DigitalActionValue = new Dictionary<ControlAction, KeyValue>();
+        AnalogActionInput = new Dictionary<ControlAction, string>();
+        AnalogActionValue = new Dictionary<ControlAction, float>();
 
-        ControllerData.TuckButton = DefaultControls.DefaultTuck;
-        ControllerData.TuckKey = DefaultControls.DefaultTuckKey;
+        DigitalActionValue[ControlAction.JUMP] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.JUMP] = DefaultControls.DefaultJump;
 
-        ControllerData.DTrickButton = DefaultControls.DefaultTrickD;
-        ControllerData.DTrickKey = DefaultControls.DefaultTrickDKey;
+        DigitalActionValue[ControlAction.DOWN_GRAB] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.DOWN_GRAB] = DefaultControls.DefaultTrickD;
 
-        ControllerData.LTrickButton = DefaultControls.DefaultTrickL;
-        ControllerData.LTrickKey = DefaultControls.DefaultTrickLKey;
+        DigitalActionValue[ControlAction.LEFT_GRAB] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.LEFT_GRAB] = DefaultControls.DefaultTrickL;
 
-        ControllerData.RTrickButton = DefaultControls.DefaultTrickR;
-        ControllerData.RTrickKey = DefaultControls.DefaultTrickRKey;
+        DigitalActionValue[ControlAction.RIGHT_GRAB] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.RIGHT_GRAB] = DefaultControls.DefaultTrickR;
 
-        ControllerData.UTrickButton = DefaultControls.DefaultTrickU;
-        ControllerData.UTrickKey = DefaultControls.DefaultTrickUKey;
+        DigitalActionValue[ControlAction.UP_GRAB] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.UP_GRAB] = DefaultControls.DefaultTrickU;
 
-        ControllerData.PauseButton = DefaultControls.DefaultPause;
-        ControllerData.PauseKey = DefaultControls.DefaultPauseKey;
+        DigitalActionValue[ControlAction.PAUSE] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.PAUSE] = DefaultControls.DefaultPause;
 
-        ControllerData.LeftHorizontalAxis = DefaultControls.DefaultLHoriz;
-        ControllerData.LeftVerticalAxis = DefaultControls.DefaultLVerti;
+        DigitalActionValue[ControlAction.CONFIRM] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.CONFIRM] = DefaultControls.DefaultConfirm;
+
+        DigitalActionValue[ControlAction.BACK] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.BACK] = DefaultControls.DefaultBack;
+
+        AnalogActionInput[ControlAction.SPIN_AXIS] = DefaultControls.DefaultLHoriz;
+        AnalogActionInput[ControlAction.TURN_AXIS] = DefaultControls.DefaultLHoriz;
+        AnalogActionInput[ControlAction.FLIP_AXIS] = DefaultControls.DefaultLVerti;
+        AnalogActionInput[ControlAction.SLOW_AXIS] = DefaultControls.DefaultLVerti;
+
+        AnalogActionValue[ControlAction.SPIN_AXIS] = Constants.ZERO_F;
+        AnalogActionValue[ControlAction.TURN_AXIS] = Constants.ZERO_F;
+        AnalogActionValue[ControlAction.FLIP_AXIS] = Constants.ZERO_F;
+        AnalogActionValue[ControlAction.SLOW_AXIS] = Constants.ZERO_F;
     }
 
+    public static KeyCode GetInputKey(ControlAction actIn)
+    {
+        if (DigitalActionInput.ContainsKey(actIn))
+        {
+            return DigitalActionInput[actIn];
+        }
+        return KeyCode.None;
+    }
+    public static KeyValue GetInputAction(ControlAction actIn)
+    {
+        // assume no keys are assigned to one and not the other
+        if (DigitalActionInput.ContainsKey(actIn))
+        {
+            return DigitalActionValue[actIn];
+        }
+        return KeyValue.BTN_NOT_FOUND;
+    }
+
+    public static float GetAnalogInputAction(ControlAction actIn)
+    {
+        if (AnalogActionInput.ContainsKey(actIn))
+        {
+            return AnalogActionValue[actIn];
+        }
+        return float.MaxValue;
+    }
+
+    /*
     public static KeyValue GetInputValue(KeyCode keyIn)
     {
         if (DigitalInputData.ContainsKey(keyIn))
@@ -105,9 +152,15 @@ public static class GlobalInputController
         }
         return float.MaxValue;
     }
+    */
 
-    public static void CheckAndSetValue(KeyCode keyIn)
+    public static void CheckAndSetKeyValue(ControlAction actIn)
     {
+        if (!DigitalActionInput.ContainsKey(actIn))
+        {
+            return;
+        }
+        KeyCode keyIn = DigitalActionInput[actIn];
         KeyValue frameValue = KeyValue.IDLE;
 
         if (Input.GetKeyDown(keyIn))
@@ -123,78 +176,61 @@ public static class GlobalInputController
             frameValue = KeyValue.UP;
         }
 
-        if (DigitalInputData.ContainsKey(keyIn))
+        DigitalActionValue[actIn] = frameValue;
+    }
+
+    public static void ResetKey(ControlAction actIn)
+    {
+        if (DigitalActionInput.ContainsKey(actIn))
         {
-            DigitalInputData[keyIn] = frameValue;
+            DigitalActionValue[actIn] = KeyValue.NEED_RESET;
         }
     }
 
-    public static void ResetKey(KeyCode keyIn)
+    public static void CheckAndSetAxisValue(ControlAction actIn)
     {
-        if (DigitalInputData.ContainsKey(keyIn))
+        if (!AnalogActionInput.ContainsKey(actIn))
         {
-            DigitalInputData[keyIn] = KeyValue.NEED_RESET;
+            return;
         }
-    }
+        string axisIn = AnalogActionInput[actIn];
 
-    public static void CheckAndSetValue(string axisNameIn)
-    {
-        float frameValue = Input.GetAxisRaw(axisNameIn);
-
-        if (AnalogInputData.ContainsKey(axisNameIn))
-        {
-            AnalogInputData[axisNameIn] = frameValue;
-        }
+        AnalogActionValue[actIn] = Input.GetAxisRaw(axisIn);
     }
 
     public static void UpdateInput()
     {
-        CheckAndSetValue(ControllerData.JumpButton);
-        CheckAndSetValue(ControllerData.JumpKey);
+        CheckAndSetKeyValue(ControlAction.JUMP);
+        CheckAndSetKeyValue(ControlAction.LEFT_GRAB);
+        CheckAndSetKeyValue(ControlAction.RIGHT_GRAB);
+        CheckAndSetKeyValue(ControlAction.DOWN_GRAB);
+        CheckAndSetKeyValue(ControlAction.UP_GRAB);
+        CheckAndSetKeyValue(ControlAction.PAUSE);
+        CheckAndSetKeyValue(ControlAction.CONFIRM);
+        CheckAndSetKeyValue(ControlAction.BACK);
 
-        CheckAndSetValue(ControllerData.LTrickButton);
-        CheckAndSetValue(ControllerData.LTrickKey);
-
-        CheckAndSetValue(ControllerData.RTrickButton);
-        CheckAndSetValue(ControllerData.RTrickKey);
-
-        CheckAndSetValue(ControllerData.DTrickButton);
-        CheckAndSetValue(ControllerData.DTrickKey);
-
-        CheckAndSetValue(ControllerData.UTrickButton);
-        CheckAndSetValue(ControllerData.UTrickKey);
-
-        CheckAndSetValue(ControllerData.PauseButton);
-        CheckAndSetValue(ControllerData.PauseKey);
-
-        CheckAndSetValue(ControllerData.LeftVerticalAxis);
-        CheckAndSetValue(ControllerData.LeftHorizontalAxis);
+        CheckAndSetAxisValue(ControlAction.TURN_AXIS);
+        CheckAndSetAxisValue(ControlAction.SPIN_AXIS);
+        CheckAndSetAxisValue(ControlAction.SLOW_AXIS);
+        CheckAndSetAxisValue(ControlAction.FLIP_AXIS);
     }
 
     public static void FlushInputs()
     {
-        ResetKey(ControllerData.JumpButton);
-        ResetKey(ControllerData.JumpKey);
+        ResetKey(ControlAction.JUMP);
+        ResetKey(ControlAction.LEFT_GRAB);
+        ResetKey(ControlAction.RIGHT_GRAB);
+        ResetKey(ControlAction.DOWN_GRAB);
+        ResetKey(ControlAction.UP_GRAB);
+        ResetKey(ControlAction.PAUSE);
+        ResetKey(ControlAction.CONFIRM);
+        ResetKey(ControlAction.BACK);
 
-        ResetKey(ControllerData.LTrickButton);
-        ResetKey(ControllerData.LTrickKey);
-
-        ResetKey(ControllerData.RTrickButton);
-        ResetKey(ControllerData.RTrickKey);
-
-        ResetKey(ControllerData.DTrickButton);
-        ResetKey(ControllerData.DTrickKey);
-
-        ResetKey(ControllerData.UTrickButton);
-        ResetKey(ControllerData.UTrickKey);
-
-        ResetKey(ControllerData.PauseButton);
-        ResetKey(ControllerData.PauseKey);
     }
 
     public static void LockConfirm()
     {
-        ResetKey(ControllerData.DTrickButton);
+        ResetKey(ControlAction.CONFIRM);
     }
 
     public static void LockInput()
@@ -219,6 +255,57 @@ public static class GlobalInputController
         InputLockTimer = 0.0f;
         InputLocked = false;
         UpdateInput();
+    }
+
+    public static KeyCode GetAnyKey()
+    {
+        if (Input.anyKeyDown)
+        {
+            foreach(KeyCode keyIn in System.Enum.GetValues(typeof(KeyCode)))
+            {
+                if (Input.GetKeyDown(keyIn))
+                {
+                    Debug.Log("key is" + keyIn);
+                    return keyIn;
+                }
+            }
+        }
+        return KeyCode.None;
+    }
+
+    public static bool UpdateAction(ControlAction actIn, KeyCode keyIn)
+    {
+        // check if action is mapped to key
+        // and if key is in the key dictionary
+        // set them all and in controllerdata
+        if (DigitalActionInput.ContainsKey(actIn))
+        {
+            DigitalActionInput.Remove(actIn);
+            DigitalActionValue.Remove(actIn);
+
+            // reset value
+            DigitalActionInput[actIn] = keyIn;
+            DigitalActionValue[actIn] = KeyValue.IDLE;
+
+            return true;
+        }
+        return false;
+    }
+
+    public static bool UpdateAction(ControlAction actIn, string axisIn)
+    {
+        if (AnalogActionInput.ContainsKey(actIn))
+        {
+            AnalogActionInput.Remove(actIn);
+            AnalogActionValue.Remove(actIn);
+
+            // reset value
+            AnalogActionInput[actIn] = axisIn;
+            AnalogActionValue[actIn] = Constants.ZERO_F;
+
+            return true;
+        }
+        return false;
     }
 }
 
@@ -254,16 +341,10 @@ public static class DefaultControls
     public static KeyCode DefaultTrickD = KeyCode.K;
     public static KeyCode DefaultJump = KeyCode.Space;
     public static KeyCode DefaultTuck = KeyCode.E;
+    public static KeyCode DefaultBack = KeyCode.L;
+    public static KeyCode DefaultConfirm = KeyCode.K;
+
     public static string DefaultLHoriz = "Horizontal";
     public static string DefaultLVerti = "Vertical";
-
-    public static KeyCode DefaultPauseKey = KeyCode.Alpha0;
-    public static KeyCode DefaultTrickUKey = KeyCode.Alpha1;
-    public static KeyCode DefaultTrickRKey = KeyCode.Alpha2;
-    public static KeyCode DefaultTrickLKey = KeyCode.Alpha3;
-    public static KeyCode DefaultTrickDKey = KeyCode.Alpha4;
-    public static KeyCode DefaultJumpKey = KeyCode.Alpha5;
-    public static KeyCode DefaultTuckKey = KeyCode.Alpha6;
-
 }
 

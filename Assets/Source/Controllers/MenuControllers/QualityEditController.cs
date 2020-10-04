@@ -12,6 +12,7 @@ public class QualityEditController : IntegerEditController
         ValueDisplay.text = QualitySettings.names[c_controllerData.i];
 
     }
+
     public override void EnginePush()
     {
         ValueDisplay.text = QualitySettings.names[c_controllerData.i];

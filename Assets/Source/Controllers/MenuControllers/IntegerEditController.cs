@@ -14,7 +14,6 @@ public class IntegerEditController : iEditController
     public int i_currentValue;
     public int i_lastStoredValue;
 
-    private IncrementCartridge cart_incr;
 
     public override void CancelDataEdit()
     {
@@ -46,7 +45,7 @@ public class IntegerEditController : iEditController
             return;
         }
 
-        float inputAxisValue = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftHorizontalAxis);
+        float inputAxisValue = GlobalInputController.GetAnalogInputAction(ControlAction.SPIN_AXIS);
         if (inputAxisValue < -0.5f)
         {
             c_controllerData.b_increasing = false;
@@ -71,13 +70,13 @@ public class IntegerEditController : iEditController
             sm_editController.Execute(Command.MENU_IDLE);
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
         {
             ConfirmDataEdit(CurrentTarget);
             Deactivate();
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.RTrickButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.PRESSED)
         {
             CancelDataEdit();
             Deactivate();

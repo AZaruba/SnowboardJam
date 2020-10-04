@@ -26,6 +26,9 @@ public class ControllerInputData
     [SerializeField] public KeyCode PauseButton;
     [SerializeField] public KeyCode PauseKey;
 
+    [SerializeField] public KeyCode ConfirmButton;
+    [SerializeField] public KeyCode BackButton;
+
     [SerializeField] public string LeftHorizontalAxis;
     [SerializeField] public string LeftVerticalAxis;
     #endregion

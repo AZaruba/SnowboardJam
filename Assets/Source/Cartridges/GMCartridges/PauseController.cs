@@ -56,8 +56,7 @@ public class PauseController : MonoBehaviour
     void Update()
     {
         // TODO: Input system update
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.PauseButton) == KeyValue.PRESSED ||
-            GlobalInputController.GetInputValue(GlobalInputController.ControllerData.PauseKey) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.PAUSE) == KeyValue.PRESSED)
         {
             Message pauseMessage = new Message((c_data.b_isPaused ? 0 : 1)); // if we want to pause, send 1, otherwise 0
             //isPaused = !isPaused;
