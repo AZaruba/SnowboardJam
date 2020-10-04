@@ -183,7 +183,7 @@ public static class GlobalInputController
     {
         if (DigitalActionInput.ContainsKey(actIn))
         {
-            DigitalActionValue[actIn] = KeyValue.NEED_RESET;
+            DigitalActionValue[actIn] = KeyValue.IDLE;
         }
     }
 

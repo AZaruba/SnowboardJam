@@ -102,6 +102,10 @@ public class IntegerEditController : iEditController
     public override void Deactivate()
     {
         sm_editController.Execute(Command.MENU_HIDE);
+
+        // hack fix: reset the menu action keys as the Video Quality Edit Controller seems to keep the button held on confirmation
+        GlobalInputController.ResetKey(ControlAction.CONFIRM);
+        GlobalInputController.ResetKey(ControlAction.BACK);
     }
 
     public void InitializeCarts()

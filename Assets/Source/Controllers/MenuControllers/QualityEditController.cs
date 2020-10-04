@@ -13,6 +13,19 @@ public class QualityEditController : IntegerEditController
 
     }
 
+    public override void CancelDataEdit()
+    {
+        c_controllerData.i = i_lastStoredValue;
+        EnginePush();
+        MessageServer.SendMessage(MessageID.EDIT_END, new Message(c_controllerData.i));
+    }
+
+    public override void ConfirmDataEdit(DataTarget targetIn)
+    {
+        MessageServer.SendMessage(MessageID.EDIT_END, new Message(c_controllerData.i));
+        GlobalGameData.SetSettingsValue(targetIn, c_controllerData.i);
+    }
+
     public override void EnginePush()
     {
         ValueDisplay.text = QualitySettings.names[c_controllerData.i];
