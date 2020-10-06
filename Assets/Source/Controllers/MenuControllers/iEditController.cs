@@ -48,6 +48,7 @@ public abstract class iEditController : MonoBehaviour
     public virtual void Deactivate()
     {
         sm_editController.Execute(Command.MENU_HIDE);
+        GlobalInputController.FlushNextFrame();
     }    
 
     public virtual void InitializeStateMachine()
@@ -64,13 +65,3 @@ public abstract class iEditController : MonoBehaviour
     }
 
 }
-
-/* TODO:
- * 
- * 1) Implement float, int, resolution, and boolean edit
- * 2) Create "deactivated" state for menu that prevents
- *    The menu from being manipulated
- * 3) update value and save PlayerPrefs on confirm or exit
- * 4) Add "default" that checks if PlayerPrefs values have
- *    been initialized and adds default values if not
- */ 

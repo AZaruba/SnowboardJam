@@ -40,6 +40,7 @@ public static class GlobalInputController
     private static bool InputInitialized = false;
 
     private static bool InputLocked = false;
+    private static bool InputToFlush = false;
     private static float InputLockTimer = 0.0f;
     private static float InputLockTimeLimit = 0.25f;
 
@@ -134,26 +135,6 @@ public static class GlobalInputController
         return float.MaxValue;
     }
 
-    /*
-    public static KeyValue GetInputValue(KeyCode keyIn)
-    {
-        if (DigitalInputData.ContainsKey(keyIn))
-        {
-            return DigitalInputData[keyIn];
-        }
-        return KeyValue.BTN_NOT_FOUND;
-    }
-
-    public static float GetInputValue(string axisIn)
-    {
-        if (AnalogInputData.ContainsKey(axisIn))
-        {
-            return AnalogInputData[axisIn];
-        }
-        return float.MaxValue;
-    }
-    */
-
     public static void CheckAndSetKeyValue(ControlAction actIn)
     {
         if (!DigitalActionInput.ContainsKey(actIn))
@@ -200,6 +181,12 @@ public static class GlobalInputController
 
     public static void UpdateInput()
     {
+        if (InputToFlush)
+        {
+            FlushInputs();
+            InputToFlush = false;
+            return;
+        }
         CheckAndSetKeyValue(ControlAction.JUMP);
         CheckAndSetKeyValue(ControlAction.LEFT_GRAB);
         CheckAndSetKeyValue(ControlAction.RIGHT_GRAB);
@@ -225,7 +212,11 @@ public static class GlobalInputController
         ResetKey(ControlAction.PAUSE);
         ResetKey(ControlAction.CONFIRM);
         ResetKey(ControlAction.BACK);
+    }
 
+    public static void FlushNextFrame()
+    {
+        InputToFlush = true;
     }
 
     public static void LockConfirm()
@@ -265,7 +256,6 @@ public static class GlobalInputController
             {
                 if (Input.GetKeyDown(keyIn))
                 {
-                    Debug.Log("key is" + keyIn);
                     return keyIn;
                 }
             }

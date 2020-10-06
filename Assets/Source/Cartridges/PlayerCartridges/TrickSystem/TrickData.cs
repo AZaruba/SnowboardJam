@@ -10,7 +10,7 @@ public class TrickData : MonoBehaviour
     [SerializeField] private TrickName UpTrick;
 
     private TrickName ActiveTrickName;
-    private KeyCode ActiveTrickKey;
+    private ControlAction ActiveTrickAction;
     private float CurrentTrickPoints;
     private float ActiveTrickTime;
 
@@ -19,7 +19,7 @@ public class TrickData : MonoBehaviour
         CurrentTrickPoints = 0;
         ActiveTrickName = TrickName.BLANK_TRICK;
         ActiveTrickTime = Constants.ZERO_F;
-        ActiveTrickKey = KeyCode.None;
+        ActiveTrickAction = ControlAction.ERROR_ACTION;
     }
 
     public TrickName t_activeTrickName
@@ -28,10 +28,10 @@ public class TrickData : MonoBehaviour
         set { ActiveTrickName = value; }
     }
 
-    public KeyCode k_activeTrickKey
+    public ControlAction k_activeTrickAction
     {
-        get { return ActiveTrickKey; }
-        set { ActiveTrickKey = value; }
+        get { return ActiveTrickAction; }
+        set { ActiveTrickAction = value; }
     }
 
     public float i_trickPoints

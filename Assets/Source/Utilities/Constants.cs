@@ -28,4 +28,5 @@ public enum DataTarget
     MUSIC_LEVEL,
     VOICE_LEVEL,
     SFX_LEVEL,
+    ANY_KEY,
 }

@@ -540,27 +540,27 @@ public class PlayerController : MonoBehaviour, iEntityController {
         if (!TrickHit && GlobalInputController.GetInputAction(ControlAction.LEFT_GRAB) == KeyValue.PRESSED)
         {
             TrickHit = true;
-            trickData.k_activeTrickKey = GlobalInputController.GetInputKey(ControlAction.LEFT_GRAB); // change to reference actions?
+            trickData.k_activeTrickAction = ControlAction.LEFT_GRAB;
             trickData.t_activeTrickName = trickData.trick_left;
         }
         if (!TrickHit && GlobalInputController.GetInputAction(ControlAction.UP_GRAB) == KeyValue.PRESSED)
         {
             TrickHit = true;
-            trickData.k_activeTrickKey = GlobalInputController.GetInputKey(ControlAction.UP_GRAB);
+            trickData.k_activeTrickAction = ControlAction.UP_GRAB;
             trickData.t_activeTrickName = trickData.trick_up;
         }
 
         if (!TrickHit && GlobalInputController.GetInputAction(ControlAction.RIGHT_GRAB) == KeyValue.PRESSED)
         {
             TrickHit = true;
-            trickData.k_activeTrickKey = GlobalInputController.GetInputKey(ControlAction.RIGHT_GRAB);
+            trickData.k_activeTrickAction = ControlAction.RIGHT_GRAB;
             trickData.t_activeTrickName = trickData.trick_right;
         }
 
         if (!TrickHit && GlobalInputController.GetInputAction(ControlAction.DOWN_GRAB) == KeyValue.PRESSED)
         {
             TrickHit = true;
-            trickData.k_activeTrickKey = GlobalInputController.GetInputKey(ControlAction.DOWN_GRAB);
+            trickData.k_activeTrickAction = ControlAction.DOWN_GRAB;
             trickData.t_activeTrickName = trickData.trick_down;
         }
 
@@ -569,7 +569,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.START_TRICK);
             sm_tricking.Execute(Command.SCORE_TRICK);
         }
-        else if (true) //GlobalInputController.GetInputAction(trickData.k_activeTrickKey) == KeyValue.UP)
+        else if (GlobalInputController.GetInputAction(trickData.k_activeTrickAction) == KeyValue.UP)
         {
             sm_tricking.Execute(Command.END_TRICK);
         }

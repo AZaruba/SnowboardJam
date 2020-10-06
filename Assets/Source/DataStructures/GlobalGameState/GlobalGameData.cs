@@ -14,14 +14,29 @@ public struct CourseRecordInfo
     public CharacterSelection bestScoreCharacter;
 }
 
+public struct ControlSettings
+{
+    public int JumpBtn;
+    public int CrouchBtn;
+
+    public int DownGrabBtn;
+    public int LeftGrabBtn;
+    public int RightGrabBtn;
+    public int UpGrabBtn;
+
+    public int ConfirmBtn;
+    public int BackBtn;
+    public int PauseBtn;
+
+    public string SpinAxis;
+    public string FlipAxis;
+}
+
 /// <summary>
 /// This struct encompasses all video settings, including graphics quality and resolution
 /// </summary>
 public struct VideoSettings
 {
-    public int VerticalResolution; // eliminate
-    public int HorizontalResolution; // eliminate
-
     public int ScreenResIndex;
     public int RenderMultiplier;
     public FullScreenMode ScreenMode;
@@ -67,12 +82,29 @@ public static class PlayerPrefsNames
     public static string VQuality = "VideoQuality";
     public static string FSMode = "FullScreenMode";
 
+    // Audio settings
     public static string AudioEn = "AudioEnabled";
 
     public static string MasterAudioL = "MasterAudio";
     public static string MusicL = "MusicLevel";
     public static string VoiceL = "VoiceLevel";
     public static string SfxL = "SfxLevel";
+
+    // control settings
+    public static string JumpBtn = "Jump";
+    public static string CrouchBtn = "Crouch";
+
+    public static string DownGrabBtn = "DownGrab";
+    public static string LeftGrabBtn = "LeftGrab";
+    public static string RightGrabBtn = "RightGrab";
+    public static string UpGrabBtn = "UpGrab";
+
+    public static string ConfirmBtn = "Confirm";
+    public static string BackBtn = "Back";
+    public static string PauseBtn = "Pause";
+
+    public static string SpinAxis = "SpinAx";
+    public static string FlipAxis = "FlipAx";
 }
 
 /// <summary>
@@ -88,6 +120,7 @@ public static class GlobalGameData
     public static GameMode selectedMode;
 
     public static PersistentSaveData currentSaveData;
+    public static ControlSettings controlSettings;
     public static VideoSettings videoSettings;
     public static AudioSettings audioSettings;
 
@@ -123,6 +156,104 @@ public static class GlobalGameData
     public static float GetSettingsFloat(DataTarget targetIn)
     {
         return default;
+    }
+
+    public static bool SetActionSetting(ControlAction actIn, KeyCode keyIn)
+    {
+        switch (actIn)
+        {
+            case ControlAction.BACK:
+                controlSettings.BackBtn = (int)keyIn;
+                SaveControlSettings();
+                return true;
+            case ControlAction.CONFIRM:
+                controlSettings.ConfirmBtn = (int)keyIn;
+                SaveControlSettings();
+                return true;
+            case ControlAction.PAUSE:
+                controlSettings.PauseBtn = (int)keyIn;
+                SaveControlSettings();
+                return true;
+            case ControlAction.JUMP:
+                controlSettings.JumpBtn = (int)keyIn;
+                SaveControlSettings();
+                return true;
+            case ControlAction.CROUCH:
+                controlSettings.CrouchBtn = (int)keyIn;
+                SaveControlSettings();
+                return true;
+            case ControlAction.DOWN_GRAB:
+                controlSettings.DownGrabBtn = (int)keyIn;
+                SaveControlSettings();
+                return true;
+            case ControlAction.LEFT_GRAB:
+                controlSettings.LeftGrabBtn = (int)keyIn;
+                SaveControlSettings();
+                return true;
+            case ControlAction.RIGHT_GRAB:
+                controlSettings.RightGrabBtn = (int)keyIn;
+                SaveControlSettings();
+                return true;
+            case ControlAction.UP_GRAB:
+                controlSettings.UpGrabBtn = (int)keyIn;
+                SaveControlSettings();
+                return true;
+        }
+        return false;
+    }
+
+    public static bool SetActionSetting(ControlAction actIn, string axName)
+    {
+        switch (actIn)
+        {
+            case ControlAction.SPIN_AXIS:
+                controlSettings.SpinAxis = axName;
+                SaveControlSettings();
+                return true;
+            case ControlAction.FLIP_AXIS:
+                controlSettings.FlipAxis = axName;
+                SaveControlSettings();
+                return true;
+        }
+        return false;
+    }
+
+    public static KeyCode GetActionSetting(ControlAction actIn)
+    {
+        switch (actIn)
+        {
+            case ControlAction.BACK:
+                return (KeyCode)controlSettings.BackBtn;
+            case ControlAction.CONFIRM:
+                return (KeyCode)controlSettings.ConfirmBtn;
+            case ControlAction.PAUSE:
+                return (KeyCode)controlSettings.PauseBtn;
+            case ControlAction.JUMP:
+                return (KeyCode)controlSettings.JumpBtn;
+            case ControlAction.CROUCH:
+                return (KeyCode)controlSettings.CrouchBtn;
+            case ControlAction.DOWN_GRAB:
+                return (KeyCode)controlSettings.DownGrabBtn;
+            case ControlAction.LEFT_GRAB:
+                return (KeyCode)controlSettings.LeftGrabBtn;
+            case ControlAction.RIGHT_GRAB:
+                return (KeyCode)controlSettings.RightGrabBtn;
+            case ControlAction.UP_GRAB:
+                return (KeyCode)controlSettings.UpGrabBtn;
+        }
+        return KeyCode.None;
+    }
+
+    public static string GetAnalogActionSetting(ControlAction actIn)
+    {
+        switch (actIn)
+        {
+            case ControlAction.SPIN_AXIS:
+                return controlSettings.SpinAxis;
+            case ControlAction.FLIP_AXIS:
+                return controlSettings.FlipAxis;
+        }
+        return "";
     }
 
     public static bool SetSettingsValue(DataTarget target, int value)
@@ -345,9 +476,153 @@ public static class GlobalGameData
         return status;
     }
 
+    private static bool SaveControlSettings()
+    {
+        PlayerPrefs.SetInt(PlayerPrefsNames.JumpBtn, controlSettings.JumpBtn);
+        PlayerPrefs.SetInt(PlayerPrefsNames.CrouchBtn, controlSettings.CrouchBtn);
+
+        PlayerPrefs.SetInt(PlayerPrefsNames.DownGrabBtn, controlSettings.DownGrabBtn);
+        PlayerPrefs.SetInt(PlayerPrefsNames.LeftGrabBtn, controlSettings.LeftGrabBtn);
+        PlayerPrefs.SetInt(PlayerPrefsNames.RightGrabBtn, controlSettings.RightGrabBtn);
+        PlayerPrefs.SetInt(PlayerPrefsNames.UpGrabBtn, controlSettings.UpGrabBtn);
+
+        PlayerPrefs.SetInt(PlayerPrefsNames.ConfirmBtn, controlSettings.ConfirmBtn);
+        PlayerPrefs.SetInt(PlayerPrefsNames.BackBtn, controlSettings.BackBtn);
+        PlayerPrefs.SetInt(PlayerPrefsNames.PauseBtn, controlSettings.PauseBtn);
+
+        PlayerPrefs.SetString(PlayerPrefsNames.FlipAxis, controlSettings.FlipAxis);
+        PlayerPrefs.SetString(PlayerPrefsNames.SpinAxis, controlSettings.SpinAxis);
+        return true;
+    }
+
+    private static bool LoadControlSettings()
+    {
+        bool status = true;
+        int intVal;
+
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.JumpBtn);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.JumpBtn = (int)KeyCode.Space;
+        }
+        else
+        {
+            controlSettings.JumpBtn = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.CrouchBtn);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.CrouchBtn = (int)KeyCode.LeftShift;
+        }
+        else
+        {
+            controlSettings.CrouchBtn = intVal;
+        }
+
+
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.DownGrabBtn);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.DownGrabBtn = (int)KeyCode.K;
+        }
+        else
+        {
+            controlSettings.DownGrabBtn = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.LeftGrabBtn);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.LeftGrabBtn = (int)KeyCode.J;
+        }
+        else
+        {
+            controlSettings.LeftGrabBtn = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.RightGrabBtn);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.RightGrabBtn = (int)KeyCode.L;
+        }
+        else
+        {
+            controlSettings.RightGrabBtn = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.UpGrabBtn);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.UpGrabBtn = (int)KeyCode.I;
+        }
+        else
+        {
+            controlSettings.UpGrabBtn = intVal;
+        }
+
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.BackBtn);
+        if(intVal == default)
+        {
+            status = false;
+            controlSettings.BackBtn = (int)KeyCode.L;
+        }
+        else
+        {
+            controlSettings.BackBtn = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.ConfirmBtn);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.ConfirmBtn = (int)KeyCode.K;
+        }
+        else
+        {
+            controlSettings.ConfirmBtn = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.PauseBtn);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.PauseBtn = (int)KeyCode.P;
+        }
+        else
+        {
+            controlSettings.PauseBtn = intVal;
+        }
+
+        string strVal;
+        strVal = PlayerPrefs.GetString(PlayerPrefsNames.FlipAxis);
+        if (strVal == default)
+        {
+            status = false;
+            controlSettings.FlipAxis = "Vertical";
+        }
+        else
+        {
+            controlSettings.FlipAxis = strVal;
+        }
+        strVal = PlayerPrefs.GetString(PlayerPrefsNames.SpinAxis);
+        if (strVal == default)
+        {
+            status = false;
+            controlSettings.SpinAxis = "Horizontal";
+        }
+        else
+        {
+            controlSettings.SpinAxis = strVal;
+        }
+
+        return status;
+    }
+
     public static void CheckAndSetDefaults()
     {
         LoadAudioSettings();
         LoadVideoSettings();
+        LoadControlSettings();
     }
 }
