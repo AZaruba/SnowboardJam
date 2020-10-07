@@ -49,6 +49,12 @@ public class MenuController : MonoBehaviour
 
     public void UpdateMenu()
     {
+        if (c_activeMenuData.b_editorActive)
+        {
+            c_activeMenuItem.UpdateEditor();
+            return;
+        }
+
         if (c_activeMenuData.b_menuActive == false)
         {
             return;

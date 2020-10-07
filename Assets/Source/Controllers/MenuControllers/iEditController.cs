@@ -19,7 +19,7 @@ public abstract class iEditController : MonoBehaviour
         InitializeStateMachine();
     }
 
-    private void Update()
+    public virtual void UpdateEditor()
     {
         if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
         {

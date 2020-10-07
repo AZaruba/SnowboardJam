@@ -45,7 +45,7 @@ public class InputEditController : iEditController
     }
 
     // Update is called once per frame
-    void Update()
+    public override void UpdateEditor()
     {
         if (c_controllerData.b_editorActive == false)
         {

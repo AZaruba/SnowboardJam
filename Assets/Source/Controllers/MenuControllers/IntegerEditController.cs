@@ -38,7 +38,7 @@ public class IntegerEditController : iEditController
         ValueDisplay.text = c_controllerData.i.ToString();
     }
 
-    private void Update()
+    public override void UpdateEditor()
     {
         if (c_controllerData.b_editorActive == false)
         {

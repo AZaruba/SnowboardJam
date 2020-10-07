@@ -74,28 +74,28 @@ public static class GlobalInputController
         AnalogActionValue = new Dictionary<ControlAction, float>();
 
         DigitalActionValue[ControlAction.JUMP] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.JUMP] = DefaultControls.DefaultJump;
+        DigitalActionInput[ControlAction.JUMP] = GlobalGameData.GetActionSetting(ControlAction.JUMP);
 
         DigitalActionValue[ControlAction.DOWN_GRAB] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.DOWN_GRAB] = DefaultControls.DefaultTrickD;
+        DigitalActionInput[ControlAction.DOWN_GRAB] = GlobalGameData.GetActionSetting(ControlAction.DOWN_GRAB);
 
         DigitalActionValue[ControlAction.LEFT_GRAB] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.LEFT_GRAB] = DefaultControls.DefaultTrickL;
+        DigitalActionInput[ControlAction.LEFT_GRAB] = GlobalGameData.GetActionSetting(ControlAction.LEFT_GRAB);
 
         DigitalActionValue[ControlAction.RIGHT_GRAB] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.RIGHT_GRAB] = DefaultControls.DefaultTrickR;
+        DigitalActionInput[ControlAction.RIGHT_GRAB] = GlobalGameData.GetActionSetting(ControlAction.RIGHT_GRAB);
 
         DigitalActionValue[ControlAction.UP_GRAB] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.UP_GRAB] = DefaultControls.DefaultTrickU;
+        DigitalActionInput[ControlAction.UP_GRAB] = GlobalGameData.GetActionSetting(ControlAction.UP_GRAB);
 
         DigitalActionValue[ControlAction.PAUSE] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.PAUSE] = DefaultControls.DefaultPause;
+        DigitalActionInput[ControlAction.PAUSE] = GlobalGameData.GetActionSetting(ControlAction.PAUSE);
 
         DigitalActionValue[ControlAction.CONFIRM] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.CONFIRM] = DefaultControls.DefaultConfirm;
+        DigitalActionInput[ControlAction.CONFIRM] = GlobalGameData.GetActionSetting(ControlAction.CONFIRM);
 
         DigitalActionValue[ControlAction.BACK] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.BACK] = DefaultControls.DefaultBack;
+        DigitalActionInput[ControlAction.BACK] = GlobalGameData.GetActionSetting(ControlAction.BACK);
 
         AnalogActionInput[ControlAction.SPIN_AXIS] = DefaultControls.DefaultLHoriz;
         AnalogActionInput[ControlAction.TURN_AXIS] = DefaultControls.DefaultLHoriz;
@@ -314,6 +314,7 @@ public class InputController : MonoBehaviour
 
     private void Update()
     {
+        GlobalInputController.FlushInputs();
         if (GlobalInputController.InputIsLocked())
         {
             return;

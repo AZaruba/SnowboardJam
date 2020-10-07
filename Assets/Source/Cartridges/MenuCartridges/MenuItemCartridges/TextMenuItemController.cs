@@ -35,6 +35,15 @@ public class TextMenuItemController : iMenuItemController, iEntityController
         EngineUpdate();
     }
 
+    public override void UpdateEditor()
+    {
+        if (ChildEditController == null)
+        {
+            return;
+        }
+        ChildEditController.UpdateEditor();
+    }
+
     public void EngineUpdate()
     {
         ItemTransform.anchoredPosition = c_itemActiveData.v_itemPosition;
