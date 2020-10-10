@@ -240,6 +240,18 @@ public static class GlobalGameData
                 return (KeyCode)controlSettings.RightGrabBtn;
             case ControlAction.UP_GRAB:
                 return (KeyCode)controlSettings.UpGrabBtn;
+            case ControlAction.DOWN_BIN:
+                return DefaultControls.DefaultBinD;
+            case ControlAction.LEFT_BIN:
+                return DefaultControls.DefaultBinL;
+            case ControlAction.RIGHT_BIN:
+                return DefaultControls.DefaultBinR;
+            case ControlAction.UP_BIN:
+                return DefaultControls.DefaultBinU;
+            case ControlAction.SAFETY_CONFIRM:
+                return DefaultControls.SafetyConfirm;
+            case ControlAction.SAFETY_BACK:
+                return DefaultControls.SafetyBack;
         }
         return KeyCode.None;
     }

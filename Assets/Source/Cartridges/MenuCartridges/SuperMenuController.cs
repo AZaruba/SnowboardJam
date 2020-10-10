@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SuperMenuController : MonoBehaviour
 {
     [SerializeField] private List<MenuController> MenuControllers;
+    [SerializeField] private int PreviousSceneID;
+    [SerializeField] private bool EmptyStackReturnsToPrevious;
 
     private iMessageClient c_client;
     private MenuController DefaultMenuController;
@@ -69,6 +72,11 @@ public class SuperMenuController : MonoBehaviour
     {
         if (s_controllerStack.Count == 0)
         {
+            if (EmptyStackReturnsToPrevious)
+            {
+                MessageServer.OnSceneChange();
+                SceneManager.LoadScene(PreviousSceneID, LoadSceneMode.Single);
+            }
             return;
         }
 

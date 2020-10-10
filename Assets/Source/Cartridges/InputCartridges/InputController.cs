@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+// using binary values
 public enum KeyValue
 {
-    BTN_NOT_FOUND,
-    IDLE,
-    UP,
-    PRESSED,
-    HELD,
-    NEED_RESET,
+    BTN_NOT_FOUND = 0b00000,
+    IDLE = 0b000001,
+    UP = 0b00010,
+    PRESSED = 0b00100,
+    HELD = 0b01000,
+    NEED_RESET = 0b10000,
+    AXIS_BIN = 0b01110,
 }
 
 public enum ControlAction
@@ -28,9 +29,17 @@ public enum ControlAction
     SLOW_AXIS,
     FLIP_AXIS,
 
+    UP_BIN,
+    DOWN_BIN,
+    LEFT_BIN,
+    RIGHT_BIN,
+
     CONFIRM,
     BACK,
     PAUSE,
+
+    SAFETY_CONFIRM,
+    SAFETY_BACK,
 }
 
 public static class GlobalInputController
@@ -97,6 +106,18 @@ public static class GlobalInputController
         DigitalActionValue[ControlAction.BACK] = KeyValue.IDLE;
         DigitalActionInput[ControlAction.BACK] = GlobalGameData.GetActionSetting(ControlAction.BACK);
 
+        DigitalActionValue[ControlAction.DOWN_BIN] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.DOWN_BIN] = GlobalGameData.GetActionSetting(ControlAction.DOWN_BIN);
+
+        DigitalActionValue[ControlAction.LEFT_BIN] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.LEFT_BIN] = GlobalGameData.GetActionSetting(ControlAction.LEFT_BIN);
+
+        DigitalActionValue[ControlAction.RIGHT_BIN] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.RIGHT_BIN] = GlobalGameData.GetActionSetting(ControlAction.RIGHT_BIN);
+
+        DigitalActionValue[ControlAction.UP_BIN] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.UP_BIN] = GlobalGameData.GetActionSetting(ControlAction.UP_BIN);
+
         AnalogActionInput[ControlAction.SPIN_AXIS] = DefaultControls.DefaultLHoriz;
         AnalogActionInput[ControlAction.TURN_AXIS] = DefaultControls.DefaultLHoriz;
         AnalogActionInput[ControlAction.FLIP_AXIS] = DefaultControls.DefaultLVerti;
@@ -106,6 +127,12 @@ public static class GlobalInputController
         AnalogActionValue[ControlAction.TURN_AXIS] = Constants.ZERO_F;
         AnalogActionValue[ControlAction.FLIP_AXIS] = Constants.ZERO_F;
         AnalogActionValue[ControlAction.SLOW_AXIS] = Constants.ZERO_F;
+
+        DigitalActionValue[ControlAction.SAFETY_BACK] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.SAFETY_BACK] = GlobalGameData.GetActionSetting(ControlAction.SAFETY_BACK);
+
+        DigitalActionValue[ControlAction.SAFETY_CONFIRM] = KeyValue.IDLE;
+        DigitalActionInput[ControlAction.SAFETY_CONFIRM] = GlobalGameData.GetActionSetting(ControlAction.SAFETY_CONFIRM);
     }
 
     public static KeyCode GetInputKey(ControlAction actIn)
@@ -121,18 +148,60 @@ public static class GlobalInputController
         // assume no keys are assigned to one and not the other
         if (DigitalActionInput.ContainsKey(actIn))
         {
+            if (actIn == ControlAction.CONFIRM)
+            {
+                KeyValue safetyConfirm = DigitalActionValue[ControlAction.SAFETY_CONFIRM];
+                if ((safetyConfirm & KeyValue.AXIS_BIN) != 0)
+                {
+                    return safetyConfirm;
+                }
+            }
+            else if (actIn == ControlAction.BACK)
+            {
+                KeyValue safetyBack = DigitalActionValue[ControlAction.SAFETY_BACK];
+                if ((safetyBack & KeyValue.AXIS_BIN) != 0)
+                {
+                    return safetyBack;
+                }
+            }
+
             return DigitalActionValue[actIn];
         }
         return KeyValue.BTN_NOT_FOUND;
     }
 
+    public static bool GetBinaryAnalogAction(ControlAction actIn, out float valueOut)
+    {
+        valueOut = Constants.ZERO_F;
+
+        if (actIn == ControlAction.TURN_AXIS ||
+            actIn == ControlAction.SPIN_AXIS)
+        {
+            valueOut = (GetInputAction(ControlAction.RIGHT_BIN) & KeyValue.AXIS_BIN) != 0 ? 1 : valueOut;
+            valueOut = (GetInputAction(ControlAction.LEFT_BIN) & KeyValue.AXIS_BIN) != 0 ? -1 : valueOut;
+        }
+        else if (actIn == ControlAction.SLOW_AXIS ||
+            actIn == ControlAction.FLIP_AXIS)
+        {
+            valueOut = (GetInputAction(ControlAction.UP_BIN) & KeyValue.AXIS_BIN) != 0 ? 1 : valueOut;
+            valueOut = (GetInputAction(ControlAction.DOWN_BIN) & KeyValue.AXIS_BIN) != 0 ? -1 : valueOut;
+        }
+
+        return !valueOut.Equals(Constants.ZERO_F);
+    }
+
     public static float GetAnalogInputAction(ControlAction actIn)
     {
+        float returnValue = float.MaxValue;
         if (AnalogActionInput.ContainsKey(actIn))
         {
+            if (GetBinaryAnalogAction(actIn, out returnValue))
+            {
+                return returnValue;
+            }
             return AnalogActionValue[actIn];
         }
-        return float.MaxValue;
+        return returnValue;
     }
 
     public static void CheckAndSetKeyValue(ControlAction actIn)
@@ -192,14 +261,23 @@ public static class GlobalInputController
         CheckAndSetKeyValue(ControlAction.RIGHT_GRAB);
         CheckAndSetKeyValue(ControlAction.DOWN_GRAB);
         CheckAndSetKeyValue(ControlAction.UP_GRAB);
+
         CheckAndSetKeyValue(ControlAction.PAUSE);
         CheckAndSetKeyValue(ControlAction.CONFIRM);
         CheckAndSetKeyValue(ControlAction.BACK);
+
+        CheckAndSetKeyValue(ControlAction.LEFT_BIN);
+        CheckAndSetKeyValue(ControlAction.RIGHT_BIN);
+        CheckAndSetKeyValue(ControlAction.DOWN_BIN);
+        CheckAndSetKeyValue(ControlAction.UP_BIN);
 
         CheckAndSetAxisValue(ControlAction.TURN_AXIS);
         CheckAndSetAxisValue(ControlAction.SPIN_AXIS);
         CheckAndSetAxisValue(ControlAction.SLOW_AXIS);
         CheckAndSetAxisValue(ControlAction.FLIP_AXIS);
+
+        CheckAndSetKeyValue(ControlAction.SAFETY_CONFIRM);
+        CheckAndSetKeyValue(ControlAction.SAFETY_BACK);
     }
 
     public static void FlushInputs()
@@ -209,9 +287,18 @@ public static class GlobalInputController
         ResetKey(ControlAction.RIGHT_GRAB);
         ResetKey(ControlAction.DOWN_GRAB);
         ResetKey(ControlAction.UP_GRAB);
+
+        ResetKey(ControlAction.UP_BIN);
+        ResetKey(ControlAction.LEFT_BIN);
+        ResetKey(ControlAction.RIGHT_BIN);
+        ResetKey(ControlAction.DOWN_BIN);
+
         ResetKey(ControlAction.PAUSE);
         ResetKey(ControlAction.CONFIRM);
         ResetKey(ControlAction.BACK);
+
+        ResetKey(ControlAction.SAFETY_CONFIRM);
+        ResetKey(ControlAction.SAFETY_BACK);
     }
 
     public static void FlushNextFrame()
@@ -331,9 +418,18 @@ public static class DefaultControls
     public static KeyCode DefaultTrickL = KeyCode.J;
     public static KeyCode DefaultTrickD = KeyCode.K;
     public static KeyCode DefaultJump = KeyCode.Space;
+
     public static KeyCode DefaultTuck = KeyCode.E;
     public static KeyCode DefaultBack = KeyCode.L;
     public static KeyCode DefaultConfirm = KeyCode.K;
+
+    public static KeyCode DefaultBinU = KeyCode.UpArrow;
+    public static KeyCode DefaultBinR = KeyCode.RightArrow;
+    public static KeyCode DefaultBinL = KeyCode.LeftArrow;
+    public static KeyCode DefaultBinD = KeyCode.DownArrow;
+
+    public static KeyCode SafetyConfirm = KeyCode.Return;
+    public static KeyCode SafetyBack = KeyCode.Backspace;
 
     public static string DefaultLHoriz = "Horizontal";
     public static string DefaultLVerti = "Vertical";

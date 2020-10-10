@@ -562,6 +562,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MenuControllers:
   - {fileID: 1526643795}
+  PreviousSceneID: 0
+  EmptyStackReturnsToPrevious: 1
 --- !u!1001 &766099307
 PrefabInstance:
   m_ObjectHideFlags: 0
