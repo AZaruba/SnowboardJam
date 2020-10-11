@@ -36,7 +36,7 @@ public class PauseMenuController : MonoBehaviour
         rectTransform.anchoredPosition = c_activeMenuData.v_currentPosition;
         if (c_activeMenuData.b_showMenu == true)
         {
-            float inputAxisValue = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis);
+            float inputAxisValue = GlobalInputController.GetAnalogInputAction(ControlAction.FLIP_AXIS);
             if (inputAxisValue > 0.5f)
             {
                 c_activeMenuData.i_menuDir = -1; // menus are often organized top to bottom
@@ -50,7 +50,7 @@ public class PauseMenuController : MonoBehaviour
                 c_activeMenuData.i_menuDir = 0;
             }
 
-            if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
+            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
             {
                 c_activeMenuItem.ExecuteMenuCommand();
             }

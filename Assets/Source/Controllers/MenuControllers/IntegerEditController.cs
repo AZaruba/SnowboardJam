@@ -6,15 +6,14 @@ using UnityEngine.UI;
 
 public class IntegerEditController : iEditController
 {
-    [SerializeField] int DefaultValue;
-    [SerializeField] int MinimumValue;
-    [SerializeField] int MaximumValue;
-    [SerializeField] Text ValueDisplay;
+    [SerializeField] public int DefaultValue;
+    [SerializeField] public int MinimumValue;
+    [SerializeField] public int MaximumValue;
+    [SerializeField] public Text ValueDisplay;
 
-    private int i_currentValue;
-    private int i_lastStoredValue;
+    public int i_currentValue;
+    public int i_lastStoredValue;
 
-    private IncrementCartridge cart_incr;
 
     public override void CancelDataEdit()
     {
@@ -39,14 +38,14 @@ public class IntegerEditController : iEditController
         ValueDisplay.text = c_controllerData.i.ToString();
     }
 
-    private void Update()
+    public override void UpdateEditor()
     {
         if (c_controllerData.b_editorActive == false)
         {
             return;
         }
 
-        float inputAxisValue = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftHorizontalAxis);
+        float inputAxisValue = GlobalInputController.GetAnalogInputAction(ControlAction.SPIN_AXIS);
         if (inputAxisValue < -0.5f)
         {
             c_controllerData.b_increasing = false;
@@ -71,13 +70,13 @@ public class IntegerEditController : iEditController
             sm_editController.Execute(Command.MENU_IDLE);
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
         {
             ConfirmDataEdit(CurrentTarget);
             Deactivate();
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.RTrickButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.PRESSED)
         {
             CancelDataEdit();
             Deactivate();
@@ -87,7 +86,7 @@ public class IntegerEditController : iEditController
         EnginePush();
     }
 
-    public void EnginePush()
+    public virtual void EnginePush()
     {
         ValueDisplay.text = c_controllerData.i.ToString();
     }
@@ -103,6 +102,10 @@ public class IntegerEditController : iEditController
     public override void Deactivate()
     {
         sm_editController.Execute(Command.MENU_HIDE);
+
+        // hack fix: reset the menu action keys as the Video Quality Edit Controller seems to keep the button held on confirmation
+        GlobalInputController.ResetKey(ControlAction.CONFIRM);
+        GlobalInputController.ResetKey(ControlAction.BACK);
     }
 
     public void InitializeCarts()

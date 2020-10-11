@@ -22,6 +22,11 @@ public abstract class iMenuItemController :  MonoBehaviour
         sm_menuItem.Execute(cmd);
     }
 
+    public virtual void UpdateEditor()
+    {
+
+    }
+
     public abstract void InitializeStateMachine();
     public abstract void InitializeData();
 

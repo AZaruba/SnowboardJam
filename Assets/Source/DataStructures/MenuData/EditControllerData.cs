@@ -16,12 +16,19 @@ public class EditControllerData
     float MaxFloat;
     float StoredFloat;
 
+    KeyCode StoredKey;
 
     Resolution StoredResolution;
 
     private float CurrentTickTime;
     private float MaxTickTime;
     private bool Increasing;
+
+    public KeyCode k
+    {
+        get { return StoredKey; }
+        set { StoredKey = value; }
+    }
 
     public bool b_editorActive
     {

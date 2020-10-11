@@ -141,8 +141,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EnginePull()
     {
-        c_inputData.f_inputAxisLHoriz = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftHorizontalAxis);
-        c_inputData.f_inputAxisLVert = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis);
+        c_inputData.f_inputAxisLHoriz = GlobalInputController.GetAnalogInputAction(ControlAction.SPIN_AXIS);
+        c_inputData.f_inputAxisLVert = GlobalInputController.GetAnalogInputAction(ControlAction.FLIP_AXIS);
 
         CheckForGround();
         CheckForZone();
@@ -211,7 +211,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_trickPhys.Execute(Command.SPIN_STOP);
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis) < 0.0f)
+        if (c_inputData.f_inputAxisLVert < 0.0f)
         {
             c_accelMachine.Execute(Command.SLOW);
         }
@@ -219,7 +219,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_accelMachine.Execute(Command.RIDE);
         }
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis) > 0.0f)
+        if (c_inputData.f_inputAxisLVert > 0.0f)
         {
             c_accelMachine.Execute(Command.STARTMOVE);
         }
@@ -229,14 +229,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.STOP);
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.JumpButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.JUMP) == KeyValue.PRESSED)
         {
             c_accelMachine.Execute(Command.CHARGE);
             c_airMachine.Execute(Command.CHARGE);
             c_turnMachine.Execute(Command.CHARGE);
             sm_trickPhys.Execute(Command.CHARGE);
         }
-        else if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.JumpButton) == KeyValue.UP)
+        else if (GlobalInputController.GetInputAction(ControlAction.JUMP) == KeyValue.UP)
         {
             c_airMachine.Execute(Command.JUMP);
             c_accelMachine.Execute(Command.JUMP);
@@ -537,30 +537,30 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void UpdateTrickStateMachine()
     {
         bool TrickHit = false;
-        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LTrickButton) == KeyValue.PRESSED)
+        if (!TrickHit && GlobalInputController.GetInputAction(ControlAction.LEFT_GRAB) == KeyValue.PRESSED)
         {
             TrickHit = true;
-            trickData.k_activeTrickKey = GlobalInputController.ControllerData.LTrickButton;
+            trickData.k_activeTrickAction = ControlAction.LEFT_GRAB;
             trickData.t_activeTrickName = trickData.trick_left;
         }
-        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.UTrickButton) == KeyValue.PRESSED)
+        if (!TrickHit && GlobalInputController.GetInputAction(ControlAction.UP_GRAB) == KeyValue.PRESSED)
         {
             TrickHit = true;
-            trickData.k_activeTrickKey = GlobalInputController.ControllerData.UTrickButton;
+            trickData.k_activeTrickAction = ControlAction.UP_GRAB;
             trickData.t_activeTrickName = trickData.trick_up;
         }
 
-        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.RTrickButton) == KeyValue.PRESSED)
+        if (!TrickHit && GlobalInputController.GetInputAction(ControlAction.RIGHT_GRAB) == KeyValue.PRESSED)
         {
             TrickHit = true;
-            trickData.k_activeTrickKey = GlobalInputController.ControllerData.RTrickButton;
+            trickData.k_activeTrickAction = ControlAction.RIGHT_GRAB;
             trickData.t_activeTrickName = trickData.trick_right;
         }
 
-        if (!TrickHit && GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
+        if (!TrickHit && GlobalInputController.GetInputAction(ControlAction.DOWN_GRAB) == KeyValue.PRESSED)
         {
             TrickHit = true;
-            trickData.k_activeTrickKey = GlobalInputController.ControllerData.DTrickButton;
+            trickData.k_activeTrickAction = ControlAction.DOWN_GRAB;
             trickData.t_activeTrickName = trickData.trick_down;
         }
 
@@ -569,7 +569,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.START_TRICK);
             sm_tricking.Execute(Command.SCORE_TRICK);
         }
-        else if (GlobalInputController.GetInputValue(trickData.k_activeTrickKey) == KeyValue.UP)
+        else if (GlobalInputController.GetInputAction(trickData.k_activeTrickAction) == KeyValue.UP)
         {
             sm_tricking.Execute(Command.END_TRICK);
         }

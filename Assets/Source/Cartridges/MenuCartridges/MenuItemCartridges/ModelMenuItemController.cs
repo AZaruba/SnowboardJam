@@ -64,6 +64,9 @@ public class ModelMenuItemController : iMenuItemController, iEntityController
                 GlobalGameData.playerOneCharacter = currentCharacter;
                 MessageServer.SendMessage(MessageID.CHARACTER_SELECTED, new Message((uint)PlayerID.PLAYER1));
                 break;
+            case MenuCommand.MENU_BACK:
+                MessageServer.SendMessage(MessageID.MENU_BACK, new Message());
+                break;
         }
     }
 

@@ -11,21 +11,23 @@ public abstract class iEditController : MonoBehaviour
     public StateMachine sm_editController;
     public EditControllerData c_controllerData;
 
+    public IncrementCartridge cart_incr;
+
     private void Start()
     {
         InitializeData();
         InitializeStateMachine();
     }
 
-    private void Update()
+    public virtual void UpdateEditor()
     {
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
         {
             ConfirmDataEdit(CurrentTarget);
             Deactivate();
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.RTrickButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.PRESSED)
         {
             CancelDataEdit();
             Deactivate();
@@ -46,22 +48,20 @@ public abstract class iEditController : MonoBehaviour
     public virtual void Deactivate()
     {
         sm_editController.Execute(Command.MENU_HIDE);
+        GlobalInputController.FlushNextFrame();
     }    
 
     public virtual void InitializeStateMachine()
     {
-        sm_editController = new StateMachine();
+        DataEditDisabledState disabledState = new DataEditDisabledState(ref c_controllerData);
+        DataEditReadyState readyState = new DataEditReadyState(ref c_controllerData);
+        DataEditWaitState waitState = new DataEditWaitState(ref c_controllerData, ref cart_incr);
+        IntEditTickState tickState = new IntEditTickState(ref c_controllerData, ref cart_incr);
 
+        sm_editController = new StateMachine(disabledState, StateRef.MENU_DISABLED);
+        sm_editController.AddState(readyState, StateRef.MENU_READY);
+        sm_editController.AddState(waitState, StateRef.MENU_WAIT);
+        sm_editController.AddState(tickState, StateRef.MENU_TICK);
     }
 
 }
-
-/* TODO:
- * 
- * 1) Implement float, int, resolution, and boolean edit
- * 2) Create "deactivated" state for menu that prevents
- *    The menu from being manipulated
- * 3) update value and save PlayerPrefs on confirm or exit
- * 4) Add "default" that checks if PlayerPrefs values have
- *    been initialized and adds default values if not
- */ 

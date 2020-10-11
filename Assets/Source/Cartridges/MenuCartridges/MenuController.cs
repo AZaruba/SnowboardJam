@@ -49,12 +49,18 @@ public class MenuController : MonoBehaviour
 
     public void UpdateMenu()
     {
+        if (c_activeMenuData.b_editorActive)
+        {
+            c_activeMenuItem.UpdateEditor();
+            return;
+        }
+
         if (c_activeMenuData.b_menuActive == false)
         {
             return;
         }
 
-        float inputAxisValue = GlobalInputController.GetInputValue(GlobalInputController.ControllerData.LeftVerticalAxis);
+        float inputAxisValue = GlobalInputController.GetAnalogInputAction(ControlAction.FLIP_AXIS);
         if (inputAxisValue > 0.5f)
         {
             c_activeMenuData.i_menuDir = -1; // menus are often organized top to bottom
@@ -68,13 +74,13 @@ public class MenuController : MonoBehaviour
             c_activeMenuData.i_menuDir = 0;
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.RTrickButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.PRESSED)
         {
             // return to previous menu
             c_activeMenuItem.MenuCommandBack();
         }
 
-        if (GlobalInputController.GetInputValue(GlobalInputController.ControllerData.DTrickButton) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
         {
             c_activeMenuItem.ExecuteMenuCommand();
         }
