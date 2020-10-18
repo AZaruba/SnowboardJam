@@ -24,6 +24,20 @@ public class AngleCalculationCartridge
         currentNormal = resultRotation * Vector3.up;
     }
 
+    /// <summary>
+    /// If the front and back normal are not the same, this will align the player to a value interpolated between the two
+    /// </summary>
+    /// <param name="targetNormal">Pre-calculated target "up" that we want to reach</param>
+    /// <param name="currentNormal">The character's current up</param>
+    /// <param name="resultRotation">The player's rotation, which will be the resulting rotation</param>
+    public void AlignToSurface2(ref Vector3 currentForward, ref Vector3 currentNormal, 
+                                ref Quaternion resultRotation, Quaternion targetRotation)
+    {
+        resultRotation = targetRotation;
+        currentNormal = resultRotation * Vector3.up;
+        currentForward = resultRotation * Vector3.forward;
+    }
+
     // TODO: This needs to be rethought as simply moving to an attach point isn't a one-size-fits-all solution
     public void MoveToAttachPoint(ref Vector3 currentPosition, ref Vector3 attachPoint)
     {

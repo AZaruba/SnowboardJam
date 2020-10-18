@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private Animator PlayerAnimator;
     [SerializeField] private DebugAccessor debugAccessor;
     [SerializeField] private CharacterAttributeData Attributes;
+    [SerializeField] private CharacterCollisionData CollisionData;
     [SerializeField] private AudioSource AudioSource;
     [SerializeField] private AudioBank SoundBank;
 
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private TrickPhysicsData c_trickPhysicsData;
     private PlayerInputData c_inputData;
     private ScoringData c_scoringData;
+    private CollisionData c_collisionData;
 
     // private members
     private StateMachine c_turnMachine;
@@ -144,7 +146,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_inputData.f_inputAxisLHoriz = GlobalInputController.GetAnalogInputAction(ControlAction.SPIN_AXIS);
         c_inputData.f_inputAxisLVert = GlobalInputController.GetAnalogInputAction(ControlAction.FLIP_AXIS);
 
-        CheckForGround();
+        //CheckForGround();
+        CheckForGround2();
         CheckForZone();
         CheckForObstacle();
     }
@@ -156,7 +159,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (c_stateData.b_courseFinished == true)
         {
-            if (c_playerData.v_currentSurfaceNormal.normalized != Vector3.zero)
+            if (!c_collisionData.v_centerNormal.Equals(Vector3.zero))
             {
                 c_accelMachine.Execute(Command.LAND);
                 c_turnMachine.Execute(Command.LAND);
@@ -173,7 +176,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             return;
         }
         // current issue, these commands don't work out great
-        if (c_playerData.v_currentSurfaceNormal.normalized == Vector3.zero)
+        if (c_collisionData.v_centerNormal.Equals(Vector3.zero))
         {
             c_accelMachine.Execute(Command.FALL);
             c_turnMachine.Execute(Command.FALL);
@@ -275,9 +278,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_stateData = new StateData();
         c_aerialMoveData = new AerialMoveData();
         c_entityData = new EntityData();
+        c_collisionData = new CollisionData();
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
+        c_playerData.q_targetRotation = transform.rotation;
         c_playerData.v_currentDirection = transform.forward;
         c_playerData.v_currentAirDirection = transform.forward;
         c_playerData.v_currentNormal = transform.up;
@@ -314,6 +319,117 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_playerData.v_currentObstacleNormal = Vector3.zero;
         }
     }
+
+    private void OnDrawGizmos()
+    {
+        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.FrontRayOffset;
+        Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.BackRayOffset;
+        Gizmos.DrawRay(offsetBack, offsetFront - offsetBack);
+    }
+
+    /// <summary>
+    /// Updated ground check function. Checks for collision with any point of the board, then comes up with an angle based on vectors
+    /// </summary>
+    private void CheckForGround2()
+    {
+        LayerMask lm_env = LayerMask.GetMask("Environment");
+
+        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.FrontRayOffset;
+        Vector3 offsetCenter = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset;
+        Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.BackRayOffset;
+
+        // if the board is hitting the ground
+        if (Physics.BoxCast(offsetCenter,
+                            CollisionData.HalfExtents,
+                            c_playerData.v_currentDown,
+                            out centerHit,
+                            c_playerData.q_currentRotation,
+                            1f,
+                            lm_env))
+        {
+            c_collisionData.v_attachPoint = centerHit.point;
+            c_collisionData.v_centerNormal = centerHit.normal;
+        }
+        else
+        {
+            c_collisionData.v_centerNormal = Vector3.zero;
+        }
+
+        // check front and back for collisions, rotate as necessary
+        if (Physics.Raycast(offsetFront, c_playerData.v_currentDown, out frontHit, 0.1f, lm_env))
+        {
+            c_collisionData.v_frontNormal = frontHit.normal;
+            c_collisionData.v_frontPoint = frontHit.point;
+        }
+        else
+        {
+            c_collisionData.v_frontNormal = Vector3.zero;
+        }
+        // if no frontHit, use ONLY back hit
+
+        if (Physics.Raycast(offsetBack, c_playerData.v_currentDown, out backHit, 0.1f, lm_env))
+        {
+            c_collisionData.v_backNormal = backHit.normal;
+        }
+        else
+        {
+            c_collisionData.v_backNormal = Vector3.zero;
+        }
+        // if no backHit, use ONLY front hit
+
+        if (!c_collisionData.v_centerNormal.Equals(Vector3.zero))
+        {
+            CalculateDesiredRotation();
+        }
+    }
+
+    /* The current issue:
+     * 
+     * We are performing adjustments based around the player position, NOT the "hinge" of the back edge
+     * The result is rotating TOO much and adjusting TOO far.
+     */ 
+
+
+    private void CalculateDesiredRotation()
+    {
+        /*
+        // if both ends are on the same angle, no rotation required
+        if (c_collisionData.v_frontNormal.Equals(c_collisionData.v_backNormal))
+        {
+            c_playerData.q_targetRotation = 
+            return;
+        }
+
+        // if one end is not on the ground, no rotation required
+        if (c_collisionData.v_frontNormal.Equals(Vector3.zero) ||
+            c_collisionData.v_backNormal.Equals(Vector3.zero))
+        {
+            c_playerData.q_targetRotation = 
+            return;
+        }
+        */
+
+        // get the current front and back position
+        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.FrontRayOffset;
+        Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.BackRayOffset;
+        Vector3 currentBoardVector = offsetFront - offsetBack;
+
+        Vector3 targetBoardVector = c_collisionData.v_frontPoint - offsetBack;
+
+        float targetAngle = Vector3.SignedAngle(currentBoardVector, targetBoardVector, transform.right * -1);
+
+        c_playerData.q_targetRotation = c_playerData.q_currentRotation * Quaternion.AngleAxis(targetAngle, Vector3.right);
+
+        if (c_collisionData.v_frontPoint.Equals(Vector3.zero))
+        {
+            c_collisionData.v_frontOffset = Vector3.zero;
+        }
+        else
+        {
+            c_collisionData.v_frontOffset = c_collisionData.v_frontPoint - offsetFront;
+        }
+    }
+
     private void CheckForGround()
     {
         LayerMask lm_env = LayerMask.GetMask("Environment");
@@ -402,7 +518,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         MoveAerialState s_moveAerial = new MoveAerialState();
         StationaryState s_stationary = new StationaryState(ref c_playerData, ref cart_angleCalc, ref cart_velocity);
-        RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
+        RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref c_collisionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
         RidingChargeState s_ridingCharge = new RidingChargeState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);

@@ -35,6 +35,7 @@ public class PlayerData : MonoBehaviour {
     private Vector3 CurrentDown;
 
     private Quaternion CurrentRotation;
+    private Quaternion TargetRotation;
     #endregion
 
     #region EngineMembers
@@ -219,6 +220,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return CurrentRotation; }
         set { CurrentRotation = value; }
+    }
+
+    public Quaternion q_targetRotation
+    {
+        get { return TargetRotation; }
+        set { TargetRotation = value; }
     }
     #endregion
     #region IOProperties
