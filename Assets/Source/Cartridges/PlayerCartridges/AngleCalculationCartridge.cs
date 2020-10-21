@@ -24,16 +24,13 @@ public class AngleCalculationCartridge
         currentNormal = resultRotation * Vector3.up;
     }
 
-    /// <summary>
-    /// If the front and back normal are not the same, this will align the player to a value interpolated between the two
-    /// </summary>
-    /// <param name="targetNormal">Pre-calculated target "up" that we want to reach</param>
-    /// <param name="currentNormal">The character's current up</param>
-    /// <param name="resultRotation">The player's rotation, which will be the resulting rotation</param>
-    public void AlignToSurface2(ref Vector3 currentForward, ref Vector3 currentNormal, 
-                                ref Quaternion resultRotation, Quaternion targetRotation)
+    public void AlignToSurface2(ref Vector3 currentForward,
+                                ref Vector3 currentNormal, 
+                                ref Quaternion resultRotation,
+                                Quaternion targetRotation)
     {
-        resultRotation = targetRotation;
+        resultRotation = targetRotation * resultRotation;
+
         currentNormal = resultRotation * Vector3.up;
         currentForward = resultRotation * Vector3.forward;
     }

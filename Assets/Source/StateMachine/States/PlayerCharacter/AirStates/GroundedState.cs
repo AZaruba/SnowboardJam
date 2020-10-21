@@ -40,7 +40,7 @@ public class GroundedState : iState
 
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentAirVelocity = Constants.ZERO_F;
-        cart_angleCalc.AlignOrientationWithSurface(ref currentNormal, ref currentDir, ref currentRotation, currentSurfaceNormal);
+        //cart_angleCalc.AlignOrientationWithSurface(ref currentNormal, ref currentDir, ref currentRotation, currentSurfaceNormal);
         cart_surfInf.SwitchReverse(ref isReversed, currentRotation, currentModelRotation);
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentDirection = currentDir;

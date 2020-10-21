@@ -334,17 +334,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         LayerMask lm_env = LayerMask.GetMask("Environment");
 
-        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.FrontRayOffset;
+        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation * (CollisionData.FrontRayOffset + new Vector3(0,c_collisionData.f_frontRayLength,0));
         Vector3 offsetCenter = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset;
         Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.BackRayOffset;
 
         // if the board is hitting the ground
-        if (Physics.BoxCast(offsetCenter,
+        if (Physics.BoxCast(c_playerData.v_currentPosition,
                             CollisionData.HalfExtents,
                             c_playerData.v_currentDown,
                             out centerHit,
                             c_playerData.q_currentRotation,
-                            1f,
+                            c_playerData.f_currentRaycastDistance,
                             lm_env))
         {
             c_collisionData.v_attachPoint = centerHit.point;
@@ -365,69 +365,36 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_collisionData.v_frontNormal = Vector3.zero;
         }
-        // if no frontHit, use ONLY back hit
 
         if (Physics.Raycast(offsetBack, c_playerData.v_currentDown, out backHit, 0.1f, lm_env))
         {
             c_collisionData.v_backNormal = backHit.normal;
+            c_collisionData.v_backPoint = backHit.point;
         }
         else
         {
             c_collisionData.v_backNormal = Vector3.zero;
         }
-        // if no backHit, use ONLY front hit
 
-        if (!c_collisionData.v_centerNormal.Equals(Vector3.zero))
+        // the composite normal should be the back, front, and center combined. If in the air, this will be zero!
+        c_collisionData.v_surfaceNormal = ((c_collisionData.v_backNormal +
+                                            c_collisionData.v_centerNormal +
+                                            c_collisionData.v_frontNormal) / 3).normalized;
+
+        if (!c_collisionData.v_surfaceNormal.Equals(Vector3.zero))
         {
-            CalculateDesiredRotation();
+            CalculateDesiredTransform();
         }
     }
 
-    /* The current issue:
+    /* Intended behavior:
      * 
-     * We are performing adjustments based around the player position, NOT the "hinge" of the back edge
-     * The result is rotating TOO much and adjusting TOO far.
+     * - provide a rotation bringing us closer to the composite surface normal (currently just zaps us there)
+     * - provide a translation that adjusts the player's position to adhere to the ground
      */ 
-
-
-    private void CalculateDesiredRotation()
+    private void CalculateDesiredTransform()
     {
-        /*
-        // if both ends are on the same angle, no rotation required
-        if (c_collisionData.v_frontNormal.Equals(c_collisionData.v_backNormal))
-        {
-            c_playerData.q_targetRotation = 
-            return;
-        }
-
-        // if one end is not on the ground, no rotation required
-        if (c_collisionData.v_frontNormal.Equals(Vector3.zero) ||
-            c_collisionData.v_backNormal.Equals(Vector3.zero))
-        {
-            c_playerData.q_targetRotation = 
-            return;
-        }
-        */
-
-        // get the current front and back position
-        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.FrontRayOffset;
-        Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.BackRayOffset;
-        Vector3 currentBoardVector = offsetFront - offsetBack;
-
-        Vector3 targetBoardVector = c_collisionData.v_frontPoint - offsetBack;
-
-        float targetAngle = Vector3.SignedAngle(currentBoardVector, targetBoardVector, transform.right * -1);
-
-        c_playerData.q_targetRotation = c_playerData.q_currentRotation * Quaternion.AngleAxis(targetAngle, Vector3.right);
-
-        if (c_collisionData.v_frontPoint.Equals(Vector3.zero))
-        {
-            c_collisionData.v_frontOffset = Vector3.zero;
-        }
-        else
-        {
-            c_collisionData.v_frontOffset = c_collisionData.v_frontPoint - offsetFront;
-        }
+        c_playerData.q_targetRotation = Quaternion.FromToRotation(c_playerData.v_currentNormal, c_collisionData.v_surfaceNormal);
     }
 
     private void CheckForGround()
