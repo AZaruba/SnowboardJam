@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class JumpingState : iState
 {
 
@@ -100,3 +101,4 @@ public class JumpingState : iState
 
 
 }
+*/

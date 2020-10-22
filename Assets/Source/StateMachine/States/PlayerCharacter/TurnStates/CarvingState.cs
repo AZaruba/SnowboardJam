@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO: The Turn function causes strange behavior on slopes and angle changes
 public class CarvingState : iState {
 
     HandlingCartridge         cart_handling;
     SurfaceInfluenceCartridge cart_surfInf;
     PlayerData                c_playerData;
+    CollisionData             c_collisionData;
     PlayerInputData           c_playerInputData;
     PlayerPositionData        c_positionData;
 
     public CarvingState(ref PlayerData playerData,
+                        ref CollisionData collisionData,
                         ref PlayerInputData inputData,
                         ref PlayerPositionData positionData,
                         ref HandlingCartridge handling,
                         ref SurfaceInfluenceCartridge surfInf)
     {
         this.c_playerData = playerData;
+        this.c_collisionData = collisionData;
         this.c_playerInputData = inputData;
         this.c_positionData = positionData;
         this.cart_handling = handling;
@@ -27,7 +29,7 @@ public class CarvingState : iState {
     public void Act()
     {
         Vector3 currentDir = c_playerData.v_currentDirection;
-        Vector3 currentNormal = c_playerData.v_currentSurfaceNormal;
+        Vector3 currentNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 

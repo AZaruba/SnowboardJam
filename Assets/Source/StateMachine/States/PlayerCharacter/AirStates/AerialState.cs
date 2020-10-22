@@ -6,13 +6,16 @@ public class AerialState : iState {
 
     private GravityCartridge cart_gravity;
     private VelocityCartridge cart_velocity;
+    private CollisionData c_collisionData;
     private PlayerData c_playerData;
     private AerialMoveData c_aerialMoveData;
 
-    public AerialState(ref PlayerData playerData, ref AerialMoveData moveData, ref GravityCartridge cart_grav, ref VelocityCartridge cart_vel)
+    public AerialState(ref PlayerData playerData, ref CollisionData collisionData,
+        ref AerialMoveData moveData, ref GravityCartridge cart_grav, ref VelocityCartridge cart_vel)
     {
         this.c_playerData = playerData;
         this.c_aerialMoveData = moveData;
+        this.c_collisionData = collisionData;
         this.cart_gravity = cart_grav;
         this.cart_velocity = cart_vel;
     }
@@ -64,7 +67,6 @@ public class AerialState : iState {
         c_playerData.v_currentDown = Vector3.down;
     }
 
-    // TODO: Fix behavior when we he the ground, we're back to just bumping back up
     public StateRef GetNextState(Command cmd)
     {
         if (cmd == Command.LAND)
@@ -73,10 +75,11 @@ public class AerialState : iState {
             horizontalDir.y = c_aerialMoveData.f_verticalVelocity;
 
             // if these vectors are equal, then we are landing on a like-plane of the one we jumped off of
-            Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_playerData.v_currentSurfaceNormal);
-            if (horizontalDir.normalized != c_playerData.v_currentSurfaceNormal*-1)
+            Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_collisionData.v_surfaceNormal);
+            if (horizontalDir.normalized != c_collisionData.v_surfaceNormal * -1)
             {
                 c_playerData.v_currentDirection = projectedDir.normalized;
+                c_playerData.q_currentRotation = Quaternion.LookRotation(c_playerData.v_currentDirection, c_playerData.v_currentNormal);
             }
             c_playerData.f_currentSpeed = projectedDir.magnitude;
             return StateRef.GROUNDED;

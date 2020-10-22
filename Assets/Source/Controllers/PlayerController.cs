@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (c_stateData.b_courseFinished == true)
         {
-            if (!c_collisionData.v_centerNormal.Equals(Vector3.zero))
+            if (!c_collisionData.v_surfaceNormal.Equals(Vector3.zero))
             {
                 c_accelMachine.Execute(Command.LAND);
                 c_turnMachine.Execute(Command.LAND);
@@ -176,7 +176,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             return;
         }
         // current issue, these commands don't work out great
-        if (c_collisionData.v_centerNormal.Equals(Vector3.zero))
+        if (c_collisionData.v_surfaceNormal.Equals(Vector3.zero))
         {
             c_accelMachine.Execute(Command.FALL);
             c_turnMachine.Execute(Command.FALL);
@@ -293,7 +293,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance; 
         c_playerData.f_surfaceAngleDifference = 0.0f;
         c_playerData.b_obstacleInRange = false;
-        c_playerData.v_currentForwardNormal = transform.up;
 
         c_stateData.b_updateState = true;
         c_stateData.b_courseFinished = false;
@@ -329,6 +328,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     /// <summary>
     /// Updated ground check function. Checks for collision with any point of the board, then comes up with an angle based on vectors
+    ///
+    /// TODO: KNOWN ISSUES
+    /// 1) The player "sinks" or "rises on surface transitions. This needs to be figured out in a way that doesn't depend
+    ///    On having a guaranteed collision point directly below the user (see SurfaceAdjustemnt())
+    /// 2) The front raycast does not do the velocity based length thing yet. That needs to be included so upward motion is
+    ///    more elegant (currentVelocity * Time.deltaTime should be enough)
+    /// 3) The player instantly snaps to the rotation rather than gradually moving. Changing this to some kind of gradual motion
+    ///    should fix the issue.
+    /// 4) There is a "bounce" when we land, likely due to reorienting to a new surface after jumping.
+    /// 5) while ground checking seems to on the road to a healthier life, this still needs to be done for object collision/crashing
     /// </summary>
     private void CheckForGround2()
     {
@@ -363,7 +372,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else
         {
-            c_collisionData.v_frontNormal = Vector3.zero;
+            c_collisionData.v_frontNormal = c_collisionData.v_centerNormal;
         }
 
         if (Physics.Raycast(offsetBack, c_playerData.v_currentDown, out backHit, 0.1f, lm_env))
@@ -373,13 +382,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else
         {
-            c_collisionData.v_backNormal = Vector3.zero;
+            c_collisionData.v_backNormal = c_collisionData.v_centerNormal;
         }
 
-        // the composite normal should be the back, front, and center combined. If in the air, this will be zero!
+        // the composite normal should be the back and front. If in the air, this will be zero!
         c_collisionData.v_surfaceNormal = ((c_collisionData.v_backNormal +
-                                            c_collisionData.v_centerNormal +
-                                            c_collisionData.v_frontNormal) / 3).normalized;
+                                            c_collisionData.v_frontNormal) / 2).normalized;
 
         if (!c_collisionData.v_surfaceNormal.Equals(Vector3.zero))
         {
@@ -397,6 +405,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.q_targetRotation = Quaternion.FromToRotation(c_playerData.v_currentNormal, c_collisionData.v_surfaceNormal);
     }
 
+    /*
     private void CheckForGround()
     {
         LayerMask lm_env = LayerMask.GetMask("Environment");
@@ -440,6 +449,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             }
         }
     }
+    */
 
     private void CheckForZone()
     {
@@ -484,10 +494,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void InitializeAccelMachine()
     {
         MoveAerialState s_moveAerial = new MoveAerialState();
-        StationaryState s_stationary = new StationaryState(ref c_playerData, ref cart_angleCalc, ref cart_velocity);
+        StationaryState s_stationary = new StationaryState(ref c_playerData, ref c_collisionData, ref cart_angleCalc, ref cart_velocity);
         RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref c_collisionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
-        RidingChargeState s_ridingCharge = new RidingChargeState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
-        SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
+        RidingChargeState s_ridingCharge = new RidingChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
+        SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
         c_accelMachine = new StateMachine(s_stationary, StateRef.STATIONARY);
@@ -502,15 +512,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeAirMachine()
     {
-        AerialState s_aerial = new AerialState(ref c_playerData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
-        JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
+        AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
+        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_collisionData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
         c_airMachine = new StateMachine(s_grounded, StateRef.GROUNDED);
         c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
-        c_airMachine.AddState(s_jumping, StateRef.JUMPING);
         c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
         c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
     }
@@ -518,7 +526,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void InitializeTurnMachine()
     {
         StraightState s_straight = new StraightState(ref c_playerData, ref c_positionData, ref cart_surfInf);
-        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_inputData, ref c_positionData, ref cart_handling, ref cart_surfInf);
+        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_handling, ref cart_surfInf);
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
         TurnChargeState s_turnCharge = new TurnChargeState(ref c_playerData, ref c_positionData, ref cart_surfInf);
 

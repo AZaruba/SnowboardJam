@@ -7,11 +7,13 @@ public class GroundedState : iState
 
     private PlayerData c_playerData;
     private PlayerPositionData c_positionData;
+    private CollisionData c_collisionData;
     private VelocityCartridge cart_velocity;
     private AngleCalculationCartridge cart_angleCalc;
     private SurfaceInfluenceCartridge cart_surfInf;
 
-    public GroundedState(ref PlayerData playerData, 
+    public GroundedState(ref PlayerData playerData,
+                         ref CollisionData collisionData,
                          ref PlayerPositionData positionData,
                          ref VelocityCartridge vel, 
                          ref AngleCalculationCartridge angleCalc,
@@ -19,6 +21,7 @@ public class GroundedState : iState
     {
         this.c_playerData = playerData;
         this.c_positionData = positionData;
+        this.c_collisionData = collisionData;
         this.cart_velocity = vel;
         this.cart_angleCalc = angleCalc;
         this.cart_surfInf = surfInf;
@@ -34,7 +37,7 @@ public class GroundedState : iState
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
-        Vector3 currentSurfaceNormal = c_playerData.v_currentSurfaceNormal;
+        Vector3 currentSurfaceNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 

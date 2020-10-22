@@ -7,10 +7,14 @@ public class StationaryState : iState {
     AngleCalculationCartridge cart_angleCalc;
     VelocityCartridge cart_velocity;
     PlayerData c_playerData;
+    CollisionData c_collisionData;
 
-    public StationaryState(ref PlayerData playerData, ref AngleCalculationCartridge angleCalc, ref VelocityCartridge velocity)
+    public StationaryState(ref PlayerData playerData,
+                           ref CollisionData collisionData,
+                           ref AngleCalculationCartridge angleCalc, ref VelocityCartridge velocity)
     {
         this.c_playerData = playerData;
+        this.c_collisionData = collisionData;
         this.cart_angleCalc = angleCalc;
         this.cart_velocity = velocity;
     }
@@ -26,7 +30,7 @@ public class StationaryState : iState {
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Vector3 currentDir = c_playerData.v_currentDirection;
-        Vector3 currentSurfaceNormal = c_playerData.v_currentForwardNormal;
+        Vector3 currentSurfaceNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion targetRotation = c_playerData.q_targetRotation;
 
