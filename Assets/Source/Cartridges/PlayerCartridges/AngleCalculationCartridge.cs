@@ -29,7 +29,7 @@ public class AngleCalculationCartridge
                                 ref Quaternion resultRotation,
                                 Quaternion targetRotation)
     {
-        resultRotation = targetRotation * resultRotation;
+        resultRotation = resultRotation * targetRotation;
 
         currentNormal = resultRotation * Vector3.up;
         currentForward = resultRotation * Vector3.forward;

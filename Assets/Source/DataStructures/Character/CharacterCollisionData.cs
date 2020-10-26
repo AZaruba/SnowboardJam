@@ -16,5 +16,7 @@ public class CharacterCollisionData : ScriptableObject
 
     public Vector3 HalfExtents;
     public Vector3 CenterOffset;
+
+    public Vector3 BodyHalfExtents;
     #endregion
 }

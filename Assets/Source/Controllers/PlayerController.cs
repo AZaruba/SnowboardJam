@@ -91,6 +91,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         EnginePull();
+        Vector3 startPosition = c_playerData.v_currentPosition;
 
         UpdateStateMachine();
 
@@ -100,6 +101,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         sm_tricking.Act();
         sm_trickPhys.Act();
 
+        LateEnginePull(startPosition);
         EngineUpdate();
     }
 
@@ -111,12 +113,24 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_positionData.q_currentModelRotation;
 
-        debugAccessor.DisplayState("Spin State", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Target dir", c_playerData.v_currentDirection);
-        debugAccessor.DisplayFloat("TurnAnalogue", c_inputData.f_inputAxisLHoriz);
+        debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
+        debugAccessor.DisplayFloat("Vert Velocity", c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1);
+        debugAccessor.DisplayVector3("PlayerPosition", c_playerData.v_currentPosition);
 
         UpdateAnimator();
         UpdateAudio();
+    }
+
+    /// <summary>
+    /// Pulls data that may be influenced by changes during the current frame.
+    /// 
+    /// Currently: Collision detection.
+    /// </summary>
+    public void LateEnginePull(Vector3 oldPosition)
+    {
+        // TODO: find the angle we want to limit, currently 40 degrees
+        c_collisionData.f_frontRayLength = Mathf.Tan(0.5f) * c_playerData.f_currentSpeed * Time.deltaTime;
+        CheckForGround2(oldPosition);
     }
 
     /// <summary>
@@ -146,8 +160,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_inputData.f_inputAxisLHoriz = GlobalInputController.GetAnalogInputAction(ControlAction.SPIN_AXIS);
         c_inputData.f_inputAxisLVert = GlobalInputController.GetAnalogInputAction(ControlAction.FLIP_AXIS);
 
-        //CheckForGround();
-        CheckForGround2();
         CheckForZone();
         CheckForObstacle();
     }
@@ -159,7 +171,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (c_stateData.b_courseFinished == true)
         {
-            if (!c_collisionData.v_surfaceNormal.Equals(Vector3.zero))
+            if (c_collisionData.b_collisionDetected)
             {
                 c_accelMachine.Execute(Command.LAND);
                 c_turnMachine.Execute(Command.LAND);
@@ -176,7 +188,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             return;
         }
         // current issue, these commands don't work out great
-        if (c_collisionData.v_surfaceNormal.Equals(Vector3.zero))
+        if (!c_collisionData.b_collisionDetected)
         {
             c_accelMachine.Execute(Command.FALL);
             c_turnMachine.Execute(Command.FALL);
@@ -258,10 +270,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else if (c_playerData.v_currentObstacleNormal.magnitude > Constants.ZERO_F) // nonzero obstacle normal implies collision
         {
-            c_accelMachine.Execute(Command.CRASH);
-            c_turnMachine.Execute(Command.CRASH);
-            c_airMachine.Execute(Command.CRASH);
-            sm_trickPhys.Execute(Command.CRASH);
+            //c_accelMachine.Execute(Command.CRASH);
+            //c_turnMachine.Execute(Command.CRASH);
+            //c_airMachine.Execute(Command.CRASH);
+            //sm_trickPhys.Execute(Command.CRASH);
         }
     }
 
@@ -321,88 +333,104 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void OnDrawGizmos()
     {
-        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.FrontRayOffset;
-        Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.BackRayOffset;
+        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.FrontRayOffset;
+        Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.BackRayOffset;
+
         Gizmos.DrawRay(offsetBack, offsetFront - offsetBack);
     }
 
     /// <summary>
-    /// Updated ground check function. Checks for collision with any point of the board, then comes up with an angle based on vectors
-    ///
-    /// TODO: KNOWN ISSUES
-    /// 1) The player "sinks" or "rises on surface transitions. This needs to be figured out in a way that doesn't depend
-    ///    On having a guaranteed collision point directly below the user (see SurfaceAdjustemnt())
-    /// 2) The front raycast does not do the velocity based length thing yet. That needs to be included so upward motion is
-    ///    more elegant (currentVelocity * Time.deltaTime should be enough)
-    /// 3) The player instantly snaps to the rotation rather than gradually moving. Changing this to some kind of gradual motion
-    ///    should fix the issue.
-    /// 4) There is a "bounce" when we land, likely due to reorienting to a new surface after jumping.
-    /// 5) while ground checking seems to on the road to a healthier life, this still needs to be done for object collision/crashing
+    /// Current Issues:
+    /// The rotation goes haywire when we change enough. Think this through, the problem is the offsets appear to get desync'd which (very obviously) leads to trouble!
     /// </summary>
-    private void CheckForGround2()
+    private void CheckForGround2(Vector3 oldPosition)
     {
+        /* notes for now:
+         * We cast a ray DOWN as that's where GRAVITY goes, verifying whether or not if the board starts falling, will it hit the ground?
+         * if we are on the ground, check the 
+         * 
+         * IMPROVEMENT
+         */
+
+        float offsetDist = CollisionData.CenterOffset.magnitude;
+
+        // the vector giving the raycast distance AND direction
         LayerMask lm_env = LayerMask.GetMask("Environment");
 
-        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation * (CollisionData.FrontRayOffset + new Vector3(0,c_collisionData.f_frontRayLength,0));
-        Vector3 offsetCenter = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset;
-        Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.BackRayOffset;
+        bool useBoardRotation = true;
 
-        // if the board is hitting the ground
+        // safety detection: use old-style raycast to check if we want to stay grounded
         if (Physics.BoxCast(c_playerData.v_currentPosition,
                             CollisionData.HalfExtents,
-                            c_playerData.v_currentDown,
+                            Vector3.down,
                             out centerHit,
                             c_playerData.q_currentRotation,
-                            c_playerData.f_currentRaycastDistance,
+                            (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
                             lm_env))
         {
-            c_collisionData.v_attachPoint = centerHit.point;
-            c_collisionData.v_centerNormal = centerHit.normal;
+            c_collisionData.b_collisionDetected = true;
         }
         else
         {
-            c_collisionData.v_centerNormal = Vector3.zero;
+            c_collisionData.b_collisionDetected = false;
         }
 
-        // check front and back for collisions, rotate as necessary
-        if (Physics.Raycast(offsetFront, c_playerData.v_currentDown, out frontHit, 0.1f, lm_env))
+        if (c_collisionData.b_collisionDetected)
         {
-            c_collisionData.v_frontNormal = frontHit.normal;
-            c_collisionData.v_frontPoint = frontHit.point;
-        }
-        else
-        {
-            c_collisionData.v_frontNormal = c_collisionData.v_centerNormal;
-        }
+            /* Collision detected! That means we have to come up with some heuristic to snap to the surface
+             * and then check front and back
+             * 
+             * ISSUE 1: Offsets are calculated incorrectly, which can eventually cause it to go haywire, figure out
+             * how to ensure offsetX is actually relative to the point at all times
+             * SOLUTION 1: normalize the rotation - Today I learned you can normalize a quaternion!
+             * 
+             * ISSUE 2: If mesh colliders can't be used for closest-point-ing, what do we use?
+             * 
+             * ISSUE 3: The resulting look rotation from a front-and-back-of-board orientation causes, frankly speaking, a total mess. What is the right way to do this?
+             */
 
-        if (Physics.Raycast(offsetBack, c_playerData.v_currentDown, out backHit, 0.1f, lm_env))
-        {
-            c_collisionData.v_backNormal = backHit.normal;
-            c_collisionData.v_backPoint = backHit.point;
-        }
-        else
-        {
-            c_collisionData.v_backNormal = c_collisionData.v_centerNormal;
-        }
+            Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + new Vector3(0, c_collisionData.f_frontRayLength, 0));
+            Vector3 offsetFrontPoint = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.FrontRayOffset;
+            Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.BackRayOffset;
 
-        // the composite normal should be the back and front. If in the air, this will be zero!
-        c_collisionData.v_surfaceNormal = ((c_collisionData.v_backNormal +
-                                            c_collisionData.v_frontNormal) / 2).normalized;
+            if (Physics.Raycast(offsetFront, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLength * 2, lm_env)) // double to check up and DOWN
+            {
+                Debug.DrawLine(offsetFront, frontHit.point, Color.red);
+                c_collisionData.v_frontNormal = frontHit.normal;
+                c_collisionData.v_frontPoint = frontHit.point;
+            }
+            else
+            {
+                useBoardRotation = false;
+                c_collisionData.v_frontNormal = centerHit.normal;
+            }
 
-        if (!c_collisionData.v_surfaceNormal.Equals(Vector3.zero))
-        {
-            CalculateDesiredTransform();
+            if (Physics.Raycast(offsetBack, c_playerData.v_currentDown, out backHit, c_playerData.f_gravity * Time.deltaTime, lm_env))
+            {
+                Debug.DrawLine(offsetBack, backHit.point, Color.red);
+                c_collisionData.v_backNormal = backHit.normal;
+                c_collisionData.v_backPoint = backHit.point;
+            }
+            else
+            {
+                useBoardRotation = false;
+                c_collisionData.v_backNormal = centerHit.normal;
+            }
+
+            c_collisionData.v_surfaceNormal = ((c_collisionData.v_backNormal +
+                                                c_collisionData.v_frontNormal) / 2).normalized;
+
+            if (useBoardRotation)
+            {
+                Vector3 BoardDirection = (c_collisionData.v_frontPoint - c_collisionData.v_backPoint).normalized;
+                c_playerData.q_targetRotation = Quaternion.Inverse(c_playerData.q_currentRotation).normalized * Quaternion.LookRotation(BoardDirection, c_collisionData.v_surfaceNormal).normalized;
+            }
+            else
+            {
+                c_playerData.q_targetRotation = Quaternion.identity;
+            }
+            c_playerData.q_targetRotation.Normalize();
         }
-    }
-
-    /* Intended behavior:
-     * 
-     * - provide a rotation bringing us closer to the composite surface normal (currently just zaps us there)
-     * - provide a translation that adjusts the player's position to adhere to the ground
-     */ 
-    private void CalculateDesiredTransform()
-    {
-        c_playerData.q_targetRotation = Quaternion.FromToRotation(c_playerData.v_currentNormal, c_collisionData.v_surfaceNormal);
     }
 
     /*
@@ -596,8 +624,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_scoringData.f_currentFlipTarget.Equals(Constants.ZERO_F) &&
             c_scoringData.f_currentSpinTarget.Equals(Constants.ZERO_F))
         {
-            Debug.Log("No trick!");
-
             ResetScoringData();
             return;
         }

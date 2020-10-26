@@ -11,8 +11,6 @@ public class ResolutionListEditController : iEditController
     private int i_lastStoredValue;
     private Resolution[] l_resolutions;
 
-    private IncrementCartridge cart_incr;
-
     private void Start()
     {
         l_resolutions = Screen.resolutions;

@@ -74,14 +74,9 @@ public class AerialState : iState {
             Vector3 horizontalDir = c_aerialMoveData.v_lateralDirection * c_aerialMoveData.f_lateralVelocity;
             horizontalDir.y = c_aerialMoveData.f_verticalVelocity;
 
-            // if these vectors are equal, then we are landing on a like-plane of the one we jumped off of
             Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_collisionData.v_surfaceNormal);
-            if (horizontalDir.normalized != c_collisionData.v_surfaceNormal * -1)
-            {
-                c_playerData.v_currentDirection = projectedDir.normalized;
-                c_playerData.q_currentRotation = Quaternion.LookRotation(c_playerData.v_currentDirection, c_playerData.v_currentNormal);
-            }
             c_playerData.f_currentSpeed = projectedDir.magnitude;
+            c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -1;
             return StateRef.GROUNDED;
         }
         if (cmd == Command.CRASH)

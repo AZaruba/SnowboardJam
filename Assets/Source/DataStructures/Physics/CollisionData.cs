@@ -14,6 +14,8 @@ public class CollisionData
 
     private Vector3 SurfaceNormal;
 
+    private bool CollisionDetected;
+
     public float f_frontRayLength
     {
         get { return FrontRayLength; }
@@ -61,6 +63,12 @@ public class CollisionData
         set { SurfaceNormal = value; }
     }
 
+    public bool b_collisionDetected
+    {
+        get { return CollisionDetected; }
+        set { CollisionDetected = value; }
+    }
+
     public CollisionData()
     {
         FrontNormal = Vector3.zero;
@@ -72,5 +80,6 @@ public class CollisionData
         SurfaceNormal = Vector3.zero;
 
         FrontRayLength = Constants.ZERO_F;
+        CollisionDetected = false;
     }
 }
