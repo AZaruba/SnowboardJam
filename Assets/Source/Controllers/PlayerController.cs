@@ -114,8 +114,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = c_positionData.q_currentModelRotation;
 
         debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayFloat("Vert Velocity", c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1);
-        debugAccessor.DisplayVector3("PlayerPosition", c_playerData.v_currentPosition);
+        debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
 
         UpdateAnimator();
         UpdateAudio();
@@ -129,7 +128,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void LateEnginePull(Vector3 oldPosition)
     {
         // TODO: find the angle we want to limit, currently 40 degrees
-        c_collisionData.f_frontRayLength = Mathf.Tan(0.5f) * c_playerData.f_currentSpeed * Time.deltaTime;
+
+        float speedRatio = c_playerData.f_currentSpeed;
+        c_collisionData.f_frontRayLengthUp = Mathf.Tan(40*(Mathf.PI/180.0f)) * speedRatio * Time.deltaTime;
+        c_collisionData.f_frontRayLengthDown = Mathf.Tan(40 * (Mathf.PI / 180.0f)) * speedRatio * Time.deltaTime;
         CheckForGround2(oldPosition);
     }
 
@@ -148,7 +150,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void UpdateAudio()
     {
         AudioRef audio = GetAudioState();
-        debugAccessor.DisplayString(audio.ToString());
         //c_audioController.PlayAudio(GetAudioState());
     }
 
@@ -353,6 +354,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
          */
 
         float offsetDist = CollisionData.CenterOffset.magnitude;
+        Vector3 PreviousBoardDirection = (c_collisionData.v_frontPoint - c_collisionData.v_backPoint).normalized;
 
         // the vector giving the raycast distance AND direction
         LayerMask lm_env = LayerMask.GetMask("Environment");
@@ -380,20 +382,22 @@ public class PlayerController : MonoBehaviour, iEntityController {
             /* Collision detected! That means we have to come up with some heuristic to snap to the surface
              * and then check front and back
              * 
-             * ISSUE 1: Offsets are calculated incorrectly, which can eventually cause it to go haywire, figure out
-             * how to ensure offsetX is actually relative to the point at all times
-             * SOLUTION 1: normalize the rotation - Today I learned you can normalize a quaternion!
-             * 
-             * ISSUE 2: If mesh colliders can't be used for closest-point-ing, what do we use?
-             * 
              * ISSUE 3: The resulting look rotation from a front-and-back-of-board orientation causes, frankly speaking, a total mess. What is the right way to do this?
              */
 
-            Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + new Vector3(0, c_collisionData.f_frontRayLength, 0));
-            Vector3 offsetFrontPoint = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.FrontRayOffset;
+            Physics.Raycast(c_playerData.v_currentPosition,
+                            Vector3.down,
+                            out centerHit,
+                            5f, // arbitrarily long length
+                            lm_env);
+
+            c_playerData.v_currentPosition = centerHit.point + new Vector3(0, 1.1f, 0);
+
+            Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
+            Vector3 offsetCenter = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.CenterOffset;
             Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.BackRayOffset;
 
-            if (Physics.Raycast(offsetFront, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLength * 2, lm_env)) // double to check up and DOWN
+            if (Physics.Raycast(offsetFront, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env)) // double to check up and DOWN
             {
                 Debug.DrawLine(offsetFront, frontHit.point, Color.red);
                 c_collisionData.v_frontNormal = frontHit.normal;
@@ -422,8 +426,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
             if (useBoardRotation)
             {
-                Vector3 BoardDirection = (c_collisionData.v_frontPoint - c_collisionData.v_backPoint).normalized;
-                c_playerData.q_targetRotation = Quaternion.Inverse(c_playerData.q_currentRotation).normalized * Quaternion.LookRotation(BoardDirection, c_collisionData.v_surfaceNormal).normalized;
+                if (c_collisionData.v_backNormal != c_collisionData.v_frontNormal)
+                {
+                    /* GOAL here:
+                     * 
+                     * We want to rotate AROUND the back end such that the front end is at the front end collision point.
+                     * So we take the vector
+                     * PlayerPosition - BackPoint = offset from backpoint
+                     * And rotate it by the rotation between
+                     */
+                    Vector3 BoardDirection = (c_collisionData.v_frontPoint - c_collisionData.v_backPoint).normalized;
+                }
+
             }
             else
             {

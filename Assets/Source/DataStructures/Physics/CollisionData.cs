@@ -10,17 +10,25 @@ public class CollisionData
     private Vector3 BackPoint;
     private Vector3 CenterNormal;
     private Vector3 AttachPoint;
-    private float FrontRayLength;
+    private float FrontRayLengthUp;
+    private float FrontRayLengthDown;
 
     private Vector3 SurfaceNormal;
 
     private bool CollisionDetected;
 
-    public float f_frontRayLength
+    public float f_frontRayLengthUp
     {
-        get { return FrontRayLength; }
-        set { FrontRayLength = value; }
+        get { return FrontRayLengthUp; }
+        set { FrontRayLengthUp = value; }
     }
+
+    public float f_frontRayLengthDown
+    {
+        get { return FrontRayLengthDown; }
+        set { FrontRayLengthDown = value; }
+    }
+
 
     public Vector3 v_frontNormal
     {
@@ -79,7 +87,8 @@ public class CollisionData
 
         SurfaceNormal = Vector3.zero;
 
-        FrontRayLength = Constants.ZERO_F;
+        FrontRayLengthUp = Constants.ZERO_F;
+        FrontRayLengthDown = Constants.ZERO_F;
         CollisionDetected = false;
     }
 }

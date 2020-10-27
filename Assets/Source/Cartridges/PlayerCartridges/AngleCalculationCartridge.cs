@@ -24,6 +24,15 @@ public class AngleCalculationCartridge
         currentNormal = resultRotation * Vector3.up;
     }
 
+    public void AlignToSurfaceByTail(ref Vector3 currentPosition, 
+                                ref Vector3 currentForward,
+                                ref Vector3 currentNormal,
+                                ref Quaternion resultRotation,
+                                Quaternion targetRotation)
+    {
+
+    }
+
     public void AlignToSurface2(ref Vector3 currentForward,
                                 ref Vector3 currentNormal, 
                                 ref Quaternion resultRotation,
