@@ -115,6 +115,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
+        debugAccessor.DisplayFloat("Current Check", c_collisionData.f_frontRayLengthDown);
 
         UpdateAnimator();
         UpdateAudio();
@@ -131,7 +132,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         float speedRatio = c_playerData.f_currentSpeed;
         c_collisionData.f_frontRayLengthUp = Mathf.Tan(40*(Mathf.PI/180.0f)) * speedRatio * Time.deltaTime;
-        c_collisionData.f_frontRayLengthDown = Mathf.Tan(40 * (Mathf.PI / 180.0f)) * speedRatio * Time.deltaTime;
+        c_collisionData.f_frontRayLengthDown = (Mathf.Tan(40 * (Mathf.PI / 180.0f)) * speedRatio + c_aerialMoveData.f_verticalVelocity * -1) * Time.deltaTime;
         CheckForGround2(oldPosition);
     }
 
@@ -291,7 +292,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_stateData = new StateData();
         c_aerialMoveData = new AerialMoveData();
         c_entityData = new EntityData();
-        c_collisionData = new CollisionData();
+        c_collisionData = new CollisionData(CollisionData.FrontRayOffset, CollisionData.BackRayOffset);
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
@@ -385,21 +386,23 @@ public class PlayerController : MonoBehaviour, iEntityController {
              * ISSUE 3: The resulting look rotation from a front-and-back-of-board orientation causes, frankly speaking, a total mess. What is the right way to do this?
              */
 
-            Physics.Raycast(c_playerData.v_currentPosition,
+            if (Physics.Raycast(c_playerData.v_currentPosition,
                             Vector3.down,
                             out centerHit,
-                            5f, // arbitrarily long length
-                            lm_env);
-
-            c_playerData.v_currentPosition = centerHit.point + new Vector3(0, 1.1f, 0);
-
-            Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
-            Vector3 offsetCenter = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.CenterOffset;
-            Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.BackRayOffset;
-
-            if (Physics.Raycast(offsetFront, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env)) // double to check up and DOWN
+                            (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
+                            lm_env))
             {
-                Debug.DrawLine(offsetFront, frontHit.point, Color.red);
+                c_playerData.v_currentPosition = centerHit.point + new Vector3(0, 1.1f, 0);
+            }
+
+
+            c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
+            Vector3 offsetCenter = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.CenterOffset;
+            c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.BackRayOffset;
+
+            if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env)) // double to check up and DOWN
+            {
+                Debug.DrawLine(c_collisionData.v_frontOffset, frontHit.point, Color.red);
                 c_collisionData.v_frontNormal = frontHit.normal;
                 c_collisionData.v_frontPoint = frontHit.point;
             }
@@ -407,11 +410,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
             {
                 useBoardRotation = false;
                 c_collisionData.v_frontNormal = centerHit.normal;
+                c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
             }
 
-            if (Physics.Raycast(offsetBack, c_playerData.v_currentDown, out backHit, c_playerData.f_gravity * Time.deltaTime, lm_env))
+            if (Physics.Raycast(c_collisionData.v_backOffset, c_playerData.v_currentDown, out backHit, c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1, lm_env))
             {
-                Debug.DrawLine(offsetBack, backHit.point, Color.red);
+                Debug.DrawLine(c_collisionData.v_backOffset, backHit.point, Color.red);
                 c_collisionData.v_backNormal = backHit.normal;
                 c_collisionData.v_backPoint = backHit.point;
             }
@@ -419,6 +423,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             {
                 useBoardRotation = false;
                 c_collisionData.v_backNormal = centerHit.normal;
+                c_collisionData.v_backPoint = c_collisionData.v_backOffset;
             }
 
             c_collisionData.v_surfaceNormal = ((c_collisionData.v_backNormal +
@@ -426,18 +431,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
             if (useBoardRotation)
             {
-                if (c_collisionData.v_backNormal != c_collisionData.v_frontNormal)
-                {
-                    /* GOAL here:
-                     * 
-                     * We want to rotate AROUND the back end such that the front end is at the front end collision point.
-                     * So we take the vector
-                     * PlayerPosition - BackPoint = offset from backpoint
-                     * And rotate it by the rotation between
-                     */
-                    Vector3 BoardDirection = (c_collisionData.v_frontPoint - c_collisionData.v_backPoint).normalized;
-                }
-
+                Debug.Log("using both");
             }
             else
             {
@@ -446,52 +440,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_playerData.q_targetRotation.Normalize();
         }
     }
-
-    /*
-    private void CheckForGround()
-    {
-        LayerMask lm_env = LayerMask.GetMask("Environment");
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance, lm_env))
-        {
-            if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right * -1) >
-                Mathf.Max(20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed)), 0.0f)) // angle should get smaller as we get faster
-            {
-                c_playerData.v_currentSurfaceNormal = Vector3.zero;
-                return;
-            }
-            else
-            {
-                c_playerData.v_currentSurfaceAttachPoint = centerHit.point;
-                c_playerData.v_currentSurfaceNormal = centerHit.normal;
-            }
-
-        }
-        else
-        {
-            // surface normal is vector3.zero if there are no collisions
-            c_playerData.v_currentSurfaceNormal = Vector3.zero;
-            return;
-        }
-
-        Vector3 fwdVec = c_playerData.v_currentDown.normalized + c_playerData.v_currentDirection.normalized;
-        if (Physics.Raycast(c_playerData.v_currentPosition, fwdVec, out frontHit, 2f, lm_env))
-        {
-            // if we have a hit, check to see the difference between sqrt(2) and the hit divided by player height
-            float frontHitDist = ((frontHit.point - c_playerData.v_currentPosition).magnitude) / 1.1f; // Height is posing an issue with getting the angle accurate
-            c_playerData.v_currentForwardPoint = frontHit.point;
-            c_playerData.v_currentForwardNormal = frontHit.normal;
-            if (Mathf.Abs(Mathf.Sqrt(2) - frontHitDist) > 0.005f)
-            {
-                Vector3 resultDir = frontHit.point - c_playerData.v_currentSurfaceAttachPoint;
-                c_playerData.f_surfaceAngleDifference = Vector3.SignedAngle(c_playerData.v_currentDirection, resultDir, Vector3.Cross(c_playerData.v_currentNormal, c_playerData.v_currentDirection));
-            }
-            else
-            {
-                c_playerData.f_surfaceAngleDifference = 0.0f;
-            }
-        }
-    }
-    */
 
     private void CheckForZone()
     {

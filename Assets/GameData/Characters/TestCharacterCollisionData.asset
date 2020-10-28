@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d45ad0b006f7454d82f6e21a7d3a38e, type: 3}
   m_Name: TestCharacterCollisionData
   m_EditorClassIdentifier: 
-  FrontRayOffset: {x: 0, y: -1.1, z: 1.25}
-  BackRayOffset: {x: 0, y: -1.1, z: -1.25}
+  FrontRayOffset: {x: 0, y: -1.09, z: 1.25}
+  BackRayOffset: {x: 0, y: -1.09, z: -1.25}
   HalfExtents: {x: 1.25, y: 0.01, z: 0.255}
   CenterOffset: {x: 0, y: -1.1, z: 0}
+  BodyHalfExtents: {x: 0, y: 0, z: 0}

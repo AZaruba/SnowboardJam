@@ -43,8 +43,16 @@ public class RidingState : iState {
         cart_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed); 
         cart_surfInf.PullDirectionVector(ref currentDir, currentSurfaceNormal, Vector3.up, 0.0f, ref currentVelocity);
         // cart_acceleration.CapSpeed(ref currentVelocity, topSpeed);
+
+        cart_angleCalc.AlignToSurfaceByTail(ref currentPosition,
+                                            c_collisionData.v_backPoint,
+                                            c_collisionData.v_frontOffset,
+                                            c_collisionData.v_frontPoint,
+                                            ref currentRotation,
+                                            ref currentDir,
+                                            ref currentNormal);
         // cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
-        cart_angleCalc.AlignToSurface2(ref currentDir, ref currentNormal, ref currentRotation, targetRotation);
+        // cart_angleCalc.AlignToSurface2(ref currentDir, ref currentNormal, ref currentRotation, targetRotation);
 
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
@@ -128,6 +136,15 @@ public class RidingChargeState : iState
         cart_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed);
         cart_surfInf.PullDirectionVector(ref currentDir, currentSurfaceNormal, Vector3.up, 0.0f, ref currentVelocity);
         // cart_acceleration.CapSpeed(ref currentVelocity, topSpeed);
+
+        cart_angleCalc.AlignToSurfaceByTail(ref currentPosition,
+                                            c_collisionData.v_backPoint,
+                                            c_collisionData.v_frontPoint,
+                                            c_collisionData.v_frontPoint,
+                                            ref currentRotation,
+                                            ref currentDir,
+                                            ref currentNormal);
+
         cart_angleCalc.AlignToSurface2(ref currentDir, ref currentNormal, ref currentRotation, targetRotation);
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
