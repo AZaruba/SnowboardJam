@@ -13,13 +13,22 @@ public class CollisionData
     private Vector3 CenterNormal;
     private Vector3 AttachPoint;
 
+    private Vector3 ObstacleNormal;
+    private Vector3 ObstaclePoint;
 
     private float FrontRayLengthUp;
     private float FrontRayLengthDown;
+    private float ObstacleRayLength;
 
     private Vector3 SurfaceNormal;
 
     private bool CollisionDetected;
+
+    public float f_obstacleRayLength
+    {
+        get { return ObstacleRayLength; }
+        set { ObstacleRayLength = value; }
+    }
 
     public float f_frontRayLengthUp
     {
@@ -33,6 +42,17 @@ public class CollisionData
         set { FrontRayLengthDown = value; }
     }
 
+    public Vector3 v_obstacleNormal
+    {
+        get { return ObstacleNormal; }
+        set { ObstacleNormal = value; }
+    }
+
+    public Vector3 v_obstaclePoint
+    {
+        get { return ObstaclePoint; }
+        set { ObstaclePoint = value; }
+    }
 
     public Vector3 v_frontNormal
     {

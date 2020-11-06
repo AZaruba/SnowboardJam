@@ -51,6 +51,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     RaycastHit backHit;
     RaycastHit centerHit;
     RaycastHit forwardHit;
+    RaycastHit obstacleHit;
 
     iMessageClient cl_character;
     #endregion
@@ -133,7 +134,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
         float speedRatio = c_playerData.f_currentSpeed;
         c_collisionData.f_frontRayLengthUp = Mathf.Tan(40*(Mathf.PI/180.0f)) * speedRatio * Time.deltaTime;
         c_collisionData.f_frontRayLengthDown = (Mathf.Tan(40 * (Mathf.PI / 180.0f)) * speedRatio + c_aerialMoveData.f_verticalVelocity * -1) * Time.deltaTime;
+
+        c_collisionData.f_obstacleRayLength = speedRatio * Time.deltaTime + CollisionData.FrontRayOffset.z; // the expected travel amount next frame
         CheckForGround2(oldPosition);
+        CheckForObstacle2();
     }
 
     /// <summary>
@@ -163,7 +167,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_inputData.f_inputAxisLVert = GlobalInputController.GetAnalogInputAction(ControlAction.FLIP_AXIS);
 
         CheckForZone();
-        CheckForObstacle();
     }
 
     /// <summary>
@@ -333,6 +336,37 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
     }
 
+    // TODO: aerial collisions might not work correctly if we only use currentNormal
+    // TODO: get surface reorientation working to verify that this works on non-horizontal planes
+    // TODO: consider and verify the use of f_frontRayLengthUp in determining how far up we need to be
+    private void CheckForObstacle2()
+    {
+        LayerMask lm_env = LayerMask.GetMask("Environment");
+
+
+        Vector3 obstacleCheckOrigin = c_playerData.v_currentPosition + c_playerData.q_currentRotation * (CollisionData.CenterOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
+
+        Vector3 debugresultVector = obstacleCheckOrigin + c_playerData.q_currentRotation * Vector3.forward;
+        Debug.DrawLine(obstacleCheckOrigin, debugresultVector, Color.green);
+
+        if (Physics.BoxCast(obstacleCheckOrigin,
+                            CollisionData.HalfExtents,
+                            c_playerData.q_currentRotation * Vector3.forward,
+                            out obstacleHit,
+                            c_playerData.q_currentRotation,
+                            c_collisionData.f_obstacleRayLength,
+                            lm_env))
+        {
+            c_collisionData.v_obstacleNormal = Vector3.ProjectOnPlane(obstacleHit.normal.normalized, c_playerData.v_currentNormal).normalized;
+            c_collisionData.v_obstaclePoint = obstacleHit.point;
+
+            Vector3 newDir = c_playerData.q_currentRotation * Vector3.forward;
+            newDir = Vector3.Reflect(newDir, c_collisionData.v_obstacleNormal).normalized;
+
+            c_playerData.q_currentRotation = Quaternion.LookRotation(newDir, c_playerData.v_currentNormal);
+        }
+    }
+
     private void OnDrawGizmos()
     {
         Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.FrontRayOffset;
@@ -355,7 +389,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
          */
 
         float offsetDist = CollisionData.CenterOffset.magnitude;
-        Vector3 PreviousBoardDirection = (c_collisionData.v_frontPoint - c_collisionData.v_backPoint).normalized;
 
         // the vector giving the raycast distance AND direction
         LayerMask lm_env = LayerMask.GetMask("Environment");
@@ -431,7 +464,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
             if (useBoardRotation)
             {
-                Debug.Log("using both");
+                // Debug.Log("using both");
             }
             else
             {
