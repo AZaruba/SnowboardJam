@@ -41,24 +41,61 @@ public class AngleCalculationCartridge
                                 Vector3 tailPosition,
                                 Vector3 nosePosition,
                                 Vector3 targetNosePosition,
+                                Vector3 noseNormal,
                                 ref Quaternion currentRotation,
                                 ref Vector3 currentForward,
                                 ref Vector3 currentNormal)
     {
-        return; 
-        /* Two vectors NP - TP
-         *            TNP - TP
-         * have some rotation between them. 
-         */
-        Quaternion surfaceRotation = Quaternion.FromToRotation(nosePosition - tailPosition, targetNosePosition - tailPosition).normalized;
+         if (noseNormal.normalized == currentNormal.normalized)
+        {
+            return;
+        }
 
-        Vector3 rotationPivot = currentPosition - tailPosition;
-        Vector3 resultPivot = surfaceRotation * rotationPivot;
-        currentPosition = currentPosition - rotationPivot + resultPivot;
-        currentRotation *= surfaceRotation;
+        // targetNosePosition is the point on the line
+        Vector3 redLine = targetNosePosition - nosePosition;
+        Vector3 rotationAxis = Vector3.Cross(currentRotation * Vector3.forward, redLine);
+        Vector3 lineDir = Vector3.Cross(noseNormal, rotationAxis); // plane normal X rotation axis gets us direction of the line
+        float rpcDot = Vector3.Dot(lineDir, redLine);
 
-        currentNormal = currentRotation * Vector3.up;
-        currentForward = currentRotation * Vector3.forward;
+        float desiredLengthSq = Mathf.Pow((nosePosition - tailPosition).magnitude, 2);
+        float pcMagSq = Mathf.Pow((redLine).magnitude, 2);
+
+        float a = lineDir.magnitude;
+        float b = 2 * rpcDot;
+        float c = pcMagSq - desiredLengthSq;
+
+        float rootValue = (b * b) - (4 * a * c);
+        if (rootValue < 0)
+        {
+            // how to handle complex numbers?
+            return;
+        }
+
+        float plusQuad = ((-1 * b) + Mathf.Sqrt(b * b - (4 * a * c))) / (2 * a);
+        float minusQuad = ((-1 * b) - Mathf.Sqrt(b * b - (4 * a * c))) / (2 * a);
+
+        Vector3 plusVec = (targetNosePosition + plusQuad * lineDir);
+        Vector3 minusVec = (targetNosePosition + minusQuad * lineDir);
+
+        Quaternion newForward = Quaternion.LookRotation(plusVec, Vector3.Cross(rotationAxis, plusVec)).normalized;
+        Quaternion newForward2 = Quaternion.LookRotation(minusVec, Vector3.Cross(rotationAxis, minusVec)).normalized;
+
+        float distPlus = Vector3.Distance(plusVec, tailPosition);
+
+        float distMinus = Vector3.Distance(minusVec, tailPosition);
+
+        if (Vector3.Distance(plusVec, targetNosePosition) < Vector3.Distance(minusVec, targetNosePosition))
+        {
+            currentRotation = newForward;
+            currentNormal = newForward * Vector3.up;
+            currentForward = newForward * Vector3.forward;
+        }
+        else
+        {
+            currentRotation = newForward2;
+            currentNormal = newForward2 * Vector3.up;
+            currentForward = newForward2 * Vector3.forward;
+        }
     }
 
     public void AlignToSurface2(ref Vector3 currentForward,

@@ -464,7 +464,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
             if (useBoardRotation)
             {
-                // Debug.Log("using both");
+                //Debug.Log("using both");
             }
             else
             {
