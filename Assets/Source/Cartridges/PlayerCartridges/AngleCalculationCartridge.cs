@@ -46,7 +46,7 @@ public class AngleCalculationCartridge
                                 ref Vector3 currentForward,
                                 ref Vector3 currentNormal)
     {
-         if (noseNormal.normalized == currentNormal.normalized)
+        if (noseNormal.normalized == currentNormal.normalized)
         {
             return;
         }
@@ -74,28 +74,32 @@ public class AngleCalculationCartridge
         float plusQuad = ((-1 * b) + Mathf.Sqrt(b * b - (4 * a * c))) / (2 * a);
         float minusQuad = ((-1 * b) - Mathf.Sqrt(b * b - (4 * a * c))) / (2 * a);
 
-        Vector3 plusVec = (targetNosePosition + plusQuad * lineDir);
-        Vector3 minusVec = (targetNosePosition + minusQuad * lineDir);
+        Vector3 plusVec = (targetNosePosition + plusQuad * lineDir) - tailPosition;
+        Vector3 minusVec = (targetNosePosition + minusQuad * lineDir) - tailPosition;
 
-        Quaternion newForward = Quaternion.LookRotation(plusVec, Vector3.Cross(rotationAxis, plusVec)).normalized;
-        Quaternion newForward2 = Quaternion.LookRotation(minusVec, Vector3.Cross(rotationAxis, minusVec)).normalized;
+        Quaternion newForward;
 
         float distPlus = Vector3.Distance(plusVec, tailPosition);
 
         float distMinus = Vector3.Distance(minusVec, tailPosition);
 
-        if (Vector3.Distance(plusVec, targetNosePosition) < Vector3.Distance(minusVec, targetNosePosition))
+        // TODO: new heuristic needed, this is very wrong
+        if (Vector3.Distance(plusVec, targetNosePosition) > Vector3.Distance(minusVec, targetNosePosition))
         {
-            currentRotation = newForward;
-            currentNormal = newForward * Vector3.up;
-            currentForward = newForward * Vector3.forward;
+            // update position as well
+            newForward = Quaternion.LookRotation(plusVec, Vector3.Cross(plusVec, rotationAxis)).normalized;
+            currentPosition = Quaternion.FromToRotation((nosePosition - tailPosition).normalized, plusVec.normalized) * (currentPosition - tailPosition) + tailPosition;
         }
         else
         {
-            currentRotation = newForward2;
-            currentNormal = newForward2 * Vector3.up;
-            currentForward = newForward2 * Vector3.forward;
+            newForward = Quaternion.LookRotation(minusVec, Vector3.Cross(minusVec, rotationAxis)).normalized;
+            currentPosition = Quaternion.FromToRotation((nosePosition - tailPosition).normalized, minusVec.normalized) * (currentPosition - tailPosition) + tailPosition;
         }
+
+
+        currentRotation = newForward;
+        currentNormal = (newForward * Vector3.up).normalized;
+        currentForward = (newForward * Vector3.forward).normalized;
     }
 
     public void AlignToSurface2(ref Vector3 currentForward,
