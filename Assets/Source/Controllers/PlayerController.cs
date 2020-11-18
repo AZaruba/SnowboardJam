@@ -316,31 +316,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
     }
     #endregion
 
-    /// <summary>
-    /// Checks in front of the character for an obstacle in the way.
-    /// </summary>
-    private void CheckForObstacle()
-    {
-        // TODO: if above a certain angle, reorient player. If else, crash
-        LayerMask lm_env = LayerMask.GetMask("Environment");
-        float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.deltaTime);
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance, lm_env))
-        {
-            c_playerData.b_obstacleInRange = true;
-            c_playerData.v_currentObstacleNormal = forwardHit.normal;
-        }
-        else
-        {
-            c_playerData.b_obstacleInRange = false;
-            c_playerData.v_currentObstacleNormal = Vector3.zero;
-        }
-    }
-
     // TODO: aerial collisions might not work correctly if we only use currentNormal
     // TODO: get surface reorientation working to verify that this works on non-horizontal planes
     // TODO: consider and verify the use of f_frontRayLengthUp in determining how far up we need to be
     private void CheckForObstacle2()
     {
+        return;
         LayerMask lm_env = LayerMask.GetMask("Environment");
 
 
@@ -416,7 +397,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
             /* Collision detected! That means we have to come up with some heuristic to snap to the surface
              * and then check front and back
              * 
-             * ISSUE 3: The resulting look rotation from a front-and-back-of-board orientation causes, frankly speaking, a total mess. What is the right way to do this?
              */
 
             if (Physics.Raycast(c_playerData.v_currentPosition,

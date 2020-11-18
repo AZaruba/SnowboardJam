@@ -38,19 +38,26 @@ public class SlowingState : iState
         float currentVelocity = c_playerData.f_currentSpeed;
         float topSpeed = c_playerData.f_topSpeed;
         float deceleration = c_playerData.f_brakePower;
-        float angleDifference = c_playerData.f_surfaceAngleDifference;
         float slowScaling = c_playerInputData.f_inputAxisLVert * - 1;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Vector3 currentSurfaceNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
-        Quaternion targetRotation = c_playerData.q_targetRotation;
 
         cart_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);
         cart_surfInf.PullDirectionVector(ref currentDir, currentSurfaceNormal, Vector3.up, 0.0f, ref currentVelocity, deceleration * slowScaling);
         // cart_acceleration.CapSpeed(ref currentVelocity, topSpeed);
-        cart_angleCalc.AlignToSurface2(ref currentDir, ref currentNormal, ref currentRotation, targetRotation);
+
+        cart_angleCalc.AlignToSurfaceByTail(ref currentPosition,
+                                            c_collisionData.v_backOffset,
+                                            c_collisionData.v_frontOffset,
+                                            c_collisionData.v_frontPoint,
+                                            c_collisionData.v_frontNormal,
+                                            ref currentRotation,
+                                            ref currentDir,
+                                            ref currentNormal);
+
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;

@@ -25,17 +25,7 @@ public class AngleCalculationCartridge
     }
 
     /* TODO:
-     * This doesn't work as intended, though it is CALLED as intended. It's entirely possible
-     * that the parameters provided aren't right, but the goal here is:
-     * 
-     *  currentPosition, via a rotation, realigns
-     *  tailPosition, as our pivot, should remain the same
-     *  nosePosition should end up at targetNosePosition
-     *  
-     *  the rotation, forward, and normal are all rotated by the rotation applied to currentPosition
-     *  
-     *  Gentle reminder to remove "Forward" entirely as the currentRotation should be able to express the orientation
-     *  of the object correctly.
+     * Handle zero speed cases
      */ 
     public void AlignToSurfaceByTail(ref Vector3 currentPosition,
                                 Vector3 tailPosition,
@@ -53,6 +43,13 @@ public class AngleCalculationCartridge
 
         // targetNosePosition is the point on the line
         Vector3 redLine = targetNosePosition - nosePosition;
+
+        if (redLine.magnitude.Equals(0))
+        {
+            return;
+        }
+
+        Vector3 blueLine = nosePosition - tailPosition;
         Vector3 rotationAxis = Vector3.Cross(currentRotation * Vector3.forward, redLine);
         Vector3 lineDir = Vector3.Cross(noseNormal, rotationAxis); // plane normal X rotation axis gets us direction of the line
         float rpcDot = Vector3.Dot(lineDir, redLine);
@@ -78,13 +75,7 @@ public class AngleCalculationCartridge
         Vector3 minusVec = (targetNosePosition + minusQuad * lineDir) - tailPosition;
 
         Quaternion newForward;
-
-        float distPlus = Vector3.Distance(plusVec, tailPosition);
-
-        float distMinus = Vector3.Distance(minusVec, tailPosition);
-
-        // TODO: new heuristic needed, this is very wrong
-        if (Vector3.Distance(plusVec, targetNosePosition) > Vector3.Distance(minusVec, targetNosePosition))
+        if (Vector3.SignedAngle(plusVec, blueLine, rotationAxis) < Vector3.SignedAngle(minusVec, blueLine, rotationAxis))
         {
             // update position as well
             newForward = Quaternion.LookRotation(plusVec, Vector3.Cross(plusVec, rotationAxis)).normalized;

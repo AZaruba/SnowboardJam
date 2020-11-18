@@ -37,8 +37,6 @@ public class RidingState : iState {
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Vector3 currentSurfaceNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
-        Quaternion targetRotation = c_playerData.q_targetRotation;
-        Vector3 attachPoint = c_collisionData.v_attachPoint;
 
         cart_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed); 
         cart_surfInf.PullDirectionVector(ref currentDir, currentSurfaceNormal, Vector3.up, 0.0f, ref currentVelocity);
@@ -129,7 +127,6 @@ public class RidingChargeState : iState
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Vector3 currentSurfaceNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
-        Quaternion targetRotation = c_playerData.q_targetRotation;
 
         cart_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed);
         cart_surfInf.PullDirectionVector(ref currentDir, currentSurfaceNormal, Vector3.up, 0.0f, ref currentVelocity);
