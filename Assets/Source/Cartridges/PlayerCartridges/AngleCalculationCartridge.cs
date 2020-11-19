@@ -26,9 +26,15 @@ public class AngleCalculationCartridge
 
     /* TODO:
      * Handle zero speed cases
+     * 
+     * Figure out a way to ensure the normal is rotated at angles, which
+     * should solve several of the desync issues
+     * 
+     * When the current
      */ 
     public void AlignToSurfaceByTail(ref Vector3 currentPosition,
                                 Vector3 tailPosition,
+                                Vector3 tailNormal,
                                 Vector3 nosePosition,
                                 Vector3 targetNosePosition,
                                 Vector3 noseNormal,
@@ -36,8 +42,13 @@ public class AngleCalculationCartridge
                                 ref Vector3 currentForward,
                                 ref Vector3 currentNormal)
     {
-        if (noseNormal.normalized == currentNormal.normalized)
+        // if the tail and the nose have found the same normal, we've already adjusted
+        if (tailNormal == noseNormal)
         {
+            Quaternion targetRotation = Quaternion.LookRotation(currentForward, tailNormal).normalized;
+            currentRotation = targetRotation;
+            currentNormal = (targetRotation * Vector3.up).normalized;
+            currentForward = (targetRotation * Vector3.forward).normalized;
             return;
         }
 
@@ -54,8 +65,8 @@ public class AngleCalculationCartridge
         Vector3 lineDir = Vector3.Cross(noseNormal, rotationAxis); // plane normal X rotation axis gets us direction of the line
         float rpcDot = Vector3.Dot(lineDir, redLine);
 
-        float desiredLengthSq = Mathf.Pow((nosePosition - tailPosition).magnitude, 2);
-        float pcMagSq = Mathf.Pow((redLine).magnitude, 2);
+        float desiredLengthSq = (nosePosition - tailPosition).sqrMagnitude;
+        float pcMagSq = (redLine).sqrMagnitude;
 
         float a = lineDir.magnitude;
         float b = 2 * rpcDot;
@@ -65,6 +76,7 @@ public class AngleCalculationCartridge
         if (rootValue < 0)
         {
             // how to handle complex numbers?
+            Debug.DrawRay(targetNosePosition, noseNormal, Color.blue, 2);
             return;
         }
 
@@ -75,6 +87,8 @@ public class AngleCalculationCartridge
         Vector3 minusVec = (targetNosePosition + minusQuad * lineDir) - tailPosition;
 
         Quaternion newForward;
+        // this STILL isn't quite right, it seems to get the opposite rotation sometimes
+        // the result is rotations that don't "appear" to happen but in reality just aren't getting calculated correctly
         if (Vector3.SignedAngle(plusVec, blueLine, rotationAxis) < Vector3.SignedAngle(minusVec, blueLine, rotationAxis))
         {
             // update position as well
@@ -91,6 +105,8 @@ public class AngleCalculationCartridge
         currentRotation = newForward;
         currentNormal = (newForward * Vector3.up).normalized;
         currentForward = (newForward * Vector3.forward).normalized;
+
+        Debug.DrawRay(targetNosePosition + plusQuad * lineDir, noseNormal, Color.green, 1);
     }
 
     public void AlignToSurface2(ref Vector3 currentForward,

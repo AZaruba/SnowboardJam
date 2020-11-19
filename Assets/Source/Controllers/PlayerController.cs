@@ -112,10 +112,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_playerData.v_currentPosition;
-        transform.rotation = c_positionData.q_currentModelRotation;
+        transform.rotation = c_playerData.q_currentRotation;
 
         debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
+        debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentNormal);
         debugAccessor.DisplayFloat("Current Check", c_collisionData.f_frontRayLengthDown);
 
         UpdateAnimator();
@@ -137,7 +137,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         c_collisionData.f_obstacleRayLength = speedRatio * Time.deltaTime + CollisionData.FrontRayOffset.z; // the expected travel amount next frame
         CheckForGround2(oldPosition);
-        CheckForObstacle2();
     }
 
     /// <summary>
@@ -413,11 +412,21 @@ public class PlayerController : MonoBehaviour, iEntityController {
             Vector3 offsetCenter = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.CenterOffset;
             c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.BackRayOffset;
 
-            if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env)) // double to check up and DOWN
+            // Debug.DrawRay(c_collisionData.v_frontOffset, c_playerData.v_currentDown, Color.red, c_collisionData.f_frontRayLengthUp + 8);
+            if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + 8, lm_env)) // double to check up and DOWN
             {
-                Debug.DrawLine(c_collisionData.v_frontOffset, frontHit.point, Color.red);
-                c_collisionData.v_frontNormal = frontHit.normal;
-                c_collisionData.v_frontPoint = frontHit.point;
+                // validate angle 
+                if (Vector3.Angle(c_playerData.v_currentNormal, frontHit.normal) > c_collisionData.f_obstacleAngle)
+                {
+                    useBoardRotation = false;
+                    c_collisionData.v_frontNormal = centerHit.normal;
+                    c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
+                }
+                else
+                {
+                    c_collisionData.v_frontNormal = frontHit.normal;
+                    c_collisionData.v_frontPoint = frontHit.point;
+                }
             }
             else
             {
@@ -426,11 +435,21 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
             }
 
-            if (Physics.Raycast(c_collisionData.v_backOffset, c_playerData.v_currentDown, out backHit, c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1, lm_env))
+            // Debug.DrawRay(c_collisionData.v_backOffset, c_playerData.v_currentDown, Color.red, 8);
+            if (Physics.Raycast(c_collisionData.v_backOffset, c_playerData.v_currentDown, out backHit, 8, lm_env))
             {
-                Debug.DrawLine(c_collisionData.v_backOffset, backHit.point, Color.red);
-                c_collisionData.v_backNormal = backHit.normal;
-                c_collisionData.v_backPoint = backHit.point;
+                // validate angle 
+                if (Vector3.Angle(c_playerData.v_currentNormal, backHit.normal) > c_collisionData.f_obstacleAngle)
+                {
+                    useBoardRotation = false;
+                    c_collisionData.v_backNormal = centerHit.normal;
+                    c_collisionData.v_backPoint = c_collisionData.v_backOffset;
+                }
+                else
+                {
+                    c_collisionData.v_backNormal = backHit.normal;
+                    c_collisionData.v_backPoint = backHit.point;
+                }
             }
             else
             {

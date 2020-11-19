@@ -34,6 +34,7 @@ public class StationaryState : iState {
         // cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
         cart_angleCalc.AlignToSurfaceByTail(ref currentPosition,
                                             c_collisionData.v_backOffset,
+                                            c_collisionData.v_backNormal,
                                             c_collisionData.v_frontOffset,
                                             c_collisionData.v_frontPoint,
                                             c_collisionData.v_frontNormal,
