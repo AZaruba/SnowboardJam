@@ -43,15 +43,16 @@ public class AngleCalculationCartridge
                                 ref Vector3 currentNormal)
     {
         // if the tail and the nose have found the same normal, we've already adjusted
-        if (tailNormal == noseNormal)
+        if (true)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(currentForward, tailNormal).normalized;
+            Quaternion targetRotation = Quaternion.FromToRotation(Vector3.up, (tailNormal + noseNormal).normalized).normalized;
             currentRotation = targetRotation;
             currentNormal = (targetRotation * Vector3.up).normalized;
             currentForward = (targetRotation * Vector3.forward).normalized;
             return;
         }
 
+        /*
         // targetNosePosition is the point on the line
         Vector3 redLine = targetNosePosition - nosePosition;
 
@@ -106,7 +107,8 @@ public class AngleCalculationCartridge
         currentNormal = (newForward * Vector3.up).normalized;
         currentForward = (newForward * Vector3.forward).normalized;
 
-        Debug.DrawRay(targetNosePosition + plusQuad * lineDir, noseNormal, Color.green, 1);
+        //Debug.DrawRay(targetNosePosition + plusQuad * lineDir, noseNormal, Color.green, 1);
+        */
     }
 
     public void AlignToSurface2(ref Vector3 currentForward,

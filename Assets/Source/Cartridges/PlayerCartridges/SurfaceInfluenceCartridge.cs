@@ -25,6 +25,20 @@ public class SurfaceInfluenceCartridge
         currentSpeed = scaledDirection.magnitude;
     }
 
+    public static void KeepAboveSurface(ref Vector3 currentPosition, Quaternion currentRotation, Vector3 pointBelow, float desiredDistance)
+    {
+        if (pointBelow == Vector3.zero)
+        {
+            return;
+        }
+
+        Vector3 inverse = Quaternion.Inverse(currentRotation) * (currentPosition - pointBelow);
+        float difference = inverse.y - desiredDistance;
+
+        inverse.y -= difference;
+        currentPosition = currentRotation * (inverse + Quaternion.Inverse(currentRotation) * pointBelow);
+    }
+
     public void SwitchReverse(ref bool isReverse, Quaternion travelRotation, Quaternion modelRotation)
     {
         isReverse = Mathf.Abs(Quaternion.Angle(travelRotation, modelRotation)) > 90f;

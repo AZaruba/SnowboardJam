@@ -136,6 +136,6 @@ public class CollisionData
         FrontRayLengthDown = Constants.ZERO_F;
         CollisionDetected = false;
 
-        CurrentObstacleAngle = 10f;
+        CurrentObstacleAngle = 45f;
     }
 }

@@ -115,7 +115,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = c_playerData.q_currentRotation;
 
         debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentNormal);
+        debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
         debugAccessor.DisplayFloat("Current Check", c_collisionData.f_frontRayLengthDown);
 
         UpdateAnimator();
@@ -404,15 +404,15 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
                             lm_env))
             {
-                c_playerData.v_currentPosition = centerHit.point + new Vector3(0, 1.1f, 0);
+                //c_playerData.v_currentPosition = centerHit.point + new Vector3(0, 1.1f, 0);
+                c_collisionData.v_attachPoint = centerHit.point;
             }
-
 
             c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
             Vector3 offsetCenter = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.CenterOffset;
-            c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.BackRayOffset;
+            c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.BackRayOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
 
-            // Debug.DrawRay(c_collisionData.v_frontOffset, c_playerData.v_currentDown, Color.red, c_collisionData.f_frontRayLengthUp + 8);
+            Debug.DrawRay(c_collisionData.v_frontOffset, c_playerData.v_currentDown, Color.magenta, c_collisionData.f_frontRayLengthUp + 8);
             if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + 8, lm_env)) // double to check up and DOWN
             {
                 // validate angle 
@@ -424,7 +424,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 }
                 else
                 {
-                    c_collisionData.v_frontNormal = frontHit.normal;
+                    c_collisionData.v_frontNormal = GetBaryCentricNormal(frontHit);
                     c_collisionData.v_frontPoint = frontHit.point;
                 }
             }
@@ -435,10 +435,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
             }
 
-            // Debug.DrawRay(c_collisionData.v_backOffset, c_playerData.v_currentDown, Color.red, 8);
-            if (Physics.Raycast(c_collisionData.v_backOffset, c_playerData.v_currentDown, out backHit, 8, lm_env))
+            Debug.DrawRay(c_collisionData.v_backOffset, c_playerData.v_currentDown, Color.red, 8);
+            if (Physics.Raycast(c_collisionData.v_backOffset, c_playerData.v_currentDown, out backHit, c_collisionData.f_frontRayLengthUp + 8, lm_env))
             {
-                // validate angle 
                 if (Vector3.Angle(c_playerData.v_currentNormal, backHit.normal) > c_collisionData.f_obstacleAngle)
                 {
                     useBoardRotation = false;
@@ -447,7 +446,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 }
                 else
                 {
-                    c_collisionData.v_backNormal = backHit.normal;
+                    c_collisionData.v_backNormal = GetBaryCentricNormal(backHit);
                     c_collisionData.v_backPoint = backHit.point;
                 }
             }
@@ -471,6 +470,38 @@ public class PlayerController : MonoBehaviour, iEntityController {
             }
             c_playerData.q_targetRotation.Normalize();
         }
+    }
+
+    private Vector3 GetBaryCentricNormal(RaycastHit hitIn)
+    {
+        Vector3 BarycentricNormal = Vector3.zero;
+        Vector3 BarycentricCoords = hitIn.barycentricCoordinate;
+
+        MeshCollider meshCol = hitIn.collider as MeshCollider;
+        if (meshCol == null || meshCol.sharedMesh == null)
+        {
+            return BarycentricNormal;
+        }
+
+        Mesh mesh = (hitIn.collider as MeshCollider).sharedMesh;
+        Vector3[] normals = mesh.normals;
+        int[] triangles = mesh.triangles;
+
+        Vector3 n0 = normals[triangles[hitIn.triangleIndex * 3 + 0]];
+        Vector3 n1 = normals[triangles[hitIn.triangleIndex * 3 + 1]];
+        Vector3 n2 = normals[triangles[hitIn.triangleIndex * 3 + 2]];
+
+        BarycentricNormal = n0 * BarycentricCoords.x +
+                            n1 * BarycentricCoords.y +
+                            n2 * BarycentricCoords.z;
+
+        BarycentricNormal = BarycentricNormal.normalized;
+
+        // Transform local space normals to world space
+        Transform hitTransform = hitIn.collider.transform;
+        BarycentricNormal = hitTransform.TransformDirection(BarycentricNormal);
+
+        return BarycentricNormal.normalized;
     }
 
     private void CheckForZone()
