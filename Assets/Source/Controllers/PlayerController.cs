@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_playerData.v_currentPosition;
-        transform.rotation = c_playerData.q_currentRotation;
+        transform.rotation = c_positionData.q_currentModelRotation;
 
         debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
@@ -132,8 +132,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // TODO: find the angle we want to limit, currently 40 degrees
 
         float speedRatio = c_playerData.f_currentSpeed;
-        c_collisionData.f_frontRayLengthUp = Mathf.Tan(40*(Mathf.PI/180.0f)) * speedRatio * Time.deltaTime;
-        c_collisionData.f_frontRayLengthDown = (Mathf.Tan(40 * (Mathf.PI / 180.0f)) * speedRatio + c_aerialMoveData.f_verticalVelocity * -1) * Time.deltaTime;
+        c_collisionData.f_frontRayLengthUp = 1.1f; //Mathf.Tan(40*(Mathf.PI/180.0f)) * speedRatio * Time.deltaTime;
+        c_collisionData.f_frontRayLengthDown = 1.1f; //(Mathf.Tan(40 * (Mathf.PI / 180.0f)) * speedRatio + c_aerialMoveData.f_verticalVelocity * -1) * Time.deltaTime;
 
         c_collisionData.f_obstacleRayLength = speedRatio * Time.deltaTime + CollisionData.FrontRayOffset.z; // the expected travel amount next frame
         CheckForGround2(oldPosition);
@@ -315,38 +315,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     }
     #endregion
 
-    // TODO: aerial collisions might not work correctly if we only use currentNormal
-    // TODO: get surface reorientation working to verify that this works on non-horizontal planes
-    // TODO: consider and verify the use of f_frontRayLengthUp in determining how far up we need to be
-    private void CheckForObstacle2()
-    {
-        return;
-        LayerMask lm_env = LayerMask.GetMask("Environment");
-
-
-        Vector3 obstacleCheckOrigin = c_playerData.v_currentPosition + c_playerData.q_currentRotation * (CollisionData.CenterOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
-
-        Vector3 debugresultVector = obstacleCheckOrigin + c_playerData.q_currentRotation * Vector3.forward;
-        Debug.DrawLine(obstacleCheckOrigin, debugresultVector, Color.green);
-
-        if (Physics.BoxCast(obstacleCheckOrigin,
-                            CollisionData.HalfExtents,
-                            c_playerData.q_currentRotation * Vector3.forward,
-                            out obstacleHit,
-                            c_playerData.q_currentRotation,
-                            c_collisionData.f_obstacleRayLength,
-                            lm_env))
-        {
-            c_collisionData.v_obstacleNormal = Vector3.ProjectOnPlane(obstacleHit.normal.normalized, c_playerData.v_currentNormal).normalized;
-            c_collisionData.v_obstaclePoint = obstacleHit.point;
-
-            Vector3 newDir = c_playerData.q_currentRotation * Vector3.forward;
-            newDir = Vector3.Reflect(newDir, c_collisionData.v_obstacleNormal).normalized;
-
-            c_playerData.q_currentRotation = Quaternion.LookRotation(newDir, c_playerData.v_currentNormal);
-        }
-    }
-
     private void OnDrawGizmos()
     {
         Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.FrontRayOffset;
@@ -378,13 +346,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // safety detection: use old-style raycast to check if we want to stay grounded
         if (Physics.BoxCast(c_playerData.v_currentPosition,
                             CollisionData.HalfExtents,
-                            Vector3.down,
+                            c_playerData.v_currentDown,
                             out centerHit,
                             c_playerData.q_currentRotation,
                             (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
                             lm_env))
         {
             c_collisionData.b_collisionDetected = true;
+            c_collisionData.v_attachPoint = centerHit.point;
         }
         else
         {
@@ -399,17 +368,15 @@ public class PlayerController : MonoBehaviour, iEntityController {
              */
 
             if (Physics.Raycast(c_playerData.v_currentPosition,
-                            Vector3.down,
+                            c_playerData.v_currentDown,
                             out centerHit,
                             (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
                             lm_env))
             {
                 //c_playerData.v_currentPosition = centerHit.point + new Vector3(0, 1.1f, 0);
-                c_collisionData.v_attachPoint = centerHit.point;
             }
 
             c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
-            Vector3 offsetCenter = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.CenterOffset;
             c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.BackRayOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
 
             Debug.DrawRay(c_collisionData.v_frontOffset, c_playerData.v_currentDown, Color.magenta, c_collisionData.f_frontRayLengthUp + 8);
@@ -459,17 +426,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
             c_collisionData.v_surfaceNormal = ((c_collisionData.v_backNormal +
                                                 c_collisionData.v_frontNormal) / 2).normalized;
-
-            if (useBoardRotation)
-            {
-                //Debug.Log("using both");
-            }
-            else
-            {
-                c_playerData.q_targetRotation = Quaternion.identity;
-            }
-            c_playerData.q_targetRotation.Normalize();
         }
+
+        c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset);
+        Vector3 offsetCenter = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.CenterOffset;
+        c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.BackRayOffset);
+
     }
 
     private Vector3 GetBaryCentricNormal(RaycastHit hitIn)
@@ -567,7 +529,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
         GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_collisionData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
-        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
+        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
         c_airMachine = new StateMachine(s_grounded, StateRef.GROUNDED);

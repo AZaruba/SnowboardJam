@@ -46,19 +46,7 @@ public class SlowingState : iState
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         cart_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);
-        cart_surfInf.PullDirectionVector(ref currentDir, currentSurfaceNormal, Vector3.up, 0.0f, ref currentVelocity, deceleration * slowScaling);
         // cart_acceleration.CapSpeed(ref currentVelocity, topSpeed);
-
-        cart_angleCalc.AlignToSurfaceByTail(ref currentPosition,
-                                            c_collisionData.v_backOffset,
-                                            c_collisionData.v_backNormal,
-                                            c_collisionData.v_frontOffset,
-                                            c_collisionData.v_frontPoint,
-                                            c_collisionData.v_frontNormal,
-                                            ref currentRotation,
-                                            ref currentDir,
-                                            ref currentNormal);
-
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;

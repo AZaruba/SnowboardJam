@@ -32,7 +32,7 @@ public class AngleCalculationCartridge
      * 
      * When the current
      */ 
-    public void AlignToSurfaceByTail(ref Vector3 currentPosition,
+    public static void AlignToSurfaceByTail(ref Vector3 currentPosition,
                                 Vector3 tailPosition,
                                 Vector3 tailNormal,
                                 Vector3 nosePosition,
@@ -45,70 +45,14 @@ public class AngleCalculationCartridge
         // if the tail and the nose have found the same normal, we've already adjusted
         if (true)
         {
-            Quaternion targetRotation = Quaternion.FromToRotation(Vector3.up, (tailNormal + noseNormal).normalized).normalized;
+            Vector3 targetNormal = (tailNormal + noseNormal).normalized;
+            Vector3 targetForward = Vector3.ProjectOnPlane(currentForward, targetNormal).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(targetForward, targetNormal);
             currentRotation = targetRotation;
             currentNormal = (targetRotation * Vector3.up).normalized;
             currentForward = (targetRotation * Vector3.forward).normalized;
             return;
         }
-
-        /*
-        // targetNosePosition is the point on the line
-        Vector3 redLine = targetNosePosition - nosePosition;
-
-        if (redLine.magnitude.Equals(0))
-        {
-            return;
-        }
-
-        Vector3 blueLine = nosePosition - tailPosition;
-        Vector3 rotationAxis = Vector3.Cross(currentRotation * Vector3.forward, redLine);
-        Vector3 lineDir = Vector3.Cross(noseNormal, rotationAxis); // plane normal X rotation axis gets us direction of the line
-        float rpcDot = Vector3.Dot(lineDir, redLine);
-
-        float desiredLengthSq = (nosePosition - tailPosition).sqrMagnitude;
-        float pcMagSq = (redLine).sqrMagnitude;
-
-        float a = lineDir.magnitude;
-        float b = 2 * rpcDot;
-        float c = pcMagSq - desiredLengthSq;
-
-        float rootValue = (b * b) - (4 * a * c);
-        if (rootValue < 0)
-        {
-            // how to handle complex numbers?
-            Debug.DrawRay(targetNosePosition, noseNormal, Color.blue, 2);
-            return;
-        }
-
-        float plusQuad = ((-1 * b) + Mathf.Sqrt(b * b - (4 * a * c))) / (2 * a);
-        float minusQuad = ((-1 * b) - Mathf.Sqrt(b * b - (4 * a * c))) / (2 * a);
-
-        Vector3 plusVec = (targetNosePosition + plusQuad * lineDir) - tailPosition;
-        Vector3 minusVec = (targetNosePosition + minusQuad * lineDir) - tailPosition;
-
-        Quaternion newForward;
-        // this STILL isn't quite right, it seems to get the opposite rotation sometimes
-        // the result is rotations that don't "appear" to happen but in reality just aren't getting calculated correctly
-        if (Vector3.SignedAngle(plusVec, blueLine, rotationAxis) < Vector3.SignedAngle(minusVec, blueLine, rotationAxis))
-        {
-            // update position as well
-            newForward = Quaternion.LookRotation(plusVec, Vector3.Cross(plusVec, rotationAxis)).normalized;
-            currentPosition = Quaternion.FromToRotation((nosePosition - tailPosition).normalized, plusVec.normalized) * (currentPosition - tailPosition) + tailPosition;
-        }
-        else
-        {
-            newForward = Quaternion.LookRotation(minusVec, Vector3.Cross(minusVec, rotationAxis)).normalized;
-            currentPosition = Quaternion.FromToRotation((nosePosition - tailPosition).normalized, minusVec.normalized) * (currentPosition - tailPosition) + tailPosition;
-        }
-
-
-        currentRotation = newForward;
-        currentNormal = (newForward * Vector3.up).normalized;
-        currentForward = (newForward * Vector3.forward).normalized;
-
-        //Debug.DrawRay(targetNosePosition + plusQuad * lineDir, noseNormal, Color.green, 1);
-        */
     }
 
     public void AlignToSurface2(ref Vector3 currentForward,

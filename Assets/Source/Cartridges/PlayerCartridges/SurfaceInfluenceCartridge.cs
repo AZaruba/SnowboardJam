@@ -25,6 +25,51 @@ public class SurfaceInfluenceCartridge
         currentSpeed = scaledDirection.magnitude;
     }
 
+    /* The goal of KeepAboveSurface2 is to:
+     * 1) find whether the player is above or below the surface at any point
+     * 2) check to see how far away they are
+     * 3) find some translation applied to the current position that remedies the clipping/floating
+     * 
+     */ 
+    public static void KeepAboveSurface2(ref Vector3 currentPosition,
+                                         Vector3 surfaceNormal,
+                                         Vector3 noseOffset,
+                                         Vector3 tailOffset,
+                                         Vector3 nosePoint,
+                                         Vector3 tailPoint,
+                                         Quaternion inverseRotation)
+    {
+        // the result should be two vectors that ONLY have a y component
+        float translationMagnitude = Constants.ZERO_F;
+
+        Vector3 resultTailVec = ((inverseRotation * tailOffset) - (inverseRotation * tailPoint));
+        Vector3 resultNoseVec = ((inverseRotation * noseOffset) - (inverseRotation * nosePoint));
+
+        float resultTail = ((inverseRotation * tailOffset) - (inverseRotation * tailPoint)).y;
+        float resultNose = ((inverseRotation * noseOffset) - (inverseRotation * nosePoint)).y;
+
+        // 1) move up the most
+        if (resultTail > 0.0f)
+        {
+            translationMagnitude = resultNose > resultTail ? resultNose : resultTail;
+        }
+        // 2) move up if needed
+        else
+        {
+            if (resultNose < 0.0f)
+            {
+                translationMagnitude = resultNose;
+            }
+            // 3) move down the least
+            else
+            {
+                translationMagnitude = resultTail < resultNose ? resultNose : resultTail;
+            }
+        }
+
+        currentPosition += surfaceNormal.normalized * (translationMagnitude * -1);
+    }
+
     public static void KeepAboveSurface(ref Vector3 currentPosition, Quaternion currentRotation, Vector3 pointBelow, float desiredDistance)
     {
         if (pointBelow == Vector3.zero)

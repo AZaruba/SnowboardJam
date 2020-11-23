@@ -28,7 +28,33 @@ public class GroundedState : iState
     }
     public void Act()
     {
+        Vector3 currentPosition = c_playerData.v_currentPosition;
+        Vector3 currentDir = c_playerData.v_currentDirection;
+        Vector3 currentNormal = c_playerData.v_currentNormal;
+        Quaternion currentRotation = c_playerData.q_currentRotation;
 
+        SurfaceInfluenceCartridge.KeepAboveSurface2(ref currentPosition,
+                                                    c_collisionData.v_surfaceNormal,
+                                                    c_collisionData.v_frontOffset,
+                                                    c_collisionData.v_backOffset,
+                                                    c_collisionData.v_frontPoint,
+                                                    c_collisionData.v_backPoint,
+                                                    Quaternion.Inverse(currentRotation));
+
+        AngleCalculationCartridge.AlignToSurfaceByTail(ref currentPosition,
+                                            c_collisionData.v_backOffset,
+                                            c_collisionData.v_backNormal,
+                                            c_collisionData.v_frontOffset,
+                                            c_collisionData.v_frontPoint,
+                                            c_collisionData.v_frontNormal,
+                                            ref currentRotation,
+                                            ref currentDir,
+                                            ref currentNormal);
+
+        c_playerData.v_currentPosition = currentPosition;
+        c_playerData.v_currentDirection = currentDir;
+        c_playerData.v_currentNormal = currentNormal;
+        c_playerData.q_currentRotation = currentRotation;
     }
 
     public void TransitionAct()

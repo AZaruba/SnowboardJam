@@ -31,6 +31,7 @@ public class StationaryState : iState {
         Vector3 currentDir = c_playerData.v_currentDirection;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
+        /*
         // cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
         cart_angleCalc.AlignToSurfaceByTail(ref currentPosition,
                                             c_collisionData.v_backOffset,
@@ -41,6 +42,8 @@ public class StationaryState : iState {
                                             ref currentRotation,
                                             ref currentDir,
                                             ref currentNormal);
+        */
+
         c_playerData.v_currentNormal = currentNormal.normalized;
         c_playerData.v_currentDown = currentNormal.normalized * -1;
         c_playerData.v_currentDirection = currentDir.normalized;

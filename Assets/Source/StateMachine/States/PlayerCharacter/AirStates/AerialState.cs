@@ -77,6 +77,7 @@ public class AerialState : iState {
             Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_collisionData.v_surfaceNormal);
             c_playerData.f_currentSpeed = projectedDir.magnitude;
             c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -2;
+            c_playerData.v_currentDirection = projectedDir.normalized;
             return StateRef.GROUNDED;
         }
         if (cmd == Command.CRASH)
