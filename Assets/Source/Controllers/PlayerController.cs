@@ -142,9 +142,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_collisionData.f_frontRayLengthUp = Mathf.Tan(c_collisionData.f_obstacleAngle*(Mathf.PI/180.0f)) * speedRatio * Time.deltaTime;
         c_collisionData.f_frontRayLengthDown = (Mathf.Tan(c_collisionData.f_obstacleAngle * (Mathf.PI / 180.0f)) * speedRatio + c_aerialMoveData.f_verticalVelocity * -1) * Time.deltaTime;
 
-        c_collisionData.f_obstacleRayLength = speedRatio * Time.deltaTime + CollisionData.FrontRayOffset.z; // the expected travel amount next frame
-        CheckForGround2();
+        c_collisionData.f_obstacleRayLength = speedRatio * Time.deltaTime; // the expected travel amount next frame
         CheckForWall();
+        CheckForGround2();
     }
 
     /// <summary>
@@ -352,19 +352,19 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         newDir.y = 0;
         c_aerialMoveData.v_lateralDirection = newDir;
+
+        // TODO: velocity adjustment on collision
     }
 
     private void CheckForWall()
     {
         LayerMask lm_env = LayerMask.GetMask("Environment");
 
-        Vector3 obstacleCheckOrigin = c_playerData.v_currentPosition + c_playerData.q_currentRotation * (CollisionData.CenterOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
+        Vector3 playerBox = CollisionData.BodyHalfExtents;
+        playerBox.y -= c_collisionData.f_frontRayLengthUp / 2;
 
-        Vector3 debugresultVector = obstacleCheckOrigin + c_playerData.q_currentRotation * Vector3.forward;
-        Debug.DrawLine(obstacleCheckOrigin, debugresultVector, Color.green);
-
-        if (Physics.BoxCast(obstacleCheckOrigin,
-                            CollisionData.HalfExtents,
+        if (Physics.BoxCast(c_playerData.v_currentPosition,
+                            playerBox,
                             c_playerData.q_currentRotation * Vector3.forward,
                             out obstacleHit,
                             c_playerData.q_currentRotation,

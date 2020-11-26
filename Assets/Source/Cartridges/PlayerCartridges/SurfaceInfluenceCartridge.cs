@@ -80,7 +80,7 @@ public class SurfaceInfluenceCartridge
     {
         Vector3 totalTranslation = Vector3.ProjectOnPlane(tailOffset - tailPoint, surfaceNormal) + tailPoint - tailOffset;
 
-        currentPosition += totalTranslation;
+        currentPosition += totalTranslation + (surfaceNormal.normalized * 0.1f);
     }
 
     public void SwitchReverse(ref bool isReverse, Quaternion travelRotation, Quaternion modelRotation)
