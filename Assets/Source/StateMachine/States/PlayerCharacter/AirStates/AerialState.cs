@@ -64,6 +64,7 @@ public class AerialState : iState {
         c_aerialMoveData.v_lateralDirection = latDir;
         c_aerialMoveData.f_verticalVelocity = vertVel;
         c_aerialMoveData.f_lateralVelocity = latVel;
+        c_playerData.v_currentNormal = Vector3.up;
         c_playerData.v_currentDown = Vector3.down;
     }
 
@@ -76,7 +77,7 @@ public class AerialState : iState {
 
             Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_collisionData.v_surfaceNormal);
             c_playerData.f_currentSpeed = projectedDir.magnitude;
-            c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -2;
+            c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -1;
             c_playerData.v_currentDirection = projectedDir.normalized;
             return StateRef.GROUNDED;
         }

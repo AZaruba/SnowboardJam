@@ -70,18 +70,17 @@ public class SurfaceInfluenceCartridge
         currentPosition += surfaceNormal.normalized * (translationMagnitude * -1);
     }
 
-    public static void KeepAboveSurface(ref Vector3 currentPosition, Quaternion currentRotation, Vector3 pointBelow, float desiredDistance)
+    public static void KeepAboveSurface(ref Vector3 currentPosition,
+                                         Vector3 surfaceNormal,
+                                         Vector3 noseOffset,
+                                         Vector3 tailOffset,
+                                         Vector3 nosePoint,
+                                         Vector3 tailPoint,
+                                         Quaternion inverseRotation)
     {
-        if (pointBelow == Vector3.zero)
-        {
-            return;
-        }
+        Vector3 totalTranslation = Vector3.ProjectOnPlane(tailOffset - tailPoint, surfaceNormal) + tailPoint - tailOffset;
 
-        Vector3 inverse = Quaternion.Inverse(currentRotation) * (currentPosition - pointBelow);
-        float difference = inverse.y - desiredDistance;
-
-        inverse.y -= difference;
-        currentPosition = currentRotation * (inverse + Quaternion.Inverse(currentRotation) * pointBelow);
+        currentPosition += totalTranslation;
     }
 
     public void SwitchReverse(ref bool isReverse, Quaternion travelRotation, Quaternion modelRotation)

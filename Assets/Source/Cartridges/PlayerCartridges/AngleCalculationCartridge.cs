@@ -24,35 +24,18 @@ public class AngleCalculationCartridge
         currentNormal = resultRotation * Vector3.up;
     }
 
-    /* TODO:
-     * Handle zero speed cases
-     * 
-     * Figure out a way to ensure the normal is rotated at angles, which
-     * should solve several of the desync issues
-     * 
-     * When the current
-     */ 
     public static void AlignToSurfaceByTail(ref Vector3 currentPosition,
-                                Vector3 tailPosition,
-                                Vector3 tailNormal,
-                                Vector3 nosePosition,
-                                Vector3 targetNosePosition,
-                                Vector3 noseNormal,
+                                Vector3 surfaceNormal,
                                 ref Quaternion currentRotation,
                                 ref Vector3 currentForward,
                                 ref Vector3 currentNormal)
     {
-        // if the tail and the nose have found the same normal, we've already adjusted
-        if (true)
-        {
-            Vector3 targetNormal = (tailNormal + noseNormal).normalized;
-            Vector3 targetForward = Vector3.ProjectOnPlane(currentForward, targetNormal).normalized;
-            Quaternion targetRotation = Quaternion.LookRotation(targetForward, targetNormal);
-            currentRotation = targetRotation;
-            currentNormal = (targetRotation * Vector3.up).normalized;
-            currentForward = (targetRotation * Vector3.forward).normalized;
-            return;
-        }
+        Vector3 targetForward = Vector3.ProjectOnPlane(currentForward, surfaceNormal).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(targetForward, surfaceNormal);
+        currentRotation = targetRotation;
+        currentNormal = (targetRotation * Vector3.up).normalized;
+        currentForward = (targetRotation * Vector3.forward).normalized;
+        return;
     }
 
     public void AlignToSurface2(ref Vector3 currentForward,
@@ -64,12 +47,6 @@ public class AngleCalculationCartridge
 
         currentNormal = resultRotation * Vector3.up;
         currentForward = resultRotation * Vector3.forward;
-    }
-
-    // TODO: This needs to be rethought as simply moving to an attach point isn't a one-size-fits-all solution
-    public void MoveToAttachPoint(ref Vector3 currentPosition, ref Vector3 attachPoint)
-    {
-        currentPosition = attachPoint; // Vector3.Lerp(currentPosition,attachPoint, 0.1f);
     }
 
     public void AlignOrientationWithSurface(ref Vector3 currentNormal, ref Vector3 currentForward, ref Quaternion resultRotation, Vector3 targetNormal)
@@ -90,12 +67,4 @@ public class AngleCalculationCartridge
     {
         rotation = Quaternion.identity;
     }
-    /*
-    public void VerifyDownwardAngle(ref Vector3 referenceVec, ref Vector3 currentDirection, ref bool downward)
-    {
-        Vector3 crossProduct = Vector3.Cross(currentDirection, referenceVec);
-
-
-    }
-    */
 }

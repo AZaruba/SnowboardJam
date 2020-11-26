@@ -1224,7 +1224,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 734568621}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 33.4, y: 41.1, z: -35.6}
+  m_LocalPosition: {x: -17.8, y: -169.2, z: -35.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1898568699}
@@ -2470,6 +2470,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Florence
       objectReference: {fileID: 0}
+    - target: {fileID: 3385852205361903154, guid: 139db251e722e4749b9f870cb08be25a,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: aabc034795335744fadd28ca187e3c10, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 139db251e722e4749b9f870cb08be25a, type: 3}
 --- !u!4 &1898568699 stripped
