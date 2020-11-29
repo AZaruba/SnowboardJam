@@ -96,12 +96,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         UpdateStateMachine();
 
-        /* TODO: steps for keeping nose and tail above surface
-         * 1) move forward
-         * 2) rotate player
-         * 3) move the player radially such that the nose and tail are above the ground
-         * 
-         */
         c_accelMachine.Act();
         c_turnMachine.Act();
         c_airMachine.Act();
@@ -122,7 +116,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
-        debugAccessor.DisplayFloat("Current Collision Angle", c_collisionData.f_obstacleAngle);
+        debugAccessor.DisplayFloat("Current Speed ratio", c_playerData.f_currentSpeed / c_playerData.f_topSpeed);
 
         UpdateAnimator();
         UpdateAudio();
@@ -139,8 +133,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         float speedRatio = c_playerData.f_currentSpeed;
 
         c_collisionData.f_obstacleAngle = 20f + CollisionData.BaseObstacleCollisionAngle * (speedRatio / c_playerData.f_topSpeed); // TODO: add "upward motion" weight
-        c_collisionData.f_frontRayLengthUp = Mathf.Tan(c_collisionData.f_obstacleAngle*(Mathf.PI/180.0f)) * speedRatio * Time.deltaTime;
-        c_collisionData.f_frontRayLengthDown = (Mathf.Tan(c_collisionData.f_obstacleAngle * (Mathf.PI / 180.0f)) * speedRatio + c_aerialMoveData.f_verticalVelocity * -1) * Time.deltaTime;
+        c_collisionData.f_frontRayLengthUp = Mathf.Tan(c_collisionData.f_obstacleAngle*(Mathf.PI/180.0f)) * Time.deltaTime;
+        c_collisionData.f_frontRayLengthDown = (Mathf.Tan(c_collisionData.f_obstacleAngle * (Mathf.PI / 180.0f)) * Time.deltaTime + c_aerialMoveData.f_verticalVelocity * -1) * Time.deltaTime;
 
         c_collisionData.f_obstacleRayLength = speedRatio * Time.deltaTime; // the expected travel amount next frame
         CheckForWall();
@@ -360,12 +354,21 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         LayerMask lm_env = LayerMask.GetMask("Environment");
 
-        Vector3 playerBox = CollisionData.BodyHalfExtents;
-        playerBox.y -= c_collisionData.f_frontRayLengthUp / 2;
+        /* The ground check goes up f_frontRayLengthUp.
+         * We should push the origin UP by q_currentRotation * f_FrontRayLengthUp
+         * Then lower the vertical extents by half, effectively keeping the TOP
+         * consistent but only pushing the bottom up
+         */ 
 
-        if (Physics.BoxCast(c_playerData.v_currentPosition,
+        Vector3 playerBox = CollisionData.BodyHalfExtents;
+
+        playerBox.y -= c_collisionData.f_frontRayLengthUp / 2;
+        Vector3 offsetOrigin = c_playerData.v_currentPosition + c_playerData.q_currentRotation * new Vector3(0, c_collisionData.f_obstacleRayLength + playerBox.y, 0);
+        Debug.DrawLine(offsetOrigin, offsetOrigin + c_playerData.v_currentDirection, Color.red);
+
+        if (Physics.BoxCast(offsetOrigin,
                             playerBox,
-                            c_playerData.q_currentRotation * Vector3.forward,
+                            c_playerData.v_currentDirection,
                             out obstacleHit,
                             c_playerData.q_currentRotation,
                             c_collisionData.f_obstacleRayLength,
@@ -379,6 +382,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
 
         float offsetDist = CollisionData.CenterOffset.magnitude;
+        Vector3 upwardVector = new Vector3(0, c_collisionData.f_frontRayLengthUp, 0);
 
         // the vector giving the raycast distance AND direction
         LayerMask lm_env = LayerMask.GetMask("Environment");
@@ -387,7 +391,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_collisionData.b_collisionDetected = false;
 
         // safety detection: use old-style raycast to check if we want to stay grounded
-        if (Physics.BoxCast(c_playerData.v_currentPosition,
+        if (Physics.BoxCast(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset),
                             CollisionData.HalfExtents,
                             c_playerData.v_currentDown,
                             out centerHit,
@@ -395,8 +399,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
                             lm_env))
         {
+            Debug.DrawLine(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset), centerHit.point, Color.blue, 5f);
             c_collisionData.b_collisionDetected = true;
             c_collisionData.v_attachPoint = centerHit.point;
+            c_collisionData.v_centerNormal = centerHit.normal;
         }
         else
         {
@@ -405,15 +411,15 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         if (c_collisionData.b_collisionDetected)
         {
-            c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
-            c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.BackRayOffset + new Vector3(0, c_collisionData.f_frontRayLengthUp, 0));
+            c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + upwardVector);
+            c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.BackRayOffset + upwardVector);
 
             if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env)) // double to check up and DOWN
             {
                 // validate angle 
                 if (Vector3.Angle(c_playerData.v_currentNormal, frontHit.normal) > c_collisionData.f_obstacleAngle)
                 {
-                    c_collisionData.v_frontNormal = centerHit.normal;
+                    c_collisionData.v_frontNormal = Vector3.zero;
                     c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
                 }
                 else
@@ -425,7 +431,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             else
             {
                 useBoardRotation = false;
-                c_collisionData.v_frontNormal = centerHit.normal;
+                c_collisionData.v_frontNormal = Vector3.zero;
                 c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
             }
 
@@ -433,7 +439,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             {
                 if (Vector3.Angle(c_playerData.v_currentNormal, backHit.normal) > c_collisionData.f_obstacleAngle)
                 {
-                    c_collisionData.v_backNormal = centerHit.normal;
+                    c_collisionData.v_backNormal = Vector3.zero;
                     c_collisionData.v_backPoint = c_collisionData.v_backOffset;
                 }
                 else
@@ -444,11 +450,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
             }
             else
             {
-                c_collisionData.v_backNormal = centerHit.normal;
+                c_collisionData.v_backNormal = Vector3.zero;
                 c_collisionData.v_backPoint = c_collisionData.v_backOffset;
             }
 
-            c_collisionData.v_surfaceNormal = (c_collisionData.v_backNormal + c_collisionData.v_frontNormal + c_collisionData.v_centerNormal).normalized;
+            if ((c_collisionData.v_backNormal + c_collisionData.v_frontNormal) == Vector3.zero)
+            {
+                c_collisionData.v_surfaceNormal = c_collisionData.v_centerNormal;
+            }
+            else
+            {
+                c_collisionData.v_surfaceNormal = (c_collisionData.v_backNormal + c_collisionData.v_frontNormal).normalized;
+            }
         }
 
         c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset);
@@ -550,7 +563,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void InitializeAirMachine()
     {
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_collisionData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
+        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 

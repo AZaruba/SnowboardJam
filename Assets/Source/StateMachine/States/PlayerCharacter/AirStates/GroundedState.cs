@@ -6,6 +6,7 @@ public class GroundedState : iState
 {
 
     private PlayerData c_playerData;
+    private AerialMoveData c_aerialMoveData;
     private PlayerPositionData c_positionData;
     private CollisionData c_collisionData;
     private VelocityCartridge cart_velocity;
@@ -13,6 +14,7 @@ public class GroundedState : iState
     private SurfaceInfluenceCartridge cart_surfInf;
 
     public GroundedState(ref PlayerData playerData,
+                         ref AerialMoveData aerialMoveData,
                          ref CollisionData collisionData,
                          ref PlayerPositionData positionData,
                          ref VelocityCartridge vel, 
@@ -20,6 +22,7 @@ public class GroundedState : iState
                          ref SurfaceInfluenceCartridge surfInf)
     {
         this.c_playerData = playerData;
+        this.c_aerialMoveData = aerialMoveData;
         this.c_positionData = positionData;
         this.c_collisionData = collisionData;
         this.cart_velocity = vel;
@@ -40,7 +43,7 @@ public class GroundedState : iState
                                             ref currentNormal);
 
         SurfaceInfluenceCartridge.KeepAboveSurface(ref currentPosition,
-                                                   currentNormal,
+                                                   c_collisionData.v_surfaceNormal,
                                                    c_collisionData.v_frontOffset,
                                                    c_collisionData.v_backOffset,
                                                    c_collisionData.v_frontPoint,
@@ -51,11 +54,11 @@ public class GroundedState : iState
         c_playerData.v_currentDirection = currentDir;
         c_playerData.v_currentNormal = currentNormal;
         c_playerData.q_currentRotation = currentRotation;
+        c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -1;
     }
 
     public void TransitionAct()
     {
-        bool isReversed = c_positionData.b_modelReversed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
@@ -65,18 +68,11 @@ public class GroundedState : iState
 
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentAirVelocity = Constants.ZERO_F;
-        AngleCalculationCartridge.AlignToSurfaceByTail(ref currentPosition,
-                                                       currentSurfaceNormal,
-                                                       ref currentRotation,
-                                                       ref currentDir,
-                                                       ref currentNormal);
 
-        cart_surfInf.SwitchReverse(ref isReversed, currentRotation, currentModelRotation);
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentDirection = currentDir;
         c_playerData.v_currentNormal = currentNormal;
         c_playerData.q_currentRotation = currentRotation;
-        c_positionData.b_modelReversed = isReversed;
 
     }
 

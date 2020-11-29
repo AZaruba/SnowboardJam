@@ -37,7 +37,7 @@ public class JumpChargeState : iState
                                             ref currentNormal);
 
         SurfaceInfluenceCartridge.KeepAboveSurface(ref currentPosition,
-                                                   currentNormal,
+                                                   c_collisionData.v_surfaceNormal,
                                                    c_collisionData.v_frontOffset,
                                                    c_collisionData.v_backOffset,
                                                    c_collisionData.v_frontPoint,
