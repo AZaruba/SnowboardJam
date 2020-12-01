@@ -10,7 +10,7 @@ public class CollisionData
     private Vector3 BackNormal;
     private Vector3 BackPoint;
     private Vector3 BackOffset;
-    private Vector3 CenterNormal;
+    private Vector3 PreviousPosition;
     private Vector3 AttachPoint;
 
     private Vector3 ObstacleNormal;
@@ -96,10 +96,10 @@ public class CollisionData
         set { BackOffset = value; }
     }
 
-    public Vector3 v_centerNormal
+    public Vector3 v_previousPosition
     {
-        get { return CenterNormal; }
-        set { CenterNormal = value; }
+        get { return PreviousPosition; }
+        set { PreviousPosition = value; }
     }
 
     public Vector3 v_attachPoint
@@ -127,7 +127,7 @@ public class CollisionData
         FrontOffset = frontOffsetIn;
         BackNormal = Vector3.zero;
         BackOffset = backOffsetIn;
-        CenterNormal = Vector3.zero;
+        PreviousPosition = Vector3.zero;
         AttachPoint = Vector3.zero;
 
         SurfaceNormal = Vector3.zero;

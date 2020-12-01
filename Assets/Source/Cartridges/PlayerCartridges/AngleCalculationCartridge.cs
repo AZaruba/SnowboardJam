@@ -30,8 +30,8 @@ public class AngleCalculationCartridge
                                 ref Vector3 currentForward,
                                 ref Vector3 currentNormal)
     {
-        Vector3 targetForward = Vector3.ProjectOnPlane(currentForward, surfaceNormal).normalized;
-        Quaternion targetRotation = Quaternion.LookRotation(targetForward, surfaceNormal);
+        Vector3 targetForward = Vector3.ProjectOnPlane(currentForward.normalized, surfaceNormal.normalized).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(targetForward, surfaceNormal).normalized;
         currentRotation = targetRotation;
         currentNormal = (targetRotation * Vector3.up).normalized;
         currentForward = (targetRotation * Vector3.forward).normalized;

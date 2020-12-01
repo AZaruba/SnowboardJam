@@ -27,18 +27,10 @@ public class SurfaceInfluenceCartridge
 
     public static void KeepAboveSurface(ref Vector3 currentPosition,
                                          Vector3 surfaceNormal,
-                                         Vector3 noseOffset,
-                                         Vector3 tailOffset,
-                                         Vector3 nosePoint,
-                                         Vector3 tailPoint,
-                                         Quaternion inverseRotation)
+                                         Vector3 contactOffset,
+                                         Vector3 contactPoint)
     {
-        /* The nose and tail point form a line
-         * We want to take the player's position and project it onto that line
-         * 
-         * The result should yield a vector from currentPosition to the target of the form (0,y,0) when multiplied by inverseRotation
-         */
-        
+        currentPosition += contactPoint - contactOffset + (surfaceNormal.normalized * 0.01f);
     }
 
     public void SwitchReverse(ref bool isReverse, Quaternion travelRotation, Quaternion modelRotation)

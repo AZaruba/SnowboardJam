@@ -96,9 +96,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         UpdateStateMachine();
 
+        c_airMachine.Act();
         c_accelMachine.Act();
         c_turnMachine.Act();
-        c_airMachine.Act();
         sm_tricking.Act();
         sm_trickPhys.Act();
 
@@ -116,7 +116,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
-        debugAccessor.DisplayFloat("Current Speed ratio", c_playerData.f_currentSpeed / c_playerData.f_topSpeed);
 
         UpdateAnimator();
         UpdateAudio();
@@ -387,8 +386,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // the vector giving the raycast distance AND direction
         LayerMask lm_env = LayerMask.GetMask("Environment");
 
-        bool useBoardRotation = true;
         c_collisionData.b_collisionDetected = false;
+
+        c_collisionData.v_previousPosition = c_playerData.v_currentPosition;
 
         // safety detection: use old-style raycast to check if we want to stay grounded
         if (Physics.BoxCast(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset),
@@ -401,8 +401,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             Debug.DrawLine(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset), centerHit.point, Color.blue, 5f);
             c_collisionData.b_collisionDetected = true;
-            c_collisionData.v_attachPoint = centerHit.point;
-            c_collisionData.v_centerNormal = centerHit.normal;
+            c_collisionData.v_surfaceNormal = centerHit.normal;
         }
         else
         {
@@ -413,6 +412,19 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + upwardVector);
             c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.BackRayOffset + upwardVector);
+
+            if (Physics.Raycast(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset),
+                                c_playerData.v_currentDown,
+                                out centerHit,
+                                (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
+                                lm_env))
+            {
+                c_collisionData.v_attachPoint = centerHit.point;
+            }
+            else
+            {
+                c_collisionData.v_attachPoint = c_playerData.v_currentPosition;
+            }
 
             if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env)) // double to check up and DOWN
             {
@@ -430,7 +442,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
             }
             else
             {
-                useBoardRotation = false;
                 c_collisionData.v_frontNormal = Vector3.zero;
                 c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
             }
@@ -454,11 +465,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_collisionData.v_backPoint = c_collisionData.v_backOffset;
             }
 
-            if ((c_collisionData.v_backNormal + c_collisionData.v_frontNormal) == Vector3.zero)
-            {
-                c_collisionData.v_surfaceNormal = c_collisionData.v_centerNormal;
-            }
-            else
+            if ((c_collisionData.v_backNormal + c_collisionData.v_frontNormal) != Vector3.zero)
             {
                 c_collisionData.v_surfaceNormal = (c_collisionData.v_backNormal + c_collisionData.v_frontNormal).normalized;
             }

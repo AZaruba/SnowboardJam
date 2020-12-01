@@ -46,7 +46,12 @@ public class SlowingState : iState
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         cart_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);
-        // cart_acceleration.CapSpeed(ref currentVelocity, topSpeed);
+
+        SurfaceInfluenceCartridge.KeepAboveSurface(ref currentPosition,
+                                                   c_collisionData.v_surfaceNormal,
+                                                   c_collisionData.v_previousPosition,
+                                                   c_collisionData.v_attachPoint);
+
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;

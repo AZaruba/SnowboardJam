@@ -42,14 +42,6 @@ public class GroundedState : iState
                                             ref currentDir,
                                             ref currentNormal);
 
-        SurfaceInfluenceCartridge.KeepAboveSurface(ref currentPosition,
-                                                   c_collisionData.v_surfaceNormal,
-                                                   c_collisionData.v_frontOffset,
-                                                   c_collisionData.v_backOffset,
-                                                   c_collisionData.v_frontPoint,
-                                                   c_collisionData.v_backPoint,
-                                                   Quaternion.Inverse(currentRotation));
-
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentDirection = currentDir;
         c_playerData.v_currentNormal = currentNormal;
