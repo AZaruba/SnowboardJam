@@ -6,13 +6,16 @@ public class AerialState : iState {
 
     private GravityCartridge cart_gravity;
     private VelocityCartridge cart_velocity;
+    private CollisionData c_collisionData;
     private PlayerData c_playerData;
     private AerialMoveData c_aerialMoveData;
 
-    public AerialState(ref PlayerData playerData, ref AerialMoveData moveData, ref GravityCartridge cart_grav, ref VelocityCartridge cart_vel)
+    public AerialState(ref PlayerData playerData, ref CollisionData collisionData,
+        ref AerialMoveData moveData, ref GravityCartridge cart_grav, ref VelocityCartridge cart_vel)
     {
         this.c_playerData = playerData;
         this.c_aerialMoveData = moveData;
+        this.c_collisionData = collisionData;
         this.cart_gravity = cart_grav;
         this.cart_velocity = cart_vel;
     }
@@ -61,10 +64,11 @@ public class AerialState : iState {
         c_aerialMoveData.v_lateralDirection = latDir;
         c_aerialMoveData.f_verticalVelocity = vertVel;
         c_aerialMoveData.f_lateralVelocity = latVel;
+        c_playerData.v_currentNormal = Vector3.up;
         c_playerData.v_currentDown = Vector3.down;
+        c_playerData.v_currentDirection = latDir;
     }
 
-    // TODO: Fix behavior when we he the ground, we're back to just bumping back up
     public StateRef GetNextState(Command cmd)
     {
         if (cmd == Command.LAND)
@@ -72,13 +76,10 @@ public class AerialState : iState {
             Vector3 horizontalDir = c_aerialMoveData.v_lateralDirection * c_aerialMoveData.f_lateralVelocity;
             horizontalDir.y = c_aerialMoveData.f_verticalVelocity;
 
-            // if these vectors are equal, then we are landing on a like-plane of the one we jumped off of
-            Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_playerData.v_currentSurfaceNormal);
-            if (horizontalDir.normalized != c_playerData.v_currentSurfaceNormal*-1)
-            {
-                c_playerData.v_currentDirection = projectedDir.normalized;
-            }
+            Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_collisionData.v_surfaceNormal);
             c_playerData.f_currentSpeed = projectedDir.magnitude;
+            c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -1 * Time.deltaTime;
+            c_playerData.v_currentDirection = projectedDir.normalized;
             return StateRef.GROUNDED;
         }
         if (cmd == Command.CRASH)

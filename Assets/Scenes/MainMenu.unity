@@ -746,7 +746,7 @@ MonoBehaviour:
   parent: {fileID: 470095455}
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
-  InputAction: 12
+  InputAction: 16
   ValueDisplay: {fileID: 255842581}
 --- !u!114 &255842581
 MonoBehaviour:
@@ -925,7 +925,7 @@ MonoBehaviour:
   parent: {fileID: 470095455}
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
-  InputAction: 10
+  InputAction: 14
   ValueDisplay: {fileID: 321906400}
 --- !u!114 &321906400
 MonoBehaviour:
@@ -3731,7 +3731,7 @@ MonoBehaviour:
   parent: {fileID: 470095455}
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
-  InputAction: 11
+  InputAction: 15
   ValueDisplay: {fileID: 1529737965}
 --- !u!114 &1529737965
 MonoBehaviour:

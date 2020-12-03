@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerData : MonoBehaviour {
     
-    // TODO: break out data into multiple piles similar to state machines
     #region Members
     [SerializeField] private float TopSpeed;
     [SerializeField] private float Acceleration;
@@ -35,6 +34,8 @@ public class PlayerData : MonoBehaviour {
     private Vector3 CurrentDown;
 
     private Quaternion CurrentRotation;
+    private Quaternion TargetRotation;
+
     #endregion
 
     #region EngineMembers
@@ -42,10 +43,6 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float ForwardRaycastDistance;
     private bool JumpBtnPressed;
     private bool ObstacleInRange;
-    private Vector3 SurfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
-    private Vector3 SurfaceAttachPoint { get; set; }
-    private Vector3 CurrentForwardPoint { get; set; }
-    private Vector3 CurrentForwardNormal { get; set; }
     private Vector3 ObstacleNormal;
     #endregion
 
@@ -220,6 +217,12 @@ public class PlayerData : MonoBehaviour {
         get { return CurrentRotation; }
         set { CurrentRotation = value; }
     }
+
+    public Quaternion q_targetRotation
+    {
+        get { return TargetRotation; }
+        set { TargetRotation = value; }
+    }
     #endregion
     #region IOProperties
     public bool b_jumpBtnPressed
@@ -232,30 +235,6 @@ public class PlayerData : MonoBehaviour {
     {
         get { return ObstacleInRange; }
         set { ObstacleInRange = value; }
-    }
-
-    public Vector3 v_currentSurfaceNormal
-    {
-        get { return SurfaceNormal; }
-        set { SurfaceNormal = value; }
-    }
-
-    public Vector3 v_currentSurfaceAttachPoint
-    {
-        get { return SurfaceAttachPoint; }
-        set { SurfaceAttachPoint = value; }
-    }
-
-    public Vector3 v_currentForwardPoint
-    {
-        get { return CurrentForwardPoint; }
-        set { CurrentForwardPoint = value; }
-    }
-
-    public Vector3 v_currentForwardNormal
-    {
-        get { return CurrentForwardNormal; }
-        set { CurrentForwardNormal = value; }
     }
 
     public Vector3 v_currentObstacleNormal

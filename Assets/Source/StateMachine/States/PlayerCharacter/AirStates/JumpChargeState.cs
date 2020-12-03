@@ -5,11 +5,13 @@ using UnityEngine;
 public class JumpChargeState : iState
 {
     private PlayerData c_playerData;
+    private CollisionData c_collisionData;
     private IncrementCartridge cart_increment;
     
-    public JumpChargeState(ref PlayerData playerData, ref IncrementCartridge incr)
+    public JumpChargeState(ref PlayerData playerData, ref CollisionData collisionData, ref IncrementCartridge incr)
     {
         this.c_playerData = playerData;
+        this.c_collisionData = collisionData;
         this.cart_increment = incr;
     }
 
@@ -22,6 +24,22 @@ public class JumpChargeState : iState
         cart_increment.Increment(ref chargeValue, chargeDelta * Time.deltaTime, chargeCap);
 
         c_playerData.f_currentJumpCharge = chargeValue;
+
+        Vector3 currentPosition = c_playerData.v_currentPosition;
+        Vector3 currentDir = c_playerData.v_currentDirection;
+        Vector3 currentNormal = c_playerData.v_currentNormal;
+        Quaternion currentRotation = c_playerData.q_currentRotation;
+
+        AngleCalculationCartridge.AlignToSurfaceByTail(ref currentPosition,
+                                            c_collisionData.v_surfaceNormal,
+                                            ref currentRotation,
+                                            ref currentDir,
+                                            ref currentNormal);
+
+        c_playerData.v_currentPosition = currentPosition;
+        c_playerData.v_currentDirection = currentDir;
+        c_playerData.v_currentNormal = currentNormal;
+        c_playerData.q_currentRotation = currentRotation;
     }
 
     public void TransitionAct()

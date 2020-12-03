@@ -24,7 +24,7 @@ public class StraightState : iState
 
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
-        c_positionData.q_currentModelRotation = Quaternion.Lerp(currentRotation, currentModelRotation, Constants.LERP_DEFAULT);
+        c_positionData.q_currentModelRotation = currentRotation; //  Quaternion.Lerp(currentRotation, currentModelRotation, Constants.LERP_DEFAULT).normalized;
     }
 
     public void TransitionAct()

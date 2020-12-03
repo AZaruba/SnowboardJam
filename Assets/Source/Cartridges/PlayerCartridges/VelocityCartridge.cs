@@ -28,6 +28,10 @@ public class VelocityCartridge {
         position = Vector3.Lerp(position, point + currentRotation * new Vector3(0, 1.1f, 0), 0.5f);
     }
      
+    public void SurfaceAdjustment(ref Vector3 position, Vector3 offset)
+    {
+        position += offset;
+    }
 
     public void SurfaceAdjustment(ref Vector3 position, Vector3 point, Vector3 forwardPoint, float angleDifference)
     {

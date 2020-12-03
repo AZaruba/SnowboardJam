@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private Animator PlayerAnimator;
     [SerializeField] private DebugAccessor debugAccessor;
     [SerializeField] private CharacterAttributeData Attributes;
+    [SerializeField] private CharacterCollisionData CollisionData;
     [SerializeField] private AudioSource AudioSource;
     [SerializeField] private AudioBank SoundBank;
 
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private TrickPhysicsData c_trickPhysicsData;
     private PlayerInputData c_inputData;
     private ScoringData c_scoringData;
+    private CollisionData c_collisionData;
 
     // private members
     private StateMachine c_turnMachine;
@@ -49,6 +51,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     RaycastHit backHit;
     RaycastHit centerHit;
     RaycastHit forwardHit;
+    RaycastHit obstacleHit;
 
     iMessageClient cl_character;
     #endregion
@@ -89,15 +92,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         EnginePull();
+        Vector3 startPosition = c_playerData.v_currentPosition;
 
         UpdateStateMachine();
 
+        c_airMachine.Act();
         c_accelMachine.Act();
         c_turnMachine.Act();
-        c_airMachine.Act();
         sm_tricking.Act();
         sm_trickPhys.Act();
 
+        LateEnginePull(startPosition);
         EngineUpdate();
     }
 
@@ -109,12 +114,30 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_positionData.q_currentModelRotation;
 
-        debugAccessor.DisplayState("Spin State", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Target dir", c_playerData.v_currentDirection);
-        debugAccessor.DisplayFloat("TurnAnalogue", c_inputData.f_inputAxisLHoriz);
+        debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
+        debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
 
         UpdateAnimator();
         UpdateAudio();
+    }
+
+    /// <summary>
+    /// Pulls data that may be influenced by changes during the current frame.
+    /// 
+    /// Currently: Collision detection.
+    /// </summary>
+    public void LateEnginePull(Vector3 oldPosition)
+    {
+
+        float speedRatio = c_playerData.f_currentSpeed;
+
+        c_collisionData.f_obstacleAngle = 20f + CollisionData.BaseObstacleCollisionAngle * (speedRatio / c_playerData.f_topSpeed); // TODO: add "upward motion" weight
+        c_collisionData.f_frontRayLengthUp = Mathf.Tan(c_collisionData.f_obstacleAngle*(Mathf.PI/180.0f)) * Time.deltaTime;
+        c_collisionData.f_frontRayLengthDown = (Mathf.Tan(c_collisionData.f_obstacleAngle * (Mathf.PI / 180.0f)) * Time.deltaTime + c_aerialMoveData.f_verticalVelocity * -1) * Time.deltaTime;
+
+        c_collisionData.f_obstacleRayLength = speedRatio * Time.deltaTime; // the expected travel amount next frame
+        CheckForWall();
+        CheckForGround2();
     }
 
     /// <summary>
@@ -132,7 +155,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void UpdateAudio()
     {
         AudioRef audio = GetAudioState();
-        debugAccessor.DisplayString(audio.ToString());
         //c_audioController.PlayAudio(GetAudioState());
     }
 
@@ -144,9 +166,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_inputData.f_inputAxisLHoriz = GlobalInputController.GetAnalogInputAction(ControlAction.SPIN_AXIS);
         c_inputData.f_inputAxisLVert = GlobalInputController.GetAnalogInputAction(ControlAction.FLIP_AXIS);
 
-        CheckForGround();
         CheckForZone();
-        CheckForObstacle();
     }
 
     /// <summary>
@@ -156,7 +176,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (c_stateData.b_courseFinished == true)
         {
-            if (c_playerData.v_currentSurfaceNormal.normalized != Vector3.zero)
+            if (c_collisionData.b_collisionDetected)
             {
                 c_accelMachine.Execute(Command.LAND);
                 c_turnMachine.Execute(Command.LAND);
@@ -173,7 +193,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             return;
         }
         // current issue, these commands don't work out great
-        if (c_playerData.v_currentSurfaceNormal.normalized == Vector3.zero)
+        if (!c_collisionData.b_collisionDetected)
         {
             c_accelMachine.Execute(Command.FALL);
             c_turnMachine.Execute(Command.FALL);
@@ -255,10 +275,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else if (c_playerData.v_currentObstacleNormal.magnitude > Constants.ZERO_F) // nonzero obstacle normal implies collision
         {
-            c_accelMachine.Execute(Command.CRASH);
-            c_turnMachine.Execute(Command.CRASH);
-            c_airMachine.Execute(Command.CRASH);
-            sm_trickPhys.Execute(Command.CRASH);
+            //c_accelMachine.Execute(Command.CRASH);
+            //c_turnMachine.Execute(Command.CRASH);
+            //c_airMachine.Execute(Command.CRASH);
+            //sm_trickPhys.Execute(Command.CRASH);
         }
     }
 
@@ -275,9 +295,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_stateData = new StateData();
         c_aerialMoveData = new AerialMoveData();
         c_entityData = new EntityData();
+        c_collisionData = new CollisionData(CollisionData.FrontRayOffset, CollisionData.BackRayOffset);
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
+        c_playerData.q_targetRotation = transform.rotation;
         c_playerData.v_currentDirection = transform.forward;
         c_playerData.v_currentAirDirection = transform.forward;
         c_playerData.v_currentNormal = transform.up;
@@ -288,74 +310,202 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance; 
         c_playerData.f_surfaceAngleDifference = 0.0f;
         c_playerData.b_obstacleInRange = false;
-        c_playerData.v_currentForwardNormal = transform.up;
 
         c_stateData.b_updateState = true;
         c_stateData.b_courseFinished = false;
     }
     #endregion
 
-    /// <summary>
-    /// Checks in front of the character for an obstacle in the way.
-    /// </summary>
-    private void CheckForObstacle()
+    private void OnDrawGizmos()
     {
-        // TODO: if above a certain angle, reorient player. If else, crash
-        LayerMask lm_env = LayerMask.GetMask("Environment");
-        float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.deltaTime);
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance, lm_env))
-        {
-            c_playerData.b_obstacleInRange = true;
-            c_playerData.v_currentObstacleNormal = forwardHit.normal;
-        }
-        else
-        {
-            c_playerData.b_obstacleInRange = false;
-            c_playerData.v_currentObstacleNormal = Vector3.zero;
-        }
-    }
-    private void CheckForGround()
-    {
-        LayerMask lm_env = LayerMask.GetMask("Environment");
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDown, out centerHit, c_playerData.f_currentRaycastDistance, lm_env))
-        {
-            if (Vector3.SignedAngle(centerHit.normal, c_playerData.v_currentSurfaceNormal, transform.right * -1) >
-                Mathf.Max(20f / (0.01f + (c_playerData.f_currentSpeed / c_playerData.f_topSpeed)), 0.0f)) // angle should get smaller as we get faster
-            {
-                c_playerData.v_currentSurfaceNormal = Vector3.zero;
-                return;
-            }
-            else
-            {
-                c_playerData.v_currentSurfaceAttachPoint = centerHit.point;
-                c_playerData.v_currentSurfaceNormal = centerHit.normal;
-            }
+        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.FrontRayOffset;
+        Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.BackRayOffset;
 
-        }
-        else
+        Gizmos.DrawRay(offsetBack, offsetFront - offsetBack);
+    }
+
+    /// <summary>
+    /// When we appear to collide with a wall in CheckForGround2(), this handles the behavior from there
+    /// </summary>
+    private void HandleWallCollision(RaycastHit obstacleHit)
+    {
+        if (Vector3.Angle(c_playerData.v_currentNormal, obstacleHit.normal) < c_collisionData.f_obstacleAngle)
         {
-            // surface normal is vector3.zero if there are no collisions
-            c_playerData.v_currentSurfaceNormal = Vector3.zero;
             return;
         }
 
-        Vector3 fwdVec = c_playerData.v_currentDown.normalized + c_playerData.v_currentDirection.normalized;
-        if (Physics.Raycast(c_playerData.v_currentPosition, fwdVec, out frontHit, 2f, lm_env))
+        c_collisionData.v_obstacleNormal = Vector3.ProjectOnPlane(obstacleHit.normal.normalized, c_playerData.v_currentNormal).normalized;
+        c_collisionData.v_obstaclePoint = obstacleHit.point;
+
+        Vector3 newDir = c_playerData.q_currentRotation * Vector3.forward;
+        newDir = Vector3.Reflect(newDir, c_collisionData.v_obstacleNormal).normalized;
+
+        c_playerData.q_currentRotation = Quaternion.LookRotation(newDir, c_playerData.v_currentNormal);
+        c_playerData.v_currentDirection = newDir;
+
+        newDir.y = 0;
+        c_aerialMoveData.v_lateralDirection = newDir;
+
+        // TODO: velocity adjustment on collision
+    }
+
+    private void CheckForWall()
+    {
+        LayerMask lm_env = LayerMask.GetMask("Environment");
+
+        /* The ground check goes up f_frontRayLengthUp.
+         * We should push the origin UP by q_currentRotation * f_FrontRayLengthUp
+         * Then lower the vertical extents by half, effectively keeping the TOP
+         * consistent but only pushing the bottom up
+         */ 
+
+        Vector3 playerBox = CollisionData.BodyHalfExtents;
+
+        playerBox.y -= c_collisionData.f_frontRayLengthUp / 2;
+        Vector3 offsetOrigin = c_playerData.v_currentPosition + c_playerData.q_currentRotation * new Vector3(0, c_collisionData.f_obstacleRayLength + playerBox.y, 0);
+        Debug.DrawLine(offsetOrigin, offsetOrigin + c_playerData.v_currentDirection, Color.red);
+
+        if (Physics.BoxCast(offsetOrigin,
+                            playerBox,
+                            c_playerData.v_currentDirection,
+                            out obstacleHit,
+                            c_playerData.q_currentRotation,
+                            c_collisionData.f_obstacleRayLength,
+                            lm_env))
         {
-            // if we have a hit, check to see the difference between sqrt(2) and the hit divided by player height
-            float frontHitDist = ((frontHit.point - c_playerData.v_currentPosition).magnitude) / 1.1f; // Height is posing an issue with getting the angle accurate
-            c_playerData.v_currentForwardPoint = frontHit.point;
-            c_playerData.v_currentForwardNormal = frontHit.normal;
-            if (Mathf.Abs(Mathf.Sqrt(2) - frontHitDist) > 0.005f)
+            HandleWallCollision(obstacleHit);
+        }
+    }
+
+    private void CheckForGround2()
+    {
+
+        float offsetDist = CollisionData.CenterOffset.magnitude;
+        Vector3 upwardVector = new Vector3(0, c_collisionData.f_frontRayLengthUp, 0);
+
+        // the vector giving the raycast distance AND direction
+        LayerMask lm_env = LayerMask.GetMask("Environment");
+
+        c_collisionData.b_collisionDetected = false;
+
+        c_collisionData.v_previousPosition = c_playerData.v_currentPosition;
+
+        // safety detection: use old-style raycast to check if we want to stay grounded
+        if (Physics.BoxCast(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset),
+                            CollisionData.HalfExtents,
+                            c_playerData.v_currentDown,
+                            out centerHit,
+                            c_playerData.q_currentRotation,
+                            (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
+                            lm_env))
+        {
+            Debug.DrawLine(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset), centerHit.point, Color.blue, 5f);
+            c_collisionData.b_collisionDetected = true;
+            c_collisionData.v_surfaceNormal = centerHit.normal;
+        }
+        else
+        {
+            c_collisionData.b_collisionDetected = false;
+        }
+
+        if (c_collisionData.b_collisionDetected)
+        {
+            c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset + upwardVector);
+            c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.BackRayOffset + upwardVector);
+
+            if (Physics.Raycast(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset),
+                                c_playerData.v_currentDown,
+                                out centerHit,
+                                (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
+                                lm_env))
             {
-                Vector3 resultDir = frontHit.point - c_playerData.v_currentSurfaceAttachPoint;
-                c_playerData.f_surfaceAngleDifference = Vector3.SignedAngle(c_playerData.v_currentDirection, resultDir, Vector3.Cross(c_playerData.v_currentNormal, c_playerData.v_currentDirection));
+                c_collisionData.v_attachPoint = centerHit.point;
             }
             else
             {
-                c_playerData.f_surfaceAngleDifference = 0.0f;
+                c_collisionData.v_attachPoint = c_playerData.v_currentPosition;
+            }
+
+            if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env)) // double to check up and DOWN
+            {
+                // validate angle 
+                if (Vector3.Angle(c_playerData.v_currentNormal, frontHit.normal) > c_collisionData.f_obstacleAngle)
+                {
+                    c_collisionData.v_frontNormal = Vector3.zero;
+                    c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
+                }
+                else
+                {
+                    c_collisionData.v_frontNormal = GetBaryCentricNormal(frontHit);
+                    c_collisionData.v_frontPoint = frontHit.point;
+                }
+            }
+            else
+            {
+                c_collisionData.v_frontNormal = Vector3.zero;
+                c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
+            }
+
+            if (Physics.Raycast(c_collisionData.v_backOffset, c_playerData.v_currentDown, out backHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env))
+            {
+                if (Vector3.Angle(c_playerData.v_currentNormal, backHit.normal) > c_collisionData.f_obstacleAngle)
+                {
+                    c_collisionData.v_backNormal = Vector3.zero;
+                    c_collisionData.v_backPoint = c_collisionData.v_backOffset;
+                }
+                else
+                {
+                    c_collisionData.v_backNormal = GetBaryCentricNormal(backHit);
+                    c_collisionData.v_backPoint = backHit.point;
+                }
+            }
+            else
+            {
+                c_collisionData.v_backNormal = Vector3.zero;
+                c_collisionData.v_backPoint = c_collisionData.v_backOffset;
+            }
+
+            if ((c_collisionData.v_backNormal + c_collisionData.v_frontNormal) != Vector3.zero)
+            {
+                c_collisionData.v_surfaceNormal = (c_collisionData.v_backNormal + c_collisionData.v_frontNormal).normalized;
             }
         }
+
+        c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset);
+        c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.BackRayOffset);
+
+    }
+
+    private Vector3 GetBaryCentricNormal(RaycastHit hitIn)
+    {
+        Vector3 BarycentricNormal = Vector3.zero;
+        Vector3 BarycentricCoords = hitIn.barycentricCoordinate;
+
+        MeshCollider meshCol = hitIn.collider as MeshCollider;
+        if (meshCol == null || meshCol.sharedMesh == null)
+        {
+            return BarycentricNormal;
+        }
+
+        Mesh mesh = (hitIn.collider as MeshCollider).sharedMesh;
+        Vector3[] normals = mesh.normals;
+        int[] triangles = mesh.triangles;
+
+        Vector3 n0 = normals[triangles[hitIn.triangleIndex * 3 + 0]];
+        Vector3 n1 = normals[triangles[hitIn.triangleIndex * 3 + 1]];
+        Vector3 n2 = normals[triangles[hitIn.triangleIndex * 3 + 2]];
+
+        BarycentricNormal = n0 * BarycentricCoords.x +
+                            n1 * BarycentricCoords.y +
+                            n2 * BarycentricCoords.z;
+
+        BarycentricNormal = BarycentricNormal.normalized;
+
+        // Transform local space normals to world space
+        Transform hitTransform = hitIn.collider.transform;
+        BarycentricNormal = hitTransform.TransformDirection(BarycentricNormal);
+
+        return BarycentricNormal.normalized;
     }
 
     private void CheckForZone()
@@ -401,10 +551,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void InitializeAccelMachine()
     {
         MoveAerialState s_moveAerial = new MoveAerialState();
-        StationaryState s_stationary = new StationaryState(ref c_playerData, ref cart_angleCalc, ref cart_velocity);
-        RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
-        RidingChargeState s_ridingCharge = new RidingChargeState(ref c_playerData, ref c_positionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
-        SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
+        StationaryState s_stationary = new StationaryState(ref c_playerData, ref c_collisionData, ref cart_angleCalc, ref cart_velocity);
+        RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref c_collisionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
+        RidingChargeState s_ridingCharge = new RidingChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
+        SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
         c_accelMachine = new StateMachine(s_stationary, StateRef.STATIONARY);
@@ -419,15 +569,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeAirMachine()
     {
-        AerialState s_aerial = new AerialState(ref c_playerData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
-        JumpingState s_jumping = new JumpingState(ref c_playerData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
-        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref cart_incr);
+        AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
+        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
+        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
         c_airMachine = new StateMachine(s_grounded, StateRef.GROUNDED);
         c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
-        c_airMachine.AddState(s_jumping, StateRef.JUMPING);
         c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
         c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
     }
@@ -435,7 +583,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void InitializeTurnMachine()
     {
         StraightState s_straight = new StraightState(ref c_playerData, ref c_positionData, ref cart_surfInf);
-        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_inputData, ref c_positionData, ref cart_handling, ref cart_surfInf);
+        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_handling, ref cart_surfInf);
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
         TurnChargeState s_turnCharge = new TurnChargeState(ref c_playerData, ref c_positionData, ref cart_surfInf);
 
@@ -505,8 +653,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_scoringData.f_currentFlipTarget.Equals(Constants.ZERO_F) &&
             c_scoringData.f_currentSpinTarget.Equals(Constants.ZERO_F))
         {
-            Debug.Log("No trick!");
-
             ResetScoringData();
             return;
         }

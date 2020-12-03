@@ -12,8 +12,10 @@ public class SlowingState : iState
     PlayerData c_playerData;
     PlayerInputData c_playerInputData;
     PlayerPositionData c_playerPositionData;
+    CollisionData c_collisionData;
 
     public SlowingState(ref PlayerData playerData,
+                        ref CollisionData collisionData,
                         ref PlayerInputData inputData,
                         ref PlayerPositionData positionData, 
                         ref VelocityCartridge vel,
@@ -24,6 +26,7 @@ public class SlowingState : iState
         this.c_playerData = playerData;
         this.c_playerInputData = inputData;
         this.c_playerPositionData = positionData;
+        this.c_collisionData = collisionData;
         this.cart_velocity = vel;
         this.cart_acceleration = accel;
         this.cart_angleCalc = angleCalc;
@@ -35,20 +38,20 @@ public class SlowingState : iState
         float currentVelocity = c_playerData.f_currentSpeed;
         float topSpeed = c_playerData.f_topSpeed;
         float deceleration = c_playerData.f_brakePower;
-        float angleDifference = c_playerData.f_surfaceAngleDifference;
         float slowScaling = c_playerInputData.f_inputAxisLVert * - 1;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
-        Vector3 currentSurfaceNormal = c_playerData.v_currentForwardNormal;
-        Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
+        Vector3 currentSurfaceNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         cart_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);
-        cart_surfInf.PullDirectionVector(ref currentDir, currentSurfaceNormal, Vector3.up, 0.0f, ref currentVelocity, deceleration * slowScaling);
-        // cart_acceleration.CapSpeed(ref currentVelocity, topSpeed);
-        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation, angleDifference);
-        cart_velocity.SurfaceAdjustment(ref currentPosition, currentSurfacePosition, currentRotation);
+
+        SurfaceInfluenceCartridge.KeepAboveSurface(ref currentPosition,
+                                                   c_collisionData.v_surfaceNormal,
+                                                   c_collisionData.v_previousPosition,
+                                                   c_collisionData.v_attachPoint);
+
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;

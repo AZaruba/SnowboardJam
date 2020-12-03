@@ -24,10 +24,29 @@ public class AngleCalculationCartridge
         currentNormal = resultRotation * Vector3.up;
     }
 
-    // TODO: This needs to be rethought as simply moving to an attach point isn't a one-size-fits-all solution
-    public void MoveToAttachPoint(ref Vector3 currentPosition, ref Vector3 attachPoint)
+    public static void AlignToSurfaceByTail(ref Vector3 currentPosition,
+                                Vector3 surfaceNormal,
+                                ref Quaternion currentRotation,
+                                ref Vector3 currentForward,
+                                ref Vector3 currentNormal)
     {
-        currentPosition = attachPoint; // Vector3.Lerp(currentPosition,attachPoint, 0.1f);
+        Vector3 targetForward = Vector3.ProjectOnPlane(currentForward.normalized, surfaceNormal.normalized).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(targetForward, surfaceNormal).normalized;
+        currentRotation = targetRotation;
+        currentNormal = (targetRotation * Vector3.up).normalized;
+        currentForward = (targetRotation * Vector3.forward).normalized;
+        return;
+    }
+
+    public void AlignToSurface2(ref Vector3 currentForward,
+                                ref Vector3 currentNormal, 
+                                ref Quaternion resultRotation,
+                                Quaternion targetRotation)
+    {
+        resultRotation = resultRotation * targetRotation;
+
+        currentNormal = resultRotation * Vector3.up;
+        currentForward = resultRotation * Vector3.forward;
     }
 
     public void AlignOrientationWithSurface(ref Vector3 currentNormal, ref Vector3 currentForward, ref Quaternion resultRotation, Vector3 targetNormal)
@@ -48,12 +67,4 @@ public class AngleCalculationCartridge
     {
         rotation = Quaternion.identity;
     }
-    /*
-    public void VerifyDownwardAngle(ref Vector3 referenceVec, ref Vector3 currentDirection, ref bool downward)
-    {
-        Vector3 crossProduct = Vector3.Cross(currentDirection, referenceVec);
-
-
-    }
-    */
 }
