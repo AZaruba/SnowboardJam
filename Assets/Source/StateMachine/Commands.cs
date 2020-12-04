@@ -73,6 +73,9 @@ public enum Command {
     START_TIMER_UP,
     START_TIMER_DOWN,
     STOP_TIMER,
+    TICK_TIMER,
+    START_COUNTDOWN,
+    COUNTDOWN_OVER,
     #endregion
 }
 
@@ -82,6 +85,7 @@ public enum StateRef {
     START_STATE,
     DISABLED,
     PAUSED,
+    PRESTART_STATE,
 
     #region PlayerStates
     IDLE,
@@ -160,6 +164,7 @@ public enum StateRef {
     #region TimerStates
     TIMER_INCR,
     TIMER_DECR,
+    TIMER_STEP,
     #endregion
 
     #region TerrainStates

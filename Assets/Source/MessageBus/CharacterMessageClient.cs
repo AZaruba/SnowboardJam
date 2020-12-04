@@ -41,6 +41,10 @@ public class CharacterMessageClient : iMessageClient
         {
             c_audioController.PlayOneShot(message.getAudioData());
         }
+        if (id == MessageID.COUNTDOWN_OVER)
+        {
+            c_stateData.b_preStarted = false;
+        }
 
         return true;
     }

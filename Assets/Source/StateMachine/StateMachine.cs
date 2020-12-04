@@ -20,6 +20,19 @@ public class StateMachine {
     }
 
     /// <summary>
+    /// Initializes a state machine in the pre-start state (used for gameplay scenes with a countdown) with a defined target "first" state.
+    /// </summary>
+    /// <param name="stateRefIn">The StateRef pointing to our desired state</param>
+    public StateMachine(StateRef stateRefIn)
+    {
+        iState prestart = new PreStartState(stateRefIn);
+        l_validStates = new Dictionary<StateRef, iState>();
+        l_validStates.Add(StateRef.PRESTART_STATE, prestart);
+        i_currentState = prestart;
+        sr_currentStateRef = StateRef.PRESTART_STATE;
+    }
+
+    /// <summary>
     /// Initializes a StateMachine with a default state defined by owner. Initialization
     /// includes a reference value identifying the state.
     /// </summary>

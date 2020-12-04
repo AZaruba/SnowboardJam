@@ -1,0 +1,75 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CountdownController : MonoBehaviour
+{
+    private int debugI;
+    private CountdownData c_countdownData;
+    private StateMachine sm_countdown;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        c_countdownData = new CountdownData();
+        debugI = c_countdownData.i_countdownTime;
+
+        InitializeStateMachine();
+    }
+
+    private void EnginePush()
+    {
+        if (c_countdownData.i_countdownTime == c_countdownData.i_targetTime)
+        {
+            MessageServer.SendMessage(MessageID.COUNTDOWN_OVER, new Message());
+            Destroy(this);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        UpdateStateMachine();
+        sm_countdown.Act();
+        EnginePush();
+    }
+
+    private void UpdateStateMachine()
+    {
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
+        {
+            sm_countdown.Execute(Command.START_COUNTDOWN);
+        }
+        // we want to continuously countdown, tick, then countdown again
+        if (c_countdownData.f_currentCountdownTime < c_countdownData.i_countdownTime)
+        {
+            sm_countdown.Execute(Command.TICK_TIMER);
+            sm_countdown.Execute(Command.START_TIMER_DOWN);
+        }
+    }
+
+    private void InitializeStateMachine()
+    {
+        CountdownStartState state_start = new CountdownStartState();
+        CountdownStepState state_step = new CountdownStepState(ref c_countdownData);
+        DecrementCountdownState state_decr = new DecrementCountdownState(ref c_countdownData);
+
+        sm_countdown = new StateMachine(state_start, StateRef.START_STATE);
+        sm_countdown.AddState(state_step, StateRef.TIMER_STEP);
+        sm_countdown.AddState(state_decr, StateRef.TIMER_DECR);
+    }
+}
+
+public class CountdownData
+{
+    public float f_currentCountdownTime;
+    public int   i_countdownTime;
+    public int   i_targetTime;
+
+    public CountdownData()
+    {
+        f_currentCountdownTime = 3;
+        i_countdownTime = 2; // subtract 1 from current countdown time
+        i_targetTime = Constants.ZERO;
+    }
+}

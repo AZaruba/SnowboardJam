@@ -77,6 +77,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeMessageClient();
 
         EnginePull();
+        LateEnginePull(c_playerData.v_currentPosition);
     }
 
     /// <summary>
@@ -174,6 +175,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void UpdateStateMachine()
     {
+        if (c_stateData.b_preStarted == false)
+        {
+            c_accelMachine.Execute(Command.COUNTDOWN_OVER);
+            c_turnMachine.Execute(Command.COUNTDOWN_OVER);
+            c_airMachine.Execute(Command.COUNTDOWN_OVER);
+            sm_tricking.Execute(Command.COUNTDOWN_OVER);
+            sm_trickPhys.Execute(Command.COUNTDOWN_OVER);
+            c_stateData.b_preStarted = true; // we want to execute this only once
+        }
+
         if (c_stateData.b_courseFinished == true)
         {
             if (c_collisionData.b_collisionDetected)
@@ -557,7 +568,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
-        c_accelMachine = new StateMachine(s_stationary, StateRef.STATIONARY);
+        c_accelMachine = new StateMachine(StateRef.STATIONARY);
+        c_accelMachine.AddState(s_stationary, StateRef.STATIONARY);
         c_accelMachine.AddState(s_riding, StateRef.RIDING);
         c_accelMachine.AddState(s_slowing, StateRef.STOPPING);
         c_accelMachine.AddState(s_moveAerial, StateRef.AIRBORNE);
@@ -574,7 +586,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
-        c_airMachine = new StateMachine(s_grounded, StateRef.GROUNDED);
+        c_airMachine = new StateMachine(StateRef.GROUNDED);
+        c_airMachine.AddState(s_grounded, StateRef.GROUNDED);
         c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
         c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
         c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
@@ -587,7 +600,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
         TurnChargeState s_turnCharge = new TurnChargeState(ref c_playerData, ref c_positionData, ref cart_surfInf);
 
-        c_turnMachine = new StateMachine(s_straight, StateRef.RIDING);
+        c_turnMachine = new StateMachine(StateRef.RIDING);
+        c_turnMachine.AddState(s_straight, StateRef.RIDING);
         c_turnMachine.AddState(s_carving, StateRef.CARVING);
         c_turnMachine.AddState(s_turnCharge, StateRef.CHARGING);
         c_turnMachine.AddState(s_turnDisabled, StateRef.DISABLED);
@@ -601,7 +615,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_handling, ref cart_incr, ref c_scoringData);
         SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref cart_handling, ref c_scoringData);
 
-        sm_trickPhys = new StateMachine(s_spinIdle, StateRef.SPIN_IDLE);
+        sm_trickPhys = new StateMachine(StateRef.SPIN_IDLE);
+        sm_trickPhys.AddState(s_spinIdle, StateRef.SPIN_IDLE);
         sm_trickPhys.AddState(s_spinCharge, StateRef.SPIN_CHARGE);
         sm_trickPhys.AddState(s_spinning, StateRef.SPINNING);
         sm_trickPhys.AddState(s_spinSnap, StateRef.SPIN_RESET);
@@ -614,7 +629,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         TrickTransitionState s_trickTransition = new TrickTransitionState(ref trickData, ref c_scoringData);
         TrickingState s_tricking = new TrickingState(ref trickData, ref c_scoringData, ref cart_incr);
 
-        sm_tricking = new StateMachine(s_trickDisabled, StateRef.TRICK_DISABLED);
+        sm_tricking = new StateMachine(StateRef.TRICK_DISABLED);
+        sm_tricking.AddState(s_trickDisabled, StateRef.TRICK_DISABLED);
         sm_tricking.AddState(s_trickReady, StateRef.TRICK_READY);
         sm_tricking.AddState(s_tricking, StateRef.TRICKING);
         sm_tricking.AddState(s_trickTransition, StateRef.TRICK_TRANSITION);
@@ -625,6 +641,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cl_character = new CharacterMessageClient(ref c_stateData, ref c_entityData, ref c_audioController);
         MessageServer.Subscribe(ref cl_character, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_character, MessageID.PLAYER_FINISHED);
+        MessageServer.Subscribe(ref cl_character, MessageID.COUNTDOWN_OVER);
     }
 
     private void InitializeAudioController()
