@@ -17,12 +17,6 @@ public class CharacterMessageClient : iMessageClient
         this.c_audioController = audioIn;
     }
 
-    public bool SendMessage(MessageID id, Message message)
-    {
-        MessageServer.SendMessage(id, message);
-        return true;
-    }
-
     public bool RecieveMessage(MessageID id, Message message)
     {
         if (id == MessageID.PAUSE)

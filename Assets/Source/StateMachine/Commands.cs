@@ -7,6 +7,7 @@ public enum Command {
     // Car Movement Commands
     ERROR_CMD = -1,
     RESET,
+    REPEAT, // used when we weant to just force a transition
 
     #region PlayerCommand
     RIDE,
@@ -117,6 +118,7 @@ public enum StateRef {
     APPROACHING_FAST,
     LEAVING_FAST,
     TRACKING_FAST,
+    PREVIEW_TRACKING,
     #endregion
 
     #region CameraOrientationStates

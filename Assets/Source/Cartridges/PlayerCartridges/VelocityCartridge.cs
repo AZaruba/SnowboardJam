@@ -44,5 +44,17 @@ public class VelocityCartridge {
     {
         currentPosition = surfacePoint + currentRotation * new Vector3(0,1.1f,0);
     }
+
+    /// <summary>
+    /// Tracks between two positions as defined by lerpRatio.
+    /// </summary>
+    /// <param name="currentPosition">The current position of the object.</param>
+    /// <param name="startPosition">The beginning of the two positions we lerp between.</param>
+    /// <param name="endPosition">The target position when lerpRatio is 1.</param>
+    /// <param name="lerpRatio">The value between 0 and 1 definding where we want to end up.</param>
+    public static void LerpPosition(ref Vector3 currentPosition, Vector3 startPosition, Vector3 endPosition, float lerpRatio)
+    {
+        currentPosition = Vector3.Lerp(startPosition, endPosition, lerpRatio);
+    }
     #endregion
 }

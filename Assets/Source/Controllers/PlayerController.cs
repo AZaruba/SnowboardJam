@@ -115,9 +115,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_positionData.q_currentModelRotation;
 
-        debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
-
         UpdateAnimator();
         UpdateAudio();
     }

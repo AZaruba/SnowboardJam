@@ -13,18 +13,16 @@ public class CameraMessageClient : iMessageClient
         c_stateData = dataIn;
     }
 
-    public bool SendMessage(MessageID id, Message message)
-    {
-        MessageServer.SendMessage(id, message);
-        return true;
-    }
-
     public bool RecieveMessage(MessageID id, Message message)
     {
         if (id == MessageID.PAUSE)
         {
             c_stateData.b_updateState = message.getInt() == 0;
-            return true;
+        }
+
+        if (id == MessageID.COUNTDOWN_START)
+        {
+            c_stateData.b_preStarted = false;
         }
 
         return true;

@@ -87,7 +87,7 @@ public class IncrementCartridge
         }
     }
 
-    public void Rotate(ref int value, int delta, int cap = int.MaxValue, int min = 0)
+    public static void Rotate(ref int value, int delta, int cap = int.MaxValue, int min = 0)
     {
         if (value == min && delta < 0)
         {

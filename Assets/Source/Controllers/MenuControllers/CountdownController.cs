@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CountdownController : MonoBehaviour
 {
-    private int debugI;
     private CountdownData c_countdownData;
     private StateMachine sm_countdown;
 
@@ -12,7 +11,6 @@ public class CountdownController : MonoBehaviour
     void Start()
     {
         c_countdownData = new CountdownData();
-        debugI = c_countdownData.i_countdownTime;
 
         InitializeStateMachine();
     }
@@ -38,6 +36,7 @@ public class CountdownController : MonoBehaviour
     {
         if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
         {
+            MessageServer.SendMessage(MessageID.COUNTDOWN_START, new Message());
             sm_countdown.Execute(Command.START_COUNTDOWN);
         }
         // we want to continuously countdown, tick, then countdown again
@@ -69,7 +68,7 @@ public class CountdownData
     public CountdownData()
     {
         f_currentCountdownTime = 3;
-        i_countdownTime = 2; // subtract 1 from current countdown time
+        i_countdownTime = 3;
         i_targetTime = Constants.ZERO;
     }
 }

@@ -33,6 +33,7 @@ public enum MessageID
     PLAY_AUDIO,
 
     // Countdown ID
+    COUNTDOWN_START,
     COUNTDOWN_OVER,
 }
 

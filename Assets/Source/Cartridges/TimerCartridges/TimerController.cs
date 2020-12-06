@@ -33,6 +33,7 @@ public class TimerController : MonoBehaviour
             return;
         }
 
+        UpdateStateMachine();
         sm_timer.Act();
         float displayTime = c_timerData.f_currentTime;
         int minutes = (int)displayTime / 60;
@@ -58,7 +59,8 @@ public class TimerController : MonoBehaviour
         TimeDecreaseState s_timeDecr = new TimeDecreaseState(ref c_timerData, ref cart_incr);
         TimeIncreaseState s_timeIncr = new TimeIncreaseState(ref c_timerData, ref cart_incr);
 
-        sm_timer = new StateMachine(s_timeIncr, StateRef.TIMER_INCR);
+        sm_timer = new StateMachine(StateRef.TIMER_INCR);
+        sm_timer.AddState(s_timeIncr, StateRef.TIMER_INCR);
         sm_timer.AddState(s_timeDecr, StateRef.TIMER_DECR);
     }
 
@@ -67,10 +69,15 @@ public class TimerController : MonoBehaviour
         cl_timer = new TimerMessageClient(ref c_stateData);
         MessageServer.Subscribe(ref cl_timer, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_timer, MessageID.PLAYER_FINISHED);
+        MessageServer.Subscribe(ref cl_timer, MessageID.COUNTDOWN_OVER);
     }
 
     private void UpdateStateMachine()
     {
-        // TODO: consider when this might get updated outside of a pause message
+        if (c_stateData.b_preStarted == false)
+        {
+            sm_timer.Execute(Command.COUNTDOWN_OVER);
+            c_stateData.b_preStarted = true; // we want to execute this only once
+        }
     }
 }

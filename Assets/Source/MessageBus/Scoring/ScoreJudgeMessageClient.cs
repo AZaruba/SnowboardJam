@@ -20,9 +20,4 @@ public class ScoreJudgeMessageClient : iMessageClient
         }
         return false;
     }
-
-    public bool SendMessage(MessageID id, Message message)
-    {
-        return false;
-    }
 }
