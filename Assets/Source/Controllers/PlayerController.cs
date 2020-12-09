@@ -53,6 +53,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     RaycastHit centerHit;
     RaycastHit forwardHit;
     RaycastHit obstacleHit;
+    List<Vector3> l_barycentricMeshNormals;
+    List<int> l_barycentricMeshIdx;
 
     iMessageClient cl_character;
     #endregion
@@ -75,6 +77,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeStateMachines();
         InitializeAudioController();
         InitializeMessageClient();
+        InitializeCachedLists();
 
         EnginePull();
         LateEnginePull();
@@ -496,12 +499,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         Mesh mesh = (hitIn.collider as MeshCollider).sharedMesh;
-        Vector3[] normals = mesh.normals;
-        int[] triangles = mesh.triangles;
+        mesh.GetNormals(l_barycentricMeshNormals);
+        mesh.GetTriangles(l_barycentricMeshIdx, 0);
 
-        Vector3 n0 = normals[triangles[hitIn.triangleIndex * 3 + 0]];
-        Vector3 n1 = normals[triangles[hitIn.triangleIndex * 3 + 1]];
-        Vector3 n2 = normals[triangles[hitIn.triangleIndex * 3 + 2]];
+        Vector3 n0 = l_barycentricMeshNormals[l_barycentricMeshIdx[hitIn.triangleIndex * 3]]; //mesh.normals[mesh.triangles[hitIn.triangleIndex * 3 + 0]];
+        Vector3 n1 = l_barycentricMeshNormals[l_barycentricMeshIdx[hitIn.triangleIndex * 3 + 1]];
+        Vector3 n2 = l_barycentricMeshNormals[l_barycentricMeshIdx[hitIn.triangleIndex * 3 + 2]];
 
         BarycentricNormal = n0 * BarycentricCoords.x +
                             n1 * BarycentricCoords.y +
@@ -638,6 +641,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         MessageServer.Subscribe(ref cl_character, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_character, MessageID.PLAYER_FINISHED);
         MessageServer.Subscribe(ref cl_character, MessageID.COUNTDOWN_OVER);
+    }
+
+    private void InitializeCachedLists()
+    {
+        l_barycentricMeshIdx = new List<int>();
+        l_barycentricMeshNormals = new List<Vector3>();
     }
 
     private void InitializeAudioController()
