@@ -26,6 +26,6 @@ public class PreStartState : iState
 
     public void TransitionAct()
     {
-        throw new System.NotImplementedException();
+
     }
 }

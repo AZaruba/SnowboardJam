@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,7 +41,7 @@ public class TimerController : MonoBehaviour
         int seconds = (int)displayTime % 60;
         int millis = (int)(displayTime * 100) % 100;
 
-        timerText.text = string.Format("{0:0}:{1:00}:{2:00}", minutes, seconds, millis);
+        timerText.text = String.Format("{0:0}:{1:00}:{2:00}", minutes, seconds, millis);
     }
 
     private void SetDefaultTimerData()

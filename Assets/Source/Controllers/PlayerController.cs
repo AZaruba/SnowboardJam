@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private CharacterCollisionData CollisionData;
     [SerializeField] private AudioSource AudioSource;
     [SerializeField] private AudioBank SoundBank;
+    [SerializeField] private LayerMask GroundCollisionMask;
+    [SerializeField] private LayerMask ZoneCollisionMask;
 
     private StateData c_stateData;
     private AerialMoveData c_aerialMoveData;
@@ -44,7 +46,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private GravityCartridge cart_gravity;
     private IncrementCartridge cart_incr;
     private SurfaceInfluenceCartridge cart_surfInf;
-    private QuaternionCartridge cart_quatern;
 
     // Cached Calculation items
     RaycastHit frontHit;
@@ -70,14 +71,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_handling = new HandlingCartridge();
         cart_incr = new IncrementCartridge();
         cart_surfInf = new SurfaceInfluenceCartridge();
-        cart_quatern = new QuaternionCartridge();
 
         InitializeStateMachines();
         InitializeAudioController();
         InitializeMessageClient();
 
         EnginePull();
-        LateEnginePull(c_playerData.v_currentPosition);
+        LateEnginePull();
     }
 
     /// <summary>
@@ -93,7 +93,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         EnginePull();
-        Vector3 startPosition = c_playerData.v_currentPosition;
 
         UpdateStateMachine();
 
@@ -103,8 +102,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         sm_tricking.Act();
         sm_trickPhys.Act();
 
-        LateEnginePull(startPosition);
         EngineUpdate();
+    }
+
+    void FixedUpdate()
+    {
+        LateEnginePull();
     }
 
     /// <summary>
@@ -124,16 +127,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// 
     /// Currently: Collision detection.
     /// </summary>
-    public void LateEnginePull(Vector3 oldPosition)
+    public void LateEnginePull()
     {
 
         float speedRatio = c_playerData.f_currentSpeed;
 
         c_collisionData.f_obstacleAngle = 20f + CollisionData.BaseObstacleCollisionAngle * (speedRatio / c_playerData.f_topSpeed); // TODO: add "upward motion" weight
-        c_collisionData.f_frontRayLengthUp = Mathf.Tan(c_collisionData.f_obstacleAngle*(Mathf.PI/180.0f)) * Time.deltaTime;
-        c_collisionData.f_frontRayLengthDown = (Mathf.Tan(c_collisionData.f_obstacleAngle * (Mathf.PI / 180.0f)) * Time.deltaTime + c_aerialMoveData.f_verticalVelocity * -1) * Time.deltaTime;
+        c_collisionData.f_frontRayLengthUp = Mathf.Tan(c_collisionData.f_obstacleAngle*(Mathf.PI/180.0f)) * Time.fixedDeltaTime;
+        c_collisionData.f_frontRayLengthDown = (Mathf.Tan(c_collisionData.f_obstacleAngle * (Mathf.PI / 180.0f)) * Time.fixedDeltaTime + c_aerialMoveData.f_verticalVelocity * -1) * Time.fixedDeltaTime;
 
-        c_collisionData.f_obstacleRayLength = speedRatio * Time.deltaTime; // the expected travel amount next frame
+        c_collisionData.f_obstacleRayLength = speedRatio * Time.fixedDeltaTime; // the expected travel amount next frame
         CheckForWall();
         CheckForGround2();
     }
@@ -359,7 +362,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void CheckForWall()
     {
-        LayerMask lm_env = LayerMask.GetMask("Environment");
 
         /* The ground check goes up f_frontRayLengthUp.
          * We should push the origin UP by q_currentRotation * f_FrontRayLengthUp
@@ -368,10 +370,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
          */ 
 
         Vector3 playerBox = CollisionData.BodyHalfExtents;
+        Vector3 originCenter = Vector3.up * (c_collisionData.f_obstacleRayLength + playerBox.y);
 
         playerBox.y -= c_collisionData.f_frontRayLengthUp / 2;
-        Vector3 offsetOrigin = c_playerData.v_currentPosition + c_playerData.q_currentRotation * new Vector3(0, c_collisionData.f_obstacleRayLength + playerBox.y, 0);
-        Debug.DrawLine(offsetOrigin, offsetOrigin + c_playerData.v_currentDirection, Color.red);
+        Vector3 offsetOrigin = c_playerData.v_currentPosition + c_playerData.q_currentRotation * originCenter;
+        //Debug.DrawLine(offsetOrigin, offsetOrigin + c_playerData.v_currentDirection, Color.red);
 
         if (Physics.BoxCast(offsetOrigin,
                             playerBox,
@@ -379,7 +382,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             out obstacleHit,
                             c_playerData.q_currentRotation,
                             c_collisionData.f_obstacleRayLength,
-                            lm_env))
+                            GroundCollisionMask))
         {
             HandleWallCollision(obstacleHit);
         }
@@ -389,10 +392,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
 
         float offsetDist = CollisionData.CenterOffset.magnitude;
-        Vector3 upwardVector = new Vector3(0, c_collisionData.f_frontRayLengthUp, 0);
-
-        // the vector giving the raycast distance AND direction
-        LayerMask lm_env = LayerMask.GetMask("Environment");
+        Vector3 upwardVector = Vector3.up * c_collisionData.f_frontRayLengthUp;
 
         c_collisionData.b_collisionDetected = false;
 
@@ -404,10 +404,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             c_playerData.v_currentDown,
                             out centerHit,
                             c_playerData.q_currentRotation,
-                            (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
-                            lm_env))
+                            (c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1) + offsetDist,
+                            GroundCollisionMask))
         {
-            Debug.DrawLine(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset), centerHit.point, Color.blue, 5f);
+            //Debug.DrawLine(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset), centerHit.point, Color.blue, 5f);
             c_collisionData.b_collisionDetected = true;
             c_collisionData.v_surfaceNormal = centerHit.normal;
         }
@@ -424,8 +424,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
             if (Physics.Raycast(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset),
                                 c_playerData.v_currentDown,
                                 out centerHit,
-                                (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
-                                lm_env))
+                                (c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1) + offsetDist,
+                                GroundCollisionMask))
             {
                 c_collisionData.v_attachPoint = centerHit.point;
             }
@@ -434,7 +434,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_collisionData.v_attachPoint = c_playerData.v_currentPosition;
             }
 
-            if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env)) // double to check up and DOWN
+            if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, GroundCollisionMask)) // double to check up and DOWN
             {
                 // validate angle 
                 if (Vector3.Angle(c_playerData.v_currentNormal, frontHit.normal) > c_collisionData.f_obstacleAngle)
@@ -454,7 +454,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
             }
 
-            if (Physics.Raycast(c_collisionData.v_backOffset, c_playerData.v_currentDown, out backHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env))
+            if (Physics.Raycast(c_collisionData.v_backOffset, c_playerData.v_currentDown, out backHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, GroundCollisionMask))
             {
                 if (Vector3.Angle(c_playerData.v_currentNormal, backHit.normal) > c_collisionData.f_obstacleAngle)
                 {
@@ -518,9 +518,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void CheckForZone()
     {
-        LayerMask lm_zoneMask = LayerMask.GetMask("Zones");
-        float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.deltaTime);
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance, lm_zoneMask))
+        float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.fixedDeltaTime);
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance, ZoneCollisionMask))
         {
             // notify that we have collided with a zone, grab the zone's ID and send corresponding message
             ZoneController controller = GameMasterController.LookupZoneController(forwardHit.transform);

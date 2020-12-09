@@ -23,28 +23,6 @@ public class VelocityCartridge {
         position += Vector3.up * verticalVelocity * Time.deltaTime;
     }
 
-    public void SurfaceAdjustment(ref Vector3 position, Vector3 point, Quaternion currentRotation)
-    {
-        position = Vector3.Lerp(position, point + currentRotation * new Vector3(0, 1.1f, 0), 0.5f);
-    }
-     
-    public void SurfaceAdjustment(ref Vector3 position, Vector3 offset)
-    {
-        position += offset;
-    }
-
-    public void SurfaceAdjustment(ref Vector3 position, Vector3 point, Vector3 forwardPoint, float angleDifference)
-    {
-        Vector3 positionVector = position - point;
-        Vector3 forwardVector = forwardPoint - point;
-
-    }
-
-    public void RaycastAdjustment(ref Vector3 surfacePoint, ref Vector3 currentPosition, ref Quaternion currentRotation)
-    {
-        currentPosition = surfacePoint + currentRotation * new Vector3(0,1.1f,0);
-    }
-
     /// <summary>
     /// Tracks between two positions as defined by lerpRatio.
     /// </summary>
