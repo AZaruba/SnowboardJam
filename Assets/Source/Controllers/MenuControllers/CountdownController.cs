@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class CountdownController : MonoBehaviour
 {
+    [SerializeField] private GameObject InGameInterface;
+    [SerializeField] private GameObject PreviewInterface;
+
     private CountdownData c_countdownData;
     private StateMachine sm_countdown;
 
     // Start is called before the first frame update
     void Start()
     {
+        InGameInterface.SetActive(false);
+        PreviewInterface.SetActive(true);
         c_countdownData = new CountdownData();
 
         InitializeStateMachine();
@@ -36,6 +41,9 @@ public class CountdownController : MonoBehaviour
     {
         if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
         {
+            InGameInterface.SetActive(true);
+            PreviewInterface.SetActive(false);
+
             MessageServer.SendMessage(MessageID.COUNTDOWN_START, new Message());
             sm_countdown.Execute(Command.START_COUNTDOWN);
         }
