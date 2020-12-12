@@ -696,8 +696,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         c_scoringData.f_currentFlipTarget = 0.0f;
         c_scoringData.f_currentSpinTarget = 0.0f;
-        c_scoringData.l_timeList = new List<float>();
-        c_scoringData.l_trickList = new List<TrickName>();
+        c_scoringData.l_timeList.Clear();
+        c_scoringData.l_trickList.Clear();
         c_scoringData.b_sendTrick = false;
     }
     #endregion

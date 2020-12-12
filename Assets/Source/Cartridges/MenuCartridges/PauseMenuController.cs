@@ -82,7 +82,8 @@ public class PauseMenuController : MonoBehaviour
             sm_menuInput.Execute(Command.MENU_SHOW);
             sm_pauseMenu.Execute(Command.MENU_SHOW);
         }
-        if (float.Equals(c_activeMenuData.f_currentMenuTickCount, c_activeMenuData.f_currentMenuWaitCount))
+
+        if (c_activeMenuData.f_currentMenuTickCount >= c_activeMenuData.f_currentMenuWaitCount)
         {
             sm_menuInput.Execute(Command.MENU_READY);
         }
@@ -90,6 +91,7 @@ public class PauseMenuController : MonoBehaviour
         {
             sm_menuInput.Execute(Command.MENU_IDLE);
         }
+
         if (c_activeMenuData.i_menuDir != 0)
         {
             sm_menuInput.Execute(Command.MENU_TICK_INPUT);

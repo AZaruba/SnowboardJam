@@ -66,8 +66,8 @@ public class CameraController : MonoBehaviour, iEntityController
 
     public void EngineUpdate()
     {
-        debugAccessor.DisplayState("Camera State", sm_translation.GetCurrentState());
-        debugAccessor.DisplayFloat("Ratio", c_previewActiveData.f_currentShotTime/ c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].Time);
+        //debugAccessor.DisplayState("Camera State", sm_translation.GetCurrentState());
+        //debugAccessor.DisplayFloat("Ratio", c_previewActiveData.f_currentShotTime/ c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].Time);
 
         transform.position = c_cameraData.v_currentPosition;
         transform.rotation = c_cameraData.q_cameraRotation;
