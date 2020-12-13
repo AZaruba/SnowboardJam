@@ -36,12 +36,17 @@ public class TimerController : MonoBehaviour
 
         UpdateStateMachine();
         sm_timer.Act();
+
         float displayTime = c_timerData.f_currentTime;
         int minutes = (int)displayTime / 60;
         int seconds = (int)displayTime % 60;
         int millis = (int)(displayTime * 100) % 100;
 
-        timerText.text = String.Format("{0:0}:{1:00}:{2:00}", minutes, seconds, millis);
+        /*
+        c_timerData.s_timerString.Clear();
+        c_timerData.s_timerString.AppendFormat(Constants.TIME_FORMAT_STRING, minutes, seconds, millis);
+        timerText.text = c_timerData.s_timerString.ToString();
+        */
     }
 
     private void SetDefaultTimerData()
@@ -49,7 +54,6 @@ public class TimerController : MonoBehaviour
         c_timerData = new TimerData();
         c_stateData = new StateData();
 
-        c_timerData.f_currentTime = 0.0f;
         c_stateData.b_updateState = true;
     }
 

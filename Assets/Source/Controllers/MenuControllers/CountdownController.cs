@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class CountdownController : MonoBehaviour
 {
     [SerializeField] private GameObject InGameInterface;
     [SerializeField] private GameObject PreviewInterface;
+    [SerializeField] private Image CountdownDisplayImage;
+
+    [SerializeField] private Sprite[] CountdownSprites;
 
     private CountdownData c_countdownData;
     private StateMachine sm_countdown;
@@ -15,9 +19,10 @@ public class CountdownController : MonoBehaviour
     {
         InGameInterface.SetActive(false);
         PreviewInterface.SetActive(true);
-        c_countdownData = new CountdownData();
+        c_countdownData = new CountdownData(CountdownSprites.Length);
 
         InitializeStateMachine();
+        CountdownDisplayImage.sprite = CountdownSprites[c_countdownData.i_countdownTime - 1];
     }
 
     private void EnginePush()
@@ -25,7 +30,7 @@ public class CountdownController : MonoBehaviour
         if (c_countdownData.i_countdownTime == c_countdownData.i_targetTime)
         {
             MessageServer.SendMessage(MessageID.COUNTDOWN_OVER, new Message());
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 
@@ -43,6 +48,7 @@ public class CountdownController : MonoBehaviour
         {
             InGameInterface.SetActive(true);
             PreviewInterface.SetActive(false);
+            CountdownDisplayImage.enabled = true;
 
             MessageServer.SendMessage(MessageID.COUNTDOWN_START, new Message());
             sm_countdown.Execute(Command.START_COUNTDOWN);
@@ -52,6 +58,8 @@ public class CountdownController : MonoBehaviour
         {
             sm_countdown.Execute(Command.TICK_TIMER);
             sm_countdown.Execute(Command.START_TIMER_DOWN);
+
+            CountdownDisplayImage.sprite = CountdownSprites[c_countdownData.i_countdownTime];
         }
     }
 
@@ -73,10 +81,10 @@ public class CountdownData
     public int   i_countdownTime;
     public int   i_targetTime;
 
-    public CountdownData()
+    public CountdownData(int CountdownTime)
     {
-        f_currentCountdownTime = 3;
-        i_countdownTime = 3;
+        f_currentCountdownTime = CountdownTime;
+        i_countdownTime = CountdownTime;
         i_targetTime = Constants.ZERO;
     }
 }
