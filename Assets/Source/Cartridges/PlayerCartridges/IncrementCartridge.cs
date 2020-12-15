@@ -30,7 +30,7 @@ public class IncrementCartridge
     /// <param name="timer">The float storing the value</param>
     /// <param name="time">The amount to decremement the value</param>
     /// <param name="max">The optional cap for the decrement operation</param>
-    public void Decrement(ref float value, float delta, float cap = float.MinValue)
+    public static void Decrement(ref float value, float delta, float cap = float.MinValue)
     {
         if (value <= cap)
         {
@@ -87,7 +87,7 @@ public class IncrementCartridge
         }
     }
 
-    public void Rotate(ref int value, int delta, int cap = int.MaxValue, int min = 0)
+    public static void Rotate(ref int value, int delta, int cap = int.MaxValue, int min = 0)
     {
         if (value == min && delta < 0)
         {

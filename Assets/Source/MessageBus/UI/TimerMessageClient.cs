@@ -13,11 +13,6 @@ public class TimerMessageClient : iMessageClient
         c_stateData = dataIn;
     }
 
-    public bool SendMessage(MessageID id, Message message)
-    {
-        return true;
-    }
-
     public bool RecieveMessage(MessageID id, Message message)
     {
         if (id == MessageID.PAUSE)
@@ -30,6 +25,11 @@ public class TimerMessageClient : iMessageClient
         if (id == MessageID.PLAYER_FINISHED)
         {
             c_stateData.b_updateState = false;
+            return true;
+        }
+        if (id == MessageID.COUNTDOWN_OVER)
+        {
+            c_stateData.b_preStarted = false;
             return true;
         }
         return false;

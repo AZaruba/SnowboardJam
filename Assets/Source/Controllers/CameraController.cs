@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour, iEntityController {
+public class CameraController : MonoBehaviour, iEntityController
+{
 
     #region Members
     [SerializeField] private CameraData c_cameraData;
+    [SerializeField] private CameraPreviewData c_previewData;
     [SerializeField] private DebugAccessor debugAccessor;
 
     private StateData c_stateData;
+    private CameraPreviewActiveData c_previewActiveData;
 
     private StateMachine sm_translation;
     private StateMachine sm_orientation;
@@ -25,7 +28,7 @@ public class CameraController : MonoBehaviour, iEntityController {
     /// Start this instance. Initializes all valid states for this object
     /// then adds them to the state machine
     /// </summary>
-	void Start ()
+	void Start()
     {
         SetDefaultCameraData();
         InitializeCartridges();
@@ -36,22 +39,21 @@ public class CameraController : MonoBehaviour, iEntityController {
 
         cl_camera = new CameraMessageClient(ref c_stateData);
         MessageServer.Subscribe(ref cl_camera, MessageID.PAUSE);
-
-        cl_camera.SendMessage(MessageID.TEST_MSG_TWO, new Message(0.0f));
+        MessageServer.Subscribe(ref cl_camera, MessageID.COUNTDOWN_START);
     }
-	
+
     /// <summary>
     /// Update this instance. States perform actions on data, the data is then
     /// used for object-level functions (such as translations) and then the
     /// state is updated.
     /// </summary>
-	void LateUpdate ()
+    void LateUpdate()
     {
         if (!c_stateData.b_updateState)
         {
             return;
         }
-        
+
         EnginePull();
 
         UpdateStateMachine();
@@ -64,19 +66,22 @@ public class CameraController : MonoBehaviour, iEntityController {
 
     public void EngineUpdate()
     {
+        //debugAccessor.DisplayState("Camera State", sm_translation.GetCurrentState());
+        //debugAccessor.DisplayFloat("Ratio", c_previewActiveData.f_currentShotTime/ c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].Time);
+
         transform.position = c_cameraData.v_currentPosition;
+        transform.rotation = c_cameraData.q_cameraRotation;
         transform.forward = c_cameraData.v_currentDirection;
     }
 
+    // NOTE: what's going to go wrong if this stays as is...
     public void EnginePull()
     {
         PlayerData playerDataIn = c_cameraData.c_targetController.SharePlayerData();
         Vector3 targetPosition = playerDataIn.v_currentPosition;
-        Vector3 targetDirection = playerDataIn.v_currentDirection;
         Quaternion targetRotation = playerDataIn.q_currentRotation;
 
-        c_cameraData.q_targetRotation = targetRotation; 
-        c_cameraData.q_cameraRotation = transform.rotation;
+        c_cameraData.q_targetRotation = targetRotation;
         c_cameraData.v_targetPosition = targetPosition +
              c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector;
 
@@ -90,14 +95,30 @@ public class CameraController : MonoBehaviour, iEntityController {
 
         float trueDistance = Vector3.Distance(cameraPosition, targetPosition);
 
+        if (c_stateData.b_preStarted == false)
+        {
+            sm_translation.Execute(Command.START_COUNTDOWN);
+            sm_orientation.Execute(Command.POINT_AT_POSITION);
+            c_stateData.b_preStarted = true;
+        }
+
+        if (sm_translation.GetCurrentState() == StateRef.PREVIEW_TRACKING)
+        {
+            if (c_previewActiveData.f_currentShotTime >= c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].Time)
+            {
+                sm_translation.Execute(Command.REPEAT, false, true);
+            }
+            return;
+        }
+
         if (trueDistance > followDistance)
         {
             sm_translation.Execute(Command.APPROACH);
-        } 
+        }
         else if (trueDistance < followDistance)
         {
             sm_translation.Execute(Command.DRAG);
-        } 
+        }
         else
         {
             // we have achieved balance!
@@ -114,11 +135,13 @@ public class CameraController : MonoBehaviour, iEntityController {
     /// </summary>
     void InitializeStateMachine()
     {
+        CameraPreviewState s_preview = new CameraPreviewState(ref c_cameraData, ref c_previewData, ref c_previewActiveData);
         FreeFollowState s_freeFollow = new FreeFollowState(ref c_cameraData, ref cart_angle, ref cart_follow);
         ApproachFollowState s_approachFollow = new ApproachFollowState(ref c_cameraData, ref cart_follow);
         AwayFollowState s_awayFollow = new AwayFollowState(ref c_cameraData, ref cart_follow);
 
-        sm_translation = new StateMachine(s_freeFollow, StateRef.TRACKING);
+        sm_translation = new StateMachine(s_preview, StateRef.PREVIEW_TRACKING);
+        sm_translation.AddState(s_freeFollow, StateRef.TRACKING);
         sm_translation.AddState(s_approachFollow, StateRef.APPROACHING);
         sm_translation.AddState(s_awayFollow, StateRef.LEAVING);
 
@@ -126,8 +149,8 @@ public class CameraController : MonoBehaviour, iEntityController {
         LookAtPositionState s_lookPos = new LookAtPositionState(ref c_cameraData, ref cart_focus);
         LookAtTargetState s_lookTarget = new LookAtTargetState(ref c_cameraData, ref cart_focus);
 
-        sm_orientation = new StateMachine(s_lookPos, StateRef.POSED);
-        sm_orientation.AddState(s_lookDir, StateRef.DIRECTED);
+        sm_orientation = new StateMachine(s_lookDir, StateRef.DIRECTED);
+        sm_orientation.AddState(s_lookPos, StateRef.POSED);
         sm_orientation.AddState(s_lookTarget, StateRef.TARGETED);
     }
 
@@ -136,59 +159,20 @@ public class CameraController : MonoBehaviour, iEntityController {
     /// </summary>
     void InitializeCartridges()
     {
-        cart_focus = new FocusCartridge ();
+        cart_focus = new FocusCartridge();
         cart_follow = new FollowCartridge();
         cart_angle = new AngleAdjustmentCartridge();
     }
 
     void SetDefaultCameraData()
     {
+        c_previewActiveData = new CameraPreviewActiveData();
+
         PlayerData playerDataIn = c_cameraData.c_targetController.SharePlayerData();
-        Vector3 targetPosition = playerDataIn.v_currentPosition;
-        Vector3 targetDirection = playerDataIn.v_currentDirection;
-        Quaternion targetRotation = playerDataIn.q_currentRotation;
 
-        Vector3 cameraPosition = targetPosition +
-            c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector +
-            targetRotation * c_cameraData.v_offsetVector;
-
-
-        c_cameraData.q_cameraRotation = transform.rotation;
-        c_cameraData.v_currentDirection = (targetPosition - cameraPosition).normalized;
-        c_cameraData.v_targetPosition = targetPosition +
-            c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector;
-
-        c_cameraData.v_currentPosition = cameraPosition;
-        c_cameraData.v_targetDirection = targetDirection.normalized;
-        c_cameraData.f_followDistance = c_cameraData.v_offsetVector.magnitude;
+        c_cameraData.q_cameraRotation = Quaternion.Euler(c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].CameraAngle);
+        c_cameraData.v_currentDirection = c_cameraData.q_cameraRotation * Vector3.forward;
+        c_cameraData.v_currentPosition = c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].StartPosition;
     }
     #endregion
 }
-
-/* Notes:
- *
- * 1) When rotating the camera around a stationary target, it needs to more aggressively pull BEHIND the character rather than over it
- * 2) The camera needs to be more aggressive with pointing toward the character's origin
- *     - the problem is it seems to lag too far behind the target when rotating quickly around it
- *
- * 3)
- *
- * Intended behavior
- *
- * 2) The camera should remain a certain distance off the ground
- *     - An obvious edge case is when we "push" the camera when a wall is in the way
- *     - The solution is to "push" until there is only ground below the camera
- * 4) If there is an object in the way of the camera preventing it from being the
- *    intended distance away from the player, it should be pushed forward to
- *    ensure it can still see the player
- *     - The "dragging" of the camera should prevent this function from causing
- *       a "jump" rather than smooth movement.
- * 6) The camera should have a peak angle, where it will simply translate
- *    more aggressively to compensate
- *    - This ensures that the camera will allow for "legibility" of the landing
- *      space while moving down and continue looking smooth going up
- * 7) The camera should dip while landing to add to the "oomph" of a good trick
- *
- * ENHANCEMENTS:
- *  - The camera should not stay closer to the camera when moving
- */ 

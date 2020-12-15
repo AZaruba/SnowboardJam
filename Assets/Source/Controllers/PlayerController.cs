@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private CharacterCollisionData CollisionData;
     [SerializeField] private AudioSource AudioSource;
     [SerializeField] private AudioBank SoundBank;
+    [SerializeField] private LayerMask GroundCollisionMask;
+    [SerializeField] private LayerMask ZoneCollisionMask;
 
     private StateData c_stateData;
     private AerialMoveData c_aerialMoveData;
@@ -44,7 +46,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private GravityCartridge cart_gravity;
     private IncrementCartridge cart_incr;
     private SurfaceInfluenceCartridge cart_surfInf;
-    private QuaternionCartridge cart_quatern;
 
     // Cached Calculation items
     RaycastHit frontHit;
@@ -52,6 +53,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     RaycastHit centerHit;
     RaycastHit forwardHit;
     RaycastHit obstacleHit;
+    List<Vector3> l_barycentricMeshNormals;
+    List<int> l_barycentricMeshIdx;
 
     iMessageClient cl_character;
     #endregion
@@ -70,13 +73,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cart_handling = new HandlingCartridge();
         cart_incr = new IncrementCartridge();
         cart_surfInf = new SurfaceInfluenceCartridge();
-        cart_quatern = new QuaternionCartridge();
 
         InitializeStateMachines();
         InitializeAudioController();
         InitializeMessageClient();
+        InitializeCachedLists();
 
         EnginePull();
+        LateEnginePull();
     }
 
     /// <summary>
@@ -92,7 +96,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         EnginePull();
-        Vector3 startPosition = c_playerData.v_currentPosition;
 
         UpdateStateMachine();
 
@@ -102,8 +105,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         sm_tricking.Act();
         sm_trickPhys.Act();
 
-        LateEnginePull(startPosition);
         EngineUpdate();
+    }
+
+    void FixedUpdate()
+    {
+        LateEnginePull();
     }
 
     /// <summary>
@@ -114,9 +121,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_positionData.q_currentModelRotation;
 
-        debugAccessor.DisplayState("Ground State", c_accelMachine.GetCurrentState());
-        debugAccessor.DisplayVector3("Current Dir", c_playerData.v_currentDirection);
-
         UpdateAnimator();
         UpdateAudio();
     }
@@ -126,16 +130,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// 
     /// Currently: Collision detection.
     /// </summary>
-    public void LateEnginePull(Vector3 oldPosition)
+    public void LateEnginePull()
     {
 
         float speedRatio = c_playerData.f_currentSpeed;
 
         c_collisionData.f_obstacleAngle = 20f + CollisionData.BaseObstacleCollisionAngle * (speedRatio / c_playerData.f_topSpeed); // TODO: add "upward motion" weight
-        c_collisionData.f_frontRayLengthUp = Mathf.Tan(c_collisionData.f_obstacleAngle*(Mathf.PI/180.0f)) * Time.deltaTime;
-        c_collisionData.f_frontRayLengthDown = (Mathf.Tan(c_collisionData.f_obstacleAngle * (Mathf.PI / 180.0f)) * Time.deltaTime + c_aerialMoveData.f_verticalVelocity * -1) * Time.deltaTime;
+        c_collisionData.f_frontRayLengthUp = Mathf.Tan(c_collisionData.f_obstacleAngle*(Mathf.PI/180.0f)) * Time.fixedDeltaTime;
+        c_collisionData.f_frontRayLengthDown = (Mathf.Tan(c_collisionData.f_obstacleAngle * (Mathf.PI / 180.0f)) * Time.fixedDeltaTime + c_aerialMoveData.f_verticalVelocity * -1) * Time.fixedDeltaTime;
 
-        c_collisionData.f_obstacleRayLength = speedRatio * Time.deltaTime; // the expected travel amount next frame
+        c_collisionData.f_obstacleRayLength = speedRatio * Time.fixedDeltaTime; // the expected travel amount next frame
         CheckForWall();
         CheckForGround2();
     }
@@ -174,6 +178,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void UpdateStateMachine()
     {
+        if (c_stateData.b_preStarted == false)
+        {
+            c_accelMachine.Execute(Command.COUNTDOWN_OVER);
+            c_turnMachine.Execute(Command.COUNTDOWN_OVER);
+            c_airMachine.Execute(Command.COUNTDOWN_OVER);
+            sm_tricking.Execute(Command.COUNTDOWN_OVER);
+            sm_trickPhys.Execute(Command.COUNTDOWN_OVER);
+            c_stateData.b_preStarted = true; // we want to execute this only once
+        }
+
         if (c_stateData.b_courseFinished == true)
         {
             if (c_collisionData.b_collisionDetected)
@@ -351,7 +365,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void CheckForWall()
     {
-        LayerMask lm_env = LayerMask.GetMask("Environment");
 
         /* The ground check goes up f_frontRayLengthUp.
          * We should push the origin UP by q_currentRotation * f_FrontRayLengthUp
@@ -360,10 +373,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
          */ 
 
         Vector3 playerBox = CollisionData.BodyHalfExtents;
+        Vector3 originCenter = Vector3.up * (c_collisionData.f_obstacleRayLength + playerBox.y);
 
         playerBox.y -= c_collisionData.f_frontRayLengthUp / 2;
-        Vector3 offsetOrigin = c_playerData.v_currentPosition + c_playerData.q_currentRotation * new Vector3(0, c_collisionData.f_obstacleRayLength + playerBox.y, 0);
-        Debug.DrawLine(offsetOrigin, offsetOrigin + c_playerData.v_currentDirection, Color.red);
+        Vector3 offsetOrigin = c_playerData.v_currentPosition + c_playerData.q_currentRotation * originCenter;
+        //Debug.DrawLine(offsetOrigin, offsetOrigin + c_playerData.v_currentDirection, Color.red);
 
         if (Physics.BoxCast(offsetOrigin,
                             playerBox,
@@ -371,7 +385,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             out obstacleHit,
                             c_playerData.q_currentRotation,
                             c_collisionData.f_obstacleRayLength,
-                            lm_env))
+                            GroundCollisionMask))
         {
             HandleWallCollision(obstacleHit);
         }
@@ -381,10 +395,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
 
         float offsetDist = CollisionData.CenterOffset.magnitude;
-        Vector3 upwardVector = new Vector3(0, c_collisionData.f_frontRayLengthUp, 0);
-
-        // the vector giving the raycast distance AND direction
-        LayerMask lm_env = LayerMask.GetMask("Environment");
+        Vector3 upwardVector = Vector3.up * c_collisionData.f_frontRayLengthUp;
 
         c_collisionData.b_collisionDetected = false;
 
@@ -396,10 +407,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             c_playerData.v_currentDown,
                             out centerHit,
                             c_playerData.q_currentRotation,
-                            (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
-                            lm_env))
+                            (c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1) + offsetDist,
+                            GroundCollisionMask))
         {
-            Debug.DrawLine(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset), centerHit.point, Color.blue, 5f);
+            //Debug.DrawLine(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset), centerHit.point, Color.blue, 5f);
             c_collisionData.b_collisionDetected = true;
             c_collisionData.v_surfaceNormal = centerHit.normal;
         }
@@ -416,8 +427,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
             if (Physics.Raycast(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset),
                                 c_playerData.v_currentDown,
                                 out centerHit,
-                                (c_aerialMoveData.f_verticalVelocity * Time.deltaTime * -1) + offsetDist,
-                                lm_env))
+                                (c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1) + offsetDist,
+                                GroundCollisionMask))
             {
                 c_collisionData.v_attachPoint = centerHit.point;
             }
@@ -426,7 +437,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_collisionData.v_attachPoint = c_playerData.v_currentPosition;
             }
 
-            if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env)) // double to check up and DOWN
+            if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, GroundCollisionMask)) // double to check up and DOWN
             {
                 // validate angle 
                 if (Vector3.Angle(c_playerData.v_currentNormal, frontHit.normal) > c_collisionData.f_obstacleAngle)
@@ -446,7 +457,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_collisionData.v_frontPoint = c_collisionData.v_frontOffset;
             }
 
-            if (Physics.Raycast(c_collisionData.v_backOffset, c_playerData.v_currentDown, out backHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, lm_env))
+            if (Physics.Raycast(c_collisionData.v_backOffset, c_playerData.v_currentDown, out backHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, GroundCollisionMask))
             {
                 if (Vector3.Angle(c_playerData.v_currentNormal, backHit.normal) > c_collisionData.f_obstacleAngle)
                 {
@@ -488,12 +499,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         Mesh mesh = (hitIn.collider as MeshCollider).sharedMesh;
-        Vector3[] normals = mesh.normals;
-        int[] triangles = mesh.triangles;
+        mesh.GetNormals(l_barycentricMeshNormals);
+        mesh.GetTriangles(l_barycentricMeshIdx, 0);
 
-        Vector3 n0 = normals[triangles[hitIn.triangleIndex * 3 + 0]];
-        Vector3 n1 = normals[triangles[hitIn.triangleIndex * 3 + 1]];
-        Vector3 n2 = normals[triangles[hitIn.triangleIndex * 3 + 2]];
+        Vector3 n0 = l_barycentricMeshNormals[l_barycentricMeshIdx[hitIn.triangleIndex * 3]]; //mesh.normals[mesh.triangles[hitIn.triangleIndex * 3 + 0]];
+        Vector3 n1 = l_barycentricMeshNormals[l_barycentricMeshIdx[hitIn.triangleIndex * 3 + 1]];
+        Vector3 n2 = l_barycentricMeshNormals[l_barycentricMeshIdx[hitIn.triangleIndex * 3 + 2]];
 
         BarycentricNormal = n0 * BarycentricCoords.x +
                             n1 * BarycentricCoords.y +
@@ -510,9 +521,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void CheckForZone()
     {
-        LayerMask lm_zoneMask = LayerMask.GetMask("Zones");
-        float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.deltaTime);
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance, lm_zoneMask))
+        float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.fixedDeltaTime);
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance, ZoneCollisionMask))
         {
             // notify that we have collided with a zone, grab the zone's ID and send corresponding message
             ZoneController controller = GameMasterController.LookupZoneController(forwardHit.transform);
@@ -557,7 +567,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
-        c_accelMachine = new StateMachine(s_stationary, StateRef.STATIONARY);
+        c_accelMachine = new StateMachine(StateRef.STATIONARY);
+        c_accelMachine.AddState(s_stationary, StateRef.STATIONARY);
         c_accelMachine.AddState(s_riding, StateRef.RIDING);
         c_accelMachine.AddState(s_slowing, StateRef.STOPPING);
         c_accelMachine.AddState(s_moveAerial, StateRef.AIRBORNE);
@@ -574,7 +585,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
-        c_airMachine = new StateMachine(s_grounded, StateRef.GROUNDED);
+        c_airMachine = new StateMachine(StateRef.GROUNDED);
+        c_airMachine.AddState(s_grounded, StateRef.GROUNDED);
         c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
         c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
         c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
@@ -587,7 +599,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
         TurnChargeState s_turnCharge = new TurnChargeState(ref c_playerData, ref c_positionData, ref cart_surfInf);
 
-        c_turnMachine = new StateMachine(s_straight, StateRef.RIDING);
+        c_turnMachine = new StateMachine(StateRef.RIDING);
+        c_turnMachine.AddState(s_straight, StateRef.RIDING);
         c_turnMachine.AddState(s_carving, StateRef.CARVING);
         c_turnMachine.AddState(s_turnCharge, StateRef.CHARGING);
         c_turnMachine.AddState(s_turnDisabled, StateRef.DISABLED);
@@ -601,7 +614,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_handling, ref cart_incr, ref c_scoringData);
         SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref cart_handling, ref c_scoringData);
 
-        sm_trickPhys = new StateMachine(s_spinIdle, StateRef.SPIN_IDLE);
+        sm_trickPhys = new StateMachine(StateRef.SPIN_IDLE);
+        sm_trickPhys.AddState(s_spinIdle, StateRef.SPIN_IDLE);
         sm_trickPhys.AddState(s_spinCharge, StateRef.SPIN_CHARGE);
         sm_trickPhys.AddState(s_spinning, StateRef.SPINNING);
         sm_trickPhys.AddState(s_spinSnap, StateRef.SPIN_RESET);
@@ -614,7 +628,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         TrickTransitionState s_trickTransition = new TrickTransitionState(ref trickData, ref c_scoringData);
         TrickingState s_tricking = new TrickingState(ref trickData, ref c_scoringData, ref cart_incr);
 
-        sm_tricking = new StateMachine(s_trickDisabled, StateRef.TRICK_DISABLED);
+        sm_tricking = new StateMachine(StateRef.TRICK_DISABLED);
+        sm_tricking.AddState(s_trickDisabled, StateRef.TRICK_DISABLED);
         sm_tricking.AddState(s_trickReady, StateRef.TRICK_READY);
         sm_tricking.AddState(s_tricking, StateRef.TRICKING);
         sm_tricking.AddState(s_trickTransition, StateRef.TRICK_TRANSITION);
@@ -625,6 +640,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
         cl_character = new CharacterMessageClient(ref c_stateData, ref c_entityData, ref c_audioController);
         MessageServer.Subscribe(ref cl_character, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_character, MessageID.PLAYER_FINISHED);
+        MessageServer.Subscribe(ref cl_character, MessageID.COUNTDOWN_OVER);
+    }
+
+    private void InitializeCachedLists()
+    {
+        l_barycentricMeshIdx = new List<int>();
+        l_barycentricMeshNormals = new List<Vector3>();
     }
 
     private void InitializeAudioController()
@@ -674,8 +696,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         c_scoringData.f_currentFlipTarget = 0.0f;
         c_scoringData.f_currentSpinTarget = 0.0f;
-        c_scoringData.l_timeList = new List<float>();
-        c_scoringData.l_trickList = new List<TrickName>();
+        c_scoringData.l_timeList.Clear();
+        c_scoringData.l_trickList.Clear();
         c_scoringData.b_sendTrick = false;
     }
     #endregion

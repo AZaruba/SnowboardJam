@@ -9,18 +9,18 @@ public enum MessageID
     TEST_MSG_ONE,
     TEST_MSG_TWO,
 
-// UI message IDs
+    // UI message IDs
     SCORE_EDIT,
     TRICK_FINISHED,
     MENU_ITEM_CHANGED,
     PLAYER_FINISHED,
 
-// Scene State Message IDs
+    // Scene State Message IDs
     CHARACTER_SELECTED,
     CHARACTER_UNSELECTED,
     ALL_CHARACTERS_SELECTED,
 
-// Nested Menu message IDs
+    // Nested Menu message IDs
     MENU_FORWARD,
     MENU_BACK,
 
@@ -31,6 +31,10 @@ public enum MessageID
     // Audio IDs
     PLAY_ONE_SHOT,
     PLAY_AUDIO,
+
+    // Countdown ID
+    COUNTDOWN_START,
+    COUNTDOWN_OVER,
 }
 
 public enum ClientID

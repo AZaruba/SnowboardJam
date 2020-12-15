@@ -12,11 +12,6 @@ public class HelpTextMessageClient : iMessageClient
         this.uiText = uiTextIn;
     }
 
-    public bool SendMessage(MessageID id, Message message)
-    {
-        return true;
-    }
-
     public bool RecieveMessage(MessageID id, Message message)
     {
         if (id == MessageID.MENU_ITEM_CHANGED)

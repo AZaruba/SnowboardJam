@@ -2,6 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public class CameraPreviewActiveData
+{
+    public CameraPreviewActiveData()
+    {
+        f_currentShotTime = Constants.ZERO_F;
+        i_currentPreviewIndex = Constants.ZERO;
+    }
+
+    public int i_currentPreviewIndex;
+    public float f_currentShotTime;
+}
+
 public class CameraData : MonoBehaviour {
 
     #region Members
@@ -24,6 +36,7 @@ public class CameraData : MonoBehaviour {
 
     private Quaternion CameraRotation;
     private Quaternion TargetRotation;
+
     #endregion
 
     #region SerializedProperties
