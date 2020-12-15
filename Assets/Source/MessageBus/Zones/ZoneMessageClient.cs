@@ -10,9 +10,4 @@ public class ZoneMessageClient : iMessageClient
         MessageServer.SendMessage(MessageID.ERROR_MSG, sentMessage);
         return true;
     }
-
-    public bool SendMessage(MessageID id, Message message)
-    {
-        return true;
-    }
 }

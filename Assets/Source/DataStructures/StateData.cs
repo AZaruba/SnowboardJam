@@ -1,7 +1,13 @@
 ﻿public class StateData
 {
+    public StateData()
+    {
+        b_preStarted = true;
+    }
+
     private bool UpdateState;
     private bool CourseFinished;
+    public bool b_preStarted;
 
     public bool b_updateState
     {

@@ -5,12 +5,10 @@ using UnityEngine;
 public class MenuTickState : iState
 {
     private ActiveMenuData c_activeData;
-    private IncrementCartridge cart_incr;
 
-    public MenuTickState(ref ActiveMenuData activeDataIn, ref IncrementCartridge incr)
+    public MenuTickState(ref ActiveMenuData activeDataIn)
     {
         this.c_activeData = activeDataIn;
-        this.cart_incr = incr;
     }
 
     public void Act()
@@ -35,7 +33,7 @@ public class MenuTickState : iState
     {
         int activeIndex = c_activeData.i_activeMenuItemIndex;
 
-        cart_incr.Rotate(ref activeIndex, c_activeData.i_menuDir, c_activeData.i_menuItemCount, 0);
+        IncrementCartridge.Rotate(ref activeIndex, c_activeData.i_menuDir, c_activeData.i_menuItemCount, 0);
 
         c_activeData.i_activeMenuItemIndex = activeIndex;
 

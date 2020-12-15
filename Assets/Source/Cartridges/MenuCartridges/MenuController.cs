@@ -169,7 +169,7 @@ public class MenuController : MonoBehaviour
         MenuDisabledState s_disabled = new MenuDisabledState();
         MenuReadyState s_ready = new MenuReadyState(ref c_activeMenuData);
         MenuWaitState s_wait = new MenuWaitState(ref ControllerData, ref c_activeMenuData, ref cart_incr);
-        MenuTickState s_tick = new MenuTickState(ref c_activeMenuData, ref cart_incr);
+        MenuTickState s_tick = new MenuTickState(ref c_activeMenuData);
 
         MenuHideState s_hide = new MenuHideState(ref c_activeMenuData, ref ControllerData, ref cart_lerp);
         MenuShowState s_show = new MenuShowState(ref c_activeMenuData, ref ControllerData, ref cart_lerp);

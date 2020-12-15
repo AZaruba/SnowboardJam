@@ -14,11 +14,6 @@ public class PauseMenuMessageClient : iMessageClient
         data_out = menuData;
     }
 
-    public bool SendMessage(MessageID id, Message message)
-    {
-        return true;
-    }
-
     public bool RecieveMessage(MessageID id, Message message)
     {
         if (id == MessageID.PAUSE)

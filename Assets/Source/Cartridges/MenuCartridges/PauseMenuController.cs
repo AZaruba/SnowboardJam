@@ -82,7 +82,8 @@ public class PauseMenuController : MonoBehaviour
             sm_menuInput.Execute(Command.MENU_SHOW);
             sm_pauseMenu.Execute(Command.MENU_SHOW);
         }
-        if (float.Equals(c_activeMenuData.f_currentMenuTickCount, c_activeMenuData.f_currentMenuWaitCount))
+
+        if (c_activeMenuData.f_currentMenuTickCount >= c_activeMenuData.f_currentMenuWaitCount)
         {
             sm_menuInput.Execute(Command.MENU_READY);
         }
@@ -90,6 +91,7 @@ public class PauseMenuController : MonoBehaviour
         {
             sm_menuInput.Execute(Command.MENU_IDLE);
         }
+
         if (c_activeMenuData.i_menuDir != 0)
         {
             sm_menuInput.Execute(Command.MENU_TICK_INPUT);
@@ -132,7 +134,7 @@ public class PauseMenuController : MonoBehaviour
 
         MenuReadyState s_ready = new MenuReadyState(ref c_activeMenuData);
         MenuWaitState s_wait = new MenuWaitState(ref ControllerData, ref c_activeMenuData, ref cart_incr);
-        MenuTickState s_tick = new MenuTickState(ref c_activeMenuData, ref cart_incr);
+        MenuTickState s_tick = new MenuTickState(ref c_activeMenuData);
 
         sm_menuInput = new StateMachine(s_disabled, StateRef.MENU_DISABLED);
         sm_menuInput.AddState(s_ready, StateRef.MENU_READY);

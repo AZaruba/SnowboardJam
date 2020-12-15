@@ -35,10 +35,4 @@ public class CharacterSelectSceneClient : iMessageClient
         }
         return false;
     }
-
-    // TODO: message clients don't need to send messages, or if they do it should be at the iMessageClient level
-    public bool SendMessage(MessageID id, Message message)
-    {
-        return false;
-    }
 }

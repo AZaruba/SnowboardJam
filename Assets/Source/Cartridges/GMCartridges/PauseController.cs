@@ -32,11 +32,6 @@ public class PauseMessageClient : iMessageClient
         }
         return false;
     }
-
-    public bool SendMessage(MessageID id, Message message)
-    {
-        throw new System.NotImplementedException();
-    }
 }
 
 public class PauseController : MonoBehaviour

@@ -7,6 +7,7 @@ public enum Command {
     // Car Movement Commands
     ERROR_CMD = -1,
     RESET,
+    REPEAT, // used when we weant to just force a transition
 
     #region PlayerCommand
     RIDE,
@@ -73,6 +74,9 @@ public enum Command {
     START_TIMER_UP,
     START_TIMER_DOWN,
     STOP_TIMER,
+    TICK_TIMER,
+    START_COUNTDOWN,
+    COUNTDOWN_OVER,
     #endregion
 }
 
@@ -82,6 +86,7 @@ public enum StateRef {
     START_STATE,
     DISABLED,
     PAUSED,
+    PRESTART_STATE,
 
     #region PlayerStates
     IDLE,
@@ -113,6 +118,7 @@ public enum StateRef {
     APPROACHING_FAST,
     LEAVING_FAST,
     TRACKING_FAST,
+    PREVIEW_TRACKING,
     #endregion
 
     #region CameraOrientationStates
@@ -160,6 +166,7 @@ public enum StateRef {
     #region TimerStates
     TIMER_INCR,
     TIMER_DECR,
+    TIMER_STEP,
     #endregion
 
     #region TerrainStates

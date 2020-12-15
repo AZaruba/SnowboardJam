@@ -16,7 +16,7 @@ public class TimeDecreaseState : iState
     {
         float currentTime = c_timerData.f_currentTime;
 
-        cart_incr.Decrement(ref currentTime, Time.deltaTime, Constants.ZERO_F);
+        IncrementCartridge.Decrement(ref currentTime, Time.deltaTime, Constants.ZERO_F);
 
         c_timerData.f_currentTime = currentTime;
     }

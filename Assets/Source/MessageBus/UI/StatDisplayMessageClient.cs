@@ -13,11 +13,6 @@ public class StatDisplayMessageClient : iMessageClient
         this.parent = parentIn;
     }
 
-    public bool SendMessage(MessageID id, Message message)
-    {
-        return true;
-    }
-
     public bool RecieveMessage(MessageID id, Message message)
     {
         if (id == MessageID.MENU_ITEM_CHANGED)
