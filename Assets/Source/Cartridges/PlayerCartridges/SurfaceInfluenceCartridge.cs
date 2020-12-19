@@ -25,13 +25,11 @@ public class SurfaceInfluenceCartridge
         currentSpeed = scaledDirection.magnitude;
     }
 
-    // TODO: reimplement with respect to fixed time raycasting
     public static void KeepAboveSurface(ref Vector3 currentPosition,
-                                         Vector3 surfaceNormal,
-                                         Vector3 contactOffset,
-                                         Vector3 contactPoint)
+                                         Quaternion currentRotation,
+                                         float contactOffset)
     {
-        return;
+        currentPosition += currentRotation * Vector3.up * contactOffset;
     }
 
     public void SwitchReverse(ref bool isReverse, Quaternion travelRotation, Quaternion modelRotation)

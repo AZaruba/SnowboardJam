@@ -61,6 +61,8 @@ public class GroundedState : iState
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentAirVelocity = Constants.ZERO_F;
 
+        currentDir = currentDir.sqrMagnitude != Constants.ZERO_F ? currentDir : currentRotation * Vector3.forward;
+
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentDirection = currentDir;
         c_playerData.v_currentNormal = currentNormal;

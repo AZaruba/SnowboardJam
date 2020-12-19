@@ -21,6 +21,7 @@ public class CollisionData
     private float ObstacleRayLength;
 
     private float CurrentObstacleAngle;
+    private float ContactOffset;
 
     private Vector3 SurfaceNormal;
 
@@ -47,6 +48,12 @@ public class CollisionData
     {
         get { return FrontRayLengthDown; }
         set { FrontRayLengthDown = value; }
+    }
+
+    public float f_contactOffset
+    {
+        get { return ContactOffset; }
+        set { ContactOffset = value; }
     }
 
     public Vector3 v_obstacleNormal
@@ -134,6 +141,7 @@ public class CollisionData
 
         FrontRayLengthUp = Constants.ZERO_F;
         FrontRayLengthDown = Constants.ZERO_F;
+        ContactOffset = Constants.ZERO_F;
         CollisionDetected = false;
 
         CurrentObstacleAngle = 45f;

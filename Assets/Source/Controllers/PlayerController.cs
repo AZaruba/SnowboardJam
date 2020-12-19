@@ -80,7 +80,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeCachedLists();
 
         EnginePull();
-        LateEnginePull();
     }
 
     /// <summary>
@@ -111,6 +110,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     void FixedUpdate()
     {
         LateEnginePull();
+        // sm airMachine.FixedAct();
+
+        c_playerData.v_currentPosition -= c_playerData.q_currentRotation * Vector3.up * c_collisionData.f_contactOffset;
     }
 
     /// <summary>
@@ -410,7 +412,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             (c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1) + offsetDist,
                             GroundCollisionMask))
         {
-            //Debug.DrawLine(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset), centerHit.point, Color.blue, 5f);
+            Debug.DrawLine(c_playerData.v_currentPosition, centerHit.point + centerHit.normal, Color.blue);
             c_collisionData.b_collisionDetected = true;
             c_collisionData.v_surfaceNormal = centerHit.normal;
         }
@@ -431,10 +433,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
                                 GroundCollisionMask))
             {
                 c_collisionData.v_attachPoint = centerHit.point;
+                c_collisionData.f_contactOffset = GetVerticalAdjustment();
             }
             else
             {
                 c_collisionData.v_attachPoint = c_playerData.v_currentPosition;
+                c_collisionData.f_contactOffset = Constants.ZERO_F;
             }
 
             if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, GroundCollisionMask)) // double to check up and DOWN
@@ -481,10 +485,27 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_collisionData.v_surfaceNormal = (c_collisionData.v_backNormal + c_collisionData.v_frontNormal).normalized;
             }
         }
+        else
+        {
+            c_collisionData.f_contactOffset = Constants.ZERO_F;
+        }
+
 
         c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset);
         c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.BackRayOffset);
 
+    }
+
+    /// <summary>
+    /// Given a collision with the ground, calculates how far the player should move along the normal to
+    /// stay on the surface -- board attached, not above nor below.
+    /// </summary>
+    /// <returns>A distance X for the fomula currentRotation * Vector3(0,X,0).</returns>
+    private float GetVerticalAdjustment()
+    {
+        Vector3 relativePosition = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - c_collisionData.v_attachPoint);
+
+        return relativePosition.y;
     }
 
     private Vector3 GetBaryCentricNormal(RaycastHit hitIn)
