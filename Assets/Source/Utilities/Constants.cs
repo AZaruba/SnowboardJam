@@ -9,9 +9,11 @@ static class Constants
     public const float LONG_DATA_EDIT_TICK_TIME = 0.5f;
 
     public const float PERPENDICULAR_F = 90f;
+    public const float DOWNHILL_SPEED_RATIO = 0.5f;
 
     public const int ZERO = 0;
     public const int ONE = 1;
+
 
     public const string TIME_FORMAT_STRING = "{0:0}:{1:00}:{2:00}";
 }

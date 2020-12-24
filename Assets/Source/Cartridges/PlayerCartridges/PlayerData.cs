@@ -19,6 +19,7 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private Vector3 FrontVectorOffset;
 
     private float CurrentSpeed;
+    private float CurrentAcceleration;
     private float CurrentAirVelocity;
     private float CurrentJumpCharge;
     private float CrashTimer;
@@ -142,6 +143,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return CurrentSpeed; }
         set { CurrentSpeed = value; }
+    }
+
+    public float f_currentAcceleration
+    {
+        get { return CurrentAcceleration; }
+        set { CurrentAcceleration = value; }
     }
 
     public float f_currentJumpCharge

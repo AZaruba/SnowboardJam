@@ -30,19 +30,18 @@ public class RidingState : iState {
     {
         // check for angle when implemented
         float currentVelocity = c_playerData.f_currentSpeed;
-        float f_acceleration = c_playerData.f_acceleration;
+        float f_acceleration = c_playerData.f_currentAcceleration;
         float topSpeed = c_playerData.f_topSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed);
+        AccelerationCartridge.Accelerate(ref currentVelocity, f_acceleration, topSpeed);
 
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;
-        c_playerData.f_acceleration = f_acceleration;
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentNormal = currentNormal.normalized;
         c_playerData.v_currentDown = currentNormal.normalized * -1;
@@ -109,7 +108,7 @@ public class RidingChargeState : iState
     {
         // check for angle when implemented
         float currentVelocity = c_playerData.f_currentSpeed;
-        float f_acceleration = c_playerData.f_acceleration;
+        float f_acceleration = c_playerData.f_currentAcceleration;
         float topSpeed = c_playerData.f_topSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
@@ -117,12 +116,11 @@ public class RidingChargeState : iState
         Vector3 currentSurfaceNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_acceleration.Accelerate(ref currentVelocity, ref f_acceleration, topSpeed);
+        AccelerationCartridge.Accelerate(ref currentVelocity, f_acceleration, topSpeed);
 
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;
-        c_playerData.f_acceleration = f_acceleration;
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentNormal = currentNormal.normalized;
         c_playerData.v_currentDown = currentNormal.normalized * -1;

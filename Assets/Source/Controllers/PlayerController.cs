@@ -123,6 +123,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_positionData.q_currentModelRotation;
 
+        debugAccessor.DisplayFloat("Current Top Speed", c_playerData.f_topSpeed);
+
         UpdateAnimator();
         UpdateAudio();
     }
@@ -296,6 +298,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
             //c_airMachine.Execute(Command.CRASH);
             //sm_trickPhys.Execute(Command.CRASH);
         }
+
+        // TODO: switch stance if acceleration is < 0 and it causes velocity to go below zero
     }
 
     #region StartupFunctions
@@ -321,6 +325,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.v_currentNormal = transform.up;
         c_playerData.v_currentDown = transform.up * -1;
         c_playerData.f_currentSpeed = Constants.ZERO_F;
+        c_playerData.f_currentAcceleration = c_playerData.f_acceleration;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentForwardRaycastDistance = c_playerData.f_forwardRaycastDistance;
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance; 
