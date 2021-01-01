@@ -42,6 +42,8 @@ public class SurfaceInfluenceCartridge
     /// <summary>
     /// Scales acceleration based on the current orientation. The y component of the orientation * forward
     /// vector provides a ratio of how far up or down the player is facing.
+    /// 
+    /// Uses the current speed to scale slowing, so jumps "feel" better
     /// </summary>
     /// <param name="acceleration">Current acceleration value.</param>
     /// <param name="defaultAcceleration">Default acceleration value.</param>
@@ -49,9 +51,10 @@ public class SurfaceInfluenceCartridge
     public static void AdjustAcceleration(ref float acceleration,
                                           float defaultAcceleration,
                                           float gravityValue,
+                                          float speedInverse,
                                           Quaternion currentRotation)
     {
-        acceleration = defaultAcceleration - (currentRotation * Vector3.forward).y * gravityValue;
+        acceleration = defaultAcceleration - ((currentRotation * Vector3.forward).y * gravityValue * speedInverse);
     }
 
     /// <summary>
@@ -60,12 +63,12 @@ public class SurfaceInfluenceCartridge
     /// <param name="topSpeed">The current top speed</param>
     /// <param name="currentRotation">The current rotation, relative to the identity quaternion</param>
     public static void AdjustTopSpeed(ref float topSpeed,
+                                      float defaultTopSpeed,
                                       Quaternion currentRotation)
     {
-        // BUG: top speed just keeps going up!
-        float referenceRatio = Quaternion.Angle(Quaternion.identity, currentRotation)/Constants.PERPENDICULAR_F;
+        float referenceRatio = (currentRotation * Vector3.forward).y*-1 + 1;
 
-        topSpeed *= referenceRatio;
+        topSpeed = defaultTopSpeed * referenceRatio;
     }
 
     public void SwitchReverse(ref bool isReverse, Quaternion travelRotation, Quaternion modelRotation)

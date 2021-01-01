@@ -123,7 +123,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_positionData.q_currentModelRotation;
 
-        debugAccessor.DisplayFloat("Current Top Speed", c_playerData.f_topSpeed);
+        debugAccessor.DisplayFloat("Current Speed", c_playerData.f_currentSpeed);
 
         UpdateAnimator();
         UpdateAudio();
@@ -210,7 +210,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             }
             return;
         }
-        // current issue, these commands don't work out great
+        // what differentiates falling from jumping (jump charge state should stay the same
         if (!c_collisionData.b_collisionDetected)
         {
             c_accelMachine.Execute(Command.FALL);
@@ -226,6 +226,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 CompileAndSendScore();
             }
 
+            // go back to the jump charge state if button is still held?
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
             c_airMachine.Execute(Command.LAND);
@@ -326,6 +327,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.v_currentDown = transform.up * -1;
         c_playerData.f_currentSpeed = Constants.ZERO_F;
         c_playerData.f_currentAcceleration = c_playerData.f_acceleration;
+        c_playerData.f_currentTopSpeed = c_playerData.f_topSpeed;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentForwardRaycastDistance = c_playerData.f_forwardRaycastDistance;
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance; 

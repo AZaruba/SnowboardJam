@@ -36,7 +36,7 @@ public class GroundedState : iState
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        float currentTopSpeed = c_playerData.f_topSpeed;
+        float currentTopSpeed = c_playerData.f_currentTopSpeed;
         float currentAcceleration = c_playerData.f_currentAcceleration;
 
         AngleCalculationCartridge.AlignToSurfaceByTail(ref currentPosition,
@@ -48,16 +48,17 @@ public class GroundedState : iState
         SurfaceInfluenceCartridge.AdjustAcceleration(ref currentAcceleration,
                                                      c_playerData.f_acceleration,
                                                      c_playerData.f_gravity,
+                                                     c_playerData.f_topSpeed / currentTopSpeed,
                                                      currentRotation);
 
-        SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, currentRotation);
+        SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, c_playerData.f_topSpeed, currentRotation);
 
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentDirection = currentDir;
         c_playerData.v_currentNormal = currentNormal;
         c_playerData.q_currentRotation = currentRotation;
         c_playerData.f_currentAcceleration = currentAcceleration;
-        c_playerData.f_topSpeed = currentTopSpeed;
+        c_playerData.f_currentTopSpeed = currentTopSpeed;
         c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -1;
     }
 

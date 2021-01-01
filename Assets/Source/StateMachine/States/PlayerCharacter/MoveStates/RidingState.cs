@@ -31,7 +31,7 @@ public class RidingState : iState {
         // check for angle when implemented
         float currentVelocity = c_playerData.f_currentSpeed;
         float f_acceleration = c_playerData.f_currentAcceleration;
-        float topSpeed = c_playerData.f_topSpeed;
+        float topSpeed = c_playerData.f_currentTopSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
@@ -109,7 +109,7 @@ public class RidingChargeState : iState
         // check for angle when implemented
         float currentVelocity = c_playerData.f_currentSpeed;
         float f_acceleration = c_playerData.f_currentAcceleration;
-        float topSpeed = c_playerData.f_topSpeed;
+        float topSpeed = c_playerData.f_currentTopSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
