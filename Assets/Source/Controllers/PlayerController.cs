@@ -123,8 +123,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = c_playerData.v_currentPosition;
         transform.rotation = c_positionData.q_currentModelRotation;
 
-        debugAccessor.DisplayFloat("Current Speed", c_playerData.f_currentSpeed);
-
         UpdateAnimator();
         UpdateAudio();
     }
@@ -403,7 +401,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void CheckForGround2()
     {
 
-        float offsetDist = CollisionData.CenterOffset.magnitude;
+        float offsetDist = CollisionData.CenterOffset.magnitude - CollisionData.HalfExtents.y;
         Vector3 upwardVector = Vector3.up * c_collisionData.f_frontRayLengthUp;
 
         c_collisionData.b_collisionDetected = false;
@@ -610,7 +608,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
         GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
-        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref cart_incr);
+        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
         c_airMachine = new StateMachine(StateRef.GROUNDED);

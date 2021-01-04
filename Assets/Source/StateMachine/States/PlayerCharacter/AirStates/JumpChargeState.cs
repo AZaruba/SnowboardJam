@@ -6,11 +6,13 @@ public class JumpChargeState : iState
 {
     private PlayerData c_playerData;
     private CollisionData c_collisionData;
+    private AerialMoveData c_aerialMoveData;
     private IncrementCartridge cart_increment;
     
-    public JumpChargeState(ref PlayerData playerData, ref CollisionData collisionData, ref IncrementCartridge incr)
+    public JumpChargeState(ref PlayerData playerData, ref CollisionData collisionData, ref AerialMoveData aerialMoveData, ref IncrementCartridge incr)
     {
         this.c_playerData = playerData;
+        this.c_aerialMoveData = aerialMoveData;
         this.c_collisionData = collisionData;
         this.cart_increment = incr;
     }
@@ -69,10 +71,9 @@ public class JumpChargeState : iState
         }
         if (cmd == Command.JUMP)
         {
-            c_playerData.f_currentJumpCharge = 0.0f;
-
             // edit position to ensure we are already the first jump frame ABOVE the ground here
-            Vector3 upwardTranslation = Vector3.up * 0.0f; // some value equal to the board size
+            Vector3 upwardTranslation = c_playerData.q_currentRotation * Vector3.up * (c_collisionData.f_contactOffset + 0.01f);
+            c_aerialMoveData.f_verticalVelocity = 0.0f;
 
             c_playerData.v_currentPosition += upwardTranslation;
             return StateRef.AIRBORNE;
