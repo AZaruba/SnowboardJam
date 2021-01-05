@@ -72,7 +72,7 @@ public class JumpChargeState : iState
         if (cmd == Command.JUMP)
         {
             // edit position to ensure we are already the first jump frame ABOVE the ground here
-            Vector3 upwardTranslation = c_playerData.q_currentRotation * Vector3.up * (c_collisionData.f_contactOffset + 0.01f);
+            Vector3 upwardTranslation = c_playerData.q_currentRotation * Vector3.up * (0.02f);
             c_aerialMoveData.f_verticalVelocity = 0.0f;
 
             c_playerData.v_currentPosition += upwardTranslation;

@@ -285,3 +285,9 @@ public class PlayerInputData
         f_inputAxisLVert = 0.0f;
     }
 }
+
+public class LastFramePositionData
+{
+    public Vector3 v_lastFramePosition;
+    public Quaternion q_lastFrameRotation;
+}

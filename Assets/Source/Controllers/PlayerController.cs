@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private PlayerInputData c_inputData;
     private ScoringData c_scoringData;
     private CollisionData c_collisionData;
+    private LastFramePositionData c_lastFrameData;
 
     // private members
     private StateMachine c_turnMachine;
@@ -94,7 +95,25 @@ public class PlayerController : MonoBehaviour, iEntityController {
             return;
         }
 
-        EnginePull();
+        EnginePull(); // poll for input every frame
+
+        float timeAlpha = (Time.time - Time.fixedTime) / Time.fixedDeltaTime;
+        transform.position = Vector3.Lerp(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition, timeAlpha);
+        transform.rotation = Quaternion.Lerp(c_lastFrameData.q_lastFrameRotation, c_playerData.q_currentRotation, timeAlpha);
+
+        debugAccessor.DisplayState("Turn state", c_turnMachine.GetCurrentState());
+
+    }
+
+    void FixedUpdate()
+    {
+        if (!c_stateData.b_updateState)
+        {
+            return;
+        }
+
+        c_lastFrameData.v_lastFramePosition = c_playerData.v_currentPosition;
+        c_lastFrameData.q_lastFrameRotation = c_playerData.q_currentRotation;
 
         UpdateStateMachine();
 
@@ -105,12 +124,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         sm_trickPhys.Act();
 
         EngineUpdate();
-    }
 
-    void FixedUpdate()
-    {
         LateEnginePull();
-        // sm airMachine.FixedAct();
 
         c_playerData.v_currentPosition -= c_playerData.q_currentRotation * Vector3.up * c_collisionData.f_contactOffset;
     }
@@ -315,6 +330,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_aerialMoveData = new AerialMoveData();
         c_entityData = new EntityData();
         c_collisionData = new CollisionData(CollisionData.FrontRayOffset, CollisionData.BackRayOffset);
+        c_lastFrameData = new LastFramePositionData();
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
@@ -331,6 +347,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance; 
         c_playerData.f_surfaceAngleDifference = 0.0f;
         c_playerData.b_obstacleInRange = false;
+
+        c_lastFrameData.v_lastFramePosition = transform.position;
+        c_lastFrameData.q_lastFrameRotation = transform.rotation;
 
         c_stateData.b_updateState = true;
         c_stateData.b_courseFinished = false;
