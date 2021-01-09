@@ -52,33 +52,6 @@ public class SpinningState : iState
         c_scoringData.f_currentFlipDegrees += currentFlipRate * 360f * Time.deltaTime;
     }
 
-    public void OldAct()
-    {
-        Quaternion currentRotation = c_physData.q_startRotation;
-
-        Vector3 playerForward = c_playerPosData.v_modelDirection;
-        Vector3 spinAxis = Vector3.up;
-        Vector3 flipAxis = Vector3.right;
-
-        float currentSpinRate = c_physData.f_currentSpinRate;
-        float currentFlipRate = c_physData.f_currentFlipRate;
-
-        float currentSpinDegrees = currentSpinRate * 360f;
-        float currentFlipDegrees = currentFlipRate * 360f;
-
-        cart_rotation.Turn(ref playerForward, flipAxis, ref currentFlipDegrees, ref currentRotation);
-        cart_rotation.Turn(ref playerForward, spinAxis, ref currentSpinDegrees, ref currentRotation);
-        cart_incr.DecrementAbs(ref currentFlipRate, c_physData.f_flipDecay * Time.deltaTime, 0.0f);
-        cart_incr.DecrementAbs(ref currentSpinRate, c_physData.f_spinDecay * Time.deltaTime, 0.0f);
-
-        c_playerPosData.q_currentModelRotation = currentRotation;
-        c_playerPosData.v_modelDirection = playerForward;
-        c_physData.f_currentFlipRate = currentFlipRate;
-        c_physData.f_currentSpinRate = currentSpinRate;
-        c_scoringData.f_currentSpinDegrees += currentSpinDegrees * Time.deltaTime;
-        c_scoringData.f_currentFlipDegrees += currentFlipDegrees * Time.deltaTime;
-    }
-
     public StateRef GetNextState(Command cmd)
     {
         if (cmd == Command.CRASH ||

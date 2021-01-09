@@ -204,6 +204,14 @@ public static class GlobalInputController
         return returnValue;
     }
 
+    /// <summary>
+    /// FixedUpdate-friendly input checking, as we check for
+    /// "pressed" and "up" states, which aren't reliable by default.
+    /// 
+    /// A function of the previous frame's value and the current frame's
+    /// value is used to dictate what the current frame value is
+    /// </summary>
+    /// <param name="actIn">The ControlAction we are currently checking.</param>
     public static void CheckAndSetKeyValue(ControlAction actIn)
     {
         if (!DigitalActionInput.ContainsKey(actIn))
@@ -211,19 +219,38 @@ public static class GlobalInputController
             return;
         }
         KeyCode keyIn = DigitalActionInput[actIn];
-        KeyValue frameValue = KeyValue.IDLE;
+        KeyValue frameValue = DigitalActionValue[actIn];
+        bool inputValue = Input.GetKey(keyIn);
 
-        if (Input.GetKeyDown(keyIn))
+        /* Pseudo
+         * Get current key value
+         * 
+         * check Input.GetKey()
+         *     | true | false
+         *-----|------|---------
+         * IDLE| PRES | IDLE
+         *-----|------|---------
+         * HELD| HELD | UP
+         * ----|------|---------
+         * PRES| HELD | UP
+         * ----|------|---------
+         * UP  | PRES | IDLE
+         */
+
+        switch (frameValue)
         {
-            frameValue = KeyValue.PRESSED;
-        }
-        else if (Input.GetKey(keyIn))
-        {
-            frameValue = KeyValue.HELD;
-        }
-        else if (Input.GetKeyUp(keyIn))
-        {
-            frameValue = KeyValue.UP;
+            case KeyValue.IDLE:
+                frameValue = inputValue ? KeyValue.PRESSED : KeyValue.IDLE;
+                break;
+            case KeyValue.PRESSED:
+                frameValue = inputValue ? KeyValue.HELD : KeyValue.UP;
+                break;
+            case KeyValue.HELD:
+                frameValue = inputValue ? KeyValue.HELD : KeyValue.UP;
+                break;
+            case KeyValue.UP:
+                frameValue = inputValue ? KeyValue.PRESSED : KeyValue.IDLE;
+                break;
         }
 
         DigitalActionValue[actIn] = frameValue;
@@ -399,9 +426,8 @@ public class InputController : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        GlobalInputController.FlushInputs();
         if (GlobalInputController.InputIsLocked())
         {
             return;

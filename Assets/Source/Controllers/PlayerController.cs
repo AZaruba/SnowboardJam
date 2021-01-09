@@ -99,9 +99,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         float timeAlpha = (Time.time - Time.fixedTime) / Time.fixedDeltaTime;
         transform.position = Vector3.Lerp(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition, timeAlpha);
-        transform.rotation = Quaternion.Lerp(c_lastFrameData.q_lastFrameRotation, c_playerData.q_currentRotation, timeAlpha);
+        transform.rotation = Quaternion.Lerp(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation, timeAlpha);
 
-        debugAccessor.DisplayState("Turn state", c_turnMachine.GetCurrentState());
+        debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
+        debugAccessor.DisplayFloat("Spin charge", c_trickPhysicsData.f_currentSpinRate);
 
     }
 
@@ -113,7 +114,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
 
         c_lastFrameData.v_lastFramePosition = c_playerData.v_currentPosition;
-        c_lastFrameData.q_lastFrameRotation = c_playerData.q_currentRotation;
+        c_lastFrameData.q_lastFrameRotation = c_positionData.q_currentModelRotation;
 
         UpdateStateMachine();
 
@@ -323,7 +324,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     void SetDefaultPlayerData()
     {
         c_trickPhysicsData = new TrickPhysicsData(Attributes.Tricks, Attributes.MaxStats);
-        c_positionData = new PlayerPositionData(transform.position, transform.forward);
+        c_positionData = new PlayerPositionData(transform.position, transform.forward, transform.rotation);
         c_scoringData = new ScoringData();
         c_inputData = new PlayerInputData();
         c_stateData = new StateData();
