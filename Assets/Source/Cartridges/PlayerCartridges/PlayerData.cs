@@ -17,6 +17,7 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float CrashRecoveryTime;
     [SerializeField] private Vector3 BackVectorOffset;
     [SerializeField] private Vector3 FrontVectorOffset;
+    [SerializeField] private Transform CenterOfGravity;
 
     private float CurrentSpeed;
     private float CurrentTopSpeed;
@@ -257,6 +258,12 @@ public class PlayerData : MonoBehaviour {
         set { ObstacleNormal = value; }
     }
     #endregion
+
+    public Transform t_centerOfGravity
+    {
+        get { return CenterOfGravity; }
+        set { CenterOfGravity = value; }
+    }
 }
 
 public class PlayerInputData
@@ -290,4 +297,5 @@ public class LastFramePositionData
 {
     public Vector3 v_lastFramePosition;
     public Quaternion q_lastFrameRotation;
+    public Quaternion q_lastFrameModelRotation;
 }

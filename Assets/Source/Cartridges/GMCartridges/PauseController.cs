@@ -48,9 +48,8 @@ public class PauseController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        // TODO: Input system update
         if (GlobalInputController.GetInputAction(ControlAction.PAUSE) == KeyValue.PRESSED)
         {
             Message pauseMessage = new Message((c_data.b_isPaused ? 0 : 1)); // if we want to pause, send 1, otherwise 0

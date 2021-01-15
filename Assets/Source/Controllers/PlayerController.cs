@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         float timeAlpha = (Time.time - Time.fixedTime) / Time.fixedDeltaTime;
         transform.position = Vector3.Lerp(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition, timeAlpha);
-        transform.rotation = Quaternion.Lerp(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation, timeAlpha);
+        c_playerData.t_centerOfGravity.rotation = Quaternion.Lerp(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation, timeAlpha);
 
         debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
         debugAccessor.DisplayFloat("Spin charge", c_trickPhysicsData.f_currentSpinRate);
@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_playerData.v_currentPosition;
-        transform.rotation = c_positionData.q_currentModelRotation;
+        c_playerData.t_centerOfGravity.rotation = c_positionData.q_currentModelRotation;
 
         UpdateAnimator();
         UpdateAudio();
