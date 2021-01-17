@@ -9,6 +9,7 @@ public class CameraController : MonoBehaviour, iEntityController
     [SerializeField] private CameraData c_cameraData;
     [SerializeField] private CameraPreviewData c_previewData;
     [SerializeField] private DebugAccessor debugAccessor;
+    [SerializeField] private Transform playerTransform;
 
     private StateData c_stateData;
     private CameraPreviewActiveData c_previewActiveData;
@@ -74,12 +75,10 @@ public class CameraController : MonoBehaviour, iEntityController
         transform.forward = c_cameraData.v_currentDirection;
     }
 
-    // NOTE: what's going to go wrong if this stays as is...
     public void EnginePull()
     {
-        PlayerData playerDataIn = c_cameraData.c_targetController.SharePlayerData();
-        Vector3 targetPosition = playerDataIn.v_currentPosition;
-        Quaternion targetRotation = playerDataIn.q_currentRotation;
+        Vector3 targetPosition = playerTransform.position;
+        Quaternion targetRotation = playerTransform.rotation;
 
         c_cameraData.q_targetRotation = targetRotation;
         c_cameraData.v_targetPosition = targetPosition +

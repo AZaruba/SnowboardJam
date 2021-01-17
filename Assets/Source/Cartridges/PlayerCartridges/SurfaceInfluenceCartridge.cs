@@ -25,13 +25,50 @@ public class SurfaceInfluenceCartridge
         currentSpeed = scaledDirection.magnitude;
     }
 
-    // TODO: reimplement with respect to fixed time raycasting
+    /// <summary>
+    /// Moves a position, in a given rotation, along the normal a certain distance. Used
+    /// to ensure that the player is above the ground at all times.
+    /// </summary>
+    /// <param name="currentPosition">The current position to be translated</param>
+    /// <param name="currentRotation">The rotation identifying the normal</param>
+    /// <param name="contactOffset">The distance to move along the normal</param>
     public static void KeepAboveSurface(ref Vector3 currentPosition,
-                                         Vector3 surfaceNormal,
-                                         Vector3 contactOffset,
-                                         Vector3 contactPoint)
+                                         Quaternion currentRotation,
+                                         float contactOffset)
     {
-        return;
+        currentPosition += currentRotation * Vector3.up * contactOffset;
+    }
+
+    /// <summary>
+    /// Scales acceleration based on the current orientation. The y component of the orientation * forward
+    /// vector provides a ratio of how far up or down the player is facing.
+    /// 
+    /// Uses the current speed to scale slowing, so jumps "feel" better
+    /// </summary>
+    /// <param name="acceleration">Current acceleration value.</param>
+    /// <param name="defaultAcceleration">Default acceleration value.</param>
+    /// <param name="currentRotation">The current player orientation, multiplied by Vector3.forward</param>
+    public static void AdjustAcceleration(ref float acceleration,
+                                          float defaultAcceleration,
+                                          float gravityValue,
+                                          float speedInverse,
+                                          Quaternion currentRotation)
+    {
+        acceleration = defaultAcceleration - ((currentRotation * Vector3.forward).y * gravityValue * speedInverse);
+    }
+
+    /// <summary>
+    /// Adjusts the player's top speed according to the surface incline. Flat surfaces will yield 100%, scaling up to 150%
+    /// </summary>
+    /// <param name="topSpeed">The current top speed</param>
+    /// <param name="currentRotation">The current rotation, relative to the identity quaternion</param>
+    public static void AdjustTopSpeed(ref float topSpeed,
+                                      float defaultTopSpeed,
+                                      Quaternion currentRotation)
+    {
+        float referenceRatio = (currentRotation * Vector3.forward).y*-1 + 1;
+
+        topSpeed = defaultTopSpeed * referenceRatio;
     }
 
     public void SwitchReverse(ref bool isReverse, Quaternion travelRotation, Quaternion modelRotation)

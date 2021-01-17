@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private PlayerInputData c_inputData;
     private ScoringData c_scoringData;
     private CollisionData c_collisionData;
+    private LastFramePositionData c_lastFrameData;
 
     // private members
     private StateMachine c_turnMachine;
@@ -80,7 +81,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeCachedLists();
 
         EnginePull();
-        LateEnginePull();
     }
 
     /// <summary>
@@ -95,7 +95,26 @@ public class PlayerController : MonoBehaviour, iEntityController {
             return;
         }
 
-        EnginePull();
+        EnginePull(); // poll for input every frame
+
+        float timeAlpha = (Time.time - Time.fixedTime) / Time.fixedDeltaTime;
+        transform.position = Vector3.Lerp(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition, timeAlpha);
+        c_playerData.t_centerOfGravity.rotation = Quaternion.Lerp(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation, timeAlpha);
+
+        debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
+        debugAccessor.DisplayFloat("Spin charge", c_trickPhysicsData.f_currentSpinRate);
+
+    }
+
+    void FixedUpdate()
+    {
+        if (!c_stateData.b_updateState)
+        {
+            return;
+        }
+
+        c_lastFrameData.v_lastFramePosition = c_playerData.v_currentPosition;
+        c_lastFrameData.q_lastFrameRotation = c_positionData.q_currentModelRotation;
 
         UpdateStateMachine();
 
@@ -106,11 +125,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
         sm_trickPhys.Act();
 
         EngineUpdate();
-    }
 
-    void FixedUpdate()
-    {
         LateEnginePull();
+
+        c_playerData.v_currentPosition -= c_playerData.q_currentRotation * Vector3.up * c_collisionData.f_contactOffset;
     }
 
     /// <summary>
@@ -119,7 +137,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         transform.position = c_playerData.v_currentPosition;
-        transform.rotation = c_positionData.q_currentModelRotation;
+        c_playerData.t_centerOfGravity.rotation = c_positionData.q_currentModelRotation;
 
         UpdateAnimator();
         UpdateAudio();
@@ -206,7 +224,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             }
             return;
         }
-        // current issue, these commands don't work out great
+        // what differentiates falling from jumping (jump charge state should stay the same
         if (!c_collisionData.b_collisionDetected)
         {
             c_accelMachine.Execute(Command.FALL);
@@ -222,6 +240,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 CompileAndSendScore();
             }
 
+            // go back to the jump charge state if button is still held?
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
             c_airMachine.Execute(Command.LAND);
@@ -294,6 +313,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
             //c_airMachine.Execute(Command.CRASH);
             //sm_trickPhys.Execute(Command.CRASH);
         }
+
+        // TODO: switch stance if acceleration is < 0 and it causes velocity to go below zero
     }
 
     #region StartupFunctions
@@ -303,13 +324,14 @@ public class PlayerController : MonoBehaviour, iEntityController {
     void SetDefaultPlayerData()
     {
         c_trickPhysicsData = new TrickPhysicsData(Attributes.Tricks, Attributes.MaxStats);
-        c_positionData = new PlayerPositionData(transform.position, transform.forward);
+        c_positionData = new PlayerPositionData(transform.position, transform.forward, transform.rotation);
         c_scoringData = new ScoringData();
         c_inputData = new PlayerInputData();
         c_stateData = new StateData();
         c_aerialMoveData = new AerialMoveData();
         c_entityData = new EntityData();
         c_collisionData = new CollisionData(CollisionData.FrontRayOffset, CollisionData.BackRayOffset);
+        c_lastFrameData = new LastFramePositionData();
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
@@ -319,11 +341,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.v_currentNormal = transform.up;
         c_playerData.v_currentDown = transform.up * -1;
         c_playerData.f_currentSpeed = Constants.ZERO_F;
+        c_playerData.f_currentAcceleration = c_playerData.f_acceleration;
+        c_playerData.f_currentTopSpeed = c_playerData.f_topSpeed;
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentForwardRaycastDistance = c_playerData.f_forwardRaycastDistance;
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance; 
         c_playerData.f_surfaceAngleDifference = 0.0f;
         c_playerData.b_obstacleInRange = false;
+
+        c_lastFrameData.v_lastFramePosition = transform.position;
+        c_lastFrameData.q_lastFrameRotation = transform.rotation;
 
         c_stateData.b_updateState = true;
         c_stateData.b_courseFinished = false;
@@ -394,7 +421,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void CheckForGround2()
     {
 
-        float offsetDist = CollisionData.CenterOffset.magnitude;
+        float offsetDist = CollisionData.CenterOffset.magnitude - CollisionData.HalfExtents.y;
         Vector3 upwardVector = Vector3.up * c_collisionData.f_frontRayLengthUp;
 
         c_collisionData.b_collisionDetected = false;
@@ -410,7 +437,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             (c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1) + offsetDist,
                             GroundCollisionMask))
         {
-            //Debug.DrawLine(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset), centerHit.point, Color.blue, 5f);
+            Debug.DrawLine(c_playerData.v_currentPosition, centerHit.point + centerHit.normal, Color.blue);
             c_collisionData.b_collisionDetected = true;
             c_collisionData.v_surfaceNormal = centerHit.normal;
         }
@@ -431,10 +458,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
                                 GroundCollisionMask))
             {
                 c_collisionData.v_attachPoint = centerHit.point;
+                c_collisionData.f_contactOffset = GetVerticalAdjustment();
             }
             else
             {
                 c_collisionData.v_attachPoint = c_playerData.v_currentPosition;
+                c_collisionData.f_contactOffset = Constants.ZERO_F;
             }
 
             if (Physics.Raycast(c_collisionData.v_frontOffset, c_playerData.v_currentDown, out frontHit, c_collisionData.f_frontRayLengthUp + c_collisionData.f_frontRayLengthDown, GroundCollisionMask)) // double to check up and DOWN
@@ -481,10 +510,27 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_collisionData.v_surfaceNormal = (c_collisionData.v_backNormal + c_collisionData.v_frontNormal).normalized;
             }
         }
+        else
+        {
+            c_collisionData.f_contactOffset = Constants.ZERO_F;
+        }
+
 
         c_collisionData.v_frontOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.FrontRayOffset);
         c_collisionData.v_backOffset = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * (CollisionData.BackRayOffset);
 
+    }
+
+    /// <summary>
+    /// Given a collision with the ground, calculates how far the player should move along the normal to
+    /// stay on the surface -- board attached, not above nor below.
+    /// </summary>
+    /// <returns>A distance X for the fomula currentRotation * Vector3(0,X,0).</returns>
+    private float GetVerticalAdjustment()
+    {
+        Vector3 relativePosition = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - c_collisionData.v_attachPoint);
+
+        return relativePosition.y;
     }
 
     private Vector3 GetBaryCentricNormal(RaycastHit hitIn)
@@ -582,7 +628,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
         GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
-        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref cart_incr);
+        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
         c_airMachine = new StateMachine(StateRef.GROUNDED);

@@ -18,7 +18,7 @@ public class AwayFollowState : iState
     {
         Vector3 currentPosition = c_cameraData.v_currentPosition;
         Vector3 targetPosition = c_cameraData.v_targetPosition;
-        Vector3 offsetVector = c_cameraData.q_targetRotation * c_cameraData.v_offsetVector;
+        Vector3 offsetVector = c_cameraData.v_offsetVector;
 
         // do the things
         cart_follow.ApproachTarget(ref currentPosition, targetPosition, offsetVector, Vector3.Distance(currentPosition,targetPosition) * Time.deltaTime);

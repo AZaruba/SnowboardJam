@@ -6,11 +6,13 @@ public class JumpChargeState : iState
 {
     private PlayerData c_playerData;
     private CollisionData c_collisionData;
+    private AerialMoveData c_aerialMoveData;
     private IncrementCartridge cart_increment;
     
-    public JumpChargeState(ref PlayerData playerData, ref CollisionData collisionData, ref IncrementCartridge incr)
+    public JumpChargeState(ref PlayerData playerData, ref CollisionData collisionData, ref AerialMoveData aerialMoveData, ref IncrementCartridge incr)
     {
         this.c_playerData = playerData;
+        this.c_aerialMoveData = aerialMoveData;
         this.c_collisionData = collisionData;
         this.cart_increment = incr;
     }
@@ -30,16 +32,30 @@ public class JumpChargeState : iState
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
+        float currentTopSpeed = c_playerData.f_currentTopSpeed;
+        float currentAcceleration = c_playerData.f_currentAcceleration;
+
         AngleCalculationCartridge.AlignToSurfaceByTail(ref currentPosition,
                                             c_collisionData.v_surfaceNormal,
                                             ref currentRotation,
                                             ref currentDir,
                                             ref currentNormal);
 
+        SurfaceInfluenceCartridge.AdjustAcceleration(ref currentAcceleration,
+                                                     c_playerData.f_acceleration,
+                                                     c_playerData.f_gravity,
+                                                     c_playerData.f_topSpeed / currentTopSpeed,
+                                                     currentRotation);
+
+        SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, c_playerData.f_topSpeed, currentRotation);
+
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentDirection = currentDir;
         c_playerData.v_currentNormal = currentNormal;
         c_playerData.q_currentRotation = currentRotation;
+
+        c_playerData.f_currentAcceleration = currentAcceleration;
+        c_playerData.f_currentTopSpeed = currentTopSpeed;
     }
 
     public void TransitionAct()
@@ -51,11 +67,15 @@ public class JumpChargeState : iState
     {
         if (cmd == Command.FALL)
         {
-            c_playerData.f_currentJumpCharge = 0.0f;
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.JUMP)
         {
+            // edit position to ensure we are already the first jump frame ABOVE the ground here
+            Vector3 upwardTranslation = c_playerData.q_currentRotation * Vector3.up * (0.02f);
+            c_aerialMoveData.f_verticalVelocity = 0.0f;
+
+            c_playerData.v_currentPosition += upwardTranslation;
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.CRASH)

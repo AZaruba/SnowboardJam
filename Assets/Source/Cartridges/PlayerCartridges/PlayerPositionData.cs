@@ -11,12 +11,13 @@ public class PlayerPositionData
 
     private bool ModelReversed;
 
-    public PlayerPositionData(Vector3 position, Vector3 direction)
+    public PlayerPositionData(Vector3 position, Vector3 direction, Quaternion rotation)
     {
         this.OccupiedZone = uint.MaxValue;
         this.v_modelPosition = position;
         this.v_modelDirection = direction;
         this.b_modelReversed = false;
+        this.q_currentModelRotation = rotation;
     }
 
     public uint u_zone

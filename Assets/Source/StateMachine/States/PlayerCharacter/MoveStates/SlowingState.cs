@@ -47,11 +47,6 @@ public class SlowingState : iState
 
         cart_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);
 
-        SurfaceInfluenceCartridge.KeepAboveSurface(ref currentPosition,
-                                                   c_collisionData.v_surfaceNormal,
-                                                   c_collisionData.v_previousPosition,
-                                                   c_collisionData.v_attachPoint);
-
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;

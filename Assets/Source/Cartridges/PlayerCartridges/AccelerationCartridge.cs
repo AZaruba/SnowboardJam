@@ -5,7 +5,7 @@ using UnityEngine;
 public class AccelerationCartridge {
 
     #region PublicFunctions
-    public void Accelerate(ref float velocity, ref float f_acceleration, float topSpeed, float surfaceFactor = 1.0f)
+    public static void Accelerate(ref float velocity, float f_acceleration, float topSpeed, float surfaceFactor = 1.0f)
     {
         if (velocity > topSpeed)
         {
