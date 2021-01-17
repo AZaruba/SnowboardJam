@@ -7,13 +7,16 @@ public class StraightState : iState
 
     SurfaceInfluenceCartridge cart_surfInf;
     PlayerData c_playerData;
+    PlayerHandlingData c_turnData;
     PlayerPositionData c_positionData;
 
     public StraightState(ref PlayerData playerData,
-                              ref PlayerPositionData positionData,
-                              ref SurfaceInfluenceCartridge surfInf)
+                         ref PlayerHandlingData turnDataIn,
+                         ref PlayerPositionData positionData,
+                         ref SurfaceInfluenceCartridge surfInf)
     {
         this.c_playerData = playerData;
+        this.c_turnData = turnDataIn;
         this.c_positionData = positionData;
         this.cart_surfInf = surfInf;
     }
@@ -29,7 +32,7 @@ public class StraightState : iState
 
     public void TransitionAct()
     {
-
+        c_turnData.f_currentTurnSpeed = Constants.ZERO_F;
     }
 
     public StateRef GetNextState(Command cmd)
@@ -57,13 +60,16 @@ public class TurnChargeState : iState
 {
     SurfaceInfluenceCartridge cart_surfInf;
     PlayerData c_playerData;
+    PlayerHandlingData c_turnData;
     PlayerPositionData c_positionData;
 
     public TurnChargeState(ref PlayerData playerData,
-                              ref PlayerPositionData positionData,
-                              ref SurfaceInfluenceCartridge surfInf)
+                           ref PlayerHandlingData turnDataIn,
+                           ref PlayerPositionData positionData,
+                           ref SurfaceInfluenceCartridge surfInf)
     {
         this.c_playerData = playerData;
+        this.c_turnData = turnDataIn;
         this.c_positionData = positionData;
         this.cart_surfInf = surfInf;
     }
@@ -79,7 +85,7 @@ public class TurnChargeState : iState
 
     public void TransitionAct()
     {
-
+        c_turnData.f_currentTurnSpeed = Constants.ZERO_F;
     }
 
     public StateRef GetNextState(Command cmd)

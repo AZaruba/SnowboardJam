@@ -15,7 +15,7 @@ public class AccelerationCartridge {
         velocity += f_acceleration * surfaceFactor * Time.deltaTime;
     }
 
-    public void Decelerate(ref float velocity, float deceleration, float surfaceFactor = 1.0f)
+    public static void Decelerate(ref float velocity, float deceleration, float surfaceFactor = 1.0f)
     {
         if (velocity < 0)
         {
@@ -23,6 +23,16 @@ public class AccelerationCartridge {
             return;
         }
         velocity -= deceleration * surfaceFactor * Time.deltaTime;
+    }
+
+    public static void AccelerateSoftCap(ref float velocity, float acceleration, float topSpeed, float deceleration, float surfaceFactor = Constants.ONE)
+    {
+        if (velocity > topSpeed)
+        {
+            velocity -= deceleration * Time.fixedDeltaTime * (1/surfaceFactor);
+            return;
+        }
+        velocity += acceleration * surfaceFactor * Time.fixedDeltaTime;
     }
 
     /// <summary>
