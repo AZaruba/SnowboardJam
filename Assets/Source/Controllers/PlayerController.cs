@@ -98,9 +98,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         EnginePull(); // poll for input every frame
 
-        float timeAlpha = (Time.time - Time.fixedTime) / Time.fixedDeltaTime;
-        transform.position = Vector3.Lerp(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition, timeAlpha);
-        c_playerData.t_centerOfGravity.rotation = Quaternion.Lerp(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation, timeAlpha);
+        transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition);
+        transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
         debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
         debugAccessor.DisplayFloat("TurnSpeed", c_turnData.f_currentTurnSpeed);

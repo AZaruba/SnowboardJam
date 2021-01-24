@@ -13,6 +13,7 @@ public class ActiveMenuData
     private bool ShowMenu;
     private bool MenuActive;
     private bool EditorActive;
+    public bool b_menuConfirmActive;
 
     private Vector2 CurrentPosition;
     private Vector2 TargetPosition;
@@ -81,5 +82,20 @@ public class ActiveMenuData
     {
         get { return CurrentOpacity; }
         set { CurrentOpacity = value; }
+    }
+
+    public ActiveMenuData()
+    {
+        b_menuConfirmActive = false;
+    }
+}
+
+public class LastFrameActiveMenuData
+{
+    public Vector3 v_lastFramePosition;
+
+    public LastFrameActiveMenuData(Vector3 posIn)
+    {
+        v_lastFramePosition = posIn;
     }
 }

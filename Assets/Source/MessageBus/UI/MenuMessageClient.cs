@@ -20,12 +20,14 @@ public class MenuMessageClient : iMessageClient
         {
             data_out.b_editorActive = true;
             data_out.b_menuActive = false;
+            data_out.b_menuConfirmActive = false;
             return true;
         }
         if (id == MessageID.EDIT_END)
         {
             data_out.b_menuActive = true;
             data_out.b_editorActive = false;
+            data_out.b_menuConfirmActive = false;
             return true;
         }
         return false;

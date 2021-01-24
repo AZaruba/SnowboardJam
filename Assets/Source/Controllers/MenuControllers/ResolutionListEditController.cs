@@ -45,10 +45,11 @@ public class ResolutionListEditController : iEditController
         GlobalGameData.SetSettingsValue(targetIn, c_controllerData.i);
     }
 
+
     // Update is called once per frame
     public override void UpdateEditor()
     {
-        if (c_controllerData.b_editorActive == false)
+        if (!c_controllerData.b_editorActive)
         {
             return;
         }
@@ -56,17 +57,18 @@ public class ResolutionListEditController : iEditController
         float inputAxisValue = GlobalInputController.GetAnalogInputAction(ControlAction.SPIN_AXIS);
         if (inputAxisValue < -0.5f)
         {
-            c_controllerData.b_increasing = false;
+            c_controllerData.i_increasing = -1;
             sm_editController.Execute(Command.MENU_TICK_INPUT);
         }
         else if (inputAxisValue > 0.5f)
         {
-            c_controllerData.b_increasing = true;
+            c_controllerData.i_increasing = 1;
             sm_editController.Execute(Command.MENU_TICK_INPUT);
         }
         else
         {
             // no input, unready
+            c_controllerData.i_increasing = 0;
         }
 
         if (float.Equals(c_controllerData.f_currentTickTime, c_controllerData.f_maxTickTime))
@@ -78,13 +80,23 @@ public class ResolutionListEditController : iEditController
             sm_editController.Execute(Command.MENU_IDLE);
         }
 
+        if (c_controllerData.i_increasing == 0)
+        {
+            sm_editController.Execute(Command.MENU_READY);
+        }
+
+        if (!CheckForConfirmation())
+        {
+            return;
+        }
+
         if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
         {
             ConfirmDataEdit(CurrentTarget);
             Deactivate();
         }
 
-        if (GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.PRESSED)
+        else if (GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.PRESSED)
         {
             CancelDataEdit();
             Deactivate();
@@ -97,6 +109,15 @@ public class ResolutionListEditController : iEditController
     public void EnginePush()
     {
         ValueDisplay.text = l_resolutions[c_controllerData.i].ToString();
+    }
+
+    public override void Activate(DataTarget targetIn)
+    {
+        // update state machine
+        c_controllerData.b_editConfirmationActive = false;
+        this.CurrentTarget = targetIn;
+        sm_editController.Execute(Command.MENU_SHOW);
+        i_lastStoredValue = c_controllerData.i;
     }
 
     public void InitializeCarts()

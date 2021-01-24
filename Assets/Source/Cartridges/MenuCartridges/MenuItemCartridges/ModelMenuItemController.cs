@@ -19,7 +19,7 @@ public class ModelMenuItemController : iMenuItemController, iEntityController
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         EnginePull();
         UpdateStateMachine();

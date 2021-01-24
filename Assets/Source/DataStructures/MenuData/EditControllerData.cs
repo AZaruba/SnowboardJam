@@ -5,6 +5,7 @@ using UnityEngine;
 public class EditControllerData
 {
     bool EditorActive;
+    public bool b_editConfirmationActive;
 
     bool StoredBool;
 
@@ -22,7 +23,7 @@ public class EditControllerData
 
     private float CurrentTickTime;
     private float MaxTickTime;
-    private bool Increasing;
+    private int Increasing;
 
     public KeyCode k
     {
@@ -82,9 +83,14 @@ public class EditControllerData
         set { MaxTickTime = value; }
     }
 
-    public bool b_increasing
+    public int i_increasing
     {
         get { return Increasing; }
         set { Increasing = value; }
+    }
+
+    public EditControllerData()
+    {
+        b_editConfirmationActive = false;
     }
 }

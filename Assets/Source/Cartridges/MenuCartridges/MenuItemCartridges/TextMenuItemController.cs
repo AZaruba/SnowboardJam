@@ -16,6 +16,7 @@ public class TextMenuItemController : iMenuItemController, iEntityController
     [SerializeField] private iEditController ChildEditController;
 
     private MenuItemActiveData c_itemActiveData;
+    private MenuItemLastFrameData c_lastFrameData;
 
     private StateMachine sm_menuItem;
 
@@ -27,11 +28,16 @@ public class TextMenuItemController : iMenuItemController, iEntityController
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         EnginePull();
+
         UpdateStateMachine();
         sm_menuItem.Act();
+    }
+
+    void Update()
+    {
         EngineUpdate();
     }
 
@@ -46,13 +52,15 @@ public class TextMenuItemController : iMenuItemController, iEntityController
 
     public void EngineUpdate()
     {
-        ItemTransform.anchoredPosition = c_itemActiveData.v_itemPosition;
-        ItemText.color = c_itemActiveData.c_currentColor;
+        ItemTransform.anchoredPosition = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_itemActiveData.v_itemPosition);
+
+        ItemText.color = Utils.InterpolateFixedColor(c_lastFrameData.c_lastFrameColor, c_itemActiveData.c_currentColor);
     }
 
     public void EnginePull()
     {
-
+        c_lastFrameData.v_lastFramePosition = c_itemActiveData.v_itemPosition;
+        c_lastFrameData.c_lastFrameColor = c_itemActiveData.c_currentColor;
     }
 
     public void UpdateStateMachine()
@@ -140,6 +148,9 @@ public class TextMenuItemController : iMenuItemController, iEntityController
         c_itemActiveData.v_targetItemPosition = ItemTransform.anchoredPosition;
         c_itemActiveData.v_origin = ItemTransform.anchoredPosition;
         c_itemActiveData.c_currentColor = ItemData.UnselectedColor;
+
+        c_lastFrameData = new MenuItemLastFrameData(c_itemActiveData.v_itemPosition, c_itemActiveData.c_currentColor);
+
 
         c_itemActiveData.i_nextScene = (int)NextSceneId;
     }

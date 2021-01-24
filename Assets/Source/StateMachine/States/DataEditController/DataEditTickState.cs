@@ -35,11 +35,11 @@ public class IntEditTickState : iState
     {
         int currentValue = c_ctrlData.i;
 
-        if (c_ctrlData.b_increasing)
+        if (c_ctrlData.i_increasing > 0)
         {
             cart_incr.Increment(ref currentValue, Constants.ONE, c_ctrlData.i_max);
         }
-        else
+        else if (c_ctrlData.i_increasing < 0) // we should never reach this line with == 0 but just in case...
         {
             cart_incr.Decrement(ref currentValue, Constants.ONE, c_ctrlData.i_min);
         }
