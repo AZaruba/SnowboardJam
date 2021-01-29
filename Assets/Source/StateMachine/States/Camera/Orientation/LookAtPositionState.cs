@@ -22,6 +22,7 @@ public class LookAtPositionState : iState
         cart_focus.PointVectorAt(ref currentPosition, ref currentTargetPosition, ref lookVector);
 
         c_cameraData.v_currentDirection = lookVector;
+        c_cameraData.q_cameraRotation = Quaternion.FromToRotation(Vector3.forward, lookVector);
     }
 
     public void TransitionAct()

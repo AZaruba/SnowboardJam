@@ -127,3 +127,12 @@ public class CameraData : MonoBehaviour {
     }
     #endregion
 }
+
+public class CameraLastFrameData
+{
+    public Vector3 v_lastFramePosition;
+    public Quaternion q_lastFrameRotation;
+
+    public Vector3 v_lastFrameTargetPosition;
+    public Quaternion v_lastFrameTargetRotation;
+}

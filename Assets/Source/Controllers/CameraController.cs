@@ -13,6 +13,7 @@ public class CameraController : MonoBehaviour, iEntityController
 
     private StateData c_stateData;
     private CameraPreviewActiveData c_previewActiveData;
+    private CameraLastFrameData c_lastFrameData;
 
     private StateMachine sm_translation;
     private StateMachine sm_orientation;
@@ -48,7 +49,7 @@ public class CameraController : MonoBehaviour, iEntityController
     /// used for object-level functions (such as translations) and then the
     /// state is updated.
     /// </summary>
-    void LateUpdate()
+    void Update()
     {
         if (!c_stateData.b_updateState)
         {
@@ -57,22 +58,34 @@ public class CameraController : MonoBehaviour, iEntityController
 
         EnginePull();
 
+        EngineUpdate();
+
+        debugAccessor.DisplayState("orientation", sm_translation.GetCurrentState());
+    }
+
+    void FixedUpdate()
+    {
+        if (!c_stateData.b_updateState)
+        {
+            return;
+        }
+
+        c_lastFrameData.v_lastFramePosition = c_cameraData.v_currentPosition;
+        c_lastFrameData.q_lastFrameRotation = c_cameraData.q_cameraRotation;
+
+        c_lastFrameData.v_lastFrameTargetPosition = playerTransform.position;
+        c_lastFrameData.v_lastFrameTargetRotation = playerTransform.rotation;
+
         UpdateStateMachine();
 
         sm_translation.Act();
         sm_orientation.Act();
-
-        EngineUpdate();
     }
 
     public void EngineUpdate()
     {
-        //debugAccessor.DisplayState("Camera State", sm_translation.GetCurrentState());
-        //debugAccessor.DisplayFloat("Ratio", c_previewActiveData.f_currentShotTime/ c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].Time);
-
-        transform.position = c_cameraData.v_currentPosition;
-        transform.rotation = c_cameraData.q_cameraRotation;
-        transform.forward = c_cameraData.v_currentDirection;
+        transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_cameraData.v_currentPosition);
+        transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_cameraData.q_cameraRotation);
     }
 
     public void EnginePull()
@@ -86,6 +99,7 @@ public class CameraController : MonoBehaviour, iEntityController
 
     }
 
+    // TODO: rethink and redo the whole state machine
     public void UpdateStateMachine()
     {
         Vector3 cameraPosition = c_cameraData.v_currentPosition;
@@ -172,6 +186,13 @@ public class CameraController : MonoBehaviour, iEntityController
         c_cameraData.q_cameraRotation = Quaternion.Euler(c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].CameraAngle);
         c_cameraData.v_currentDirection = c_cameraData.q_cameraRotation * Vector3.forward;
         c_cameraData.v_currentPosition = c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].StartPosition;
+
+        c_lastFrameData = new CameraLastFrameData();
+        c_lastFrameData.v_lastFramePosition = c_cameraData.v_currentPosition;
+        c_lastFrameData.q_lastFrameRotation = c_cameraData.q_cameraRotation;
+
+        c_lastFrameData.v_lastFrameTargetPosition = playerTransform.position;
+        c_lastFrameData.v_lastFrameTargetRotation = playerTransform.rotation;
     }
     #endregion
 }
