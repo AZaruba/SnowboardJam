@@ -1253,7 +1253,8 @@ MonoBehaviour:
   TopSpeed: 20
   Acceleration: 5
   BrakePower: 30
-  TurnSpeed: 100
+  TurnSpeed: 200
+  TurnAcceleration: 150
   JumpPower: 10
   BaseJumpPower: 5
   JumpChargeRate: 5

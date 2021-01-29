@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class MenuController : MonoBehaviour
@@ -16,6 +14,7 @@ public class MenuController : MonoBehaviour
     private iMessageClient c_menuClient;
     private iMenuItemController c_activeMenuItem;
     private ActiveMenuData c_activeMenuData;
+    private LastFrameActiveMenuData c_lastFrameData;
     private IncrementCartridge cart_incr;
     private LerpCartridge cart_lerp;
 
@@ -42,7 +41,12 @@ public class MenuController : MonoBehaviour
 
     void Update()
     {
-        rectTransform.anchoredPosition = c_activeMenuData.v_currentPosition;
+        rectTransform.anchoredPosition = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_activeMenuData.v_currentPosition);
+    }
+
+    void FixedUpdate()
+    {
+        c_lastFrameData.v_lastFramePosition = c_activeMenuData.v_currentPosition;
         sm_menuInput.Act();
         sm_showHide.Act();
     }
@@ -74,6 +78,11 @@ public class MenuController : MonoBehaviour
             c_activeMenuData.i_menuDir = 0;
         }
 
+        if (!CheckForConfirmation())
+        {
+            return;
+        }
+
         if (GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.PRESSED)
         {
             // return to previous menu
@@ -87,6 +96,29 @@ public class MenuController : MonoBehaviour
 
         UpdateStateMachine();
 
+        SetActiveMenuItemIndex();
+    }
+
+    public virtual bool CheckForConfirmation()
+    {
+        if (!c_activeMenuData.b_menuConfirmActive)
+        {
+            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.IDLE &&
+                GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.IDLE)
+            {
+                c_activeMenuData.b_menuConfirmActive = true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void SetActiveMenuItemIndex()
+    {
         if (i_activeMenuItemIndex != c_activeMenuData.i_activeMenuItemIndex)
         {
             c_activeMenuItem.ExecuteStateMachineCommand(Command.UNSELECT);
@@ -145,6 +177,7 @@ public class MenuController : MonoBehaviour
     private void InitializeData()
     {
         c_activeMenuData = new ActiveMenuData();
+        c_lastFrameData = new LastFrameActiveMenuData(ControllerData.DisabledPosition);
 
         c_activeMenuData.f_currentMenuTickCount = Constants.ZERO_F;
         c_activeMenuData.f_currentMenuWaitCount = ControllerData.ShortTickTime;

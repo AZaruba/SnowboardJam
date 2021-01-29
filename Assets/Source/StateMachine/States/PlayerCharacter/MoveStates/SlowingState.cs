@@ -45,7 +45,7 @@ public class SlowingState : iState
         Vector3 currentSurfaceNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_acceleration.Decelerate(ref currentVelocity, deceleration * slowScaling);
+        AccelerationCartridge.Decelerate(ref currentVelocity, deceleration * slowScaling);
 
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 

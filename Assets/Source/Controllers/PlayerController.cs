@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private PlayerPositionData c_positionData;
     private EntityData c_entityData;
+    private PlayerHandlingData c_turnData;
 
     private AudioController c_audioController;
     private AudioDTree t_audioStateTree;
@@ -97,12 +98,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         EnginePull(); // poll for input every frame
 
-        float timeAlpha = (Time.time - Time.fixedTime) / Time.fixedDeltaTime;
-        transform.position = Vector3.Lerp(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition, timeAlpha);
-        c_playerData.t_centerOfGravity.rotation = Quaternion.Lerp(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation, timeAlpha);
+        transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition);
+        transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
         debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
-        debugAccessor.DisplayFloat("Spin charge", c_trickPhysicsData.f_currentSpinRate);
+        debugAccessor.DisplayFloat("TurnSpeed", c_turnData.f_currentTurnSpeed);
 
     }
 
@@ -249,10 +249,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         }
 
+        
         if (Mathf.Abs(c_inputData.f_inputAxisLHoriz) > 0.0f)
         {
+            // catch changing direction between two FixedUpdates
+            if (Mathf.Sign(c_turnData.f_currentTurnSpeed) != Mathf.Sign(c_inputData.f_inputAxisLHoriz))
+            {
+                c_turnMachine.Execute(Command.RIDE);
+            }
             c_turnMachine.Execute(Command.TURN);
         }
+        
         else
         {
             c_turnMachine.Execute(Command.RIDE);
@@ -332,6 +339,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_entityData = new EntityData();
         c_collisionData = new CollisionData(CollisionData.FrontRayOffset, CollisionData.BackRayOffset);
         c_lastFrameData = new LastFramePositionData();
+        c_turnData = new PlayerHandlingData(c_playerData.f_turnSpeed, c_playerData.f_turnAcceleration);
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
@@ -640,10 +648,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeTurnMachine()
     {
-        StraightState s_straight = new StraightState(ref c_playerData, ref c_positionData, ref cart_surfInf);
-        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_handling, ref cart_surfInf);
+        StraightState s_straight = new StraightState(ref c_playerData, ref c_turnData, ref c_positionData, ref cart_surfInf);
+        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_turnData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_handling, ref cart_surfInf);
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
-        TurnChargeState s_turnCharge = new TurnChargeState(ref c_playerData, ref c_positionData, ref cart_surfInf);
+        TurnChargeState s_turnCharge = new TurnChargeState(ref c_playerData, ref c_turnData, ref c_positionData, ref cart_surfInf);
 
         c_turnMachine = new StateMachine(StateRef.RIDING);
         c_turnMachine.AddState(s_straight, StateRef.RIDING);

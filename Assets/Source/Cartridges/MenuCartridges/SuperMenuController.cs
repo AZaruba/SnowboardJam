@@ -15,6 +15,7 @@ public class SuperMenuController : MonoBehaviour
     private MenuController m_activeMenuController;
     private int m_activeMenuControllerIndex;
     private Stack<int> s_controllerStack;
+    private bool m_bMenuInputActive;
 
     // Start is called before the first frame update
     void Start()
@@ -24,6 +25,7 @@ public class SuperMenuController : MonoBehaviour
         m_activeMenuControllerIndex = 0;
         c_client = new SuperMenuMessageClient(this);
         s_controllerStack = new Stack<int>();
+        m_bMenuInputActive = false;
 
         for (int i = 0; i < MenuControllers.Count; i++)
         {
@@ -35,9 +37,21 @@ public class SuperMenuController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         // call update function for active Menu Controller
+        if (!m_bMenuInputActive)
+        {
+            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.IDLE &&
+                GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.IDLE)
+            {
+                m_bMenuInputActive = true;
+            }
+            else
+            {
+                return;
+            }
+        }
         m_activeMenuController.UpdateMenu();
     }
 
@@ -56,6 +70,8 @@ public class SuperMenuController : MonoBehaviour
             return;
         }
 
+        m_bMenuInputActive = false;
+
         s_controllerStack.Push(m_activeMenuControllerIndex);
 
         m_activeMenuController.HideMenu();
@@ -70,6 +86,7 @@ public class SuperMenuController : MonoBehaviour
     /// </summary>
     public void PopMenuStack()
     {
+        m_bMenuInputActive = false;
         if (s_controllerStack.Count == 0)
         {
             if (EmptyStackReturnsToPrevious)

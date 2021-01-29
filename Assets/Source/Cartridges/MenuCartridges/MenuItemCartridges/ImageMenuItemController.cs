@@ -14,6 +14,7 @@ public class ImageMenuItemController : iMenuItemController, iEntityController
 
     private StateMachine sm_menuItem;
     private MenuItemActiveData c_itemActiveData;
+    private MenuItemLastFrameData c_lastFrameData;
 
     // Start is called before the first frame update
     void Awake()
@@ -23,23 +24,28 @@ public class ImageMenuItemController : iMenuItemController, iEntityController
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         EnginePull();
         UpdateStateMachine();
         sm_menuItem.Act();
+    }
+
+    void Update()
+    {
         EngineUpdate();
     }
 
     public void EngineUpdate()
     {
-        ItemTransform.anchoredPosition = c_itemActiveData.v_itemPosition;
-        ItemImage.color = c_itemActiveData.c_currentColor;
+        ItemTransform.anchoredPosition = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_itemActiveData.v_itemPosition);
+        ItemImage.color = Utils.InterpolateFixedColor(c_lastFrameData.c_lastFrameColor, c_itemActiveData.c_currentColor);
     }
 
     public void EnginePull()
     {
-
+        c_lastFrameData.v_lastFramePosition = c_itemActiveData.v_itemPosition;
+        c_lastFrameData.c_lastFrameColor = c_itemActiveData.c_currentColor;
     }
 
     public void UpdateStateMachine()
@@ -104,6 +110,8 @@ public class ImageMenuItemController : iMenuItemController, iEntityController
         c_itemActiveData.v_targetItemPosition = ItemTransform.anchoredPosition;
         c_itemActiveData.v_origin = ItemTransform.anchoredPosition;
         c_itemActiveData.c_currentColor = ItemData.UnselectedColor;
+
+        c_lastFrameData = new MenuItemLastFrameData(c_itemActiveData.v_itemPosition, c_itemActiveData.c_currentColor);
 
         c_itemActiveData.i_nextScene = (int)NextSceneId;
     }

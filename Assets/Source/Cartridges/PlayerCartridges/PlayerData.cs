@@ -9,6 +9,7 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float Acceleration;
     [SerializeField] private float BrakePower;
     [SerializeField] private float TurnSpeed;
+    [SerializeField] private float TurnAcceleration;
     [SerializeField] private float JumpPower;
     [SerializeField] private float BaseJumpPower;
     [SerializeField] private float JumpChargeRate;
@@ -78,6 +79,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return TurnSpeed; }
         set { TurnSpeed = value; }
+    }
+
+    public float f_turnAcceleration
+    {
+        get { return TurnAcceleration; }
+        set { TurnAcceleration = value; }
     }
 
     public float f_jumpPower
@@ -290,6 +297,24 @@ public class PlayerInputData
     {
         f_inputAxisLHoriz = 0.0f;
         f_inputAxisLVert = 0.0f;
+    }
+}
+
+/// <summary>
+/// Stores active turn data, with acceleration to give weight
+/// </summary>
+public class PlayerHandlingData
+{
+    public float f_currentTurnSpeed;
+    public float f_turnAcceleration;
+    public float f_turnTopSpeed;
+    public float f_lastFrameTurnSpeed;
+
+    public PlayerHandlingData(float turnSpeedIn, float turnAccelIn)
+    {
+        this.f_currentTurnSpeed = Constants.ZERO_F;
+        this.f_turnAcceleration = turnAccelIn;
+        this.f_turnTopSpeed = turnSpeedIn;
     }
 }
 

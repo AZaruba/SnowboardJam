@@ -49,3 +49,15 @@ public class MenuItemActiveData
         set { NextScene = value; }
     }
 }
+
+public class MenuItemLastFrameData
+{
+    public Vector3 v_lastFramePosition;
+    public Color c_lastFrameColor;
+
+    public MenuItemLastFrameData(Vector3 posIn, Color colIn)
+    {
+        v_lastFramePosition = posIn;
+        c_lastFrameColor = colIn;
+    }
+}
