@@ -119,6 +119,8 @@ public enum StateRef {
     LEAVING_FAST,
     TRACKING_FAST,
     PREVIEW_TRACKING,
+
+    FOLLOWING,
     #endregion
 
     #region CameraOrientationStates

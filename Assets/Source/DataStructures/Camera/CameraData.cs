@@ -17,14 +17,20 @@ public class CameraPreviewActiveData
 public class CameraData : MonoBehaviour {
 
     #region Members
-    [SerializeField] private float FollowHeight;
+    [SerializeField] private float FollowHeight; // relative to CURRENT GROUND, not player
+    [SerializeField] private float FollowDistance;
     [SerializeField] private Vector3 OffsetVector;
     [SerializeField] private Vector3 TargetOffsetVector;
     [SerializeField] private PlayerController PlayerTarget;
 
+    [SerializeField] public float MaxOrbitSpeed;
+    [SerializeField] public float MaxRotationSpeed;
+    [SerializeField] public float MinFollowDistance;
+    [SerializeField] public float MaxFollowDistance;
+    [SerializeField] public float MaxCameraAngle;
+
     private float FieldOfView;
     private float CameraAngle;
-    private float FollowDistance;
 
     private Vector3 CurrentPosition;
     private Vector3 CurrentDirection;
@@ -126,6 +132,26 @@ public class CameraData : MonoBehaviour {
         set { SurfaceBelowCameraPosition = value; }
     }
     #endregion
+}
+
+public class CameraPositionData
+{
+    public CameraPositionData(Vector3 posIn, Vector3 targetIn, Quaternion rotIn, Quaternion targetRotIn)
+    {
+        this.v_currentPosition = posIn;
+        this.v_currentTargetPosition = targetIn;
+
+        this.q_currentRotation = rotIn;
+        this.q_currentTargetRotation = targetRotIn;
+    }
+
+    public Vector3 v_currentPosition;
+    public Vector3 v_currentTargetPosition;
+
+    public Quaternion q_currentRotation;
+    public Quaternion q_currentTargetRotation;
+
+    public float f_currentFollowDistance;
 }
 
 public class CameraLastFrameData

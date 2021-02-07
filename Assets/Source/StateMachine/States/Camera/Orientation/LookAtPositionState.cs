@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class LookAtPositionState : iState
 {
-    private FocusCartridge cart_focus;
     private CameraData c_cameraData;
 
-    public LookAtPositionState(ref CameraData cameraData, ref FocusCartridge focus)
+    public LookAtPositionState(ref CameraData cameraData)
     {
         this.c_cameraData = cameraData;
-        this.cart_focus = focus;
     }
 
     public void Act()
@@ -19,7 +17,7 @@ public class LookAtPositionState : iState
         Vector3 currentTargetPosition = c_cameraData.v_targetPosition;
         Vector3 lookVector = c_cameraData.v_currentDirection;
 
-        cart_focus.PointVectorAt(ref currentPosition, ref currentTargetPosition, ref lookVector);
+        FocusCartridge.PointVectorAt(ref currentPosition, ref currentTargetPosition, ref lookVector);
 
         c_cameraData.v_currentDirection = lookVector;
         c_cameraData.q_cameraRotation = Quaternion.FromToRotation(Vector3.forward, lookVector);

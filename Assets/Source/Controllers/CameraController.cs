@@ -19,7 +19,6 @@ public class CameraController : MonoBehaviour, iEntityController
     private StateMachine sm_orientation;
 
     //cartridge list
-    private FocusCartridge cart_focus;
     private AngleAdjustmentCartridge cart_angle;
     private FollowCartridge cart_follow;
 
@@ -99,8 +98,24 @@ public class CameraController : MonoBehaviour, iEntityController
 
     }
 
-    // TODO: rethink and redo the whole state machine
     public void UpdateStateMachine()
+    {
+        Vector3 cameraPosition = c_cameraData.v_currentPosition;
+        Vector3 targetPosition = c_cameraData.v_targetPosition;
+        float followDistance = c_cameraData.f_followDistance;
+
+        float trueDistance = Vector3.Distance(cameraPosition, targetPosition);
+
+        if (c_stateData.b_preStarted == false)
+        {
+            sm_translation.Execute(Command.START_COUNTDOWN);
+            sm_orientation.Execute(Command.POINT_AT_POSITION);
+            c_stateData.b_preStarted = true;
+        }
+    }
+
+    // TODO: rethink and redo the whole state machine
+    public void UpdateStateMachineOld()
     {
         Vector3 cameraPosition = c_cameraData.v_currentPosition;
         Vector3 targetPosition = c_cameraData.v_targetPosition;
@@ -158,9 +173,9 @@ public class CameraController : MonoBehaviour, iEntityController
         sm_translation.AddState(s_approachFollow, StateRef.APPROACHING);
         sm_translation.AddState(s_awayFollow, StateRef.LEAVING);
 
-        LookAtDirectionState s_lookDir = new LookAtDirectionState(ref c_cameraData, ref cart_focus);
-        LookAtPositionState s_lookPos = new LookAtPositionState(ref c_cameraData, ref cart_focus);
-        LookAtTargetState s_lookTarget = new LookAtTargetState(ref c_cameraData, ref cart_focus);
+        LookAtDirectionState s_lookDir = new LookAtDirectionState(ref c_cameraData);
+        LookAtPositionState s_lookPos = new LookAtPositionState(ref c_cameraData);
+        LookAtTargetState s_lookTarget = new LookAtTargetState(ref c_cameraData);
 
         sm_orientation = new StateMachine(s_lookDir, StateRef.DIRECTED);
         sm_orientation.AddState(s_lookPos, StateRef.POSED);
@@ -172,7 +187,6 @@ public class CameraController : MonoBehaviour, iEntityController
     /// </summary>
     void InitializeCartridges()
     {
-        cart_focus = new FocusCartridge();
         cart_follow = new FollowCartridge();
         cart_angle = new AngleAdjustmentCartridge();
     }
