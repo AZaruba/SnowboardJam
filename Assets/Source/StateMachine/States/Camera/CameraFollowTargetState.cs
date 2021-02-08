@@ -16,6 +16,15 @@ public class CameraFollowTargetState : iState
 
     public void Act()
     {
+        Vector3 cameraPosition = c_positionData.v_currentPosition;
+        Quaternion cameraRotation = c_positionData.q_currentRotation;
+
+        CameraMotionCartridge.HorizontalFollow(ref cameraPosition, c_positionData.v_currentTargetTranslation,
+                                               ref cameraRotation, c_positionData.q_currentTargetRotation);
+
+        c_positionData.v_currentPosition = cameraPosition;
+        c_positionData.q_currentRotation = cameraRotation;
+
         /* Yoann Pignole's camera guide in our case:
          * 
          * 1) Force camera outside of wall surface:
@@ -56,7 +65,7 @@ public class CameraFollowTargetState : iState
          *    b. Make sure this isn't vomit-inducing
          *    
          * Notes: How do we do easing? Check for error from ideals in CameraData and then move based on that?
-         */ 
+         */
     }
 
     public StateRef GetNextState(Command cmd)

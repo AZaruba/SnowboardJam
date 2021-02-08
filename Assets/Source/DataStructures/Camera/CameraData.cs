@@ -143,10 +143,13 @@ public class CameraPositionData
 
         this.q_currentRotation = rotIn;
         this.q_currentTargetRotation = targetRotIn;
+
+        v_currentTargetTranslation = Vector3.zero;
     }
 
     public Vector3 v_currentPosition;
     public Vector3 v_currentTargetPosition;
+    public Vector3 v_currentTargetTranslation;
 
     public Quaternion q_currentRotation;
     public Quaternion q_currentTargetRotation;
