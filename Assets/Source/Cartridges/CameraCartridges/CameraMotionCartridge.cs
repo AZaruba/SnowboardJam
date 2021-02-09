@@ -4,16 +4,15 @@ using UnityEngine;
 
 public static class CameraMotionCartridge
 {
-    public static void HorizontalFollow(ref Vector3 cameraPosition, Vector3 targetTranslation,
-                                        ref Quaternion cameraRotation, Quaternion targetRotation)
+    public static void HorizontalFollow(ref Vector3 cameraPosition, Vector3 targetTranslation, Vector3 targetPosition,
+                                        ref Quaternion cameraRotation, float desiredDistance)
     {
-        Quaternion finalRotation = Quaternion.identity;
-        float translationAmount = 0.0f; // (Quaternion.Inverse(cameraRotation) * targetTranslation).z;
+        Vector3 finalOffset = targetPosition - targetTranslation - targetPosition;
+        float rotationAmount = Vector3.SignedAngle(targetPosition - cameraPosition, finalOffset, cameraRotation * Vector3.up);
+        float translationAmount = (targetPosition - cameraPosition).magnitude;
 
-        // how to make this a composite of a translation and a rotation
-
-        cameraPosition += cameraRotation * Vector3.forward * translationAmount;
-        cameraRotation = finalRotation;
+        cameraRotation *= Quaternion.AngleAxis(rotationAmount, cameraRotation * Vector3.up);
+        cameraPosition += cameraRotation * Vector3.forward * (translationAmount - desiredDistance);
     }
 
     /// <summary>
@@ -35,11 +34,17 @@ public static class CameraMotionCartridge
                                                  cameraRotation * Vector3.right);
 
         // position doesn't move if the angle is valid, position moves the required y value otherwise.
-        float targetAngle = currentAngle >= angleConstraint ? Constants.ZERO_F : Vector3.SignedAngle(targetPosition, 
-                                                                                                     targetPosition + targetTranslation, 
+        float targetAngle = Mathf.Abs(currentAngle) >= angleConstraint ? Constants.ZERO_F : Vector3.SignedAngle(targetPosition, 
+                                                                                                     targetPosition - targetTranslation, 
                                                                                                      cameraRotation * Vector3.right);
 
         cameraPosition += currentAngle >= angleConstraint ? Vector3.zero : Vector3.up * targetTranslation.y;
         cameraRotation *= Quaternion.AngleAxis(targetAngle, Vector3.right);
+    }
+
+    // Camera needs to keep focus on player, otherwise translation accelerates out of control
+    public static void FocusOnPlayer()
+    {
+
     }
 }

@@ -14,9 +14,9 @@ public class CameraController : MonoBehaviour, iEntityController
     private StateData c_stateData;
     private CameraPreviewActiveData c_previewActiveData;
     private CameraLastFrameData c_lastFrameData;
+    private CameraPositionData c_positionData;
 
-    private StateMachine sm_translation;
-    private StateMachine sm_orientation;
+    private StateMachine sm_cameraBehavior;
 
     //cartridge list
     private AngleAdjustmentCartridge cart_angle;
@@ -57,9 +57,6 @@ public class CameraController : MonoBehaviour, iEntityController
 
         EnginePull();
 
-        EngineUpdate();
-
-        debugAccessor.DisplayState("orientation", sm_translation.GetCurrentState());
     }
 
     void FixedUpdate()
@@ -69,22 +66,25 @@ public class CameraController : MonoBehaviour, iEntityController
             return;
         }
 
-        c_lastFrameData.v_lastFramePosition = c_cameraData.v_currentPosition;
-        c_lastFrameData.q_lastFrameRotation = c_cameraData.q_cameraRotation;
+        EnginePull();
+
+        c_lastFrameData.v_lastFramePosition = c_positionData.v_currentPosition;
+        c_lastFrameData.q_lastFrameRotation = c_positionData.q_currentRotation;
 
         c_lastFrameData.v_lastFrameTargetPosition = playerTransform.position;
         c_lastFrameData.v_lastFrameTargetRotation = playerTransform.rotation;
 
         UpdateStateMachine();
 
-        sm_translation.Act();
-        sm_orientation.Act();
+        sm_cameraBehavior.Act();
+
+        EngineUpdate();
     }
 
     public void EngineUpdate()
     {
-        transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_cameraData.v_currentPosition);
-        transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_cameraData.q_cameraRotation);
+        transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_positionData.v_currentPosition);
+        transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentRotation);
     }
 
     public void EnginePull()
@@ -92,25 +92,26 @@ public class CameraController : MonoBehaviour, iEntityController
         Vector3 targetPosition = playerTransform.position;
         Quaternion targetRotation = playerTransform.rotation;
 
-        c_cameraData.q_targetRotation = targetRotation;
-        c_cameraData.v_targetPosition = targetPosition +
-             c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector;
-
+        c_positionData.v_currentTargetTranslation = targetPosition - c_positionData.v_currentTargetPosition;
+        c_positionData.v_currentTargetPosition = targetPosition;
+        c_positionData.q_currentTargetRotation = targetRotation;
     }
 
     public void UpdateStateMachine()
     {
-        Vector3 cameraPosition = c_cameraData.v_currentPosition;
-        Vector3 targetPosition = c_cameraData.v_targetPosition;
-        float followDistance = c_cameraData.f_followDistance;
-
-        float trueDistance = Vector3.Distance(cameraPosition, targetPosition);
-
         if (c_stateData.b_preStarted == false)
         {
-            sm_translation.Execute(Command.START_COUNTDOWN);
-            sm_orientation.Execute(Command.POINT_AT_POSITION);
+            sm_cameraBehavior.Execute(Command.START_COUNTDOWN);
             c_stateData.b_preStarted = true;
+        }
+
+        if (sm_cameraBehavior.GetCurrentState() == StateRef.PREVIEW_TRACKING)
+        {
+            if (c_previewActiveData.f_currentShotTime >= c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].Time)
+            {
+                sm_cameraBehavior.Execute(Command.REPEAT, false, true);
+            }
+            return;
         }
     }
 
@@ -125,32 +126,17 @@ public class CameraController : MonoBehaviour, iEntityController
 
         if (c_stateData.b_preStarted == false)
         {
-            sm_translation.Execute(Command.START_COUNTDOWN);
-            sm_orientation.Execute(Command.POINT_AT_POSITION);
+            sm_cameraBehavior.Execute(Command.START_COUNTDOWN);
             c_stateData.b_preStarted = true;
         }
 
-        if (sm_translation.GetCurrentState() == StateRef.PREVIEW_TRACKING)
+        if (sm_cameraBehavior.GetCurrentState() == StateRef.PREVIEW_TRACKING)
         {
             if (c_previewActiveData.f_currentShotTime >= c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].Time)
             {
-                sm_translation.Execute(Command.REPEAT, false, true);
+                sm_cameraBehavior.Execute(Command.REPEAT, false, true);
             }
             return;
-        }
-
-        if (trueDistance > followDistance)
-        {
-            sm_translation.Execute(Command.APPROACH);
-        }
-        else if (trueDistance < followDistance)
-        {
-            sm_translation.Execute(Command.DRAG);
-        }
-        else
-        {
-            // we have achieved balance!
-            sm_translation.Execute(Command.TRACK);
         }
 
         // TODO: Find some check for turning, switch to directed. Switch to targeted otherwise
@@ -163,23 +149,11 @@ public class CameraController : MonoBehaviour, iEntityController
     /// </summary>
     void InitializeStateMachine()
     {
-        CameraPreviewState s_preview = new CameraPreviewState(ref c_cameraData, ref c_previewData, ref c_previewActiveData);
-        FreeFollowState s_freeFollow = new FreeFollowState(ref c_cameraData, ref cart_angle, ref cart_follow);
-        ApproachFollowState s_approachFollow = new ApproachFollowState(ref c_cameraData, ref cart_follow);
-        AwayFollowState s_awayFollow = new AwayFollowState(ref c_cameraData, ref cart_follow);
+        CameraPreviewState s_preview = new CameraPreviewState(ref c_positionData, ref c_previewData, ref c_previewActiveData);
+        CameraFollowTargetState s_followTarget = new CameraFollowTargetState(ref c_cameraData, ref c_positionData);
 
-        sm_translation = new StateMachine(s_preview, StateRef.PREVIEW_TRACKING);
-        sm_translation.AddState(s_freeFollow, StateRef.TRACKING);
-        sm_translation.AddState(s_approachFollow, StateRef.APPROACHING);
-        sm_translation.AddState(s_awayFollow, StateRef.LEAVING);
-
-        LookAtDirectionState s_lookDir = new LookAtDirectionState(ref c_cameraData);
-        LookAtPositionState s_lookPos = new LookAtPositionState(ref c_cameraData);
-        LookAtTargetState s_lookTarget = new LookAtTargetState(ref c_cameraData);
-
-        sm_orientation = new StateMachine(s_lookDir, StateRef.DIRECTED);
-        sm_orientation.AddState(s_lookPos, StateRef.POSED);
-        sm_orientation.AddState(s_lookTarget, StateRef.TARGETED);
+        sm_cameraBehavior = new StateMachine(s_preview, StateRef.PREVIEW_TRACKING);
+        sm_cameraBehavior.AddState(s_followTarget, StateRef.FOLLOWING);
     }
 
     /// <summary>
@@ -207,6 +181,8 @@ public class CameraController : MonoBehaviour, iEntityController
 
         c_lastFrameData.v_lastFrameTargetPosition = playerTransform.position;
         c_lastFrameData.v_lastFrameTargetRotation = playerTransform.rotation;
+
+        c_positionData = new CameraPositionData(c_cameraData.v_currentPosition, playerTransform.position, c_cameraData.q_cameraRotation, playerTransform.rotation);
     }
     #endregion
 }
