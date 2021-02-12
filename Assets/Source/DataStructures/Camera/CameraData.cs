@@ -22,12 +22,14 @@ public class CameraData : MonoBehaviour {
     [SerializeField] private Vector3 OffsetVector;
     [SerializeField] private Vector3 TargetOffsetVector;
     [SerializeField] private PlayerController PlayerTarget;
+    [SerializeField] public LayerMask GroundCollisionMask;
 
     [SerializeField] public float MaxOrbitSpeed;
     [SerializeField] public float MaxRotationSpeed;
     [SerializeField] public float MinFollowDistance;
     [SerializeField] public float MaxFollowDistance;
     [SerializeField] public float MaxCameraAngle;
+    [SerializeField] public float OffsetDistance;
 
     private float FieldOfView;
     private float CameraAngle;
@@ -74,6 +76,12 @@ public class CameraData : MonoBehaviour {
     {
         get { return TargetOffsetVector; }
         set { TargetOffsetVector = value; }
+    }
+
+    public float f_targetOffset
+    {
+        get { return OffsetDistance; }
+        set { OffsetDistance = value; }
     }
     #endregion
 
@@ -145,6 +153,7 @@ public class CameraPositionData
         this.q_currentTargetRotation = targetRotIn;
 
         v_currentTargetTranslation = Vector3.zero;
+        this.f_distanceToGround = Constants.ZERO_F;
     }
 
     public Vector3 v_currentPosition;
@@ -155,6 +164,7 @@ public class CameraPositionData
     public Quaternion q_currentTargetRotation;
 
     public float f_currentFollowDistance;
+    public float f_distanceToGround;
 }
 
 public class CameraLastFrameData

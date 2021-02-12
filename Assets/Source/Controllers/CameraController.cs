@@ -18,9 +18,7 @@ public class CameraController : MonoBehaviour, iEntityController
 
     private StateMachine sm_cameraBehavior;
 
-    //cartridge list
-    private AngleAdjustmentCartridge cart_angle;
-    private FollowCartridge cart_follow;
+    private RaycastHit c_hitOut;
 
     iMessageClient cl_camera;
     #endregion
@@ -32,7 +30,6 @@ public class CameraController : MonoBehaviour, iEntityController
 	void Start()
     {
         SetDefaultCameraData();
-        InitializeCartridges();
         InitializeStateMachine();
 
         c_stateData = new StateData();
@@ -55,8 +52,7 @@ public class CameraController : MonoBehaviour, iEntityController
             return;
         }
 
-        EnginePull();
-
+        EngineUpdate();
     }
 
     void FixedUpdate()
@@ -78,7 +74,6 @@ public class CameraController : MonoBehaviour, iEntityController
 
         sm_cameraBehavior.Act();
 
-        EngineUpdate();
     }
 
     public void EngineUpdate()
@@ -95,6 +90,24 @@ public class CameraController : MonoBehaviour, iEntityController
         c_positionData.v_currentTargetTranslation = targetPosition - c_positionData.v_currentTargetPosition;
         c_positionData.v_currentTargetPosition = targetPosition;
         c_positionData.q_currentTargetRotation = targetRotation;
+
+        CheckForGround();
+    }
+
+    public void CheckForGround()
+    {
+        if (Physics.Raycast(c_positionData.v_currentPosition, 
+            c_positionData.q_currentTargetRotation * Vector3.down, 
+            out c_hitOut,
+            c_cameraData.f_followHeight,
+            c_cameraData.GroundCollisionMask))
+        {
+            c_positionData.f_distanceToGround = c_hitOut.distance;
+        }
+        else
+        {
+            c_positionData.f_distanceToGround = c_cameraData.f_followHeight;
+        }
     }
 
     public void UpdateStateMachine()
@@ -154,15 +167,6 @@ public class CameraController : MonoBehaviour, iEntityController
 
         sm_cameraBehavior = new StateMachine(s_preview, StateRef.PREVIEW_TRACKING);
         sm_cameraBehavior.AddState(s_followTarget, StateRef.FOLLOWING);
-    }
-
-    /// <summary>
-    /// Initializes the cartridges.
-    /// </summary>
-    void InitializeCartridges()
-    {
-        cart_follow = new FollowCartridge();
-        cart_angle = new AngleAdjustmentCartridge();
     }
 
     void SetDefaultCameraData()

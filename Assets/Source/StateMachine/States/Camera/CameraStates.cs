@@ -65,11 +65,19 @@ public class CameraFollowTargetState : iState
         Quaternion cameraRotation = c_positionData.q_currentRotation;
 
         CameraMotionCartridge.HorizontalFollow(ref cameraPosition, c_positionData.v_currentTargetTranslation, c_positionData.v_currentTargetPosition,
-                                               ref cameraRotation, c_cameraData.f_followDistance);
+                                               c_positionData.q_currentTargetRotation, cameraRotation, c_cameraData.f_followDistance);
 
         CameraMotionCartridge.VerticalFollow(ref cameraPosition, c_positionData.v_currentTargetTranslation,
                                              ref cameraRotation, c_positionData.v_currentTargetPosition,
                                              c_cameraData.MaxCameraAngle);
+
+        CameraMotionCartridge.KeepAboveGround(ref cameraPosition, c_positionData.q_currentTargetRotation, c_cameraData.f_followHeight, c_positionData.f_distanceToGround);
+
+        CameraMotionCartridge.FocusOnPlayer(ref cameraRotation,
+                                            cameraPosition,
+                                            c_positionData.v_currentTargetPosition,
+                                            c_positionData.v_currentTargetTranslation,
+                                            c_cameraData.f_targetOffset);
 
         c_positionData.v_currentPosition = cameraPosition;
         c_positionData.q_currentRotation = cameraRotation;
@@ -127,11 +135,22 @@ public class CameraFollowTargetState : iState
         // set position to desired position
         c_positionData.v_currentPosition = c_positionData.v_currentTargetPosition + c_positionData.q_currentTargetRotation * Vector3.forward * (c_cameraData.f_followDistance * -1);
 
+        Quaternion cameraRotation = c_positionData.q_currentRotation;
+
+        CameraMotionCartridge.FocusOnPlayer(ref cameraRotation, 
+                                            c_positionData.v_currentPosition, 
+                                            c_positionData.v_currentTargetPosition, 
+                                            c_positionData.v_currentTargetTranslation, 
+                                            c_cameraData.f_targetOffset);
+
+        c_positionData.q_currentRotation = cameraRotation;
+        /*
         // look at player
         Vector3 normal = c_positionData.q_currentTargetRotation * Vector3.up;
         Vector3 dir = c_positionData.v_currentTargetPosition - c_positionData.v_currentPosition;
 
         c_positionData.q_currentRotation = Quaternion.LookRotation(dir.normalized, normal.normalized);
+        */
     }
 
 }

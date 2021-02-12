@@ -1576,11 +1576,15 @@ MonoBehaviour:
   OffsetVector: {x: 0, y: 1.5, z: -3}
   TargetOffsetVector: {x: 0, y: 0.5, z: 0}
   PlayerTarget: {fileID: 734568627}
+  GroundCollisionMask:
+    serializedVersion: 2
+    m_Bits: 1024
   MaxOrbitSpeed: 0
   MaxRotationSpeed: 0
   MinFollowDistance: 0
   MaxFollowDistance: 0
   MaxCameraAngle: 80
+  OffsetDistance: 1
 --- !u!114 &745530434
 MonoBehaviour:
   m_ObjectHideFlags: 0
