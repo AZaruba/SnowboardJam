@@ -30,6 +30,7 @@ public class CameraData : MonoBehaviour {
     [SerializeField] public float MaxFollowDistance;
     [SerializeField] public float MaxCameraAngle;
     [SerializeField] public float OffsetDistance;
+    [SerializeField] public float OffsetHeight;
 
     private float FieldOfView;
     private float CameraAngle;
@@ -82,6 +83,11 @@ public class CameraData : MonoBehaviour {
     {
         get { return OffsetDistance; }
         set { OffsetDistance = value; }
+    }
+    public float f_offsetHeight
+    {
+        get { return OffsetHeight; }
+        set { OffsetHeight = value; }
     }
     #endregion
 

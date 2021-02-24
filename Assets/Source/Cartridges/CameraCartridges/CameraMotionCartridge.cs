@@ -4,14 +4,30 @@ using UnityEngine;
 
 public static class CameraMotionCartridge
 {
+    /* Known issues:
+     * jerky movement is likely caused by the way we change where we look based on a change in velocity/position delta
+     * Adding some kind of acceleration smoothing should help with the problem, double checking how we handle 
+     * change in direction/velocity should finish it.
+     * 
+     */ 
+    public static void HorizontalAccelerate()
+    {
+
+    }
+
     public static void HorizontalFollow(ref Vector3 cameraPosition, Vector3 targetTranslation, Vector3 targetPosition,
                                         Quaternion targetRotation, Quaternion cameraRotation, float desiredDistance)
     {
         Vector3 projectionNormal = cameraRotation * Vector3.up;
         float translationAmount = (Vector3.ProjectOnPlane(targetPosition, projectionNormal) - Vector3.ProjectOnPlane(cameraPosition, projectionNormal)).magnitude;
 
-        // cameraRotation *= Quaternion.AngleAxis(rotationAmount, cameraRotation * Vector3.up);
+        // follow should have weight to it, as just translating causes jerky movement overall
         cameraPosition -= cameraRotation * Vector3.forward * (desiredDistance - translationAmount);
+    }
+
+    public static void VerticalAccelerate()
+    {
+
     }
 
     /// <summary>
@@ -38,14 +54,13 @@ public static class CameraMotionCartridge
                                                                                                      cameraRotation * Vector3.right);
 
         cameraPosition += currentAngle >= angleConstraint ? Vector3.zero : Vector3.up * targetTranslation.y;
-        // cameraRotation *= Quaternion.AngleAxis(targetAngle, Vector3.right); Camera rotation is unncessary as focusing on thep layer handles itS
     }
 
     // Camera needs to keep focus on player, otherwise translation accelerates out of control
-    public static void FocusOnPlayer(ref Quaternion cameraRotation, Vector3 cameraPosition, Vector3 targetPosition,
-                                     Vector3 targetTranslation, float forwardOffset)
+    public static void FocusOnPlayer(ref Quaternion cameraRotation, Quaternion targetDir, Vector3 cameraPosition, Vector3 targetPosition,
+                                     Vector3 targetTranslation, float forwardOffset, float upwardOffset)
     {
-        Vector3 totalOffset = targetTranslation.normalized * forwardOffset;
+        Vector3 totalOffset = targetTranslation.normalized * forwardOffset + targetDir * Vector3.up.normalized * upwardOffset;
         Vector3 pointAt = targetPosition - cameraPosition + totalOffset;
 
         cameraRotation = Quaternion.LookRotation(pointAt);

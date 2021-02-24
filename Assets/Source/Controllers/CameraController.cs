@@ -51,6 +51,7 @@ public class CameraController : MonoBehaviour, iEntityController
         {
             return;
         }
+        EnginePull();
 
         EngineUpdate();
     }
@@ -62,7 +63,6 @@ public class CameraController : MonoBehaviour, iEntityController
             return;
         }
 
-        EnginePull();
 
         c_lastFrameData.v_lastFramePosition = c_positionData.v_currentPosition;
         c_lastFrameData.q_lastFrameRotation = c_positionData.q_currentRotation;
