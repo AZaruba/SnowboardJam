@@ -15,6 +15,16 @@ public class AccelerationCartridge {
         velocity += f_acceleration * surfaceFactor * Time.deltaTime;
     }
 
+    public static void AccelerateAbs(ref float velocity, float f_acceleration, float topSpeed, float surfaceFactor = 1.0f)
+    {
+        if (Mathf.Abs(velocity) > Mathf.Abs(topSpeed))
+        {
+            velocity = topSpeed * (velocity/Mathf.Abs(velocity));
+            return;
+        }
+        velocity += f_acceleration * surfaceFactor * Time.deltaTime;
+    }
+
     public static void Decelerate(ref float velocity, float deceleration, float surfaceFactor = 1.0f)
     {
         if (velocity < 0)

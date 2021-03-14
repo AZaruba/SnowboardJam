@@ -9,7 +9,6 @@ public class CameraController : MonoBehaviour, iEntityController
     [SerializeField] private CameraData c_cameraData;
     [SerializeField] private CameraPreviewData c_previewData;
     [SerializeField] private DebugAccessor debugAccessor;
-    [SerializeField] private Transform playerTransform;
 
     private StateData c_stateData;
     private CameraPreviewActiveData c_previewActiveData;
@@ -35,9 +34,10 @@ public class CameraController : MonoBehaviour, iEntityController
         c_stateData = new StateData();
         c_stateData.b_updateState = true;
 
-        cl_camera = new CameraMessageClient(ref c_stateData);
+        cl_camera = new CameraMessageClient(ref c_stateData, ref c_positionData);
         MessageServer.Subscribe(ref cl_camera, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_camera, MessageID.COUNTDOWN_START);
+        MessageServer.Subscribe(ref cl_camera, MessageID.PLAYER_POSITION_UPDATED);
     }
 
     /// <summary>
@@ -56,19 +56,35 @@ public class CameraController : MonoBehaviour, iEntityController
         EngineUpdate();
     }
 
+    /* GOALS:
+     * 
+     * 1) Message sent every frame that tells the camera what the player's position and rotation is
+     * 2) Camera informs normal by projecting player rotation (direction of travel, not model) onto the plane formed by
+     *    where the camera is pointing to get surface-relative rotation WITHOUT getting tripped up by spinning
+     * 3) The offset should be informed not by rotation but by the frame delta, which prevents the "swinging"
+     * 4) The camera should drag going up and down when in the air
+     * 
+     * 
+     * TODOS:
+     * - Fix currentTargetTranslation (DONE)
+     * - Prevent jerky motion on rotation change - Done by having FocusOnPlayer() not require targetTranslation be nonzero
+     * - Find some way to initialize the camera to the right position every time
+     * - Adjust offets to make the camera angle look nice after behavior is in place
+     * - Find stopping/landing "snap" points and smooth over them (what does it look like if the direction or delta is zero?
+     */ 
     void FixedUpdate()
     {
         if (!c_stateData.b_updateState)
         {
             return;
         }
-
+        FixedEnginePull();
 
         c_lastFrameData.v_lastFramePosition = c_positionData.v_currentPosition;
         c_lastFrameData.q_lastFrameRotation = c_positionData.q_currentRotation;
 
-        c_lastFrameData.v_lastFrameTargetPosition = playerTransform.position;
-        c_lastFrameData.v_lastFrameTargetRotation = playerTransform.rotation;
+        c_lastFrameData.v_lastFrameTargetPosition = c_positionData.v_currentTargetPosition;
+        c_lastFrameData.v_lastFrameTargetRotation = c_positionData.q_currentTargetRotation;
 
         UpdateStateMachine();
 
@@ -84,13 +100,12 @@ public class CameraController : MonoBehaviour, iEntityController
 
     public void EnginePull()
     {
-        Vector3 targetPosition = playerTransform.position;
-        Quaternion targetRotation = playerTransform.rotation;
 
-        c_positionData.v_currentTargetTranslation = targetPosition - c_positionData.v_currentTargetPosition;
-        c_positionData.v_currentTargetPosition = targetPosition;
-        c_positionData.q_currentTargetRotation = targetRotation;
+    }
 
+    public void FixedEnginePull()
+    {
+        c_positionData.v_currentTargetTranslation = c_lastFrameData.v_lastFrameTargetPosition - c_positionData.v_currentTargetPosition;
         CheckForGround();
     }
 
@@ -179,14 +194,15 @@ public class CameraController : MonoBehaviour, iEntityController
         c_cameraData.v_currentDirection = c_cameraData.q_cameraRotation * Vector3.forward;
         c_cameraData.v_currentPosition = c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].StartPosition;
 
+
+        c_positionData = new CameraPositionData(c_cameraData.v_currentPosition, c_cameraData.q_cameraRotation);
+
         c_lastFrameData = new CameraLastFrameData();
         c_lastFrameData.v_lastFramePosition = c_cameraData.v_currentPosition;
         c_lastFrameData.q_lastFrameRotation = c_cameraData.q_cameraRotation;
 
-        c_lastFrameData.v_lastFrameTargetPosition = playerTransform.position;
-        c_lastFrameData.v_lastFrameTargetRotation = playerTransform.rotation;
-
-        c_positionData = new CameraPositionData(c_cameraData.v_currentPosition, playerTransform.position, c_cameraData.q_cameraRotation, playerTransform.rotation);
+        c_lastFrameData.v_lastFrameTargetPosition = c_positionData.v_currentTargetPosition;
+        c_lastFrameData.v_lastFrameTargetRotation = c_positionData.q_currentTargetRotation;
     }
     #endregion
 }

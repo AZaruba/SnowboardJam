@@ -40,7 +40,7 @@ public class CarvingState : iState {
         float turnSpeedCap = c_turnData.f_turnTopSpeed;
 
 
-        AccelerationCartridge.Accelerate(ref currentTurnSpeed, currentTurnAccel, turnSpeedCap);
+        AccelerationCartridge.AccelerateAbs(ref currentTurnSpeed, currentTurnAccel, turnSpeedCap);
         HandlingCartridge.Turn(ref currentDir, Vector3.up, currentTurnSpeed * Time.fixedDeltaTime, ref currentRotation);
 
         c_playerData.v_currentDirection = currentDir.normalized;

@@ -82,6 +82,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeCachedLists();
 
         EnginePull();
+        MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation)); // NOT the model rotation
+
     }
 
     /// <summary>
@@ -128,7 +130,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         LateEnginePull();
 
-        c_playerData.v_currentPosition -= c_playerData.q_currentRotation * Vector3.up * c_collisionData.f_contactOffset;
+        c_playerData.v_currentPosition -= c_playerData.q_currentRotation * Vector3.up * c_collisionData.f_contactOffset; // TODO: put this somewhere logical
+
+        // send normal 
+        MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation)); // NOT the model rotation
     }
 
     /// <summary>

@@ -150,13 +150,13 @@ public class CameraData : MonoBehaviour {
 
 public class CameraPositionData
 {
-    public CameraPositionData(Vector3 posIn, Vector3 targetIn, Quaternion rotIn, Quaternion targetRotIn)
+    public CameraPositionData(Vector3 posIn, Quaternion rotIn)
     {
         this.v_currentPosition = posIn;
-        this.v_currentTargetPosition = targetIn;
+        this.v_currentTargetPosition = Vector3.zero;
 
         this.q_currentRotation = rotIn;
-        this.q_currentTargetRotation = targetRotIn;
+        this.q_currentTargetRotation = Quaternion.identity;
 
         v_currentTargetTranslation = Vector3.zero;
         this.f_distanceToGround = Constants.ZERO_F;
