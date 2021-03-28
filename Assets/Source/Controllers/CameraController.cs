@@ -20,6 +20,11 @@ public class CameraController : MonoBehaviour, iEntityController
     private RaycastHit c_hitOut;
 
     iMessageClient cl_camera;
+
+    // rendering constants
+    private static int renderPixelHeight;
+    private static float renderPixelRatio;
+    private static int renderPixelWidth;
     #endregion
 
     /// <summary>
@@ -186,6 +191,10 @@ public class CameraController : MonoBehaviour, iEntityController
 
     void SetDefaultCameraData()
     {
+        renderPixelHeight = 540;
+        renderPixelRatio = ((float)Camera.main.pixelHeight / (float)Camera.main.pixelWidth);
+        renderPixelWidth = Mathf.RoundToInt(renderPixelRatio * renderPixelHeight);
+
         c_previewActiveData = new CameraPreviewActiveData();
 
         PlayerData playerDataIn = c_cameraData.c_targetController.SharePlayerData();
@@ -205,4 +214,27 @@ public class CameraController : MonoBehaviour, iEntityController
         c_lastFrameData.v_lastFrameTargetRotation = c_positionData.q_currentTargetRotation;
     }
     #endregion
+
+    #region RenderingFuncs
+    void OnRenderImage(RenderTexture source, RenderTexture destination) {
+        Camera.main.orthographicSize = renderPixelHeight / 2f;
+        source.filterMode = FilterMode.Point;
+        RenderTexture buffer = RenderTexture.GetTemporary(renderPixelWidth, renderPixelHeight, -1);
+        buffer.filterMode = FilterMode.Point;
+        Graphics.Blit(source, buffer);
+        Graphics.Blit(buffer, destination);
+        RenderTexture.ReleaseTemporary(buffer);
+    }
+    #endregion
 }
+
+
+/* New Goals
+ * 1) Get rid of jittering on max fall speed
+ * 2) Sort out angle limits
+ * 
+ * Behavior:
+ * 1) Camera moves at a speed of zero at minimum distance, interpolates to character's current speed at max distance.
+ * 2) Rotates alongside travel vector (defined as thisPosition - lastPosition), then do translation after
+ * 3) Vertical do the same thing, interpolate based on minimum and maximum distance
+ */

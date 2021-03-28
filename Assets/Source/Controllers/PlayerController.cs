@@ -640,7 +640,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void InitializeAirMachine()
     {
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
+        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
@@ -876,3 +876,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         t_audioStateTree.AssignChild(ref airborneBranch);
     }
 }
+
+// TODO:
+
+// Get cartridges out of states, into static space
+// Get modelRotation and physicsRotation sorted out (modelRotation only for spinning, flipping, and grip slipping/physicsRotation for motion)
