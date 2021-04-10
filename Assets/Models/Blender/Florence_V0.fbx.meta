@@ -1,26 +1,26 @@
 fileFormatVersion: 2
-guid: 139db251e722e4749b9f870cb08be25a
+guid: f68f688cf241dba4aacc8f1a505d4432
 ModelImporter:
-  serializedVersion: 19300
+  serializedVersion: 19301
   internalIDToNameTable:
   - first:
-      74: 1079665108409675491
-    second: Armature|Jump
+      74: -6668961363510252115
+    second: Ride_Straight
   - first:
-      74: 6768017912671426680
-    second: Armature|Ride
+      74: 7970824323537410330
+    second: Ride_Slow
   - first:
-      74: 7855619899660676045
-    second: Armature|TurnLeft
+      74: -2831327520102356535
+    second: Turn_Left
   - first:
-      74: 8757086869315581435
-    second: Armature|TurnLeftEnd
+      74: -4385324823141643098
+    second: Turn_Right
   - first:
-      74: -1180041773398129697
-    second: Armature|TurnRight
+      74: -4593393663071426598
+    second: Boarder|Ride_Straight
   - first:
-      74: 7886231979397101764
-    second: Armature|TurnRightEnd
+      74: 4220722502397266033
+    second: BoardBindings|Ride_Straight
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -40,8 +40,8 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
-    importConstraints: 0
-    animationCompression: 0
+    importConstraints: 1
+    animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -61,6 +61,7 @@ ModelImporter:
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -99,7 +100,7 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     globalScale: 1
-    rootMotionBoneName: UpperTorso
+    rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
@@ -107,7 +108,7 @@ ModelImporter:
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 0
   additionalBone: 0
   userData: 
   assetBundleName: 

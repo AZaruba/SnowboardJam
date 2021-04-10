@@ -172,7 +172,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     private void UpdateAnimator()
     {
-        PlayerAnimator.SetFloat("TurnAnalogue", c_inputData.f_inputAxisLHoriz);
+        PlayerAnimator.SetFloat("TurnAnalogue", c_turnData.f_currentTurnSpeed / c_turnData.f_turnTopSpeed);
+        PlayerAnimator.SetFloat("SlowAnalogue", c_inputData.f_inputAxisLVert);
         PlayerAnimator.SetBool("JumpPressed", c_airMachine.GetCurrentState() == StateRef.CHARGING);
     }
 

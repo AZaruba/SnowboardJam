@@ -217,7 +217,7 @@ public class CameraController : MonoBehaviour, iEntityController
 
     #region RenderingFuncs
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        Camera.main.orthographicSize = renderPixelHeight / 2f;
+        Camera.main.orthographicSize = renderPixelHeight;
         source.filterMode = FilterMode.Point;
         RenderTexture buffer = RenderTexture.GetTemporary(renderPixelWidth, renderPixelHeight, -1);
         buffer.filterMode = FilterMode.Point;
