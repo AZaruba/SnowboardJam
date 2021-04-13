@@ -6,9 +6,9 @@ public class CameraMessageClient : iMessageClient
 {
     ClientID clientID;
     StateData c_stateData;
-    CameraPositionData c_posData;
+    NewCameraTargetData c_posData;
 
-    public CameraMessageClient(ref StateData dataIn, ref CameraPositionData posDataIn)
+    public CameraMessageClient(ref StateData dataIn, ref NewCameraTargetData posDataIn)
     {
         clientID = ClientID.CAMERA_CLIENT;
         c_stateData = dataIn;

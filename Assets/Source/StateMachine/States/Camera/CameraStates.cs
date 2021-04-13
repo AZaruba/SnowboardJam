@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraPreviewState : iState
+public class CameraPreviewStateO : iState
 {
     CameraPreviewData c_previewData;
     CameraPositionData c_positionData;
     CameraPreviewActiveData c_activeData;
 
-    public CameraPreviewState(ref CameraPositionData dataIn, ref CameraPreviewData pDataIn, ref CameraPreviewActiveData aDataIn)
+    public CameraPreviewStateO(ref CameraPositionData dataIn, ref CameraPreviewData pDataIn, ref CameraPreviewActiveData aDataIn)
     {
         this.c_previewData = pDataIn;
         this.c_positionData = dataIn;

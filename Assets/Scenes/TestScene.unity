@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4366757, g: 0.48427194, b: 0.5645252, a: 1}
+  m_IndirectSpecularColor: {r: 0.4366756, g: 0.48427135, b: 0.56452316, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1380,24 +1380,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 745530428}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd4e9e3d1e6794411a31e23d950ed9f6, type: 3}
+  m_Script: {fileID: 11500000, guid: fd6f496fa701542f991014c304e66144, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FollowHeight: 0.5
-  FollowDistance: 4
-  OffsetVector: {x: 0, y: 1.5, z: -3}
-  TargetOffsetVector: {x: 0, y: 0.5, z: 0}
-  PlayerTarget: {fileID: 734568627}
-  GroundCollisionMask:
-    serializedVersion: 2
-    m_Bits: 1024
-  MaxOrbitSpeed: 0
-  MaxRotationSpeed: 0
-  MinFollowDistance: 0
-  MaxFollowDistance: 0
-  MaxCameraAngle: 70
-  OffsetDistance: 1
-  OffsetHeight: 2
+  FollowDistance: 3
+  FollowHeight: 1
+  MaximumVerticalAngle: 70
+  RotationalAcceleration: 0
+  TranslationAcceleration: 0
 --- !u!114 &745530434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1407,12 +1397,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 745530428}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79b6f947e49b24dc28819263f9a6a383, type: 3}
+  m_Script: {fileID: 11500000, guid: 79ce5724f7b22452ca3647b664264def, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   c_cameraData: {fileID: 745530433}
   c_previewData: {fileID: 11400000, guid: c6e323d19040147fdb7669ba8ed3dc54, type: 2}
-  debugAccessor: {fileID: 734568626}
 --- !u!1001 &799940039
 PrefabInstance:
   m_ObjectHideFlags: 0

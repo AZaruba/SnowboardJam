@@ -39,10 +39,12 @@ public class CameraController : MonoBehaviour, iEntityController
         c_stateData = new StateData();
         c_stateData.b_updateState = true;
 
+        /*
         cl_camera = new CameraMessageClient(ref c_stateData, ref c_positionData);
         MessageServer.Subscribe(ref cl_camera, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_camera, MessageID.COUNTDOWN_START);
         MessageServer.Subscribe(ref cl_camera, MessageID.PLAYER_POSITION_UPDATED);
+        */
     }
 
     /// <summary>
@@ -182,10 +184,10 @@ public class CameraController : MonoBehaviour, iEntityController
     /// </summary>
     void InitializeStateMachine()
     {
-        CameraPreviewState s_preview = new CameraPreviewState(ref c_positionData, ref c_previewData, ref c_previewActiveData);
+        // CameraPreviewState s_preview = new CameraPreviewState(ref c_positionData, ref c_previewData, ref c_previewActiveData);
         CameraFollowTargetState s_followTarget = new CameraFollowTargetState(ref c_cameraData, ref c_positionData);
 
-        sm_cameraBehavior = new StateMachine(s_preview, StateRef.PREVIEW_TRACKING);
+        // sm_cameraBehavior = new StateMachine(s_preview, StateRef.PREVIEW_TRACKING);
         sm_cameraBehavior.AddState(s_followTarget, StateRef.FOLLOWING);
     }
 
