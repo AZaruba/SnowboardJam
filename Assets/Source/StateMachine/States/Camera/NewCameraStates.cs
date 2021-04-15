@@ -63,19 +63,64 @@ public class CameraFollowState : iState
      * The camera should accelerate and decelerate to the player's current movement
      *    - this can be achieved by checking the difference in position from last to current frame
      *    - this also enables us to not really track maximum speed
-     */ 
+     */
+    private NewCameraData c_cameraData;
+    private NewCameraPositionData c_positionData;
+    private NewCameraTargetData c_targetData;
+    private NewCameraLastFrameData c_lastFrameData;
+
+    public CameraFollowState(ref NewCameraData dataIn, 
+                             ref NewCameraPositionData posDataIn, 
+                             ref NewCameraTargetData targetDataIn,
+                             ref NewCameraLastFrameData lastFrameDataIn)
+    {
+        this.c_cameraData = dataIn;
+        this.c_positionData = posDataIn;
+        this.c_targetData = targetDataIn;
+        this.c_lastFrameData = lastFrameDataIn;
+    }
     public void Act()
     {
-        throw new System.NotImplementedException();
+        Vector3 currentPosition = c_positionData.v_currentPosition;
+        Quaternion currentRotation = c_positionData.q_currentRotation;
+        float currentTransVelocity = c_positionData.f_currentTranslationVelocity;
+        float distanceToTarget;
+        Quaternion outRotation;
+
+        CameraOrientationCartridge.CalculateHorizontalDistance(out distanceToTarget,
+                                                               currentPosition,
+                                                               c_targetData.v_currentTargetPosition,
+                                                               c_targetData.q_currentTargetRotation);
+
+        CameraOrientationCartridge.CalculateHorizontalRotation(out outRotation, 
+                                                               currentRotation, 
+                                                               c_targetData.q_currentTargetRotation,
+                                                               c_targetData.v_currentTargetPosition - c_positionData.v_currentPosition);
+
+        CameraOrientationCartridge.AccelerateTranslationalVelocity(ref currentTransVelocity, 
+                                                                   distanceToTarget,
+                                                                   c_cameraData.MaxFollowDistance, 
+                                                                   c_cameraData.MinFollowDistance, 
+                                                                   c_targetData.f_currentTargetVelocity);
+
+        CameraOrientationCartridge.TranslateHorizontalPosition(ref currentPosition, 
+                                                     c_targetData.q_currentTargetRotation, 
+                                                     currentTransVelocity);
+
+        CameraOrientationCartridge.ApplyRotation(ref currentRotation, outRotation);
+
+        c_positionData.f_currentTranslationVelocity = currentTransVelocity;
+        c_positionData.v_currentPosition = currentPosition;
+        c_positionData.q_currentRotation = currentRotation;
     }
 
     public StateRef GetNextState(Command cmd)
     {
-        throw new System.NotImplementedException();
+        return StateRef.TRACKING;
     }
 
     public void TransitionAct()
     {
-        throw new System.NotImplementedException();
+        
     }
 }

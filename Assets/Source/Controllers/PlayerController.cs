@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// Start this instance. Initializes all valid states for this object
     /// then adds them to the state machine
     /// </summary>
-    void Start()
+    void Awake()
     {
         SetDefaultPlayerData();
         cart_gravity = new GravityCartridge();
@@ -104,7 +104,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
         debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
-        debugAccessor.DisplayFloat("TurnSpeed", c_turnData.f_currentTurnSpeed);
 
     }
 
@@ -133,7 +132,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.v_currentPosition -= c_playerData.q_currentRotation * Vector3.up * c_collisionData.f_contactOffset; // TODO: put this somewhere logical
 
         // send normal 
-        MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation)); // NOT the model rotation
+        MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation, c_playerData.f_currentSpeed)); // NOT the model rotation
     }
 
     /// <summary>

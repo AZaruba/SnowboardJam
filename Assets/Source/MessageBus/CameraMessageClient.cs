@@ -31,6 +31,7 @@ public class CameraMessageClient : iMessageClient
         {
             c_posData.v_currentTargetPosition = message.getVector();
             c_posData.q_currentTargetRotation = message.getQuaternion();
+            c_posData.f_currentTargetVelocity = message.getFloat();
         }
 
         return true;

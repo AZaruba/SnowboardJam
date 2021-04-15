@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class NewCameraData : MonoBehaviour
 {
-    public float FollowDistance;
+    public float MaxFollowDistance;
+    public float MinFollowDistance;
     public float FollowHeight;
     public float MaximumVerticalAngle;
     public float RotationalAcceleration;
@@ -15,11 +16,13 @@ public class NewCameraTargetData
 {
     public Vector3 v_currentTargetPosition;
     public Quaternion q_currentTargetRotation;
+    public float f_currentTargetVelocity;
 
     public NewCameraTargetData(Vector3 posIn, Quaternion rotIn)
     {
         this.v_currentTargetPosition = posIn;
         this.q_currentTargetRotation = rotIn;
+        f_currentTargetVelocity = Constants.ZERO_F;
     }
 }
 

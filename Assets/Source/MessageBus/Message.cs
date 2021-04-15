@@ -123,10 +123,11 @@ public class Message
         a_data = dataIn;
     }
 
-    public Message (Vector3 vDataIn, Quaternion qDataIn)
+    public Message (Vector3 vDataIn, Quaternion qDataIn, float fDataIn = 0)
     {
         v_data = vDataIn;
         q_data = qDataIn;
+        f_data = fDataIn;
     }
 
     public uint getUint()

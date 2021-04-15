@@ -6,6 +6,7 @@ public class NewCameraController : MonoBehaviour, iEntityController
 {
     [SerializeField] private NewCameraData c_cameraData;
     [SerializeField] private CameraPreviewData c_previewData;
+    [SerializeField] private DebugAccessor debugAccessor;
 
     private StateData c_stateData;
     private NewCameraLastFrameData c_lastFrameData;
@@ -14,6 +15,7 @@ public class NewCameraController : MonoBehaviour, iEntityController
     private CameraPreviewActiveData c_previewActiveData;
 
     iMessageClient cl_camera;
+    StateMachine sm_cameraBehavior;
 
     // rendering constants
     private static int renderPixelHeight;
@@ -55,6 +57,10 @@ public class NewCameraController : MonoBehaviour, iEntityController
             return;
         }
         FixedEnginePull();
+
+        sm_cameraBehavior.Act();
+
+        debugAccessor.DisplayFloat("Velo", c_positionData.f_currentTranslationVelocity);
     }
 
     public void EnginePull()
@@ -64,7 +70,11 @@ public class NewCameraController : MonoBehaviour, iEntityController
 
     public void FixedEnginePull()
     {
+        c_lastFrameData.v_lastPosition = c_positionData.v_currentPosition;
+        c_lastFrameData.q_lastRotation = c_positionData.q_currentRotation;
 
+        c_lastFrameData.v_lastTargetPosition = c_targetData.v_currentTargetPosition;
+        c_lastFrameData.q_lastTargetRotation = c_targetData.q_currentTargetRotation;
     }
 
     public void EngineUpdate()
@@ -73,19 +83,21 @@ public class NewCameraController : MonoBehaviour, iEntityController
         transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastRotation, c_positionData.q_currentRotation);
     }
 
-    void iEntityController.UpdateStateMachine()
+    public void UpdateStateMachine()
     {
 
     }
 
     void InitializeStateMachine()
     {
+        CameraFollowState s_followTarget = new CameraFollowState(ref c_cameraData, ref c_positionData, ref c_targetData, ref c_lastFrameData);
 
+        sm_cameraBehavior = new StateMachine(s_followTarget, StateRef.TRACKING);
     }
 
     void SetDefaultData()
     {
-        renderPixelHeight = 540;
+        renderPixelHeight = 1080;
         renderPixelRatio = ((float)Camera.main.pixelHeight / (float)Camera.main.pixelWidth);
         renderPixelWidth = Mathf.RoundToInt(renderPixelRatio * renderPixelHeight);
 
