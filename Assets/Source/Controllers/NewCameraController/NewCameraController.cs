@@ -60,7 +60,7 @@ public class NewCameraController : MonoBehaviour, iEntityController
 
         sm_cameraBehavior.Act();
 
-        debugAccessor.DisplayFloat("Velo", c_positionData.f_currentRotationalVelocity);
+        debugAccessor.DisplayFloat("Velo", c_positionData.f_currentTranslationVelocity);
     }
 
     public void EnginePull()

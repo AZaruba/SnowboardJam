@@ -4,15 +4,18 @@ using UnityEngine;
 
 public static class CameraOrientationCartridge
 {
-    public static void AccelerateRotationalVelocity()
+    public static void AccelerateVerticalVelocity()
     {
 
     }
 
-    public static void CalculateVerticalRotation(out float angleBetween, Quaternion rotationIn)
+    public static void CalculateVerticalRotation(out float angleBetween, Quaternion rotationIn, Vector3 playerOffset)
     {
-        Vector3 projectedDir = Vector3.ProjectOnPlane(rotationIn * Vector3.forward, Vector3.up).normalized;
-        angleBetween = Vector3.SignedAngle(rotationIn * Vector3.forward, projectedDir, rotationIn * Vector3.right);
+        Vector3 planeDir = rotationIn * Vector3.right;
+        Vector3 playerDir = Vector3.ProjectOnPlane(playerOffset, planeDir).normalized;
+        Vector3 flatCameraDir = Vector3.ProjectOnPlane(rotationIn * Vector3.forward, planeDir).normalized;
+
+        angleBetween = Vector3.SignedAngle(flatCameraDir, playerDir, planeDir);
     }
 
     /* The vertical motion of the camera might be bidirectional?
@@ -56,7 +59,8 @@ public static class CameraOrientationCartridge
 
     public static void AccelerateTranslationalVelocity(ref float velocityIn, float currentDist, float maxDist, float minDist, float targetVelocity, float capRatio = 1.1f)
     {
-        velocityIn = Mathf.Min((currentDist - minDist) / (maxDist - minDist) * targetVelocity, targetVelocity * capRatio);
+        float absVelocity = (currentDist - minDist) / (maxDist - minDist) * targetVelocity;
+        velocityIn = Mathf.Abs(absVelocity) > Mathf.Abs(targetVelocity * capRatio) ? targetVelocity * capRatio : absVelocity;
     }
 
     /* NOTE:

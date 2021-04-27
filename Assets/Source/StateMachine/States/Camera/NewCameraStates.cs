@@ -93,7 +93,7 @@ public class CameraFollowState : iState
         Quaternion outRotation;
 
         Vector3 targetTranslationVec = c_targetData.q_currentTargetRotation * Vector3.forward * c_targetData.f_currentTargetVelocity;
-        float targetHorizontalVelocity = targetTranslationVec.x + targetTranslationVec.z;
+        float targetHorizontalVelocity = Mathf.Abs(targetTranslationVec.x + targetTranslationVec.z);
         float targetVerticalVelocity = targetTranslationVec.y;
 
         CameraOrientationCartridge.CalculateHorizontalDistance(out distanceToTarget,
@@ -111,7 +111,8 @@ public class CameraFollowState : iState
                                                                c_targetData.v_currentTargetPosition - c_positionData.v_currentPosition);
 
         CameraOrientationCartridge.CalculateVerticalRotation(out verticalAngleToTarget,
-                                                             currentRotation);
+                                                             currentRotation,
+                                                             c_targetData.v_currentTargetPosition - c_positionData.v_currentPosition);
 
         CameraOrientationCartridge.AccelerateTranslationalVelocity(ref currentTransVelocity, 
                                                                    distanceToTarget,
@@ -129,14 +130,16 @@ public class CameraFollowState : iState
                                                  outRotation);
 
         CameraOrientationCartridge.ApplyRotation(ref currentRotation,
-                                                 Quaternion.AngleAxis(verticalAngleToTarget, Vector3.right));
+                                                 Quaternion.AngleAxis(verticalAngleToTarget, currentRotation * Vector3.right).normalized);
 
         CameraOrientationCartridge.TranslateHorizontalPosition(ref currentPosition,
                                                      currentRotation * Vector3.forward,
                                                      currentTransVelocity);
 
+        /*
         CameraOrientationCartridge.TranslateVerticalPosition(ref currentPosition,
                                                              currentVertVelocity);
+        */
 
         c_positionData.f_currentTranslationVelocity = currentTransVelocity;
         c_positionData.f_currentRotationalVelocity = currentVertVelocity;
