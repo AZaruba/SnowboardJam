@@ -8,6 +8,7 @@ public class NewCameraData : MonoBehaviour
     public float MinFollowDistance;
     public float FollowHeight;
     public float MaximumVerticalAngle;
+    public float DesiredVerticalAngle;
     public float RotationalAcceleration;
     public float TranslationAcceleration;
 }

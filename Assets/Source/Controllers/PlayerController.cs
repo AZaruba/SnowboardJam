@@ -132,7 +132,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.v_currentPosition -= c_playerData.q_currentRotation * Vector3.up * c_collisionData.f_contactOffset; // TODO: put this somewhere logical
 
         // send normal 
-        MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation, c_playerData.f_currentSpeed)); // NOT the model rotation
+        MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation, c_playerData.f_currentSpeed)); // NOT the model rotation INCLUDE AIR STATE
     }
 
     /// <summary>

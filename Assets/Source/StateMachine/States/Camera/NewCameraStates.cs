@@ -84,32 +84,62 @@ public class CameraFollowState : iState
         Vector3 currentPosition = c_positionData.v_currentPosition;
         Quaternion currentRotation = c_positionData.q_currentRotation;
         float currentTransVelocity = c_positionData.f_currentTranslationVelocity;
+        float currentVertVelocity = c_positionData.f_currentRotationalVelocity;
+
         float distanceToTarget;
+        float verticalDistanceToTarget;
+        float verticalAngleToTarget;
+
         Quaternion outRotation;
+
+        Vector3 targetTranslationVec = c_targetData.q_currentTargetRotation * Vector3.forward * c_targetData.f_currentTargetVelocity;
+        float targetHorizontalVelocity = targetTranslationVec.x + targetTranslationVec.z;
+        float targetVerticalVelocity = targetTranslationVec.y;
 
         CameraOrientationCartridge.CalculateHorizontalDistance(out distanceToTarget,
                                                                currentPosition,
                                                                c_targetData.v_currentTargetPosition,
                                                                c_targetData.q_currentTargetRotation);
 
+        CameraOrientationCartridge.CalculateVerticalDistance(out verticalDistanceToTarget,
+                                                             currentPosition.y,
+                                                             c_targetData.v_currentTargetPosition.y);
+
         CameraOrientationCartridge.CalculateHorizontalRotation(out outRotation, 
                                                                currentRotation, 
                                                                c_targetData.q_currentTargetRotation,
                                                                c_targetData.v_currentTargetPosition - c_positionData.v_currentPosition);
 
+        CameraOrientationCartridge.CalculateVerticalRotation(out verticalAngleToTarget,
+                                                             currentRotation);
+
         CameraOrientationCartridge.AccelerateTranslationalVelocity(ref currentTransVelocity, 
                                                                    distanceToTarget,
                                                                    c_cameraData.MaxFollowDistance, 
                                                                    c_cameraData.MinFollowDistance, 
-                                                                   c_targetData.f_currentTargetVelocity);
+                                                                   targetHorizontalVelocity);
 
-        CameraOrientationCartridge.TranslateHorizontalPosition(ref currentPosition, 
-                                                     c_targetData.q_currentTargetRotation, 
+        CameraOrientationCartridge.CalculateVerticalVelocity(ref currentVertVelocity,
+                                                             verticalAngleToTarget,
+                                                             c_cameraData.MaximumVerticalAngle,
+                                                             c_cameraData.DesiredVerticalAngle,
+                                                             targetVerticalVelocity);
+
+        CameraOrientationCartridge.ApplyRotation(ref currentRotation,
+                                                 outRotation);
+
+        CameraOrientationCartridge.ApplyRotation(ref currentRotation,
+                                                 Quaternion.AngleAxis(verticalAngleToTarget, Vector3.right));
+
+        CameraOrientationCartridge.TranslateHorizontalPosition(ref currentPosition,
+                                                     currentRotation * Vector3.forward,
                                                      currentTransVelocity);
 
-        CameraOrientationCartridge.ApplyRotation(ref currentRotation, outRotation);
+        CameraOrientationCartridge.TranslateVerticalPosition(ref currentPosition,
+                                                             currentVertVelocity);
 
         c_positionData.f_currentTranslationVelocity = currentTransVelocity;
+        c_positionData.f_currentRotationalVelocity = currentVertVelocity;
         c_positionData.v_currentPosition = currentPosition;
         c_positionData.q_currentRotation = currentRotation;
     }
