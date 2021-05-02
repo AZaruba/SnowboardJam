@@ -11,6 +11,7 @@ public class NewCameraData : MonoBehaviour
     public float DesiredVerticalAngle;
     public float RotationalAcceleration;
     public float TranslationAcceleration;
+    public float MaxVerticalVelocity;
 }
 
 public class NewCameraTargetData
@@ -42,6 +43,7 @@ public class NewCameraPositionData
     public float f_currentCameraAngle;
     public float f_currentTranslationVelocity;
     public float f_currentRotationalVelocity;
+    public float f_currentVerticalVelocity;
 }
 
 public class NewCameraLastFrameData

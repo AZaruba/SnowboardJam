@@ -84,26 +84,17 @@ public class CameraFollowState : iState
         Vector3 currentPosition = c_positionData.v_currentPosition;
         Quaternion currentRotation = c_positionData.q_currentRotation;
         float currentTransVelocity = c_positionData.f_currentTranslationVelocity;
-        float currentVertVelocity = c_positionData.f_currentRotationalVelocity;
+        float currentVertVelocity = c_positionData.f_currentVerticalVelocity;
 
         float distanceToTarget;
-        float verticalDistanceToTarget;
+        float verticalAngleDiscrepancy;
         float verticalAngleToTarget;
 
         Quaternion outRotation;
 
         Vector3 targetTranslationVec = c_targetData.q_currentTargetRotation * Vector3.forward * c_targetData.f_currentTargetVelocity;
         float targetHorizontalVelocity = Mathf.Abs(targetTranslationVec.x + targetTranslationVec.z);
-        float targetVerticalVelocity = targetTranslationVec.y;
 
-        CameraOrientationCartridge.CalculateHorizontalDistance(out distanceToTarget,
-                                                               currentPosition,
-                                                               c_targetData.v_currentTargetPosition,
-                                                               c_targetData.q_currentTargetRotation);
-
-        CameraOrientationCartridge.CalculateVerticalDistance(out verticalDistanceToTarget,
-                                                             currentPosition.y,
-                                                             c_targetData.v_currentTargetPosition.y);
 
         CameraOrientationCartridge.CalculateHorizontalRotation(out outRotation, 
                                                                currentRotation, 
@@ -113,18 +104,7 @@ public class CameraFollowState : iState
         CameraOrientationCartridge.CalculateVerticalRotation(out verticalAngleToTarget,
                                                              currentRotation,
                                                              c_targetData.v_currentTargetPosition - c_positionData.v_currentPosition);
-
-        CameraOrientationCartridge.AccelerateTranslationalVelocity(ref currentTransVelocity, 
-                                                                   distanceToTarget,
-                                                                   c_cameraData.MaxFollowDistance, 
-                                                                   c_cameraData.MinFollowDistance, 
-                                                                   targetHorizontalVelocity);
-
-        CameraOrientationCartridge.CalculateVerticalVelocity(ref currentVertVelocity,
-                                                             verticalAngleToTarget,
-                                                             c_cameraData.MaximumVerticalAngle,
-                                                             c_cameraData.DesiredVerticalAngle,
-                                                             targetVerticalVelocity);
+;
 
         CameraOrientationCartridge.ApplyRotation(ref currentRotation,
                                                  outRotation);
@@ -132,17 +112,36 @@ public class CameraFollowState : iState
         CameraOrientationCartridge.ApplyRotation(ref currentRotation,
                                                  Quaternion.AngleAxis(verticalAngleToTarget, currentRotation * Vector3.right).normalized);
 
+        CameraOrientationCartridge.CalculateHorizontalDistance(out distanceToTarget,
+                                                               currentPosition,
+                                                               c_targetData.v_currentTargetPosition,
+                                                               c_targetData.q_currentTargetRotation);
+
+        CameraOrientationCartridge.AccelerateTranslationalVelocity(ref currentTransVelocity,
+                                                                   distanceToTarget,
+                                                                   c_cameraData.MaxFollowDistance,
+                                                                   c_cameraData.MinFollowDistance,
+                                                                   targetHorizontalVelocity);
+
+        CameraOrientationCartridge.CalculateVerticalDifference(out verticalAngleDiscrepancy, 
+                                                               c_targetData.v_currentTargetPosition - c_positionData.v_currentPosition,
+                                                               currentRotation);
+
+        CameraOrientationCartridge.AccelerateVerticalVelocity(ref currentVertVelocity,
+                                                             c_cameraData.MaxVerticalVelocity,
+                                                             c_cameraData.DesiredVerticalAngle,
+                                                             c_cameraData.MaximumVerticalAngle,
+                                                             verticalAngleDiscrepancy);
+
         CameraOrientationCartridge.TranslateHorizontalPosition(ref currentPosition,
                                                      currentRotation * Vector3.forward,
                                                      currentTransVelocity);
 
-        /*
         CameraOrientationCartridge.TranslateVerticalPosition(ref currentPosition,
                                                              currentVertVelocity);
-        */
 
         c_positionData.f_currentTranslationVelocity = currentTransVelocity;
-        c_positionData.f_currentRotationalVelocity = currentVertVelocity;
+        c_positionData.f_currentVerticalVelocity = currentVertVelocity;
         c_positionData.v_currentPosition = currentPosition;
         c_positionData.q_currentRotation = currentRotation;
     }

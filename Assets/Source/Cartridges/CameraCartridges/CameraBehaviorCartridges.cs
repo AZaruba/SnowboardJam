@@ -4,9 +4,26 @@ using UnityEngine;
 
 public static class CameraOrientationCartridge
 {
-    public static void AccelerateVerticalVelocity()
+    public static void AccelerateVerticalVelocity(ref float velocity, float velocityCap, float targetAngle, float maxAngle, float currentAngle)
     {
+        float absVelocity = ((currentAngle - targetAngle) / (maxAngle - targetAngle)) * velocityCap;
+        float capDir = absVelocity > Constants.ZERO_F ? 1 : -1;
+        velocity = Mathf.Abs(absVelocity) > velocityCap ? velocityCap * capDir : absVelocity;
+    }
 
+    public static void CalculateVerticalDifference(out float currentAngle, Vector3 playerOffset, Quaternion targetRotationIn)
+    {
+        /* GOALS:
+         * Player has a direction, our return value is:
+         *     - an angle value
+         *     - The angle formed by the camera's angle above the player
+         *     - Relative to the player's current orientation (project onto that plane?)
+         * 
+         */
+
+        Vector3 flatOffset = (Quaternion.Inverse(targetRotationIn) * playerOffset).normalized;
+
+        currentAngle = Vector3.SignedAngle(Vector3.ProjectOnPlane(flatOffset, Vector3.up).normalized, flatOffset, targetRotationIn * Vector3.right);
     }
 
     public static void CalculateVerticalRotation(out float angleBetween, Quaternion rotationIn, Vector3 playerOffset)

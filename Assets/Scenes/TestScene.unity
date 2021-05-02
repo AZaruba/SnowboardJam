@@ -1390,6 +1390,7 @@ MonoBehaviour:
   DesiredVerticalAngle: 10
   RotationalAcceleration: 0
   TranslationAcceleration: 0
+  MaxVerticalVelocity: 20
 --- !u!114 &745530434
 MonoBehaviour:
   m_ObjectHideFlags: 0
