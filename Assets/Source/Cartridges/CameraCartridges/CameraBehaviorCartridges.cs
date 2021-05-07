@@ -13,17 +13,14 @@ public static class CameraOrientationCartridge
 
     public static void CalculateVerticalDifference(out float currentAngle, Vector3 playerOffset, Quaternion targetRotationIn)
     {
-        /* GOALS:
-         * Player has a direction, our return value is:
-         *     - an angle value
-         *     - The angle formed by the camera's angle above the player
-         *     - Relative to the player's current orientation (project onto that plane?)
-         * 
+        /* The target has a rotation, multiply that rotation by Vector3.forward to get where the player is going.
+         * That, rotated along the right axis ten degrees, is what our desired angle should be
          */
+        Vector3 planeDir = targetRotationIn * Vector3.right;
+        Vector3 playerDir = Vector3.ProjectOnPlane(playerOffset, planeDir).normalized;
+        Vector3 flatPlayerDir = Vector3.ProjectOnPlane(playerDir, Vector3.up).normalized;
 
-        Vector3 flatOffset = (Quaternion.Inverse(targetRotationIn) * playerOffset).normalized;
-
-        currentAngle = Vector3.SignedAngle(Vector3.ProjectOnPlane(flatOffset, Vector3.up).normalized, flatOffset, targetRotationIn * Vector3.right);
+        currentAngle = Vector3.SignedAngle(flatPlayerDir, playerDir, planeDir);
     }
 
     public static void CalculateVerticalRotation(out float angleBetween, Quaternion rotationIn, Vector3 playerOffset)

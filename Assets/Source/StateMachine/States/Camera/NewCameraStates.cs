@@ -103,7 +103,7 @@ public class CameraFollowState : iState
 
         CameraOrientationCartridge.CalculateVerticalRotation(out verticalAngleToTarget,
                                                              currentRotation,
-                                                             c_targetData.v_currentTargetPosition - c_positionData.v_currentPosition);
+                                                              (c_targetData.v_currentTargetPosition + c_targetData.q_currentTargetRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition);
 ;
 
         CameraOrientationCartridge.ApplyRotation(ref currentRotation,
@@ -124,7 +124,7 @@ public class CameraFollowState : iState
                                                                    targetHorizontalVelocity);
 
         CameraOrientationCartridge.CalculateVerticalDifference(out verticalAngleDiscrepancy, 
-                                                               c_targetData.v_currentTargetPosition - c_positionData.v_currentPosition,
+                                                               (c_targetData.v_currentTargetPosition + c_targetData.q_currentTargetRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition,
                                                                currentRotation);
 
         CameraOrientationCartridge.AccelerateVerticalVelocity(ref currentVertVelocity,

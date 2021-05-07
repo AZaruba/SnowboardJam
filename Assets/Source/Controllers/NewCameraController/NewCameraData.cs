@@ -12,6 +12,8 @@ public class NewCameraData : MonoBehaviour
     public float RotationalAcceleration;
     public float TranslationAcceleration;
     public float MaxVerticalVelocity;
+
+    public Vector3 TargetLookOffset;
 }
 
 public class NewCameraTargetData

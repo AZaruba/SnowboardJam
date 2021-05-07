@@ -1387,10 +1387,11 @@ MonoBehaviour:
   MinFollowDistance: 1
   FollowHeight: 1
   MaximumVerticalAngle: 70
-  DesiredVerticalAngle: 10
+  DesiredVerticalAngle: 30
   RotationalAcceleration: 0
   TranslationAcceleration: 0
-  MaxVerticalVelocity: 20
+  MaxVerticalVelocity: 40
+  TargetLookOffset: {x: 0, y: 1, z: 0}
 --- !u!114 &745530434
 MonoBehaviour:
   m_ObjectHideFlags: 0
