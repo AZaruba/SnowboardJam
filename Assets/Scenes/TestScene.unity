@@ -1383,14 +1383,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd6f496fa701542f991014c304e66144, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxFollowDistance: 4
-  MinFollowDistance: 1
-  FollowHeight: 1
+  MaxFollowDistance: 6
+  MinFollowDistance: 4
+  FollowHeight: 0
   MaximumVerticalAngle: 70
-  DesiredVerticalAngle: 30
+  DesiredVerticalAngle: 15
   RotationalAcceleration: 0
   TranslationAcceleration: 0
   MaxVerticalVelocity: 40
+  MaxHorizontalVelocity: 40
   TargetLookOffset: {x: 0, y: 1, z: 0}
 --- !u!114 &745530434
 MonoBehaviour:

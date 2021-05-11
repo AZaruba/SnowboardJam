@@ -60,7 +60,9 @@ public class NewCameraController : MonoBehaviour, iEntityController
 
         sm_cameraBehavior.Act();
 
-        debugAccessor.DisplayFloat("Velo", c_positionData.f_currentVerticalVelocity);
+        debugAccessor.DisplayFloat("Vert Velocity", c_positionData.f_currentTranslationVelocity);
+        c_lastFrameData.v_lastTargetPosition = c_targetData.v_currentTargetPosition;
+        c_lastFrameData.q_lastTargetRotation = c_targetData.q_currentTargetRotation;
     }
 
     public void EnginePull()
@@ -73,8 +75,7 @@ public class NewCameraController : MonoBehaviour, iEntityController
         c_lastFrameData.v_lastPosition = c_positionData.v_currentPosition;
         c_lastFrameData.q_lastRotation = c_positionData.q_currentRotation;
 
-        c_lastFrameData.v_lastTargetPosition = c_targetData.v_currentTargetPosition;
-        c_lastFrameData.q_lastTargetRotation = c_targetData.q_currentTargetRotation;
+        DoCollisionChecks();
     }
 
     public void EngineUpdate()
@@ -84,6 +85,11 @@ public class NewCameraController : MonoBehaviour, iEntityController
     }
 
     public void UpdateStateMachine()
+    {
+
+    }
+
+    public void DoCollisionChecks()
     {
 
     }

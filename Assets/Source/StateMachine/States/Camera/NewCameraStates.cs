@@ -92,10 +92,6 @@ public class CameraFollowState : iState
 
         Quaternion outRotation;
 
-        Vector3 targetTranslationVec = c_targetData.q_currentTargetRotation * Vector3.forward * c_targetData.f_currentTargetVelocity;
-        float targetHorizontalVelocity = Mathf.Abs(targetTranslationVec.x + targetTranslationVec.z);
-
-
         CameraOrientationCartridge.CalculateHorizontalRotation(out outRotation, 
                                                                currentRotation, 
                                                                c_targetData.q_currentTargetRotation,
@@ -113,15 +109,14 @@ public class CameraFollowState : iState
                                                  Quaternion.AngleAxis(verticalAngleToTarget, currentRotation * Vector3.right).normalized);
 
         CameraOrientationCartridge.CalculateHorizontalDistance(out distanceToTarget,
-                                                               currentPosition,
-                                                               c_targetData.v_currentTargetPosition,
-                                                               c_targetData.q_currentTargetRotation);
+                                                               (c_targetData.v_currentTargetPosition + c_targetData.q_currentTargetRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition,
+                                                               currentRotation);
 
         CameraOrientationCartridge.AccelerateTranslationalVelocity(ref currentTransVelocity,
                                                                    distanceToTarget,
                                                                    c_cameraData.MaxFollowDistance,
                                                                    c_cameraData.MinFollowDistance,
-                                                                   targetHorizontalVelocity);
+                                                                   c_cameraData.MaxHorizontalVelocity);
 
         CameraOrientationCartridge.CalculateVerticalDifference(out verticalAngleDiscrepancy, 
                                                                (c_targetData.v_currentTargetPosition + c_targetData.q_currentTargetRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition,

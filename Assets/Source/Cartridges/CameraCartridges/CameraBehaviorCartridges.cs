@@ -6,9 +6,7 @@ public static class CameraOrientationCartridge
 {
     public static void AccelerateVerticalVelocity(ref float velocity, float velocityCap, float targetAngle, float maxAngle, float currentAngle)
     {
-        float absVelocity = ((currentAngle - targetAngle) / (maxAngle - targetAngle)) * velocityCap;
-        float capDir = absVelocity > Constants.ZERO_F ? 1 : -1;
-        velocity = Mathf.Abs(absVelocity) > velocityCap ? velocityCap * capDir : absVelocity;
+        velocity = (currentAngle - targetAngle) / (maxAngle - targetAngle) * velocityCap;
     }
 
     public static void CalculateVerticalDifference(out float currentAngle, Vector3 playerOffset, Quaternion targetRotationIn)
@@ -64,26 +62,25 @@ public static class CameraOrientationCartridge
         rotationOut = Quaternion.LookRotation(playerDir, planeDir) * Quaternion.Inverse(Quaternion.LookRotation(flatCameraDir, planeDir)).normalized;
     }
 
-    public static void CalculateHorizontalDistance(out float distance, Vector3 camPosition, Vector3 targetPosition, Quaternion rotation)
+    public static void CalculateHorizontalDistance(out float distance, Vector3 playerOffset, Quaternion targetRotationIn)
     {
-        camPosition.y = 0;
-        targetPosition.y = 0;
-        distance = Vector3.Distance(camPosition, targetPosition);
+        Vector3 planeDir = targetRotationIn * Vector3.up;
+        Vector3 playerDir = Vector3.ProjectOnPlane(playerOffset, planeDir);
+
+        distance = playerDir.magnitude;
     }
 
-    public static void AccelerateTranslationalVelocity(ref float velocityIn, float currentDist, float maxDist, float minDist, float targetVelocity, float capRatio = 1.1f)
+    // slowing down in the air?
+    public static void AccelerateTranslationalVelocity(ref float velocityIn, float currentDist, float maxDist, float minDist, float velocityCap)
     {
-        float absVelocity = (currentDist - minDist) / (maxDist - minDist) * targetVelocity;
-        velocityIn = Mathf.Abs(absVelocity) > Mathf.Abs(targetVelocity * capRatio) ? targetVelocity * capRatio : absVelocity;
+        float absVelocity = (currentDist - minDist) / (maxDist - minDist) * velocityCap;
+        float capDir = absVelocity > Constants.ZERO_F ? 1 : -1;
+        velocityIn = Mathf.Abs(absVelocity) > velocityCap ? velocityCap * capDir : absVelocity;
     }
 
-    /* NOTE:
-     * This causes out-of-control acceleration if the camera is not reorienting correctly, could this pose issues later?
-     * This needs to be flattened like the rotation calculation
-     */ 
     public static void TranslateHorizontalPosition(ref Vector3 position, Vector3 direction, float velocity)
     {
-        direction.y = 0;
+        direction = Vector3.ProjectOnPlane(direction, Vector3.up);
         Quaternion flatRotation = Quaternion.LookRotation(direction, Vector3.up);
         position += flatRotation * Vector3.forward * velocity * Time.deltaTime;
     }
