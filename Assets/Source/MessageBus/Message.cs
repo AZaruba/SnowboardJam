@@ -35,6 +35,9 @@ public enum MessageID
     // Countdown ID
     COUNTDOWN_START,
     COUNTDOWN_OVER,
+
+    // Physics and positioning
+    PLAYER_POSITION_UPDATED
 }
 
 public enum ClientID
@@ -68,6 +71,8 @@ public class Message
     private string s_data;
     private TrickMessageData t_data;
     private AudioRef a_data;
+    private Vector3 v_data;
+    private Quaternion q_data;
 
     public Message()
     {
@@ -118,6 +123,13 @@ public class Message
         a_data = dataIn;
     }
 
+    public Message (Vector3 vDataIn, Quaternion qDataIn, float fDataIn = 0)
+    {
+        v_data = vDataIn;
+        q_data = qDataIn;
+        f_data = fDataIn;
+    }
+
     public uint getUint()
     {
         return u_data;
@@ -146,5 +158,15 @@ public class Message
     public AudioRef getAudioData()
     {
         return a_data;
+    }
+
+    public Vector3 getVector()
+    {
+        return v_data;
+    }
+
+    public Quaternion getQuaternion()
+    {
+        return q_data;
     }
 }

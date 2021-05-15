@@ -5,14 +5,12 @@ using UnityEngine;
 public class StationaryLookAtState : iState {
 
     #region Members
-    FocusCartridge cart_focus;
     CameraData c_cameraData;
     #endregion
 
-    public StationaryLookAtState(ref CameraData cameraData, ref FocusCartridge focus)
+    public StationaryLookAtState(ref CameraData cameraData)
     {
         this.c_cameraData = cameraData;
-        this.cart_focus = focus;
     }
 
     public void Act()
@@ -21,7 +19,7 @@ public class StationaryLookAtState : iState {
         Vector3 currentTargetPosition = c_cameraData.v_targetPosition;
         Vector3 lookVector = c_cameraData.v_currentDirection;
 
-        cart_focus.PointVectorAt(ref currentPosition, ref currentTargetPosition, ref lookVector);
+        FocusCartridge.PointVectorAt(ref currentPosition, ref currentTargetPosition, ref lookVector);
 
         c_cameraData.v_currentDirection = lookVector;
     }

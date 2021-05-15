@@ -9,20 +9,22 @@ public class CameraController : MonoBehaviour, iEntityController
     [SerializeField] private CameraData c_cameraData;
     [SerializeField] private CameraPreviewData c_previewData;
     [SerializeField] private DebugAccessor debugAccessor;
-    [SerializeField] private Transform playerTransform;
 
     private StateData c_stateData;
     private CameraPreviewActiveData c_previewActiveData;
+    private CameraLastFrameData c_lastFrameData;
+    private CameraPositionData c_positionData;
 
-    private StateMachine sm_translation;
-    private StateMachine sm_orientation;
+    private StateMachine sm_cameraBehavior;
 
-    //cartridge list
-    private FocusCartridge cart_focus;
-    private AngleAdjustmentCartridge cart_angle;
-    private FollowCartridge cart_follow;
+    private RaycastHit c_hitOut;
 
     iMessageClient cl_camera;
+
+    // rendering constants
+    private static int renderPixelHeight;
+    private static float renderPixelRatio;
+    private static int renderPixelWidth;
     #endregion
 
     /// <summary>
@@ -32,15 +34,17 @@ public class CameraController : MonoBehaviour, iEntityController
 	void Start()
     {
         SetDefaultCameraData();
-        InitializeCartridges();
         InitializeStateMachine();
 
         c_stateData = new StateData();
         c_stateData.b_updateState = true;
 
-        cl_camera = new CameraMessageClient(ref c_stateData);
+        /*
+        cl_camera = new CameraMessageClient(ref c_stateData, ref c_positionData);
         MessageServer.Subscribe(ref cl_camera, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_camera, MessageID.COUNTDOWN_START);
+        MessageServer.Subscribe(ref cl_camera, MessageID.PLAYER_POSITION_UPDATED);
+        */
     }
 
     /// <summary>
@@ -48,45 +52,106 @@ public class CameraController : MonoBehaviour, iEntityController
     /// used for object-level functions (such as translations) and then the
     /// state is updated.
     /// </summary>
-    void LateUpdate()
+    void Update()
     {
         if (!c_stateData.b_updateState)
         {
             return;
         }
-
         EnginePull();
-
-        UpdateStateMachine();
-
-        sm_translation.Act();
-        sm_orientation.Act();
 
         EngineUpdate();
     }
 
+    /* GOALS:
+     * 
+     * 1) Message sent every frame that tells the camera what the player's position and rotation is
+     * 2) Camera informs normal by projecting player rotation (direction of travel, not model) onto the plane formed by
+     *    where the camera is pointing to get surface-relative rotation WITHOUT getting tripped up by spinning
+     * 3) The offset should be informed not by rotation but by the frame delta, which prevents the "swinging"
+     * 4) The camera should drag going up and down when in the air
+     * 
+     * 
+     * TODOS:
+     * - Fix currentTargetTranslation (DONE)
+     * - Prevent jerky motion on rotation change - Done by having FocusOnPlayer() not require targetTranslation be nonzero
+     * - Find some way to initialize the camera to the right position every time
+     * - Adjust offets to make the camera angle look nice after behavior is in place
+     * - Find stopping/landing "snap" points and smooth over them (what does it look like if the direction or delta is zero?
+     */ 
+    void FixedUpdate()
+    {
+        if (!c_stateData.b_updateState)
+        {
+            return;
+        }
+        FixedEnginePull();
+
+        c_lastFrameData.v_lastFramePosition = c_positionData.v_currentPosition;
+        c_lastFrameData.q_lastFrameRotation = c_positionData.q_currentRotation;
+
+        c_lastFrameData.v_lastFrameTargetPosition = c_positionData.v_currentTargetPosition;
+        c_lastFrameData.v_lastFrameTargetRotation = c_positionData.q_currentTargetRotation;
+
+        UpdateStateMachine();
+
+        sm_cameraBehavior.Act();
+
+    }
+
     public void EngineUpdate()
     {
-        //debugAccessor.DisplayState("Camera State", sm_translation.GetCurrentState());
-        //debugAccessor.DisplayFloat("Ratio", c_previewActiveData.f_currentShotTime/ c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].Time);
-
-        transform.position = c_cameraData.v_currentPosition;
-        transform.rotation = c_cameraData.q_cameraRotation;
-        transform.forward = c_cameraData.v_currentDirection;
+        transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_positionData.v_currentPosition);
+        transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentRotation);
     }
 
     public void EnginePull()
     {
-        Vector3 targetPosition = playerTransform.position;
-        Quaternion targetRotation = playerTransform.rotation;
-
-        c_cameraData.q_targetRotation = targetRotation;
-        c_cameraData.v_targetPosition = targetPosition +
-             c_cameraData.q_cameraRotation * c_cameraData.v_targetOffsetVector;
 
     }
 
+    public void FixedEnginePull()
+    {
+        c_positionData.v_currentTargetTranslation = c_lastFrameData.v_lastFrameTargetPosition - c_positionData.v_currentTargetPosition;
+        CheckForGround();
+    }
+
+    public void CheckForGround()
+    {
+        if (Physics.Raycast(c_positionData.v_currentPosition, 
+            c_positionData.q_currentTargetRotation * Vector3.down, 
+            out c_hitOut,
+            c_cameraData.f_followHeight,
+            c_cameraData.GroundCollisionMask))
+        {
+            c_positionData.f_distanceToGround = c_hitOut.distance;
+        }
+        else
+        {
+            c_positionData.f_distanceToGround = c_cameraData.f_followHeight;
+        }
+    }
+
     public void UpdateStateMachine()
+    {
+        if (c_stateData.b_preStarted == false)
+        {
+            sm_cameraBehavior.Execute(Command.START_COUNTDOWN);
+            c_stateData.b_preStarted = true;
+        }
+
+        if (sm_cameraBehavior.GetCurrentState() == StateRef.PREVIEW_TRACKING)
+        {
+            if (c_previewActiveData.f_currentShotTime >= c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].Time)
+            {
+                sm_cameraBehavior.Execute(Command.REPEAT, false, true);
+            }
+            return;
+        }
+    }
+
+    // TODO: rethink and redo the whole state machine
+    public void UpdateStateMachineOld()
     {
         Vector3 cameraPosition = c_cameraData.v_currentPosition;
         Vector3 targetPosition = c_cameraData.v_targetPosition;
@@ -96,32 +161,17 @@ public class CameraController : MonoBehaviour, iEntityController
 
         if (c_stateData.b_preStarted == false)
         {
-            sm_translation.Execute(Command.START_COUNTDOWN);
-            sm_orientation.Execute(Command.POINT_AT_POSITION);
+            sm_cameraBehavior.Execute(Command.START_COUNTDOWN);
             c_stateData.b_preStarted = true;
         }
 
-        if (sm_translation.GetCurrentState() == StateRef.PREVIEW_TRACKING)
+        if (sm_cameraBehavior.GetCurrentState() == StateRef.PREVIEW_TRACKING)
         {
             if (c_previewActiveData.f_currentShotTime >= c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].Time)
             {
-                sm_translation.Execute(Command.REPEAT, false, true);
+                sm_cameraBehavior.Execute(Command.REPEAT, false, true);
             }
             return;
-        }
-
-        if (trueDistance > followDistance)
-        {
-            sm_translation.Execute(Command.APPROACH);
-        }
-        else if (trueDistance < followDistance)
-        {
-            sm_translation.Execute(Command.DRAG);
-        }
-        else
-        {
-            // we have achieved balance!
-            sm_translation.Execute(Command.TRACK);
         }
 
         // TODO: Find some check for turning, switch to directed. Switch to targeted otherwise
@@ -134,37 +184,19 @@ public class CameraController : MonoBehaviour, iEntityController
     /// </summary>
     void InitializeStateMachine()
     {
-        CameraPreviewState s_preview = new CameraPreviewState(ref c_cameraData, ref c_previewData, ref c_previewActiveData);
-        FreeFollowState s_freeFollow = new FreeFollowState(ref c_cameraData, ref cart_angle, ref cart_follow);
-        ApproachFollowState s_approachFollow = new ApproachFollowState(ref c_cameraData, ref cart_follow);
-        AwayFollowState s_awayFollow = new AwayFollowState(ref c_cameraData, ref cart_follow);
+        // CameraPreviewState s_preview = new CameraPreviewState(ref c_positionData, ref c_previewData, ref c_previewActiveData);
+        CameraFollowTargetState s_followTarget = new CameraFollowTargetState(ref c_cameraData, ref c_positionData);
 
-        sm_translation = new StateMachine(s_preview, StateRef.PREVIEW_TRACKING);
-        sm_translation.AddState(s_freeFollow, StateRef.TRACKING);
-        sm_translation.AddState(s_approachFollow, StateRef.APPROACHING);
-        sm_translation.AddState(s_awayFollow, StateRef.LEAVING);
-
-        LookAtDirectionState s_lookDir = new LookAtDirectionState(ref c_cameraData, ref cart_focus);
-        LookAtPositionState s_lookPos = new LookAtPositionState(ref c_cameraData, ref cart_focus);
-        LookAtTargetState s_lookTarget = new LookAtTargetState(ref c_cameraData, ref cart_focus);
-
-        sm_orientation = new StateMachine(s_lookDir, StateRef.DIRECTED);
-        sm_orientation.AddState(s_lookPos, StateRef.POSED);
-        sm_orientation.AddState(s_lookTarget, StateRef.TARGETED);
-    }
-
-    /// <summary>
-    /// Initializes the cartridges.
-    /// </summary>
-    void InitializeCartridges()
-    {
-        cart_focus = new FocusCartridge();
-        cart_follow = new FollowCartridge();
-        cart_angle = new AngleAdjustmentCartridge();
+        // sm_cameraBehavior = new StateMachine(s_preview, StateRef.PREVIEW_TRACKING);
+        sm_cameraBehavior.AddState(s_followTarget, StateRef.FOLLOWING);
     }
 
     void SetDefaultCameraData()
     {
+        renderPixelHeight = 540;
+        renderPixelRatio = ((float)Camera.main.pixelHeight / (float)Camera.main.pixelWidth);
+        renderPixelWidth = Mathf.RoundToInt(renderPixelRatio * renderPixelHeight);
+
         c_previewActiveData = new CameraPreviewActiveData();
 
         PlayerData playerDataIn = c_cameraData.c_targetController.SharePlayerData();
@@ -172,6 +204,39 @@ public class CameraController : MonoBehaviour, iEntityController
         c_cameraData.q_cameraRotation = Quaternion.Euler(c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].CameraAngle);
         c_cameraData.v_currentDirection = c_cameraData.q_cameraRotation * Vector3.forward;
         c_cameraData.v_currentPosition = c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].StartPosition;
+
+
+        c_positionData = new CameraPositionData(c_cameraData.v_currentPosition, c_cameraData.q_cameraRotation);
+
+        c_lastFrameData = new CameraLastFrameData();
+        c_lastFrameData.v_lastFramePosition = c_cameraData.v_currentPosition;
+        c_lastFrameData.q_lastFrameRotation = c_cameraData.q_cameraRotation;
+
+        c_lastFrameData.v_lastFrameTargetPosition = c_positionData.v_currentTargetPosition;
+        c_lastFrameData.v_lastFrameTargetRotation = c_positionData.q_currentTargetRotation;
+    }
+    #endregion
+
+    #region RenderingFuncs
+    void OnRenderImage(RenderTexture source, RenderTexture destination) {
+        Camera.main.orthographicSize = renderPixelHeight;
+        source.filterMode = FilterMode.Point;
+        RenderTexture buffer = RenderTexture.GetTemporary(renderPixelWidth, renderPixelHeight, -1);
+        buffer.filterMode = FilterMode.Point;
+        Graphics.Blit(source, buffer);
+        Graphics.Blit(buffer, destination);
+        RenderTexture.ReleaseTemporary(buffer);
     }
     #endregion
 }
+
+
+/* New Goals
+ * 1) Get rid of jittering on max fall speed
+ * 2) Sort out angle limits
+ * 
+ * Behavior:
+ * 1) Camera moves at a speed of zero at minimum distance, interpolates to character's current speed at max distance.
+ * 2) Rotates alongside travel vector (defined as thisPosition - lastPosition), then do translation after
+ * 3) Vertical do the same thing, interpolate based on minimum and maximum distance
+ */

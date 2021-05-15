@@ -9,25 +9,16 @@ public class GroundedState : iState
     private AerialMoveData c_aerialMoveData;
     private PlayerPositionData c_positionData;
     private CollisionData c_collisionData;
-    private VelocityCartridge cart_velocity;
-    private AngleCalculationCartridge cart_angleCalc;
-    private SurfaceInfluenceCartridge cart_surfInf;
 
     public GroundedState(ref PlayerData playerData,
                          ref AerialMoveData aerialMoveData,
                          ref CollisionData collisionData,
-                         ref PlayerPositionData positionData,
-                         ref VelocityCartridge vel, 
-                         ref AngleCalculationCartridge angleCalc,
-                         ref SurfaceInfluenceCartridge surfInf)
+                         ref PlayerPositionData positionData)
     {
         this.c_playerData = playerData;
         this.c_aerialMoveData = aerialMoveData;
         this.c_positionData = positionData;
         this.c_collisionData = collisionData;
-        this.cart_velocity = vel;
-        this.cart_angleCalc = angleCalc;
-        this.cart_surfInf = surfInf;
     }
     public void Act()
     {

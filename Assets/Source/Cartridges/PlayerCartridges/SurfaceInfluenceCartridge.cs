@@ -54,7 +54,7 @@ public class SurfaceInfluenceCartridge
                                           float speedInverse,
                                           Quaternion currentRotation)
     {
-        acceleration = defaultAcceleration - ((currentRotation * Vector3.forward).y * gravityValue * speedInverse);
+        acceleration = defaultAcceleration - ((currentRotation * Vector3.forward).y * gravityValue * speedInverse * Time.deltaTime);
     }
 
     /// <summary>

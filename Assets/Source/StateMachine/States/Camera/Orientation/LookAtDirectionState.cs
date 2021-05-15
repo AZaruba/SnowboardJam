@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class LookAtDirectionState : iState
 {
-    private FocusCartridge cart_focus;
     private CameraData c_cameraData;
 
-    public LookAtDirectionState(ref CameraData cameraData, ref FocusCartridge focus)
+    public LookAtDirectionState(ref CameraData cameraData)
     {
         this.c_cameraData = cameraData;
-        this.cart_focus = focus;
     }
 
     public void Act()

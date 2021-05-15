@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// Start this instance. Initializes all valid states for this object
     /// then adds them to the state machine
     /// </summary>
-    void Start()
+    void Awake()
     {
         SetDefaultPlayerData();
         cart_gravity = new GravityCartridge();
@@ -82,6 +82,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeCachedLists();
 
         EnginePull();
+        MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation)); // NOT the model rotation
+
     }
 
     /// <summary>
@@ -102,7 +104,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
         debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
-        debugAccessor.DisplayFloat("TurnSpeed", c_turnData.f_currentTurnSpeed);
 
     }
 
@@ -128,7 +129,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         LateEnginePull();
 
-        c_playerData.v_currentPosition -= c_playerData.q_currentRotation * Vector3.up * c_collisionData.f_contactOffset;
+        c_playerData.v_currentPosition -= c_playerData.q_currentRotation * Vector3.up * c_collisionData.f_contactOffset; // TODO: put this somewhere logical
+
+        // send normal 
+        MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation, c_playerData.f_currentSpeed)); // NOT the model rotation INCLUDE AIR STATE
     }
 
     /// <summary>
@@ -136,7 +140,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EngineUpdate()
     {
-        transform.position = c_playerData.v_currentPosition;
+        //transform.position = c_playerData.v_currentPosition;
         c_playerData.t_centerOfGravity.rotation = c_positionData.q_currentModelRotation;
 
         UpdateAnimator();
@@ -167,7 +171,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     private void UpdateAnimator()
     {
-        PlayerAnimator.SetFloat("TurnAnalogue", c_inputData.f_inputAxisLHoriz);
+        PlayerAnimator.SetFloat("TurnAnalogue", c_turnData.f_currentTurnSpeed / c_turnData.f_turnTopSpeed);
+        PlayerAnimator.SetFloat("SlowAnalogue", c_inputData.f_inputAxisLVert);
         PlayerAnimator.SetBool("JumpPressed", c_airMachine.GetCurrentState() == StateRef.CHARGING);
     }
 
@@ -635,7 +640,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void InitializeAirMachine()
     {
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
-        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData, ref cart_velocity, ref cart_angleCalc, ref cart_surfInf);
+        GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
@@ -871,3 +876,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         t_audioStateTree.AssignChild(ref airborneBranch);
     }
 }
+
+// TODO:
+
+// Get cartridges out of states, into static space
+// Get modelRotation and physicsRotation sorted out (modelRotation only for spinning, flipping, and grip slipping/physicsRotation for motion)

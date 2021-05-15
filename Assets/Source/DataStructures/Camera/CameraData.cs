@@ -17,14 +17,23 @@ public class CameraPreviewActiveData
 public class CameraData : MonoBehaviour {
 
     #region Members
-    [SerializeField] private float FollowHeight;
+    [SerializeField] private float FollowHeight; // relative to CURRENT GROUND, not player
+    [SerializeField] private float FollowDistance;
     [SerializeField] private Vector3 OffsetVector;
     [SerializeField] private Vector3 TargetOffsetVector;
     [SerializeField] private PlayerController PlayerTarget;
+    [SerializeField] public LayerMask GroundCollisionMask;
+
+    [SerializeField] public float MaxOrbitSpeed;
+    [SerializeField] public float MaxRotationSpeed;
+    [SerializeField] public float MinFollowDistance;
+    [SerializeField] public float MaxFollowDistance;
+    [SerializeField] public float MaxCameraAngle;
+    [SerializeField] public float OffsetDistance;
+    [SerializeField] public float OffsetHeight;
 
     private float FieldOfView;
     private float CameraAngle;
-    private float FollowDistance;
 
     private Vector3 CurrentPosition;
     private Vector3 CurrentDirection;
@@ -68,6 +77,17 @@ public class CameraData : MonoBehaviour {
     {
         get { return TargetOffsetVector; }
         set { TargetOffsetVector = value; }
+    }
+
+    public float f_targetOffset
+    {
+        get { return OffsetDistance; }
+        set { OffsetDistance = value; }
+    }
+    public float f_offsetHeight
+    {
+        get { return OffsetHeight; }
+        set { OffsetHeight = value; }
     }
     #endregion
 
@@ -126,4 +146,38 @@ public class CameraData : MonoBehaviour {
         set { SurfaceBelowCameraPosition = value; }
     }
     #endregion
+}
+
+public class CameraPositionData
+{
+    public CameraPositionData(Vector3 posIn, Quaternion rotIn)
+    {
+        this.v_currentPosition = posIn;
+        this.v_currentTargetPosition = Vector3.zero;
+
+        this.q_currentRotation = rotIn;
+        this.q_currentTargetRotation = Quaternion.identity;
+
+        v_currentTargetTranslation = Vector3.zero;
+        this.f_distanceToGround = Constants.ZERO_F;
+    }
+
+    public Vector3 v_currentPosition;
+    public Vector3 v_currentTargetPosition;
+    public Vector3 v_currentTargetTranslation;
+
+    public Quaternion q_currentRotation;
+    public Quaternion q_currentTargetRotation;
+
+    public float f_currentFollowDistance;
+    public float f_distanceToGround;
+}
+
+public class CameraLastFrameData
+{
+    public Vector3 v_lastFramePosition;
+    public Quaternion q_lastFrameRotation;
+
+    public Vector3 v_lastFrameTargetPosition;
+    public Quaternion v_lastFrameTargetRotation;
 }
