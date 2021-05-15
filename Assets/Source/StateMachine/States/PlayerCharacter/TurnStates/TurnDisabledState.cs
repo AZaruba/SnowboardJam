@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class TurnDisabledState : iState
 {
+    public TurnDisabledState()
+    {
+
+    }
+
     public void Act()
     {
 

@@ -1205,7 +1205,7 @@ MonoBehaviour:
   ItemTransform: {fileID: 434950577}
   ItemText: {fileID: 434950575}
   MenuAction: 5
-  NextSceneId: 1
+  NextSceneId: 3
   DataItem: 0
   ChildMenuController: {fileID: 0}
   ChildEditController: {fileID: 0}

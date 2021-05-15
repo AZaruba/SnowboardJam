@@ -33,7 +33,6 @@ public class CarvingState : iState {
     {
         Vector3 currentDir = c_playerData.v_currentDirection;
         Quaternion currentRotation = c_playerData.q_currentRotation;
-        Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
         float currentTurnSpeed = c_turnData.f_currentTurnSpeed;
         float currentTurnAccel = c_turnData.f_turnAcceleration * c_playerInputData.f_inputAxisLHoriz;
@@ -45,7 +44,7 @@ public class CarvingState : iState {
 
         c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
-        c_positionData.q_currentModelRotation = Quaternion.Lerp(currentRotation, currentModelRotation, Constants.LERP_DEFAULT);
+        c_positionData.q_currentModelRotation = currentRotation;
 
         c_turnData.f_currentTurnSpeed = currentTurnSpeed;
     }

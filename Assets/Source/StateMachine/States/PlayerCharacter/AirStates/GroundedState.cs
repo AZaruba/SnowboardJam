@@ -50,6 +50,7 @@ public class GroundedState : iState
         c_playerData.q_currentRotation = currentRotation;
         c_playerData.f_currentAcceleration = currentAcceleration;
         c_playerData.f_currentTopSpeed = currentTopSpeed;
+
         c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -1;
     }
 
@@ -58,9 +59,7 @@ public class GroundedState : iState
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
-        Vector3 currentSurfaceNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
-        Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentAirVelocity = Constants.ZERO_F;

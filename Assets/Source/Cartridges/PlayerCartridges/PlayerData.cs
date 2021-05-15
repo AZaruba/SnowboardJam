@@ -7,6 +7,7 @@ public class PlayerData : MonoBehaviour {
     #region Members
     [SerializeField] private float TopSpeed;
     [SerializeField] private float Acceleration;
+    [SerializeField] private float StartBoost;
     [SerializeField] private float BrakePower;
     [SerializeField] private float TurnSpeed;
     [SerializeField] private float TurnAcceleration;
@@ -67,6 +68,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return Acceleration; }
         set { Acceleration = value; }
+    }
+
+    public float f_startBoost
+    {
+        get { return StartBoost; }
+        set { StartBoost = value; }
     }
 
     public float f_brakePower

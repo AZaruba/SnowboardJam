@@ -648,7 +648,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 483208280}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1875111437}
@@ -1082,14 +1082,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TopSpeed: 30
-  Acceleration: 5
-  BrakePower: 30
+  Acceleration: 0.1
+  StartBoost: 5
+  BrakePower: 10
   TurnSpeed: 200
   TurnAcceleration: 200
   JumpPower: 10
   BaseJumpPower: 5
   JumpChargeRate: 5
-  GravityFactor: 20
+  GravityFactor: 15
   TerminalVelocity: 40
   CrashRecoveryTime: 2
   BackVectorOffset: {x: 0, y: 0, z: 0.5}
@@ -1423,7 +1424,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 36f3047709dbebc4f9ad1aa050dcbcb2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.1
+      value: -0.9
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 36f3047709dbebc4f9ad1aa050dcbcb2,
         type: 3}
@@ -1433,17 +1434,17 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 36f3047709dbebc4f9ad1aa050dcbcb2,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 36f3047709dbebc4f9ad1aa050dcbcb2,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 36f3047709dbebc4f9ad1aa050dcbcb2,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 36f3047709dbebc4f9ad1aa050dcbcb2,
         type: 3}

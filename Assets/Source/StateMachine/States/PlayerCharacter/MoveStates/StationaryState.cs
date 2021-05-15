@@ -4,19 +4,14 @@ using UnityEngine;
 
 public class StationaryState : iState {
 
-    AngleCalculationCartridge cart_angleCalc;
-    VelocityCartridge cart_velocity;
     PlayerData c_playerData;
-    CollisionData c_collisionData;
+    PlayerPositionData c_playerPositionData;
 
     public StationaryState(ref PlayerData playerData,
-                           ref CollisionData collisionData,
-                           ref AngleCalculationCartridge angleCalc, ref VelocityCartridge velocity)
+                           ref PlayerPositionData positionData)
     {
         this.c_playerData = playerData;
-        this.c_collisionData = collisionData;
-        this.cart_angleCalc = angleCalc;
-        this.cart_velocity = velocity;
+        this.c_playerPositionData = positionData;
     }
 
     public void Act()
@@ -66,6 +61,7 @@ public class StationaryState : iState {
         }
         if (cmd == Command.STARTMOVE)
         {
+            c_playerData.f_currentSpeed += c_playerData.f_startBoost * c_playerPositionData.i_switchStance;
             return StateRef.RIDING;
         }
         return StateRef.STATIONARY;

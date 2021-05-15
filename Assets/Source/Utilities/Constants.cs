@@ -14,6 +14,8 @@ static class Constants
     public const int ZERO = 0;
     public const int ONE = 1;
 
+    public const int SWITCH_STANCE = -1;
+    public const int REGULAR_STANCE = 1;
 
     public const string TIME_FORMAT_STRING = "{0:0}:{1:00}:{2:00}";
 }

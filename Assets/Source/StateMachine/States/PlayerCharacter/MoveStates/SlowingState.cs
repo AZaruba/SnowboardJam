@@ -36,16 +36,16 @@ public class SlowingState : iState
     {
         // check for angle when implemented
         float currentVelocity = c_playerData.f_currentSpeed;
-        float topSpeed = c_playerData.f_topSpeed;
         float deceleration = c_playerData.f_brakePower;
         float slowScaling = c_playerInputData.f_inputAxisLVert * - 1;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
-        Vector3 currentSurfaceNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        AccelerationCartridge.Decelerate(ref currentVelocity, deceleration * slowScaling);
+        AccelerationCartridge.Decelerate(ref currentVelocity, 
+                                         deceleration * slowScaling * c_playerPositionData.i_switchStance, 
+                                         c_playerPositionData.i_switchStance);
 
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 

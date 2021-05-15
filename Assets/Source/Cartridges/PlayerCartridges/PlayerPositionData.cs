@@ -9,14 +9,14 @@ public class PlayerPositionData
     private Vector3 ModelPosition;
     private Quaternion ModelRotation;
 
-    private bool ModelReversed;
+    private int ModelReversed;
 
     public PlayerPositionData(Vector3 position, Vector3 direction, Quaternion rotation)
     {
         this.OccupiedZone = uint.MaxValue;
         this.v_modelPosition = position;
         this.v_modelDirection = direction;
-        this.b_modelReversed = false;
+        this.i_switchStance = Constants.REGULAR_STANCE;
         this.q_currentModelRotation = rotation;
     }
 
@@ -44,7 +44,7 @@ public class PlayerPositionData
         set { ModelRotation = value; }
     }
 
-    public bool b_modelReversed
+    public int i_switchStance
     {
         get { return ModelReversed; }
         set { ModelReversed = value; }

@@ -60,7 +60,6 @@ public class NewCameraController : MonoBehaviour, iEntityController
 
         sm_cameraBehavior.Act();
 
-        debugAccessor.DisplayFloat("Vert Velocity", c_positionData.f_currentTranslationVelocity);
         c_lastFrameData.v_lastTargetPosition = c_targetData.v_currentTargetPosition;
         c_lastFrameData.q_lastTargetRotation = c_targetData.q_currentTargetRotation;
     }

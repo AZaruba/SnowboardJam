@@ -101,10 +101,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
         EnginePull(); // poll for input every frame
 
         transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition);
-        transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
+        c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
         debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
-
+        debugAccessor.DisplayFloat("Switch state", c_playerData.f_currentSpeed);//c_positionData.i_switchStance);
     }
 
     void FixedUpdate()
@@ -289,7 +289,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.STARTMOVE);
         }
 
-        if (c_playerData.f_currentSpeed <= 0.02f)
+        if (c_playerData.f_currentSpeed * c_positionData.i_switchStance <= 0.02f)
         {
             c_accelMachine.Execute(Command.STOP);
         }
@@ -620,7 +620,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void InitializeAccelMachine()
     {
         MoveAerialState s_moveAerial = new MoveAerialState();
-        StationaryState s_stationary = new StationaryState(ref c_playerData, ref c_collisionData, ref cart_angleCalc, ref cart_velocity);
+        StationaryState s_stationary = new StationaryState(ref c_playerData, ref c_positionData);
         RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref c_collisionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
         RidingChargeState s_ridingCharge = new RidingChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
@@ -653,10 +653,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeTurnMachine()
     {
-        StraightState s_straight = new StraightState(ref c_playerData, ref c_turnData, ref c_positionData, ref cart_surfInf);
+        StraightState s_straight = new StraightState(ref c_playerData, ref c_turnData, ref c_positionData);
         CarvingState s_carving = new CarvingState(ref c_playerData, ref c_turnData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_handling, ref cart_surfInf);
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
-        TurnChargeState s_turnCharge = new TurnChargeState(ref c_playerData, ref c_turnData, ref c_positionData, ref cart_surfInf);
+        TurnChargeState s_turnCharge = new TurnChargeState(ref c_playerData, ref c_turnData, ref c_positionData);
 
         c_turnMachine = new StateMachine(StateRef.RIDING);
         c_turnMachine.AddState(s_straight, StateRef.RIDING);

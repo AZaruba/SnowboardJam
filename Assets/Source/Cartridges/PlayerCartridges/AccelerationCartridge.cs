@@ -15,6 +15,19 @@ public class AccelerationCartridge {
         velocity += f_acceleration * surfaceFactor * Time.deltaTime;
     }
 
+    // how to manage decelerating or accelerating
+    public static void GravityAccelerate(ref float velocity, float gravityValue, Vector3 currentDirection, float topSpeed)
+    {
+
+        float gravityAcceleration = currentDirection.normalized.y * gravityValue;
+        if (velocity > topSpeed)
+        {
+            velocity = topSpeed;
+            return;
+        }
+        velocity -= gravityAcceleration * Time.deltaTime;
+    }
+
     public static void AccelerateAbs(ref float velocity, float f_acceleration, float topSpeed, float surfaceFactor = 1.0f)
     {
         if (Mathf.Abs(velocity) > Mathf.Abs(topSpeed))
@@ -25,9 +38,9 @@ public class AccelerationCartridge {
         velocity += f_acceleration * surfaceFactor * Time.deltaTime;
     }
 
-    public static void Decelerate(ref float velocity, float deceleration, float surfaceFactor = 1.0f)
+    public static void Decelerate(ref float velocity, float deceleration, int switchStance, float surfaceFactor = 1.0f)
     {
-        if (velocity < 0)
+        if (velocity * switchStance < 0)
         {
             velocity = 0.0f;
             return;
