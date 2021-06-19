@@ -5,6 +5,7 @@ using UnityEngine;
 public class AccelerationCartridge {
 
     #region PublicFunctions
+    // TODO: make a soft cap version
     public static void Accelerate(ref float velocity, float f_acceleration, float topSpeed, float surfaceFactor = 1.0f)
     {
         if (velocity > topSpeed)
@@ -16,6 +17,7 @@ public class AccelerationCartridge {
     }
 
     // how to manage decelerating or accelerating
+    // TODO: make a soft cap version
     public static void GravityAccelerate(ref float velocity, float gravityValue, Vector3 currentDirection, float topSpeed)
     {
 

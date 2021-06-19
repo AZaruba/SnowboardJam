@@ -66,7 +66,7 @@ public class SurfaceInfluenceCartridge
                                       float defaultTopSpeed,
                                       Quaternion currentRotation)
     {
-        float referenceRatio = (currentRotation * Vector3.forward).y*-1 + 1;
+        float referenceRatio = (currentRotation * Vector3.forward).y*-0.8f + 1;
 
         topSpeed = defaultTopSpeed * referenceRatio;
     }
