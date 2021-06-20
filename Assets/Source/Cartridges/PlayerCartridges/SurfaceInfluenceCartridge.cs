@@ -64,11 +64,13 @@ public class SurfaceInfluenceCartridge
     /// <param name="currentRotation">The current rotation, relative to the identity quaternion</param>
     public static void AdjustTopSpeed(ref float topSpeed,
                                       float defaultTopSpeed,
+                                      float gravity,
                                       Quaternion currentRotation)
     {
-        float referenceRatio = (currentRotation * Vector3.forward).y*-0.8f + 1;
+        float adjustedGravity = gravity - defaultTopSpeed;
+        float newTopSpeed = (currentRotation * Vector3.forward).y * adjustedGravity;
 
-        topSpeed = defaultTopSpeed * referenceRatio;
+        topSpeed = defaultTopSpeed - newTopSpeed;
     }
 
     public void SwitchReverse(ref bool isReverse, Quaternion travelRotation, Quaternion modelRotation)

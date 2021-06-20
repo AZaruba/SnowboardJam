@@ -104,7 +104,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
         debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
-        debugAccessor.DisplayFloat("Top Speed", c_playerData.f_currentTopSpeed);
+        debugAccessor.DisplayFloat("Current Top Speed", c_playerData.f_currentTopSpeed);
     }
 
     void FixedUpdate()

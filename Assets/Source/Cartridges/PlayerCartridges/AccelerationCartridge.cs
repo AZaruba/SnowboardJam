@@ -30,6 +30,32 @@ public class AccelerationCartridge {
         velocity -= gravityAcceleration * Time.deltaTime;
     }
 
+    /// <summary>
+    /// Provides a complete ground acceleration function, using innate acceleration and gravity,
+    /// with a soft cap allowing deceleration to 
+    /// </summary>
+    /// <param name="velocity">Current velocity to be accelerated</param>
+    /// <param name="acceleration">Current acceleration rate</param>
+    /// <param name="gravity">Constant gravity for the entity</param>
+    /// <param name="topSpeed">The "soft cap" current top speed of the entity</param>
+    /// <param name="verticalDirectionValue">The y value of the entity's direction vector, used to calculate gravity ratio</param>
+    public static void NewSoftCapAccelerate(ref float velocity,
+        float acceleration,
+        float gravity,
+        float topSpeed,
+        float verticalDirectionValue)
+    {
+        float gravityAcceleration = verticalDirectionValue * gravity * Time.deltaTime * Constants.NEGATIVE_ONE;
+        float timedAcceleration = acceleration * Time.deltaTime;
+
+        if (velocity > topSpeed)
+        {
+            velocity -= (velocity - topSpeed) * Time.deltaTime;
+            return;
+        }
+        velocity += gravityAcceleration + timedAcceleration;
+    }
+
     public static void AccelerateAbs(ref float velocity, float f_acceleration, float topSpeed, float surfaceFactor = 1.0f)
     {
         if (Mathf.Abs(velocity) > Mathf.Abs(topSpeed))

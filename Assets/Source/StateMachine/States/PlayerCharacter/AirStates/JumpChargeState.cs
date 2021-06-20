@@ -47,7 +47,7 @@ public class JumpChargeState : iState
                                                      c_playerData.f_topSpeed / currentTopSpeed,
                                                      currentRotation);
 
-        SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, c_playerData.f_topSpeed, currentRotation);
+        SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, c_playerData.f_topSpeed, c_playerData.f_terminalVelocity, currentRotation);
 
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentDirection = currentDir;

@@ -31,14 +31,17 @@ public class RidingState : iState {
         // check for angle when implemented
         float currentVelocity = c_playerData.f_currentSpeed;
         float f_acceleration = c_playerData.f_currentAcceleration;
-        float topSpeed = c_playerData.f_currentTopSpeed;
+        // float topSpeed = c_playerData.f_currentTopSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        AccelerationCartridge.Accelerate(ref currentVelocity, f_acceleration * c_playerPositionData.i_switchStance, topSpeed);
-        AccelerationCartridge.GravityAccelerate(ref currentVelocity, c_playerData.f_gravity, currentDir, topSpeed);
+        AccelerationCartridge.NewSoftCapAccelerate(ref currentVelocity,
+                                                   f_acceleration * c_playerPositionData.i_switchStance,
+                                                   c_playerData.f_gravity,
+                                                   c_playerData.f_currentTopSpeed,
+                                                   currentDir.y);
 
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
@@ -111,14 +114,17 @@ public class RidingChargeState : iState
         // check for angle when implemented
         float currentVelocity = c_playerData.f_currentSpeed;
         float f_acceleration = c_playerData.f_currentAcceleration;
-        float topSpeed = c_playerData.f_currentTopSpeed;
+        //float topSpeed = c_playerData.f_currentTopSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        AccelerationCartridge.Accelerate(ref currentVelocity, f_acceleration * c_playerPositionData.i_switchStance, topSpeed);
-        AccelerationCartridge.GravityAccelerate(ref currentVelocity, c_playerData.f_gravity, currentDir, topSpeed);
+        AccelerationCartridge.NewSoftCapAccelerate(ref currentVelocity,
+                                                   f_acceleration * c_playerPositionData.i_switchStance,
+                                                   c_playerData.f_gravity,
+                                                   c_playerData.f_currentTopSpeed,
+                                                   currentDir.y);
 
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 

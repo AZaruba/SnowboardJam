@@ -962,7 +962,7 @@ MonoBehaviour:
   StartBoost: 5
   BrakePower: 10
   TurnSpeed: 200
-  TurnAcceleration: 200
+  TurnAcceleration: 400
   JumpPower: 10
   BaseJumpPower: 5
   JumpChargeRate: 5
@@ -2138,6 +2138,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 5bbedd19a4a4acd4d88e8998a4ff0ef6, type: 2}
+    - target: {fileID: 5094665594830365787, guid: 22b3eb5864ce3f345b3a201460a61164,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8039920178110245393, guid: 22b3eb5864ce3f345b3a201460a61164,
         type: 3}
       propertyPath: m_Layer
