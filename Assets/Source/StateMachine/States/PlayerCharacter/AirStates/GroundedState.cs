@@ -40,9 +40,10 @@ public class GroundedState : iState
                                                      c_playerData.f_acceleration,
                                                      c_playerData.f_gravity,
                                                      c_playerData.f_topSpeed / currentTopSpeed,
-                                                     currentRotation);
+                                                     currentRotation,
+                                                     c_positionData.i_switchStance);
 
-        SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, c_playerData.f_topSpeed, c_playerData.f_terminalVelocity, currentRotation);
+        SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, c_playerData.f_topSpeed, c_playerData.f_terminalVelocity, currentRotation, c_positionData.i_switchStance);
 
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentDirection = currentDir;

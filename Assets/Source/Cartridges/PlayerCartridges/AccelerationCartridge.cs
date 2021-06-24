@@ -22,7 +22,7 @@ public class AccelerationCartridge {
     {
 
         float gravityAcceleration = currentDirection.normalized.y * gravityValue;
-        if (velocity > topSpeed)
+        if (Mathf.Abs(velocity) > Mathf.Abs(topSpeed))
         {
             velocity = topSpeed;
             return;
@@ -40,20 +40,19 @@ public class AccelerationCartridge {
     /// <param name="topSpeed">The "soft cap" current top speed of the entity</param>
     /// <param name="verticalDirectionValue">The y value of the entity's direction vector, used to calculate gravity ratio</param>
     public static void NewSoftCapAccelerate(ref float velocity,
-        float acceleration,
         float gravity,
         float topSpeed,
-        float verticalDirectionValue)
+        float verticalDirectionValue,
+        int switchStance)
     {
         float gravityAcceleration = verticalDirectionValue * gravity * Time.deltaTime * Constants.NEGATIVE_ONE;
-        float timedAcceleration = acceleration * Time.deltaTime;
 
-        if (velocity > topSpeed)
+        if (Mathf.Abs(velocity) > Mathf.Abs(topSpeed))
         {
-            velocity -= (velocity - topSpeed) * Time.deltaTime;
+            velocity -= (Mathf.Abs(velocity) - topSpeed) * switchStance * Time.deltaTime;
             return;
         }
-        velocity += gravityAcceleration + timedAcceleration;
+        velocity += gravityAcceleration;
     }
 
     public static void AccelerateAbs(ref float velocity, float f_acceleration, float topSpeed, float surfaceFactor = 1.0f)

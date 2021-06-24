@@ -5,13 +5,15 @@ using UnityEngine;
 public class JumpChargeState : iState
 {
     private PlayerData c_playerData;
+    private PlayerPositionData c_positionData;
     private CollisionData c_collisionData;
     private AerialMoveData c_aerialMoveData;
     private IncrementCartridge cart_increment;
     
-    public JumpChargeState(ref PlayerData playerData, ref CollisionData collisionData, ref AerialMoveData aerialMoveData, ref IncrementCartridge incr)
+    public JumpChargeState(ref PlayerData playerData, ref PlayerPositionData positionData, ref CollisionData collisionData, ref AerialMoveData aerialMoveData, ref IncrementCartridge incr)
     {
         this.c_playerData = playerData;
+        this.c_positionData = positionData;
         this.c_aerialMoveData = aerialMoveData;
         this.c_collisionData = collisionData;
         this.cart_increment = incr;
@@ -45,9 +47,10 @@ public class JumpChargeState : iState
                                                      c_playerData.f_acceleration,
                                                      c_playerData.f_gravity,
                                                      c_playerData.f_topSpeed / currentTopSpeed,
-                                                     currentRotation);
+                                                     currentRotation,
+                                                     c_positionData.i_switchStance);
 
-        SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, c_playerData.f_topSpeed, c_playerData.f_terminalVelocity, currentRotation);
+        SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, c_playerData.f_topSpeed, c_playerData.f_terminalVelocity, currentRotation, c_positionData.i_switchStance);
 
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentDirection = currentDir;

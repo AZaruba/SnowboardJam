@@ -104,7 +104,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
         debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
-        debugAccessor.DisplayFloat("Current Top Speed", c_playerData.f_currentTopSpeed);
+        debugAccessor.DisplayFloat("Current Speed", c_playerData.f_currentSpeed);
     }
 
     void FixedUpdate()
@@ -641,7 +641,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
         GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData);
-        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
+        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
         c_airMachine = new StateMachine(StateRef.GROUNDED);

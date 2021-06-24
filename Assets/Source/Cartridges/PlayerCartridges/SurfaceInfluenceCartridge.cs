@@ -52,9 +52,10 @@ public class SurfaceInfluenceCartridge
                                           float defaultAcceleration,
                                           float gravityValue,
                                           float speedInverse,
-                                          Quaternion currentRotation)
+                                          Quaternion currentRotation,
+                                          int switchStance)
     {
-        acceleration = defaultAcceleration - ((currentRotation * Vector3.forward).y * gravityValue * speedInverse * Time.deltaTime);
+        acceleration = defaultAcceleration - ((currentRotation * Vector3.forward * switchStance).y * gravityValue * speedInverse);
     }
 
     /// <summary>
@@ -65,10 +66,11 @@ public class SurfaceInfluenceCartridge
     public static void AdjustTopSpeed(ref float topSpeed,
                                       float defaultTopSpeed,
                                       float gravity,
-                                      Quaternion currentRotation)
+                                      Quaternion currentRotation,
+                                      int switchStance)
     {
         float adjustedGravity = gravity - defaultTopSpeed;
-        float newTopSpeed = (currentRotation * Vector3.forward).y * adjustedGravity;
+        float newTopSpeed = (currentRotation * Vector3.forward * switchStance).y * adjustedGravity;
 
         topSpeed = defaultTopSpeed - newTopSpeed;
     }
