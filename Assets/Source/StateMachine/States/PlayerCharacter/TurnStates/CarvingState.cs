@@ -31,7 +31,6 @@ public class CarvingState : iState {
 
     public void Act()
     {
-        Vector3 currentDir = c_playerData.v_currentDirection;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         float currentTurnSpeed = c_turnData.f_currentTurnSpeed;
@@ -40,9 +39,8 @@ public class CarvingState : iState {
 
 
         AccelerationCartridge.AccelerateAbs(ref currentTurnSpeed, currentTurnAccel, turnSpeedCap);
-        HandlingCartridge.Turn(ref currentDir, Vector3.up, currentTurnSpeed * Time.fixedDeltaTime, ref currentRotation);
+        HandlingCartridge.Turn(Vector3.up, currentTurnSpeed * Time.fixedDeltaTime, ref currentRotation);
 
-        c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
         c_positionData.q_currentModelRotation = currentRotation;
 

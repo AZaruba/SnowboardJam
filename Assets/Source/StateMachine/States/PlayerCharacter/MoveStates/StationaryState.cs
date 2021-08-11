@@ -23,7 +23,6 @@ public class StationaryState : iState {
     {
         Vector3 currentPosition = c_playerData.v_currentPosition;
         Vector3 currentNormal = c_playerData.v_currentNormal;
-        Vector3 currentDir = c_playerData.v_currentDirection;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         /*
@@ -41,7 +40,6 @@ public class StationaryState : iState {
 
         c_playerData.v_currentNormal = currentNormal.normalized;
         c_playerData.v_currentDown = currentNormal.normalized * -1;
-        c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.q_currentRotation = currentRotation;
         c_playerData.f_currentSpeed = Constants.ZERO_F;

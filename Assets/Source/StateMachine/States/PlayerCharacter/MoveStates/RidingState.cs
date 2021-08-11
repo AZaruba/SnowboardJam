@@ -33,7 +33,6 @@ public class RidingState : iState {
         float f_acceleration = c_playerData.f_currentAcceleration;
         // float topSpeed = c_playerData.f_currentTopSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
-        Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
@@ -49,7 +48,6 @@ public class RidingState : iState {
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentNormal = currentNormal.normalized;
         c_playerData.v_currentDown = currentNormal.normalized * -1;
-        c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
         c_playerPositionData.i_switchStance = currentVelocity != Mathf.Abs(currentVelocity) ? Constants.SWITCH_STANCE : Constants.REGULAR_STANCE;
     }
@@ -116,7 +114,6 @@ public class RidingChargeState : iState
         float f_acceleration = c_playerData.f_currentAcceleration;
         //float topSpeed = c_playerData.f_currentTopSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
-        Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
@@ -132,7 +129,6 @@ public class RidingChargeState : iState
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentNormal = currentNormal.normalized;
         c_playerData.v_currentDown = currentNormal.normalized * -1;
-        c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
         c_playerPositionData.i_switchStance = currentVelocity != Mathf.Abs(currentVelocity) ? Constants.SWITCH_STANCE : Constants.REGULAR_STANCE;
     }

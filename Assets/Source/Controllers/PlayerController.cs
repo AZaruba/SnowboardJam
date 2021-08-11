@@ -349,7 +349,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
         c_playerData.q_targetRotation = transform.rotation;
-        c_playerData.v_currentDirection = transform.forward;
         c_playerData.v_currentAirDirection = transform.forward;
         c_playerData.v_currentNormal = transform.up;
         c_playerData.v_currentDown = transform.up * -1;
@@ -395,7 +394,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         newDir = Vector3.Reflect(newDir, c_collisionData.v_obstacleNormal).normalized;
 
         c_playerData.q_currentRotation = Quaternion.LookRotation(newDir, c_playerData.v_currentNormal);
-        c_playerData.v_currentDirection = newDir;
 
         newDir.y = 0;
         c_aerialMoveData.v_lateralDirection = newDir;
@@ -417,11 +415,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         playerBox.y -= c_collisionData.f_frontRayLengthUp / 2;
         Vector3 offsetOrigin = c_playerData.v_currentPosition + c_playerData.q_currentRotation * originCenter;
-        //Debug.DrawLine(offsetOrigin, offsetOrigin + c_playerData.v_currentDirection, Color.red);
 
         if (Physics.BoxCast(offsetOrigin,
                             playerBox,
-                            c_playerData.v_currentDirection,
+                            c_playerData.q_currentRotation * Vector3.forward,
                             out obstacleHit,
                             c_playerData.q_currentRotation,
                             c_collisionData.f_obstacleRayLength,
@@ -581,7 +578,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void CheckForZone()
     {
         float distance = c_playerData.f_currentForwardRaycastDistance + (c_playerData.f_currentSpeed * Time.fixedDeltaTime);
-        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.v_currentDirection, out forwardHit, distance, ZoneCollisionMask))
+        if (Physics.Raycast(c_playerData.v_currentPosition, c_playerData.q_currentRotation * Vector3.forward, out forwardHit, distance, ZoneCollisionMask))
         {
             // notify that we have collided with a zone, grab the zone's ID and send corresponding message
             ZoneController controller = GameMasterController.LookupZoneController(forwardHit.transform);

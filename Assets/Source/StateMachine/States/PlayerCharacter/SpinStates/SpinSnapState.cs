@@ -34,7 +34,6 @@ public class SpinSnapState : iState
         Quaternion root = c_physData.q_startRotation;
         Quaternion currentRotation = c_physData.q_startRotation;
 
-        Vector3 playerForward = c_playerPosData.v_modelDirection;
         Vector3 spinAxis = Vector3.up;
         Vector3 flipAxis = Vector3.right;
 
@@ -47,13 +46,12 @@ public class SpinSnapState : iState
         float currentSpinDegrees = c_scoringData.f_currentSpinDegrees;
         float currentFlipDegrees = c_scoringData.f_currentFlipDegrees;
 
-        HandlingCartridge.Turn(ref playerForward, flipAxis, currentFlipDegrees, ref root);
-        HandlingCartridge.Turn(ref playerForward, spinAxis, currentSpinDegrees, ref root);
+        HandlingCartridge.Turn(flipAxis, currentFlipDegrees, ref root);
+        HandlingCartridge.Turn(spinAxis, currentSpinDegrees, ref root);
         cart_rotation.SetRotation(ref currentRotation, root);
         cart_rotation.ValidateSpinRotation(currentSpinDegrees, currentFlipDegrees, spinCeiling, flipCeiling, ref currentSpinRate, ref currentFlipRate);
 
         c_playerPosData.q_currentModelRotation = currentRotation;
-        c_playerPosData.v_modelDirection = playerForward;
         c_physData.f_currentFlipRate = currentFlipRate;
         c_physData.f_currentSpinRate = currentSpinRate;
         c_scoringData.f_currentSpinDegrees += currentSpinRate * 360f * Time.deltaTime;

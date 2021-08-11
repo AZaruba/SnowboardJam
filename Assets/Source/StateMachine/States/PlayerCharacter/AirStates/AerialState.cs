@@ -50,7 +50,7 @@ public class AerialState : iState {
     public void TransitionAct()
     {
         Vector3 jumpVector = Vector3.up * c_playerData.f_currentJumpCharge;
-        Vector3 directVector = c_playerData.v_currentDirection * c_playerData.f_currentSpeed;
+        Vector3 directVector = c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed;
 
         Vector3 totalAerialVector = jumpVector + directVector;
         Vector3 latDir = totalAerialVector;
@@ -66,7 +66,6 @@ public class AerialState : iState {
         c_aerialMoveData.f_lateralVelocity = latVel;
         c_playerData.v_currentNormal = Vector3.up;
         c_playerData.v_currentDown = Vector3.down;
-        c_playerData.v_currentDirection = latDir;
     }
 
     public StateRef GetNextState(Command cmd)
@@ -79,7 +78,6 @@ public class AerialState : iState {
             Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_collisionData.v_surfaceNormal);
             c_playerData.f_currentSpeed = projectedDir.magnitude;
             c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -1 * Time.deltaTime;
-            c_playerData.v_currentDirection = projectedDir.normalized;
             return StateRef.GROUNDED;
         }
         if (cmd == Command.CRASH)

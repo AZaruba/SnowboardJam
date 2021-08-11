@@ -32,7 +32,6 @@ public class PlayerData : MonoBehaviour {
     private float SurfaceAngleDifference;
 
     private Vector3 CurrentPosition;
-    private Vector3 CurrentDirection;
     private Vector3 CurrentModelDirection;
     private Vector3 CurrentAirDirection;
     private Vector3 CurrentNormal;
@@ -196,12 +195,6 @@ public class PlayerData : MonoBehaviour {
     {
         get { return CurrentPosition; }
         set { CurrentPosition = value; }
-    }
-
-    public Vector3 v_currentDirection
-    {
-        get { return CurrentDirection; }
-        set { CurrentDirection = value; }
     }
 
     public Vector3 v_currentModelDirection

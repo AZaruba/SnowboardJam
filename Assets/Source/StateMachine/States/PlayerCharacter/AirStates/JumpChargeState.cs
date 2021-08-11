@@ -30,17 +30,14 @@ public class JumpChargeState : iState
         c_playerData.f_currentJumpCharge = chargeValue;
 
         Vector3 currentPosition = c_playerData.v_currentPosition;
-        Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         float currentTopSpeed = c_playerData.f_currentTopSpeed;
         float currentAcceleration = c_playerData.f_currentAcceleration;
 
-        AngleCalculationCartridge.AlignToSurfaceByTail(ref currentPosition,
-                                            c_collisionData.v_surfaceNormal,
+        AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
                                             ref currentRotation,
-                                            ref currentDir,
                                             ref currentNormal);
 
         SurfaceInfluenceCartridge.AdjustAcceleration(ref currentAcceleration,
@@ -53,7 +50,6 @@ public class JumpChargeState : iState
         SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, c_playerData.f_topSpeed, c_playerData.f_terminalVelocity, currentRotation, c_positionData.i_switchStance);
 
         c_playerData.v_currentPosition = currentPosition;
-        c_playerData.v_currentDirection = currentDir;
         c_playerData.v_currentNormal = currentNormal;
         c_playerData.q_currentRotation = currentRotation;
 

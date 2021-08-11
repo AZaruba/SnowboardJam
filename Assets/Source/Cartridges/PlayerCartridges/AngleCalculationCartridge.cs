@@ -24,17 +24,14 @@ public class AngleCalculationCartridge
         currentNormal = resultRotation * Vector3.up;
     }
 
-    public static void AlignToSurfaceByTail(ref Vector3 currentPosition,
-                                Vector3 surfaceNormal,
+    public static void AlignToSurfaceByTail(Vector3 surfaceNormal,
                                 ref Quaternion currentRotation,
-                                ref Vector3 currentForward,
                                 ref Vector3 currentNormal)
     {
-        Vector3 targetForward = Vector3.ProjectOnPlane(currentForward.normalized, surfaceNormal.normalized).normalized;
+        Vector3 targetForward = Vector3.ProjectOnPlane(currentRotation * Vector3.forward.normalized, surfaceNormal.normalized).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(targetForward, surfaceNormal).normalized;
         currentRotation = targetRotation;
         currentNormal = (targetRotation * Vector3.up).normalized;
-        currentForward = (targetRotation * Vector3.forward).normalized;
         return;
     }
 

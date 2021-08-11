@@ -39,7 +39,6 @@ public class SlowingState : iState
         float deceleration = c_playerData.f_brakePower;
         float slowScaling = c_playerInputData.f_inputAxisLVert * - 1;
         Vector3 currentPosition = c_playerData.v_currentPosition;
-        Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
@@ -53,7 +52,6 @@ public class SlowingState : iState
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentNormal = currentNormal.normalized;
         c_playerData.v_currentDown = currentNormal.normalized * -1;
-        c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
     }
 
