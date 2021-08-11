@@ -36,11 +36,14 @@ public class RidingState : iState {
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        AccelerationCartridge.NewSoftCapAccelerate(ref currentVelocity,
-                                                   c_playerData.f_gravity,
-                                                   c_playerData.f_currentTopSpeed,
-                                                   (currentRotation * Vector3.forward).y,
-                                                   c_playerPositionData.i_switchStance);
+        AccelerationCartridge.AccelerateGravity(ref currentVelocity,
+            c_playerData.f_gravity,
+            c_playerData.f_topSpeed,
+            currentRotation);
+
+        AccelerationCartridge.DecelerateFriction(ref currentVelocity,
+            0.1f,
+            currentRotation);
 
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
@@ -117,11 +120,14 @@ public class RidingChargeState : iState
         Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        AccelerationCartridge.NewSoftCapAccelerate(ref currentVelocity,
-                                                   c_playerData.f_gravity,
-                                                   c_playerData.f_currentTopSpeed,
-                                                   (currentRotation * Vector3.forward).y,
-                                                   c_playerPositionData.i_switchStance);
+        AccelerationCartridge.AccelerateGravity(ref currentVelocity,
+            c_playerData.f_gravity,
+            c_playerData.f_topSpeed,
+            currentRotation);
+
+        AccelerationCartridge.DecelerateFriction(ref currentVelocity,
+            0.1f,
+            currentRotation);
 
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 

@@ -105,6 +105,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
         debugAccessor.DisplayFloat("Current Speed", c_playerData.f_currentSpeed);
+        // debugAccessor.DisplayVector3("Directional", c_playerData)
     }
 
     void FixedUpdate()

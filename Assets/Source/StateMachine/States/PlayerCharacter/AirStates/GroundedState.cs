@@ -33,13 +33,6 @@ public class GroundedState : iState
                                             ref currentRotation,
                                             ref currentNormal);
 
-        SurfaceInfluenceCartridge.AdjustAcceleration(ref currentAcceleration,
-                                                     c_playerData.f_acceleration,
-                                                     c_playerData.f_gravity,
-                                                     c_playerData.f_topSpeed / currentTopSpeed,
-                                                     currentRotation,
-                                                     c_positionData.i_switchStance);
-
         SurfaceInfluenceCartridge.AdjustTopSpeed(ref currentTopSpeed, c_playerData.f_topSpeed, c_playerData.f_terminalVelocity, currentRotation, c_positionData.i_switchStance);
 
         c_playerData.v_currentPosition = currentPosition;

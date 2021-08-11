@@ -46,6 +46,10 @@ public class SlowingState : iState
                                          deceleration * slowScaling * c_playerPositionData.i_switchStance, 
                                          c_playerPositionData.i_switchStance);
 
+        AccelerationCartridge.DecelerateFriction(ref currentVelocity,
+            0.1f,
+            currentRotation);
+
         cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;
