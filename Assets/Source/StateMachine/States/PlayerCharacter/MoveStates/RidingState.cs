@@ -30,16 +30,15 @@ public class RidingState : iState {
     {
         // check for angle when implemented
         float currentVelocity = c_playerData.f_currentSpeed;
-        float f_acceleration = c_playerData.f_currentAcceleration;
-        // float topSpeed = c_playerData.f_currentTopSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
-        Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
+        Quaternion currentModelRotation = c_playerPositionData.q_currentModelRotation;
 
         AccelerationCartridge.AccelerateGravity(ref currentVelocity,
             c_playerData.f_gravity,
             c_playerData.f_topSpeed,
-            currentRotation);
+            ref currentRotation,
+            ref currentModelRotation);
 
         AccelerationCartridge.DecelerateFriction(ref currentVelocity,
             0.1f,
@@ -49,8 +48,6 @@ public class RidingState : iState {
 
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.v_currentPosition = currentPosition;
-        c_playerData.v_currentNormal = currentNormal.normalized;
-        c_playerData.v_currentDown = currentNormal.normalized * -1;
         c_playerData.q_currentRotation = currentRotation;
         c_playerPositionData.i_switchStance = currentVelocity != Mathf.Abs(currentVelocity) ? Constants.SWITCH_STANCE : Constants.REGULAR_STANCE;
     }
@@ -114,16 +111,15 @@ public class RidingChargeState : iState
     {
         // check for angle when implemented
         float currentVelocity = c_playerData.f_currentSpeed;
-        float f_acceleration = c_playerData.f_currentAcceleration;
-        //float topSpeed = c_playerData.f_currentTopSpeed;
         Vector3 currentPosition = c_playerData.v_currentPosition;
-        Vector3 currentNormal = c_playerData.v_currentNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
+        Quaternion currentModelRotation = c_playerPositionData.q_currentModelRotation;
 
         AccelerationCartridge.AccelerateGravity(ref currentVelocity,
             c_playerData.f_gravity,
             c_playerData.f_topSpeed,
-            currentRotation);
+            ref currentRotation,
+            ref currentModelRotation);
 
         AccelerationCartridge.DecelerateFriction(ref currentVelocity,
             0.1f,
@@ -133,17 +129,13 @@ public class RidingChargeState : iState
 
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.v_currentPosition = currentPosition;
-        c_playerData.v_currentNormal = currentNormal.normalized;
-        c_playerData.v_currentDown = currentNormal.normalized * -1;
         c_playerData.q_currentRotation = currentRotation;
         c_playerPositionData.i_switchStance = currentVelocity != Mathf.Abs(currentVelocity) ? Constants.SWITCH_STANCE : Constants.REGULAR_STANCE;
     }
 
     public void TransitionAct()
     {
-        c_playerData.f_currentAirVelocity = 0.0f;
-        c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
-        c_playerData.v_currentDown = c_collisionData.v_surfaceNormal * -1;
+
     }
 
     public StateRef GetNextState(Command cmd)

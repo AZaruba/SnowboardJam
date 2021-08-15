@@ -306,6 +306,8 @@ public class PlayerInputData
 public class PlayerHandlingData
 {
     public float f_currentTurnSpeed;
+    public float f_currentRealTurnSpeed;
+    public float f_currentSurfaceFactor;
     public float f_turnAcceleration;
     public float f_turnTopSpeed;
     public float f_lastFrameTurnSpeed;
@@ -313,6 +315,8 @@ public class PlayerHandlingData
     public PlayerHandlingData(float turnSpeedIn, float turnAccelIn)
     {
         this.f_currentTurnSpeed = Constants.ZERO_F;
+        this.f_currentRealTurnSpeed = Constants.ZERO_F;
+        this.f_currentSurfaceFactor = Constants.ONE;
         this.f_turnAcceleration = turnAccelIn;
         this.f_turnTopSpeed = turnSpeedIn;
     }

@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition);
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
-        debugAccessor.DisplayState("Spin state", sm_trickPhys.GetCurrentState());
+        debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
         debugAccessor.DisplayFloat("Current Speed", c_playerData.f_currentSpeed);
         // debugAccessor.DisplayVector3("Directional", c_playerData)
     }
@@ -442,7 +442,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // safety detection: use old-style raycast to check if we want to stay grounded
         if (Physics.BoxCast(c_playerData.v_currentPosition + (c_playerData.q_currentRotation * CollisionData.CenterOffset),
                             CollisionData.HalfExtents,
-                            c_playerData.v_currentDown,
+                            c_playerData.q_currentRotation * Vector3.down,
                             out centerHit,
                             c_playerData.q_currentRotation,
                             (c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1) + offsetDist,

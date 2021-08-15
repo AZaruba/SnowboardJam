@@ -8,16 +8,21 @@ public class AccelerationCartridge {
     public static void AccelerateGravity(ref float velocity,
         float gravity,
         float topSpeed,
-        Quaternion playerRotation)
+        ref Quaternion playerRotation,
+        ref Quaternion modelRotation)
     {
         Vector3 projectedGravityAcceleration = Vector3.ProjectOnPlane(Vector3.down * gravity * Time.deltaTime, playerRotation * Vector3.up);
         Vector3 playerVec = playerRotation * Vector3.forward * velocity;
 
         velocity = (playerVec + projectedGravityAcceleration).magnitude;
+        Quaternion resultRotation = Quaternion.FromToRotation(playerVec, playerVec + projectedGravityAcceleration);
+        playerRotation = resultRotation * playerRotation;
+        modelRotation = resultRotation * modelRotation;
         if (velocity > topSpeed)
         {
             velocity = topSpeed;
         }
+
     }
 
     public static void DecelerateFriction(ref float velocity,

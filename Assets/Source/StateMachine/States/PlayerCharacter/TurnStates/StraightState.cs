@@ -27,6 +27,7 @@ public class StraightState : iState
     public void TransitionAct()
     {
         c_turnData.f_currentTurnSpeed = Constants.ZERO_F;
+        c_turnData.f_currentRealTurnSpeed = Constants.ZERO_F;
     }
 
     public StateRef GetNextState(Command cmd)
@@ -74,6 +75,7 @@ public class TurnChargeState : iState
     public void TransitionAct()
     {
         c_turnData.f_currentTurnSpeed = Constants.ZERO_F;
+        c_turnData.f_currentRealTurnSpeed = Constants.ZERO_F;
     }
 
     public StateRef GetNextState(Command cmd)
