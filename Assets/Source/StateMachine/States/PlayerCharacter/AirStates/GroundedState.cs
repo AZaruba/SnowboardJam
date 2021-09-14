@@ -26,12 +26,15 @@ public class GroundedState : iState
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
+        c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
+
         AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
                                             ref currentRotation,
                                             ref currentNormal);
         AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
                                             ref currentModelRotation,
                                             ref currentNormal);
+
 
         c_playerData.v_currentNormal = currentNormal;
         c_playerData.q_currentRotation = currentRotation;
@@ -45,9 +48,23 @@ public class GroundedState : iState
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentAirVelocity = Constants.ZERO_F;
 
-        c_playerData.q_currentRotation = Quaternion.FromToRotation(c_playerData.v_currentNormal, c_collisionData.v_surfaceNormal) * c_playerData.q_currentRotation;
-        c_positionData.q_currentModelRotation = Quaternion.FromToRotation(c_playerData.v_currentNormal, c_collisionData.v_surfaceNormal) * c_positionData.q_currentModelRotation;
-        c_playerData.v_currentNormal = c_collisionData.v_surfaceNormal;
+        Vector3 currentNormal = c_playerData.v_currentNormal;
+        Quaternion currentRotation = c_playerData.q_currentRotation;
+        Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
+
+        //c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
+
+        AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
+                                            ref currentRotation,
+                                            ref currentNormal);
+        AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
+                                            ref currentModelRotation,
+                                            ref currentNormal);
+
+
+        c_playerData.v_currentNormal = currentNormal;
+        c_playerData.q_currentRotation = currentRotation;
+        c_positionData.q_currentModelRotation = currentModelRotation;
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
         c_playerData.v_currentDown = c_collisionData.v_surfaceNormal * -1;
 

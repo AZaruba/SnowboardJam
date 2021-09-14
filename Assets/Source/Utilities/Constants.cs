@@ -1,4 +1,6 @@
 ﻿
+using UnityEngine;
+
 static class Constants
 {
     public const float ZERO_F = 0.0f;
@@ -19,6 +21,13 @@ static class Constants
     public const int REGULAR_STANCE = 1;
 
     public const string TIME_FORMAT_STRING = "{0:0}:{1:00}:{2:00}";
+}
+
+static class CollisionLayers
+{
+    public static LayerMask PLAYER_CHARACTER = 1 << 8;
+    public static LayerMask ENVIRONMENT = 1 << 10;
+    public static LayerMask ZONES = 1 << 11;
 }
 
 public enum DataTarget
