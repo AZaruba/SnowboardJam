@@ -208,7 +208,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3902070}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 0.1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -992,6 +992,7 @@ GameObject:
   - component: {fileID: 734568628}
   - component: {fileID: 734568629}
   - component: {fileID: 734568630}
+  - component: {fileID: 734568624}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -1067,6 +1068,19 @@ MonoBehaviour:
   CenterOfGravity: {fileID: 483208281}
   RaycastDistance: 1.2
   ForwardRaycastDistance: 0.6
+--- !u!65 &734568624
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 734568621}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 2, z: 2.5}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!4 &734568625
 Transform:
   m_ObjectHideFlags: 0
@@ -1075,7 +1089,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 734568621}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 483208281}
@@ -1121,7 +1135,7 @@ MonoBehaviour:
   ZoneCollisionMask:
     serializedVersion: 2
     m_Bits: 2048
-  collisionCollider: {fileID: 1334918258}
+  collisionCollider: {fileID: 734568624}
 --- !u!114 &734568628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1974,25 +1988,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1182894704}
   m_CullTransparentMesh: 0
---- !u!1 &1334918255 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2092831448347260655, guid: 36f3047709dbebc4f9ad1aa050dcbcb2,
-    type: 3}
-  m_PrefabInstance: {fileID: 799940039}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &1334918258
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1334918255}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.5, y: 2.5, z: 0.1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1418095435
 GameObject:
   m_ObjectHideFlags: 0
