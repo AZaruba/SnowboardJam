@@ -105,8 +105,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
         debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayFloat("Current Speed", c_playerData.f_currentAirVelocity);
-        // debugAccessor.DisplayVector3("Directional", c_playerData)
+        debugAccessor.DisplayFloat("contact offset", c_collisionData.f_contactOffset);
+        debugAccessor.DisplayVector3("Attach point", c_collisionData.v_attachPoint);
     }
 
     void FixedUpdate()
@@ -213,15 +213,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         if (c_stateData.b_courseFinished == true)
         {
-            /*
-            if (c_collisionData.b_collisionDetected)
-            {
-                c_accelMachine.Execute(Command.LAND);
-                c_turnMachine.Execute(Command.LAND);
-                c_airMachine.Execute(Command.LAND);
-                sm_tricking.Execute(Command.LAND);
-            }
-            */
             c_accelMachine.Execute(Command.SLOW);
             c_turnMachine.Execute(Command.RIDE);
             if (c_playerData.f_currentSpeed < 0.0f)
@@ -231,33 +222,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
             }
             return;
         }
-        // what differentiates falling from jumping (jump charge state should stay the same
-        /*
-        if (!c_collisionData.b_collisionDetected)
-        {
-            c_accelMachine.Execute(Command.FALL);
-            c_turnMachine.Execute(Command.FALL);
-            c_airMachine.Execute(Command.FALL);
-            sm_tricking.Execute(Command.READY_TRICK);
-        }
-        else
-        {
-            // trick should only send when we land a trick
-            if (c_scoringData.b_sendTrick)
-            {
-                CompileAndSendScore();
-            }
-
-            // go back to the jump charge state if button is still held?
-            c_accelMachine.Execute(Command.LAND);
-            c_turnMachine.Execute(Command.LAND);
-            c_airMachine.Execute(Command.LAND);
-            sm_tricking.Execute(Command.LAND);
-            sm_trickPhys.Execute(Command.LAND);
-
-        }
-        */
-        
         if (Mathf.Abs(c_inputData.f_inputAxisLHoriz) > 0.0f)
         {
             // catch changing direction between two FixedUpdates
@@ -329,7 +293,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
             //sm_trickPhys.Execute(Command.CRASH);
         }
 
-        // TODO: switch stance if acceleration is < 0 and it causes velocity to go below zero
     }
 
     #region StartupFunctions
@@ -435,7 +398,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (Physics.BoxCast(c_playerData.v_currentPosition + CollisionData.CenterOffset,
                             CollisionData.HalfExtents,
-                            Vector3.down,
+                            c_playerData.q_currentRotation * Vector3.down,
                             out backHit,
                             c_playerData.q_currentRotation,
                             c_collisionData.f_contactOffset + CollisionData.CenterOffset.magnitude,
@@ -447,6 +410,17 @@ public class PlayerController : MonoBehaviour, iEntityController {
         else
         {
             c_collisionData.v_attachPoint = Vector3.zero;
+        }
+    }
+
+    private void CollectCenteredNormalIfPresent()
+    {
+        if (Physics.Raycast(c_playerData.v_currentPosition,
+                            c_playerData.q_currentRotation * Vector3.down,
+                            out frontHit,
+                            c_collisionData.f_contactOffset + CollisionData.CenterOffset.y))
+        {
+            c_collisionData.v_surfaceNormal = GetBaryCentricNormal(frontHit);
         }
     }
 
@@ -465,13 +439,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             CollisionLayers.ENVIRONMENT))
         {
             c_collisionData.b_collisionDetected = true;
-            c_collisionData.v_surfaceNormal = GetBaryCentricNormal(centerHit);
             c_collisionData.f_contactOffset = centerHit.distance;
 
             // rotation being weird on land, possibly influencing the offset push
             c_playerData.q_currentRotation = Quaternion.FromToRotation(c_playerData.q_currentRotation * Vector3.up, c_collisionData.v_surfaceNormal) * c_playerData.q_currentRotation;
 
             ValidateRotatedAttachPoint();
+            CollectCenteredNormalIfPresent();
 
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
@@ -599,7 +573,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private void InitializeTurnMachine()
     {
         StraightState s_straight = new StraightState(ref c_playerData, ref c_turnData, ref c_positionData);
-        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_turnData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_handling, ref cart_surfInf);
+        CarvingState s_carving = new CarvingState(ref c_playerData, ref c_turnData, ref c_inputData, ref c_positionData);
         TurnDisabledState s_turnDisabled = new TurnDisabledState();
         TurnChargeState s_turnCharge = new TurnChargeState(ref c_playerData, ref c_turnData, ref c_positionData);
 

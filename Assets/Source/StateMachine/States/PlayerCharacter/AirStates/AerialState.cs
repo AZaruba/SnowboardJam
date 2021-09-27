@@ -70,6 +70,7 @@ public class AerialState : iState {
 
     public StateRef GetNextState(Command cmd)
     {
+        // TODO: why are we doing this here? and why does it seem like we have sort of a "bounce" whenever the angle is different enough
         if (cmd == Command.LAND)
         {
             Vector3 horizontalDir = c_aerialMoveData.v_lateralDirection * c_aerialMoveData.f_lateralVelocity;
