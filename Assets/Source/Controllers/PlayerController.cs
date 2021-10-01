@@ -405,7 +405,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             CollisionLayers.ENVIRONMENT))
         {
             Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - backHit.point);
-            c_collisionData.v_attachPoint = Vector3.up * (unfoldedVector.y - 0.01f);
+            c_collisionData.v_attachPoint = Vector3.up * (unfoldedVector.y - CollisionData.HalfExtents.y + ((c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed).y * Time.deltaTime));
         }
         else
         {
