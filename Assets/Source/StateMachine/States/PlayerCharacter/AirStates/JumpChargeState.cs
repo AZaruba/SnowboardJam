@@ -33,6 +33,8 @@ public class JumpChargeState : iState
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
+        c_playerData.v_currentPosition -= c_collisionData.v_attachPoint;
+
         AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
                                             ref currentRotation,
                                             ref currentNormal);
