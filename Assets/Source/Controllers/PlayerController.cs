@@ -493,6 +493,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // Transform local space normals to world space
         Transform hitTransform = hitIn.collider.transform;
         BarycentricNormal = hitTransform.TransformDirection(BarycentricNormal);
+        Debug.DrawRay(hitIn.point, BarycentricNormal.normalized, Color.red, 5);
 
         return BarycentricNormal.normalized;
     }
