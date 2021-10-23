@@ -27,11 +27,20 @@ public class CarvingState : iState {
 
         float currentTurnSpeed = c_turnData.f_currentTurnSpeed;
         float currentRealTurnSpeed = c_turnData.f_currentRealTurnSpeed;
-        float currentTurnAccel = c_turnData.f_turnAcceleration * c_playerInputData.f_inputAxisLHoriz;
+        float targetTurnAccel = c_turnData.f_turnAcceleration * c_playerInputData.f_inputAxisLHoriz;
         float turnSpeedCap = c_turnData.f_turnTopSpeed;
+
+        float turnSign = Mathf.Sign(targetTurnAccel);
+
+        AccelerationCartridge.CalculateInterpolatedAcceleration(out float currentTurnAccel,
+                                                                targetTurnAccel,
+                                                                turnSpeedCap * turnSign * Constants.NEGATIVE_ONE,
+                                                                turnSpeedCap * turnSign,
+                                                                currentTurnSpeed);
 
         AccelerationCartridge.AccelerateAbs(ref currentTurnSpeed, currentTurnAccel, turnSpeedCap);
         AccelerationCartridge.AccelerateAbs(ref currentRealTurnSpeed, currentTurnAccel, turnSpeedCap, c_turnData.f_currentSurfaceFactor);
+
         HandlingCartridge.Turn(Vector3.up, currentTurnSpeed * Time.fixedDeltaTime, ref currentModelRotation);
         HandlingCartridge.Turn(Vector3.up, currentRealTurnSpeed * Time.fixedDeltaTime, ref currentRotation);
 

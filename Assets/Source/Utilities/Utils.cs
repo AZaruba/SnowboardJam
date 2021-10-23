@@ -19,6 +19,11 @@ public static class Utils
         return (lastFloat * (1.0f - TimestepInterpolator.FIXED_INTERPOLATION_VALUE)) + (targetFloat * TimestepInterpolator.FIXED_INTERPOLATION_VALUE);
     }
 
+    public static float InterpolateFloatManual(float min, float max, float target)
+    {
+        return (min * (Constants.ONE - max)) +(target * max);
+    }
+
     public static Color InterpolateFixedColor(Color lastColor, Color targetColor)
     {
         return Color.Lerp(lastColor, targetColor, TimestepInterpolator.FIXED_INTERPOLATION_VALUE);

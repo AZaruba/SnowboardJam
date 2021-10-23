@@ -45,7 +45,6 @@ public class GroundedState : iState
 
     public void TransitionAct()
     {
-        Debug.Log(c_collisionData.v_attachPoint);
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentAirVelocity = Constants.ZERO_F;
 

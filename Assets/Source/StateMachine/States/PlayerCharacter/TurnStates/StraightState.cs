@@ -21,13 +21,28 @@ public class StraightState : iState
     public void Act()
     {
         Quaternion currentRotation = c_playerData.q_currentRotation;
+        Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
+
+        float currentTurnSpeed = c_turnData.f_currentTurnSpeed;
+        float currentRealTurnSpeed = c_turnData.f_currentRealTurnSpeed;
+
+        AccelerationCartridge.DecelerateAbs(ref currentTurnSpeed, c_turnData.f_turnResetSpeed);
+
+        AccelerationCartridge.DecelerateAbs(ref currentRealTurnSpeed, c_turnData.f_turnResetSpeed);
+
+        HandlingCartridge.Turn(Vector3.up, currentRealTurnSpeed * Time.fixedDeltaTime, ref currentRotation);
+        HandlingCartridge.Turn(Vector3.up, currentTurnSpeed * Time.fixedDeltaTime, ref currentModelRotation);
+
+
         c_positionData.q_currentModelRotation = currentRotation;
+        c_playerData.q_currentRotation = currentRotation;
+        c_turnData.f_currentTurnSpeed = currentTurnSpeed;
+        c_turnData.f_currentRealTurnSpeed = currentRealTurnSpeed;
     }
 
     public void TransitionAct()
     {
-        c_turnData.f_currentTurnSpeed = Constants.ZERO_F;
-        c_turnData.f_currentRealTurnSpeed = Constants.ZERO_F;
+
     }
 
     public StateRef GetNextState(Command cmd)
@@ -69,13 +84,26 @@ public class TurnChargeState : iState
     public void Act()
     {
         Quaternion currentRotation = c_playerData.q_currentRotation;
+        Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
+
+        float currentTurnSpeed = c_turnData.f_currentTurnSpeed;
+        float currentRealTurnSpeed = c_turnData.f_currentRealTurnSpeed;
+
+        AccelerationCartridge.DecelerateAbs(ref currentTurnSpeed, c_turnData.f_turnResetSpeed);
+        AccelerationCartridge.DecelerateAbs(ref currentRealTurnSpeed, c_turnData.f_turnResetSpeed);
+
+        HandlingCartridge.Turn(Vector3.up, currentRealTurnSpeed * Time.fixedDeltaTime, ref currentRotation);
+        HandlingCartridge.Turn(Vector3.up, currentTurnSpeed * Time.fixedDeltaTime, ref currentModelRotation);
+
+
         c_positionData.q_currentModelRotation = currentRotation;
+        c_playerData.q_currentRotation = currentRotation;
+        c_turnData.f_currentTurnSpeed = currentTurnSpeed;
+        c_turnData.f_currentRealTurnSpeed = currentRealTurnSpeed;
     }
 
     public void TransitionAct()
     {
-        c_turnData.f_currentTurnSpeed = Constants.ZERO_F;
-        c_turnData.f_currentRealTurnSpeed = Constants.ZERO_F;
     }
 
     public StateRef GetNextState(Command cmd)

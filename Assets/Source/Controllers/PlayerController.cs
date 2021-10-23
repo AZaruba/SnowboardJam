@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
         debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayFloat("contact offset", c_collisionData.f_contactOffset);
+        debugAccessor.DisplayFloat("Turn Speed", c_turnData.f_currentRealTurnSpeed);
         debugAccessor.DisplayVector3("Attach point", c_collisionData.v_attachPoint);
     }
 
@@ -171,7 +171,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     private void UpdateAnimator()
     {
-        PlayerAnimator.SetFloat("TurnAnalogue", c_turnData.f_currentTurnSpeed / c_turnData.f_turnTopSpeed);
+        PlayerAnimator.SetFloat("TurnAnalogue", c_turnData.f_currentRealTurnSpeed / c_turnData.f_turnTopSpeed);
         PlayerAnimator.SetFloat("SlowAnalogue", c_inputData.f_inputAxisLVert);
         PlayerAnimator.SetBool("JumpPressed", c_airMachine.GetCurrentState() == StateRef.CHARGING);
     }
@@ -310,7 +310,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_entityData = new EntityData();
         c_collisionData = new CollisionData(CollisionData.FrontRayOffset, CollisionData.BackRayOffset);
         c_lastFrameData = new LastFramePositionData();
-        c_turnData = new PlayerHandlingData(c_playerData.f_turnSpeed, c_playerData.f_turnAcceleration);
+        c_turnData = new PlayerHandlingData(c_playerData.f_turnSpeed, c_playerData.f_turnAcceleration, c_playerData.f_turnAcceleration * 2);
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
