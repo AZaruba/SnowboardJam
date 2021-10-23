@@ -337,10 +337,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void OnDrawGizmos()
     {
-        Vector3 offsetFront = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.FrontRayOffset;
-        Vector3 offsetBack = c_playerData.v_currentPosition + c_playerData.q_currentRotation.normalized * CollisionData.BackRayOffset;
+        Gizmos.matrix = Matrix4x4.TRS(c_playerData.v_currentPosition, c_playerData.q_currentRotation, transform.lossyScale);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(CollisionData.CenterOffset, CollisionData.HalfExtents * 2);
 
-        Gizmos.DrawRay(offsetBack, offsetFront - offsetBack);
+        Gizmos.color = c_airMachine.GetCurrentState() == StateRef.AIRBORNE ? Color.green : Color.blue;
+        Gizmos.DrawWireCube(CollisionData.CenterOffset + (Vector3.down * c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1), CollisionData.HalfExtents * 2);
+
     }
 
     /// <summary>
@@ -396,16 +399,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void ValidateRotatedAttachPoint()
     {
-        if (Physics.BoxCast(c_playerData.v_currentPosition + CollisionData.CenterOffset,
-                            CollisionData.HalfExtents,
+        if (Physics.BoxCast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset * 2,
+                            CollisionData.BodyHalfExtents,
                             c_playerData.q_currentRotation * Vector3.down,
                             out backHit,
                             c_playerData.q_currentRotation,
-                            c_collisionData.f_contactOffset + CollisionData.CenterOffset.magnitude,
+                            c_collisionData.f_contactOffset + c_aerialMoveData.f_verticalVelocity * -1 + CollisionData.CenterOffset.y * 2,
                             CollisionLayers.ENVIRONMENT))
         {
             Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - backHit.point);
-            c_collisionData.v_attachPoint = Vector3.up * (unfoldedVector.y - CollisionData.HalfExtents.y + ((c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed).y * Time.deltaTime));
+            c_collisionData.v_attachPoint = Vector3.up * (unfoldedVector.y + ((c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed).y * Time.deltaTime));
+            Debug.DrawRay(c_playerData.v_currentPosition - unfoldedVector, Vector3.up, Color.red, 5);
+            Debug.DrawLine(backHit.point, backHit.point + c_playerData.q_currentRotation * Vector3.up * unfoldedVector.y, Color.cyan, 5);
         }
         else
         {
@@ -430,12 +435,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         c_collisionData.b_collisionDetected = false;
 
-        if (Physics.BoxCast(c_playerData.v_currentPosition + CollisionData.CenterOffset,
-                            CollisionData.HalfExtents,
-                            Vector3.down,
+        if (Physics.BoxCast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset * 2,
+                            CollisionData.BodyHalfExtents,
+                            c_playerData.q_currentRotation * Vector3.down,
                             out centerHit,
                             c_playerData.q_currentRotation,
-                            (c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1) + offsetDist,
+                            c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1 + CollisionData.CenterOffset.y * 2,
                             CollisionLayers.ENVIRONMENT))
         {
             c_collisionData.b_collisionDetected = true;
@@ -493,7 +498,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         // Transform local space normals to world space
         Transform hitTransform = hitIn.collider.transform;
         BarycentricNormal = hitTransform.TransformDirection(BarycentricNormal);
-        Debug.DrawRay(hitIn.point, BarycentricNormal.normalized, Color.red, 5);
 
         return BarycentricNormal.normalized;
     }
@@ -796,8 +800,3 @@ public class PlayerController : MonoBehaviour, iEntityController {
         t_audioStateTree.AssignChild(ref airborneBranch);
     }
 }
-
-// TODO:
-
-// Get cartridges out of states, into static space
-// Get modelRotation and physicsRotation sorted out (modelRotation only for spinning, flipping, and grip slipping/physicsRotation for motion)

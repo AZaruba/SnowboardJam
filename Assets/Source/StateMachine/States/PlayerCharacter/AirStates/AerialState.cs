@@ -70,7 +70,6 @@ public class AerialState : iState {
 
     public StateRef GetNextState(Command cmd)
     {
-        // TODO: why are we doing this here? and why does it seem like we have sort of a "bounce" whenever the angle is different enough
         if (cmd == Command.LAND)
         {
             Vector3 horizontalDir = c_aerialMoveData.v_lateralDirection * c_aerialMoveData.f_lateralVelocity;
@@ -78,7 +77,7 @@ public class AerialState : iState {
 
             Vector3 projectedDir = Vector3.ProjectOnPlane(horizontalDir, c_collisionData.v_surfaceNormal);
             c_playerData.f_currentSpeed = projectedDir.magnitude;
-            c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -1 * Time.deltaTime;
+            c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -1;
             return StateRef.GROUNDED;
         }
         if (cmd == Command.CRASH)

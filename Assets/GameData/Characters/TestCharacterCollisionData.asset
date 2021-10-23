@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FrontRayOffset: {x: 0, y: 0.01, z: 1.25}
   BackRayOffset: {x: 0, y: 0.01, z: -1.25}
-  HalfExtents: {x: 0.255, y: 0.01, z: 1.25}
+  HalfExtents: {x: 0.255, y: 1.1, z: 1.25}
   CenterOffset: {x: 0, y: 1.1, z: 0}
-  BodyHalfExtents: {x: 0.255, y: 1.09, z: 1.255}
+  BodyHalfExtents: {x: 0.255, y: 0.1, z: 1.255}
   BaseObstacleCollisionAngle: 25
