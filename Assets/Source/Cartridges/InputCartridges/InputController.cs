@@ -48,6 +48,7 @@ public static class GlobalInputController
     public static ControllerInputData ControllerData;
     private static bool InputInitialized = false;
 
+    private static bool WatchingForInput = false;
     private static bool InputLocked = false;
     private static bool InputToFlush = false;
     private static float InputLockTimer = 0.0f;
@@ -60,6 +61,9 @@ public static class GlobalInputController
     //private static Dictionary<KeyCode, KeyValue> DigitalInputData;
     //private static Dictionary<string, float> AnalogInputData;
 
+    // used for updating inputs in the menu, as this action directly polls Unity's Input class
+    private static Dictionary<KeyCode, KeyValue> ArbitraryInputs;
+
     public static bool InitializeInput()
     {
         if (InputInitialized)
@@ -68,9 +72,22 @@ public static class GlobalInputController
         }
 
         DefineInputs();
+        InitializeArbitraryInputs();
 
         InputInitialized = true;
         return true;
+    }
+
+    public static void InitializeArbitraryInputs()
+    {
+        ArbitraryInputs = new Dictionary<KeyCode, KeyValue>();
+        foreach (KeyCode keyIn in System.Enum.GetValues(typeof(KeyCode)))
+        {
+            if (!ArbitraryInputs.ContainsKey(keyIn))
+            {
+                ArbitraryInputs.Add(keyIn, KeyValue.IDLE);
+            }
+        }
     }
 
     public static void DefineInputs()
@@ -256,6 +273,46 @@ public static class GlobalInputController
         DigitalActionValue[actIn] = frameValue;
     }
 
+    /// <summary>
+    /// Checks and sets the values for all keys listed in the system keycode enum.
+    /// This is used to poll for input within FixedUpdate for ANY key. It should
+    /// only run when rebinding a key in the menu.
+    /// </summary>
+    public static void CheckAndSetValueArbitrary()
+    {
+        foreach (KeyCode keyIn in new List<KeyCode>(ArbitraryInputs.Keys))
+        {
+            KeyValue frameValue = ArbitraryInputs[keyIn];
+            bool inputValue = Input.GetKey(keyIn);
+
+            switch (frameValue)
+            {
+                case KeyValue.IDLE:
+                    frameValue = inputValue ? KeyValue.PRESSED : KeyValue.IDLE;
+                    break;
+                case KeyValue.PRESSED:
+                    frameValue = inputValue ? KeyValue.HELD : KeyValue.UP;
+                    break;
+                case KeyValue.HELD:
+                    frameValue = inputValue ? KeyValue.HELD : KeyValue.UP;
+                    break;
+                case KeyValue.UP:
+                    frameValue = inputValue ? KeyValue.PRESSED : KeyValue.IDLE;
+                    break;
+            }
+
+            ArbitraryInputs[keyIn] = frameValue;
+        }
+    }
+
+    public static void FlushArbitraryInputs()
+    {
+        foreach (KeyCode keyIn in new List<KeyCode>(ArbitraryInputs.Keys))
+        {
+            ArbitraryInputs[keyIn] = KeyValue.IDLE;
+        }
+    }
+
     public static void ResetKey(ControlAction actIn)
     {
         if (DigitalActionInput.ContainsKey(actIn))
@@ -362,16 +419,29 @@ public static class GlobalInputController
         UpdateInput();
     }
 
+    public static void StartWatchForAnyInput()
+    {
+        WatchingForInput = true;
+    }
+
+    public static void StopWatchForAnyInput()
+    {
+        FlushArbitraryInputs();
+        WatchingForInput = false;
+    }
+
+    public static bool WatchForAnyInput()
+    {
+        return WatchingForInput;
+    }
+
     public static KeyCode GetAnyKey()
     {
-        if (Input.anyKeyDown)
+        foreach(KeyCode keyIn in ArbitraryInputs.Keys)
         {
-            foreach(KeyCode keyIn in System.Enum.GetValues(typeof(KeyCode)))
+            if (ArbitraryInputs[keyIn] == KeyValue.PRESSED)
             {
-                if (Input.GetKeyDown(keyIn))
-                {
-                    return keyIn;
-                }
+                return keyIn;
             }
         }
         return KeyCode.None;
@@ -431,6 +501,10 @@ public class InputController : MonoBehaviour
         if (GlobalInputController.InputIsLocked())
         {
             return;
+        }
+        if (GlobalInputController.WatchForAnyInput())
+        {
+            GlobalInputController.CheckAndSetValueArbitrary();
         }
         GlobalInputController.UpdateInput();
     }

@@ -51,16 +51,25 @@ public class InputEditController : iEditController
         {
             return;
         }
+        ValueDisplay.color = Color.yellow;
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.IDLE)
+        {
+            GlobalInputController.StartWatchForAnyInput();
+        }
 
         KeyCode keyIn = GlobalInputController.GetAnyKey();
         if (keyIn == KeyCode.Escape)
         {
+            GlobalInputController.StopWatchForAnyInput();
+            ValueDisplay.color = Color.white;
             CancelDataEdit();
         }
 
         else if (keyIn != KeyCode.None)
         {
+            GlobalInputController.StopWatchForAnyInput();
             c_controllerData.k = keyIn;
+            ValueDisplay.color = Color.white;
             ConfirmDataEdit(CurrentTarget);
         }
 
