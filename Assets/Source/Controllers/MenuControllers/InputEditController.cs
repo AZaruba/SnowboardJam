@@ -5,8 +5,10 @@ using UnityEngine.UI;
 
 public class InputEditController : iEditController
 {
-    [SerializeField] public ControlAction InputAction;
-    [SerializeField] public Text ValueDisplay;
+    public ControlAction InputAction;
+    public Image SpriteDisplay;
+
+    private Sprite spriteOut;
 
     public override void CancelDataEdit()
     {
@@ -26,7 +28,10 @@ public class InputEditController : iEditController
 
     public virtual void EnginePush()
     {
-        ValueDisplay.text = c_controllerData.k.ToString();
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, InputType.KEYBOARD_WIN))
+        {
+            SpriteDisplay.sprite = spriteOut;
+        }
     }
 
     public override void InitializeData()
@@ -41,7 +46,11 @@ public class InputEditController : iEditController
     {
         InitializeData();
         InitializeStateMachine();
-        ValueDisplay.text = c_controllerData.k.ToString();
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, InputType.KEYBOARD_WIN))
+        {
+            SpriteDisplay.sprite = spriteOut;
+
+        }
     }
 
     // Update is called once per frame
@@ -51,7 +60,7 @@ public class InputEditController : iEditController
         {
             return;
         }
-        ValueDisplay.color = Color.yellow;
+
         if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.IDLE)
         {
             GlobalInputController.StartWatchForAnyInput();
@@ -61,7 +70,6 @@ public class InputEditController : iEditController
         if (keyIn == KeyCode.Escape)
         {
             GlobalInputController.StopWatchForAnyInput();
-            ValueDisplay.color = Color.white;
             CancelDataEdit();
         }
 
@@ -69,7 +77,6 @@ public class InputEditController : iEditController
         {
             GlobalInputController.StopWatchForAnyInput();
             c_controllerData.k = keyIn;
-            ValueDisplay.color = Color.white;
             ConfirmDataEdit(CurrentTarget);
         }
 

@@ -14,6 +14,13 @@ public enum KeyValue
     AXIS_BIN = 0b01110,
 }
 
+public enum ControllerType
+{
+    KEYBOARD,
+    XBOX_CONTROLLER,
+    PS_CONTROLLER
+}
+
 public enum ControlAction
 {
     ERROR_ACTION = -1,

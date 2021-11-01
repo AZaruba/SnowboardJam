@@ -131,8 +131,8 @@ GameObject:
   m_Component:
   - component: {fileID: 16272875}
   - component: {fileID: 16272878}
-  - component: {fileID: 16272877}
   - component: {fileID: 16272876}
+  - component: {fileID: 16272877}
   m_Layer: 5
   m_Name: LGrabControlEditText
   m_TagString: Untagged
@@ -157,7 +157,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 500, y: 0}
-  m_SizeDelta: {x: 800, y: 80}
+  m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &16272876
 MonoBehaviour:
@@ -175,7 +175,7 @@ MonoBehaviour:
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
   InputAction: 3
-  ValueDisplay: {fileID: 16272877}
+  SpriteDisplay: {fileID: 16272877}
 --- !u!114 &16272877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,7 +185,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 16272874}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -195,20 +195,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 034514e93265445da99ddd8d52447eae, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 0
-    m_MaxSize: 60
-    m_Alignment: 3
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: X
+  m_Sprite: {fileID: 7498317165019275574, guid: 0de9a1c7e336d4c6a8c7620e0e488770,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &16272878
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -429,8 +426,8 @@ GameObject:
   m_Component:
   - component: {fileID: 128363052}
   - component: {fileID: 128363051}
-  - component: {fileID: 128363050}
   - component: {fileID: 128363049}
+  - component: {fileID: 128363050}
   m_Layer: 5
   m_Name: DGrabControlEditText
   m_TagString: Untagged
@@ -454,7 +451,7 @@ MonoBehaviour:
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
   InputAction: 2
-  ValueDisplay: {fileID: 128363050}
+  SpriteDisplay: {fileID: 128363050}
 --- !u!114 &128363050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -464,7 +461,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 128363048}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -474,20 +471,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 034514e93265445da99ddd8d52447eae, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 0
-    m_MaxSize: 60
-    m_Alignment: 3
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: X
+  m_Sprite: {fileID: 7498317165019275574, guid: 0de9a1c7e336d4c6a8c7620e0e488770,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &128363051
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -513,7 +507,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 500, y: 0}
-  m_SizeDelta: {x: 800, y: 80}
+  m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &215115704
 GameObject:
@@ -703,8 +697,8 @@ GameObject:
   m_Component:
   - component: {fileID: 255842579}
   - component: {fileID: 255842582}
-  - component: {fileID: 255842581}
   - component: {fileID: 255842580}
+  - component: {fileID: 255842581}
   m_Layer: 5
   m_Name: PauseControlEditText
   m_TagString: Untagged
@@ -729,7 +723,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 500, y: 0}
-  m_SizeDelta: {x: 800, y: 80}
+  m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &255842580
 MonoBehaviour:
@@ -747,7 +741,7 @@ MonoBehaviour:
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
   InputAction: 16
-  ValueDisplay: {fileID: 255842581}
+  SpriteDisplay: {fileID: 255842581}
 --- !u!114 &255842581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -757,7 +751,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 255842578}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -767,20 +761,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 034514e93265445da99ddd8d52447eae, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 0
-    m_MaxSize: 60
-    m_Alignment: 3
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: X
+  m_Sprite: {fileID: 7498317165019275574, guid: 0de9a1c7e336d4c6a8c7620e0e488770,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &255842582
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -882,8 +873,8 @@ GameObject:
   m_Component:
   - component: {fileID: 321906398}
   - component: {fileID: 321906401}
-  - component: {fileID: 321906400}
   - component: {fileID: 321906399}
+  - component: {fileID: 321906400}
   m_Layer: 5
   m_Name: ConfirmControlEditText
   m_TagString: Untagged
@@ -908,7 +899,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 500, y: 0}
-  m_SizeDelta: {x: 800, y: 80}
+  m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &321906399
 MonoBehaviour:
@@ -926,7 +917,7 @@ MonoBehaviour:
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
   InputAction: 14
-  ValueDisplay: {fileID: 321906400}
+  SpriteDisplay: {fileID: 321906400}
 --- !u!114 &321906400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -936,7 +927,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 321906397}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -946,20 +937,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 034514e93265445da99ddd8d52447eae, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 0
-    m_MaxSize: 60
-    m_Alignment: 3
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: X
+  m_Sprite: {fileID: 7498317165019275574, guid: 0de9a1c7e336d4c6a8c7620e0e488770,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &321906401
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1279,8 +1267,8 @@ GameObject:
   m_Component:
   - component: {fileID: 441487578}
   - component: {fileID: 441487581}
-  - component: {fileID: 441487580}
   - component: {fileID: 441487579}
+  - component: {fileID: 441487580}
   m_Layer: 5
   m_Name: JumpControlEditText
   m_TagString: Untagged
@@ -1305,7 +1293,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 500, y: 0}
-  m_SizeDelta: {x: 800, y: 80}
+  m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &441487579
 MonoBehaviour:
@@ -1323,7 +1311,7 @@ MonoBehaviour:
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
   InputAction: 0
-  ValueDisplay: {fileID: 441487580}
+  SpriteDisplay: {fileID: 441487580}
 --- !u!114 &441487580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1333,7 +1321,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 441487577}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -1343,20 +1331,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 034514e93265445da99ddd8d52447eae, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 0
-    m_MaxSize: 60
-    m_Alignment: 3
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: X
+  m_Sprite: {fileID: 7498317165019275574, guid: 0de9a1c7e336d4c6a8c7620e0e488770,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &441487581
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1375,8 +1360,8 @@ GameObject:
   m_Component:
   - component: {fileID: 452141103}
   - component: {fileID: 452141106}
-  - component: {fileID: 452141105}
   - component: {fileID: 452141104}
+  - component: {fileID: 452141105}
   m_Layer: 5
   m_Name: CrouchControlEditText
   m_TagString: Untagged
@@ -1401,7 +1386,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 500, y: 0}
-  m_SizeDelta: {x: 800, y: 80}
+  m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &452141104
 MonoBehaviour:
@@ -1419,7 +1404,7 @@ MonoBehaviour:
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
   InputAction: 1
-  ValueDisplay: {fileID: 452141105}
+  SpriteDisplay: {fileID: 452141105}
 --- !u!114 &452141105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1429,7 +1414,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 452141102}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -1439,20 +1424,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 034514e93265445da99ddd8d52447eae, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 0
-    m_MaxSize: 60
-    m_Alignment: 3
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: X
+  m_Sprite: {fileID: 7498317165019275574, guid: 0de9a1c7e336d4c6a8c7620e0e488770,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &452141106
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2144,6 +2126,7 @@ GameObject:
   m_Component:
   - component: {fileID: 800220884}
   - component: {fileID: 800220882}
+  - component: {fileID: 800220883}
   m_Layer: 0
   m_Name: InputController
   m_TagString: Untagged
@@ -2163,6 +2146,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c60078fe03322894fa90a2816b6809f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &800220883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800220881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbf4c76f193ac44a5b33268dbe7d37cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  KeyboardMap: {fileID: 11400000, guid: 64e8f64e16ea14c698abe63c9c4cb635, type: 2}
 --- !u!4 &800220884
 Transform:
   m_ObjectHideFlags: 0
@@ -2842,8 +2838,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1153800885}
   - component: {fileID: 1153800888}
-  - component: {fileID: 1153800887}
   - component: {fileID: 1153800886}
+  - component: {fileID: 1153800887}
   m_Layer: 5
   m_Name: RGrabControlEditText
   m_TagString: Untagged
@@ -2868,7 +2864,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 500, y: 0}
-  m_SizeDelta: {x: 800, y: 80}
+  m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1153800886
 MonoBehaviour:
@@ -2886,7 +2882,7 @@ MonoBehaviour:
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
   InputAction: 4
-  ValueDisplay: {fileID: 1153800887}
+  SpriteDisplay: {fileID: 1153800887}
 --- !u!114 &1153800887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2896,7 +2892,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1153800884}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -2906,20 +2902,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 034514e93265445da99ddd8d52447eae, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 0
-    m_MaxSize: 60
-    m_Alignment: 3
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: X
+  m_Sprite: {fileID: 7498317165019275574, guid: 0de9a1c7e336d4c6a8c7620e0e488770,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1153800888
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3596,8 +3589,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1529737963}
   - component: {fileID: 1529737966}
-  - component: {fileID: 1529737965}
   - component: {fileID: 1529737964}
+  - component: {fileID: 1529737965}
   m_Layer: 5
   m_Name: BackControlEditText
   m_TagString: Untagged
@@ -3622,7 +3615,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 500, y: 0}
-  m_SizeDelta: {x: 800, y: 80}
+  m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1529737964
 MonoBehaviour:
@@ -3640,7 +3633,7 @@ MonoBehaviour:
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
   InputAction: 15
-  ValueDisplay: {fileID: 1529737965}
+  SpriteDisplay: {fileID: 1529737965}
 --- !u!114 &1529737965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3650,7 +3643,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1529737962}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -3660,20 +3653,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 034514e93265445da99ddd8d52447eae, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 0
-    m_MaxSize: 60
-    m_Alignment: 3
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: X
+  m_Sprite: {fileID: 7498317165019275574, guid: 0de9a1c7e336d4c6a8c7620e0e488770,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1529737966
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3914,8 +3904,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1591521894}
   - component: {fileID: 1591521897}
-  - component: {fileID: 1591521896}
   - component: {fileID: 1591521895}
+  - component: {fileID: 1591521896}
   m_Layer: 5
   m_Name: UGrabControlEditText
   m_TagString: Untagged
@@ -3940,7 +3930,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 500, y: 0}
-  m_SizeDelta: {x: 800, y: 80}
+  m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1591521895
 MonoBehaviour:
@@ -3958,7 +3948,7 @@ MonoBehaviour:
   ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
   CurrentTarget: 9
   InputAction: 5
-  ValueDisplay: {fileID: 1591521896}
+  SpriteDisplay: {fileID: 1591521896}
 --- !u!114 &1591521896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3968,7 +3958,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1591521893}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -3978,20 +3968,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 12800000, guid: 034514e93265445da99ddd8d52447eae, type: 3}
-    m_FontSize: 40
-    m_FontStyle: 2
-    m_BestFit: 0
-    m_MinSize: 0
-    m_MaxSize: 60
-    m_Alignment: 3
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: X
+  m_Sprite: {fileID: 7498317165019275574, guid: 0de9a1c7e336d4c6a8c7620e0e488770,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1591521897
 CanvasRenderer:
   m_ObjectHideFlags: 0
