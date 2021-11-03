@@ -2159,6 +2159,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   KeyboardMap: {fileID: 11400000, guid: 64e8f64e16ea14c698abe63c9c4cb635, type: 2}
+  PSMap: {fileID: 11400000, guid: 9ce5c1285525d49e494b075453dc1cf5, type: 2}
+  XboxMap: {fileID: 11400000, guid: 2fe4e1504149e4283a1b67955fb9df64, type: 2}
 --- !u!4 &800220884
 Transform:
   m_ObjectHideFlags: 0

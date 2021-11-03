@@ -14,13 +14,6 @@ public enum KeyValue
     AXIS_BIN = 0b01110,
 }
 
-public enum ControllerType
-{
-    KEYBOARD,
-    XBOX_CONTROLLER,
-    PS_CONTROLLER
-}
-
 public enum ControlAction
 {
     ERROR_ACTION = -1,
@@ -65,11 +58,11 @@ public static class GlobalInputController
     private static Dictionary<ControlAction, KeyValue> DigitalActionValue;
     private static Dictionary<ControlAction, string> AnalogActionInput;
     private static Dictionary<ControlAction, float> AnalogActionValue;
-    //private static Dictionary<KeyCode, KeyValue> DigitalInputData;
-    //private static Dictionary<string, float> AnalogInputData;
 
     // used for updating inputs in the menu, as this action directly polls Unity's Input class
     private static Dictionary<KeyCode, KeyValue> ArbitraryInputs;
+
+    private static InputType activeControllerType;
 
     public static bool InitializeInput()
     {
@@ -87,10 +80,35 @@ public static class GlobalInputController
 
     public static void InitializeArbitraryInputs()
     {
+        // filter out "any joystick" inputs
+        List<KeyCode> filteredKeys = new List<KeyCode>() {
+            KeyCode.JoystickButton0,
+            KeyCode.JoystickButton1,
+            KeyCode.JoystickButton2,
+            KeyCode.JoystickButton3,
+            KeyCode.JoystickButton4,
+            KeyCode.JoystickButton5,
+            KeyCode.JoystickButton6,
+            KeyCode.JoystickButton7,
+            KeyCode.JoystickButton8,
+            KeyCode.JoystickButton9,
+            KeyCode.JoystickButton10,
+            KeyCode.JoystickButton11,
+            KeyCode.JoystickButton12,
+            KeyCode.JoystickButton13,
+            KeyCode.JoystickButton14,
+            KeyCode.JoystickButton15,
+            KeyCode.JoystickButton16,
+            KeyCode.JoystickButton17,
+            KeyCode.JoystickButton18,
+            KeyCode.JoystickButton19
+        };
+
+
         ArbitraryInputs = new Dictionary<KeyCode, KeyValue>();
         foreach (KeyCode keyIn in System.Enum.GetValues(typeof(KeyCode)))
         {
-            if (!ArbitraryInputs.ContainsKey(keyIn))
+            if (!ArbitraryInputs.ContainsKey(keyIn) && !filteredKeys.Contains(keyIn))
             {
                 ArbitraryInputs.Add(keyIn, KeyValue.IDLE);
             }
@@ -142,10 +160,10 @@ public static class GlobalInputController
         DigitalActionValue[ControlAction.UP_BIN] = KeyValue.IDLE;
         DigitalActionInput[ControlAction.UP_BIN] = GlobalGameData.GetActionSetting(ControlAction.UP_BIN);
 
-        AnalogActionInput[ControlAction.SPIN_AXIS] = DefaultControls.DefaultLHoriz;
-        AnalogActionInput[ControlAction.TURN_AXIS] = DefaultControls.DefaultLHoriz;
-        AnalogActionInput[ControlAction.FLIP_AXIS] = DefaultControls.DefaultLVerti;
-        AnalogActionInput[ControlAction.SLOW_AXIS] = DefaultControls.DefaultLVerti;
+        AnalogActionInput[ControlAction.SPIN_AXIS] = GlobalGameData.GetAnalogActionSetting(ControlAction.SPIN_AXIS);
+        AnalogActionInput[ControlAction.TURN_AXIS] = GlobalGameData.GetAnalogActionSetting(ControlAction.SPIN_AXIS);
+        AnalogActionInput[ControlAction.FLIP_AXIS] = GlobalGameData.GetAnalogActionSetting(ControlAction.FLIP_AXIS);
+        AnalogActionInput[ControlAction.SLOW_AXIS] = GlobalGameData.GetAnalogActionSetting(ControlAction.FLIP_AXIS);
 
         AnalogActionValue[ControlAction.SPIN_AXIS] = Constants.ZERO_F;
         AnalogActionValue[ControlAction.TURN_AXIS] = Constants.ZERO_F;
@@ -454,6 +472,7 @@ public static class GlobalInputController
         return KeyCode.None;
     }
 
+    // TODO: swap with existing action if the value is currently assigned
     public static bool UpdateAction(ControlAction actIn, KeyCode keyIn)
     {
         // check if action is mapped to key
@@ -488,6 +507,16 @@ public static class GlobalInputController
         }
         return false;
     }
+
+    public static InputType GetActiveControllerType()
+    {
+        return activeControllerType;
+    }
+
+    public static void SetActiveControllerType(InputType typeIn)
+    {
+        activeControllerType = typeIn;
+    }
 }
 
 public class InputController : MonoBehaviour
@@ -517,28 +546,112 @@ public class InputController : MonoBehaviour
     }
 }
 
+public class DefaultControlLayout
+{
+    public KeyCode DefaultPause;
+    public KeyCode DefaultTrickU;
+    public KeyCode DefaultTrickR;
+    public KeyCode DefaultTrickL;
+    public KeyCode DefaultTrickD;
+    public KeyCode DefaultJump;
+
+    public KeyCode DefaultTuck;
+    public KeyCode DefaultBack;
+    public KeyCode DefaultConfirm;
+
+    public KeyCode DefaultBinU;
+    public KeyCode DefaultBinR;
+    public KeyCode DefaultBinL;
+    public KeyCode DefaultBinD;
+
+    public KeyCode SafetyConfirm;
+    public KeyCode SafetyBack;
+
+    public string DefaultLHoriz;
+    public string DefaultLVerti;
+}
+
 public static class DefaultControls
 {
-    public static KeyCode DefaultPause = KeyCode.P;
-    public static KeyCode DefaultTrickU = KeyCode.I;
-    public static KeyCode DefaultTrickR = KeyCode.L;
-    public static KeyCode DefaultTrickL = KeyCode.J;
-    public static KeyCode DefaultTrickD = KeyCode.K;
-    public static KeyCode DefaultJump = KeyCode.Space;
+    public static DefaultControlLayout KeyboardLayout;
+    public static DefaultControlLayout PSLayout;
+    public static DefaultControlLayout XboxLayout;
 
-    public static KeyCode DefaultTuck = KeyCode.E;
-    public static KeyCode DefaultBack = KeyCode.L;
-    public static KeyCode DefaultConfirm = KeyCode.K;
+    public static void InitializeLayouts()
+    {
+        KeyboardLayout = new DefaultControlLayout();
+        PSLayout = new DefaultControlLayout();
+        XboxLayout = new DefaultControlLayout();
+            // KBM
+        KeyboardLayout.DefaultPause = KeyCode.P;
+        KeyboardLayout.DefaultTrickU = KeyCode.I;
+        KeyboardLayout.DefaultTrickR = KeyCode.L;
+        KeyboardLayout.DefaultTrickL = KeyCode.J;
+        KeyboardLayout.DefaultTrickD = KeyCode.K;
+        KeyboardLayout.DefaultJump = KeyCode.Space;
 
-    public static KeyCode DefaultBinU = KeyCode.UpArrow;
-    public static KeyCode DefaultBinR = KeyCode.RightArrow;
-    public static KeyCode DefaultBinL = KeyCode.LeftArrow;
-    public static KeyCode DefaultBinD = KeyCode.DownArrow;
+        KeyboardLayout.DefaultTuck = KeyCode.E;
+        KeyboardLayout.DefaultBack = KeyCode.L;
+        KeyboardLayout.DefaultConfirm = KeyCode.K;
 
-    public static KeyCode SafetyConfirm = KeyCode.Return;
-    public static KeyCode SafetyBack = KeyCode.Backspace;
+        KeyboardLayout.DefaultBinU = KeyCode.UpArrow;
+        KeyboardLayout.DefaultBinR = KeyCode.RightArrow;
+        KeyboardLayout.DefaultBinL = KeyCode.LeftArrow;
+        KeyboardLayout.DefaultBinD = KeyCode.DownArrow;
 
-    public static string DefaultLHoriz = "Horizontal";
-    public static string DefaultLVerti = "Vertical";
+        KeyboardLayout.SafetyConfirm = KeyCode.Return;
+        KeyboardLayout.SafetyBack = KeyCode.Backspace;
+
+        KeyboardLayout.DefaultLHoriz = "Horizontal";
+        KeyboardLayout.DefaultLVerti = "Vertical";
+
+        // PS
+        PSLayout.DefaultPause = KeyCode.Joystick1Button9;
+        PSLayout.DefaultTrickU = KeyCode.Joystick1Button3;
+        PSLayout.DefaultTrickR = KeyCode.Joystick1Button2;
+        PSLayout.DefaultTrickL = KeyCode.Joystick1Button0;
+        PSLayout.DefaultTrickD = KeyCode.Joystick1Button1;
+        PSLayout.DefaultJump = KeyCode.Joystick1Button5;
+
+        PSLayout.DefaultTuck = KeyCode.Joystick1Button4;
+        PSLayout.DefaultBack = KeyCode.Joystick1Button2;
+        PSLayout.DefaultConfirm = KeyCode.Joystick1Button1;
+
+        PSLayout.DefaultBinU = KeyCode.UpArrow;
+        PSLayout.DefaultBinR = KeyCode.RightArrow;
+        PSLayout.DefaultBinL = KeyCode.LeftArrow;
+        PSLayout.DefaultBinD = KeyCode.DownArrow;
+
+        PSLayout.SafetyConfirm = KeyCode.Return;
+        PSLayout.SafetyBack = KeyCode.Backspace;
+
+        PSLayout.DefaultLHoriz = "Horizontal";
+        PSLayout.DefaultLVerti = "Vertical";
+
+        // Xbox
+        XboxLayout.DefaultPause = KeyCode.P;
+        XboxLayout.DefaultTrickU = KeyCode.I;
+        XboxLayout.DefaultTrickR = KeyCode.L;
+        XboxLayout.DefaultTrickL = KeyCode.J;
+        XboxLayout.DefaultTrickD = KeyCode.K;
+        XboxLayout.DefaultJump = KeyCode.Space;
+
+        XboxLayout.DefaultTuck = KeyCode.E;
+        XboxLayout.DefaultBack = KeyCode.L;
+        XboxLayout.DefaultConfirm = KeyCode.K;
+
+        XboxLayout.DefaultBinU = KeyCode.UpArrow;
+        XboxLayout.DefaultBinR = KeyCode.RightArrow;
+        XboxLayout.DefaultBinL = KeyCode.LeftArrow;
+        XboxLayout.DefaultBinD = KeyCode.DownArrow;
+
+        XboxLayout.SafetyConfirm = KeyCode.Return;
+        XboxLayout.SafetyBack = KeyCode.Backspace;
+
+        XboxLayout.DefaultLHoriz = "Horizontal";
+        XboxLayout.DefaultLVerti = "Vertical";
+    }
+
+
 }
 

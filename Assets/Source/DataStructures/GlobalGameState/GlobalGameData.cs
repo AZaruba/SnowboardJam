@@ -218,6 +218,7 @@ public static class GlobalGameData
         return false;
     }
 
+    // TODO: implementing mouse input will mean that there will always be a way to reassign keys, so "safety" keys are unnecessary
     public static KeyCode GetActionSetting(ControlAction actIn)
     {
         switch (actIn)
@@ -241,17 +242,17 @@ public static class GlobalGameData
             case ControlAction.UP_GRAB:
                 return (KeyCode)controlSettings.UpGrabBtn;
             case ControlAction.DOWN_BIN:
-                return DefaultControls.DefaultBinD;
+                return KeyCode.DownArrow;
             case ControlAction.LEFT_BIN:
-                return DefaultControls.DefaultBinL;
+                return KeyCode.LeftArrow;
             case ControlAction.RIGHT_BIN:
-                return DefaultControls.DefaultBinR;
+                return KeyCode.RightArrow;
             case ControlAction.UP_BIN:
-                return DefaultControls.DefaultBinU;
+                return KeyCode.UpArrow;
             case ControlAction.SAFETY_CONFIRM:
-                return DefaultControls.SafetyConfirm;
+                return KeyCode.Return;
             case ControlAction.SAFETY_BACK:
-                return DefaultControls.SafetyBack;
+                return KeyCode.Backspace;
         }
         return KeyCode.None;
     }
@@ -510,13 +511,36 @@ public static class GlobalGameData
     private static bool LoadControlSettings()
     {
         bool status = true;
+
+        DefaultControls.InitializeLayouts();
+
+        // decide layout based on 
+        DefaultControlLayout layoutIn = DefaultControls.KeyboardLayout;
+        GlobalInputController.SetActiveControllerType(InputType.KEYBOARD_WIN);
+
         int intVal;
+
+        string[] joystickNames = Input.GetJoystickNames();
+        if (joystickNames.Length > 0)
+        {
+            if (joystickNames[0].ToLower().Contains("dualshock"))
+            {
+                GlobalInputController.SetActiveControllerType(InputType.CONTROLLER_PS);
+                layoutIn = DefaultControls.PSLayout;
+            }
+            else if (joystickNames[0].ToLower().Contains("xbox"))
+            {
+                GlobalInputController.SetActiveControllerType(InputType.CONTROLLER_XBOX);
+                layoutIn = DefaultControls.XboxLayout;
+            }
+        }
+
 
         intVal = PlayerPrefs.GetInt(PlayerPrefsNames.JumpBtn);
         if (intVal == default)
         {
             status = false;
-            controlSettings.JumpBtn = (int)KeyCode.Space;
+            controlSettings.JumpBtn = (int)layoutIn.DefaultJump;
         }
         else
         {
@@ -526,7 +550,7 @@ public static class GlobalGameData
         if (intVal == default)
         {
             status = false;
-            controlSettings.CrouchBtn = (int)KeyCode.LeftShift;
+            controlSettings.CrouchBtn = (int)layoutIn.DefaultTuck;
         }
         else
         {
@@ -538,7 +562,7 @@ public static class GlobalGameData
         if (intVal == default)
         {
             status = false;
-            controlSettings.DownGrabBtn = (int)KeyCode.K;
+            controlSettings.DownGrabBtn = (int)layoutIn.DefaultTrickD;
         }
         else
         {
@@ -548,7 +572,7 @@ public static class GlobalGameData
         if (intVal == default)
         {
             status = false;
-            controlSettings.LeftGrabBtn = (int)KeyCode.J;
+            controlSettings.LeftGrabBtn = (int)layoutIn.DefaultTrickL;
         }
         else
         {
@@ -558,7 +582,7 @@ public static class GlobalGameData
         if (intVal == default)
         {
             status = false;
-            controlSettings.RightGrabBtn = (int)KeyCode.L;
+            controlSettings.RightGrabBtn = (int)layoutIn.DefaultTrickR;
         }
         else
         {
@@ -568,7 +592,7 @@ public static class GlobalGameData
         if (intVal == default)
         {
             status = false;
-            controlSettings.UpGrabBtn = (int)KeyCode.I;
+            controlSettings.UpGrabBtn = (int)layoutIn.DefaultTrickU;
         }
         else
         {
@@ -579,7 +603,7 @@ public static class GlobalGameData
         if(intVal == default)
         {
             status = false;
-            controlSettings.BackBtn = (int)KeyCode.L;
+            controlSettings.BackBtn = (int)layoutIn.DefaultBack;
         }
         else
         {
@@ -589,7 +613,7 @@ public static class GlobalGameData
         if (intVal == default)
         {
             status = false;
-            controlSettings.ConfirmBtn = (int)KeyCode.K;
+            controlSettings.ConfirmBtn = (int)layoutIn.DefaultConfirm;
         }
         else
         {
@@ -599,7 +623,7 @@ public static class GlobalGameData
         if (intVal == default)
         {
             status = false;
-            controlSettings.PauseBtn = (int)KeyCode.P;
+            controlSettings.PauseBtn = (int)layoutIn.DefaultPause;
         }
         else
         {
@@ -608,20 +632,20 @@ public static class GlobalGameData
 
         string strVal;
         strVal = PlayerPrefs.GetString(PlayerPrefsNames.FlipAxis);
-        if (strVal == default)
+        if (strVal.Length == 0)
         {
             status = false;
-            controlSettings.FlipAxis = "Vertical";
+            controlSettings.FlipAxis = layoutIn.DefaultLVerti;
         }
         else
         {
             controlSettings.FlipAxis = strVal;
         }
         strVal = PlayerPrefs.GetString(PlayerPrefsNames.SpinAxis);
-        if (strVal == default)
+        if (strVal.Length == 0)
         {
             status = false;
-            controlSettings.SpinAxis = "Horizontal";
+            controlSettings.SpinAxis = layoutIn.DefaultLHoriz;
         }
         else
         {
@@ -637,4 +661,9 @@ public static class GlobalGameData
         LoadVideoSettings();
         LoadControlSettings();
     }
+
+    // TODO:
+    // when loading controller information, map joystick buttons between DS4 and XO based on which controller we identify on startup
+    // add a "press a button to start" to get a "hint" on what input device we want to map to
+    // have KBM controls always on as a "backup?"
 }

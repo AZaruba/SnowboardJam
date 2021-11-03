@@ -28,10 +28,7 @@ public class InputEditController : iEditController
 
     public virtual void EnginePush()
     {
-        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, InputType.KEYBOARD_WIN))
-        {
-            SpriteDisplay.sprite = spriteOut;
-        }
+
     }
 
     public override void InitializeData()
@@ -78,6 +75,10 @@ public class InputEditController : iEditController
             GlobalInputController.StopWatchForAnyInput();
             c_controllerData.k = keyIn;
             ConfirmDataEdit(CurrentTarget);
+            if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, InputType.KEYBOARD_WIN))
+            {
+                SpriteDisplay.sprite = spriteOut;
+            }
         }
 
         // no state machine needed, handled by isActive
