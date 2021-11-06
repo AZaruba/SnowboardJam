@@ -472,7 +472,6 @@ public static class GlobalInputController
         return KeyCode.None;
     }
 
-    // TODO: swap with existing action if the value is currently assigned
     public static bool UpdateAction(ControlAction actIn, KeyCode keyIn)
     {
         // check if action is mapped to key
@@ -506,6 +505,22 @@ public static class GlobalInputController
             return true;
         }
         return false;
+    }
+
+    public static List<ControlAction> GetActionForKey(KeyCode keyIn)
+    {
+        List<ControlAction> actionsOut = new List<ControlAction>();
+        if (DigitalActionInput.ContainsValue(keyIn))
+        {
+           foreach(ControlAction action in DigitalActionInput.Keys)
+           {
+                if (DigitalActionInput[action] == keyIn)
+                {
+                    actionsOut.Add(action);
+                }
+           }
+        }
+        return actionsOut;
     }
 
     public static InputType GetActiveControllerType()
@@ -577,6 +592,9 @@ public static class DefaultControls
     public static DefaultControlLayout PSLayout;
     public static DefaultControlLayout XboxLayout;
 
+    public static Dictionary<KeyCode, KeyCode> XboxToPS;
+    public static Dictionary<KeyCode, KeyCode> PSToXbox;
+
     public static void InitializeLayouts()
     {
         KeyboardLayout = new DefaultControlLayout();
@@ -629,16 +647,16 @@ public static class DefaultControls
         PSLayout.DefaultLVerti = "Vertical";
 
         // Xbox
-        XboxLayout.DefaultPause = KeyCode.P;
-        XboxLayout.DefaultTrickU = KeyCode.I;
-        XboxLayout.DefaultTrickR = KeyCode.L;
-        XboxLayout.DefaultTrickL = KeyCode.J;
-        XboxLayout.DefaultTrickD = KeyCode.K;
-        XboxLayout.DefaultJump = KeyCode.Space;
+        XboxLayout.DefaultPause = KeyCode.Joystick1Button7;
+        XboxLayout.DefaultTrickU = KeyCode.Joystick1Button3;
+        XboxLayout.DefaultTrickR = KeyCode.Joystick1Button1;
+        XboxLayout.DefaultTrickL = KeyCode.Joystick1Button2;
+        XboxLayout.DefaultTrickD = KeyCode.Joystick1Button0;
+        XboxLayout.DefaultJump = KeyCode.Joystick1Button5;
 
-        XboxLayout.DefaultTuck = KeyCode.E;
-        XboxLayout.DefaultBack = KeyCode.L;
-        XboxLayout.DefaultConfirm = KeyCode.K;
+        XboxLayout.DefaultTuck = KeyCode.Joystick1Button4;
+        XboxLayout.DefaultBack = KeyCode.Joystick1Button1;
+        XboxLayout.DefaultConfirm = KeyCode.Joystick1Button0;
 
         XboxLayout.DefaultBinU = KeyCode.UpArrow;
         XboxLayout.DefaultBinR = KeyCode.RightArrow;
@@ -652,6 +670,10 @@ public static class DefaultControls
         XboxLayout.DefaultLVerti = "Vertical";
     }
 
-
+    public static void InitializeMaps()
+    {
+        XboxToPS = new Dictionary<KeyCode, KeyCode>();
+        PSToXbox = new Dictionary<KeyCode, KeyCode>();
+    }
 }
 

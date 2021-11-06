@@ -151,7 +151,6 @@ public class TextMenuItemController : iMenuItemController, iEntityController
 
         c_lastFrameData = new MenuItemLastFrameData(c_itemActiveData.v_itemPosition, c_itemActiveData.c_currentColor);
 
-
         c_itemActiveData.i_nextScene = (int)NextSceneId;
     }
 }

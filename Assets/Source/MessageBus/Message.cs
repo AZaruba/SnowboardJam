@@ -27,6 +27,7 @@ public enum MessageID
     // Edit Menu Message IDs
     EDIT_START,
     EDIT_END,
+    EDIT_SWAP,
 
     // Audio IDs
     PLAY_ONE_SHOT,
@@ -91,6 +92,12 @@ public class Message
         this.i_data = iIn;
         this.f_data = fIn;
         this.s_data = sIn;
+    }
+
+    public Message(int intIn, uint uintIn)
+    {
+        this.i_data = intIn;
+        this.u_data = uintIn;
     }
 
     public Message(uint dataIn)

@@ -489,6 +489,7 @@ public static class GlobalGameData
         return status;
     }
 
+    // TODO: create separate controller/keyboard bindings
     private static bool SaveControlSettings()
     {
         PlayerPrefs.SetInt(PlayerPrefsNames.JumpBtn, controlSettings.JumpBtn);

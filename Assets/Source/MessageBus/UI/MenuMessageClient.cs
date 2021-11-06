@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuMessageClient : iMessageClient
 {
@@ -29,6 +30,28 @@ public class MenuMessageClient : iMessageClient
             data_out.b_editorActive = false;
             data_out.b_menuConfirmActive = false;
             return true;
+        }
+        return false;
+    }
+}
+
+public class InputEditMessageClient : iMessageClient
+{
+    InputEditController parent;
+
+    public InputEditMessageClient(InputEditController parentIn)
+    {
+        this.parent = parentIn;
+    }
+
+    public bool RecieveMessage(MessageID id, Message message)
+    {
+        if (id == MessageID.EDIT_SWAP)
+        {
+            if (parent.InputAction == (ControlAction)message.getUint())
+            {
+                parent.InputSwap((KeyCode)message.getInt());
+            }
         }
         return false;
     }

@@ -102,7 +102,7 @@ public class NewCameraController : MonoBehaviour, iEntityController
 
     void SetDefaultData()
     {
-        renderPixelHeight = 1080;
+        renderPixelHeight = 540;
         renderPixelRatio = ((float)Camera.main.pixelHeight / (float)Camera.main.pixelWidth);
         renderPixelWidth = Mathf.RoundToInt(renderPixelRatio * renderPixelHeight);
 
