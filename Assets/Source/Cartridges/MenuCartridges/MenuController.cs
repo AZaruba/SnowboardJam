@@ -64,6 +64,9 @@ public class MenuController : MonoBehaviour
             return;
         }
 
+        c_activeMenuData.i_menuMousePositionItemIndex = -1;
+        CheckMouseInput();
+
         float inputAxisValue = GlobalInputController.GetAnalogInputAction(ControlAction.FLIP_AXIS);
         if (inputAxisValue > 0.5f)
         {
@@ -89,7 +92,8 @@ public class MenuController : MonoBehaviour
             c_activeMenuItem.MenuCommandBack();
         }
 
-        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED ||
+            c_activeMenuData.b_menuItemClicked)
         {
             c_activeMenuItem.ExecuteMenuCommand();
         }
@@ -97,6 +101,20 @@ public class MenuController : MonoBehaviour
         UpdateStateMachine();
 
         SetActiveMenuItemIndex();
+    }
+
+    public void CheckMouseInput()
+    {
+        c_activeMenuData.b_menuItemClicked = false;
+        for (int i = 0; i < MenuItems.Count; i++)
+        {
+            iMenuItemController itemController = MenuItems[i];
+            if (GlobalMouseInputController.MouseOverItem(itemController.ItemTransform))
+            {
+                c_activeMenuData.i_menuMousePositionItemIndex = i;
+                c_activeMenuData.b_menuItemClicked = GlobalMouseInputController.GetMouseClick() == KeyValue.UP;
+            }
+        }
     }
 
     public virtual bool CheckForConfirmation()
@@ -150,7 +168,11 @@ public class MenuController : MonoBehaviour
         {
             sm_menuInput.Execute(Command.MENU_IDLE);
         }
-        if (c_activeMenuData.i_menuDir != 0)
+        if (c_activeMenuData.i_menuMousePositionItemIndex >= 0)
+        {
+            sm_menuInput.Execute(Command.MENU_MOUSE_INPUT);
+        }
+        else if (c_activeMenuData.i_menuDir != 0)
         {
             sm_menuInput.Execute(Command.MENU_TICK_INPUT);
         }
@@ -188,6 +210,7 @@ public class MenuController : MonoBehaviour
         c_activeMenuData.b_menuActive = true;
         c_activeMenuData.v_currentPosition = ControllerData.DisabledPosition;
         c_activeMenuData.v_targetPosition = ControllerData.DisabledPosition;
+        c_activeMenuData.i_menuMousePositionItemIndex = -1;
     }
 
     /// <summary>
@@ -203,11 +226,13 @@ public class MenuController : MonoBehaviour
         MenuReadyState s_ready = new MenuReadyState(ref c_activeMenuData);
         MenuWaitState s_wait = new MenuWaitState(ref ControllerData, ref c_activeMenuData, ref cart_incr);
         MenuTickState s_tick = new MenuTickState(ref c_activeMenuData);
+        MenuJumpState s_jump = new MenuJumpState(ref c_activeMenuData);
 
         MenuHideState s_hide = new MenuHideState(ref c_activeMenuData, ref ControllerData, ref cart_lerp);
         MenuShowState s_show = new MenuShowState(ref c_activeMenuData, ref ControllerData, ref cart_lerp);
 
         sm_menuInput = new StateMachine(s_ready, StateRef.MENU_READY);
+        sm_menuInput.AddState(s_jump, StateRef.MENU_MOUSE);
         sm_menuInput.AddState(s_wait, StateRef.MENU_WAIT);
         sm_menuInput.AddState(s_tick, StateRef.MENU_TICK);
         sm_menuInput.AddState(s_disabled, StateRef.MENU_DISABLED);

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MenuItemData
   m_EditorClassIdentifier: 
   TransitionSpeed: 5
-  TransitionOffset: 50
+  TransitionOffset: 0
   TransitionDirection: {x: 1, y: 0}
   SelectedColor: {r: 1, g: 1, b: 1, a: 1}
   UnselectedColor: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 1}

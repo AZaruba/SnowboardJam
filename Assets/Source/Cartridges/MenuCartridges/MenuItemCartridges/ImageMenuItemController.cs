@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 public class ImageMenuItemController : iMenuItemController, iEntityController
 {
     [SerializeField] private BasicMenuItemData ItemData;
-    [SerializeField] private RectTransform ItemTransform;
     [SerializeField] private Image ItemImage;
     [SerializeField] private MenuCommand MenuAction;
     [SerializeField] private Scene NextSceneId;

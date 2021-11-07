@@ -5,8 +5,8 @@ using UnityEngine;
 public abstract class iMenuItemController :  MonoBehaviour
 {
     [SerializeField] private string HelpText;
-
     private MenuItemActiveData c_itemActiveData;
+    [SerializeField] public RectTransform ItemTransform;
     private StateMachine sm_menuItem;
     protected MenuController c_parent;
 

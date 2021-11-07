@@ -30,6 +30,10 @@ public class MenuWaitState : iState
         {
             return StateRef.MENU_DISABLED;
         }
+        if (cmd == Command.MENU_MOUSE_INPUT)
+        {
+            return StateRef.MENU_MOUSE;
+        }
         if (cmd == Command.MENU_READY)
         {
             return StateRef.MENU_READY;

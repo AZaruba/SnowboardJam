@@ -19,6 +19,9 @@ public class ActiveMenuData
     private Vector2 TargetPosition;
     private float CurrentOpacity;
 
+    public int i_menuMousePositionItemIndex;
+    public bool b_menuItemClicked;
+
     public bool b_showMenu
     {
         get { return ShowMenu; }

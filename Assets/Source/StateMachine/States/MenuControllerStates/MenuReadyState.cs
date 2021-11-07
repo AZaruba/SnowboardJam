@@ -26,6 +26,10 @@ public class MenuReadyState : iState
         {
             return StateRef.MENU_TICK;
         }
+        if (cmd == Command.MENU_MOUSE_INPUT)
+        {
+            return StateRef.MENU_MOUSE;
+        }
         return StateRef.MENU_READY;
     }
 
