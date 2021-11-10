@@ -23,6 +23,8 @@ public static class InputSpriteController
     private static Dictionary<KeyCode, Sprite> INPUT_SPRITES_NS;
     private static Dictionary<KeyCode, Sprite> INPUT_SPRITES_CONTROLLER_GENERIC;
 
+    private static Sprite EMPTY_SPRITE;
+
     public static int CONTROLLER_OFFSET = 16;
     public static int CONTROLLER_START_INDEX = (int)InputType.CONTROLLER_XBOX;
 
@@ -95,7 +97,7 @@ public static class InputSpriteController
         }
     }
 
-    public static bool getInputSprite(out Sprite spriteOut, KeyCode keyIn, InputType inputType = InputType.KEYBOARD_WIN)
+    public static bool getInputSprite(out Sprite spriteOut, KeyCode keyIn)
     {
 
         if (INPUT_SPRITES_KEYBOARD.ContainsKey(keyIn))
@@ -123,53 +125,20 @@ public static class InputSpriteController
             spriteOut = INPUT_SPRITES_CONTROLLER_GENERIC[keyIn];
             return true;
         }
-        /*
-        inputType = GlobalInputController.GetActiveControllerType();
-        switch (inputType)
-        {
-            case InputType.KEYBOARD_WIN:
-                if (INPUT_SPRITES_KEYBOARD.ContainsKey(keyIn))
-                {
-                    spriteOut = INPUT_SPRITES_KEYBOARD[keyIn];
-                    return true;
-                }
-                break;
-            case InputType.CONTROLLER_XBOX:
-                if (INPUT_SPRITES_XBOX.ContainsKey(keyIn))
-                {
-                    spriteOut = INPUT_SPRITES_XBOX[keyIn];
-                    return true;
-                }
-                break;
-            case InputType.CONTROLLER_PS:
-                if (INPUT_SPRITES_PS.ContainsKey(keyIn))
-                {
-                    spriteOut = INPUT_SPRITES_PS[keyIn];
-                    return true;
-                }
-                break;
-            case InputType.CONTROLLER_NS:
-                if (INPUT_SPRITES_NS.ContainsKey(keyIn))
-                {
-                    spriteOut = INPUT_SPRITES_NS[keyIn];
-                    return true;
-                }
-                break;
-            case InputType.CONTROLLER_GENERIC:
-                if (INPUT_SPRITES_CONTROLLER_GENERIC.ContainsKey(keyIn))
-                {
-                    spriteOut = INPUT_SPRITES_CONTROLLER_GENERIC[keyIn];
-                    return true;
-                }
-                break;
-            default:
-                break;
-        }
-        */
 
         // return null value, false to inform caller that lookup has failed
         spriteOut = null;
         return false;
+    }
+
+    public static void SetEmptySprite(Sprite spriteIn)
+    {
+        EMPTY_SPRITE = spriteIn;
+    }
+
+    public static Sprite EmptySprite()
+    {
+        return EMPTY_SPRITE;
     }
 }
 
@@ -179,6 +148,7 @@ public class InputSpriteCache : MonoBehaviour
     [SerializeField] private InputDeviceMap KeyboardMap;
     [SerializeField] private InputDeviceMap PSMap;
     [SerializeField] private InputDeviceMap XboxMap;
+    [SerializeField] private Sprite EmptyInputSprite;
 
     void Awake()
     {
@@ -186,5 +156,6 @@ public class InputSpriteCache : MonoBehaviour
         InputSpriteController.setInputIconSprites(KeyboardMap.SpriteCodes, KeyboardMap.Sprites, InputType.KEYBOARD_WIN);
         InputSpriteController.setInputIconSprites(PSMap.SpriteCodes, PSMap.Sprites, InputType.CONTROLLER_PS);
         InputSpriteController.setInputIconSprites(XboxMap.SpriteCodes, XboxMap.Sprites, InputType.CONTROLLER_XBOX);
+        InputSpriteController.SetEmptySprite(EmptyInputSprite);
     }
 }

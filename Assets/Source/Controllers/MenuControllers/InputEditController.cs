@@ -46,7 +46,7 @@ public class InputEditController : iEditController
     {
         InitializeData();
         InitializeStateMachine();
-        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, InputType.KEYBOARD_WIN))
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
         {
             SpriteDisplay.sprite = spriteOut;
 
@@ -64,6 +64,7 @@ public class InputEditController : iEditController
         if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.IDLE)
         {
             GlobalInputController.StartWatchForAnyInput();
+            SpriteDisplay.sprite = InputSpriteController.EmptySprite();
         }
 
         KeyCode keyIn = GlobalInputController.GetAnyKey();
@@ -71,6 +72,10 @@ public class InputEditController : iEditController
         {
             GlobalInputController.StopWatchForAnyInput();
             CancelDataEdit();
+            if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+            {
+                SpriteDisplay.sprite = spriteOut;
+            }
         }
 
         else if (keyIn != KeyCode.None)
@@ -79,11 +84,12 @@ public class InputEditController : iEditController
             VerifyAndUpdateMutex(keyIn);
             c_controllerData.k = keyIn;
             ConfirmDataEdit(CurrentTarget);
-            if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, InputType.KEYBOARD_WIN))
+            if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
             {
                 SpriteDisplay.sprite = spriteOut;
             }
         }
+
 
         // no state machine needed, handled by isActive
         EnginePush();
@@ -113,7 +119,7 @@ public class InputEditController : iEditController
         GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
         GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
 
-        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, InputType.KEYBOARD_WIN))
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
         {
             SpriteDisplay.sprite = spriteOut;
         }

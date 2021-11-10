@@ -101,7 +101,8 @@ public static class GlobalInputController
             KeyCode.JoystickButton16,
             KeyCode.JoystickButton17,
             KeyCode.JoystickButton18,
-            KeyCode.JoystickButton19
+            KeyCode.JoystickButton19,
+            KeyCode.Escape, // "cheese it" button
         };
 
 
