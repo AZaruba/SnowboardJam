@@ -40,11 +40,16 @@ public class DebugFunctions : MonoBehaviour {
         }
         if (vectorLine == 0)
         {
-            vector3_1.text = objName + ": " + vec;
+            vector3_1.text = objName + ": " + vec.ToString();
         }
         else if (vectorLine == 1)
         {
-            vector3_2.text = objName + ": " + vec;
+            vector3_2.text = objName + ": " + vec.ToString();
         }
+    }
+
+    public void DisplayString(string dataIn)
+    {
+        vector3_2.text = dataIn;
     }
 }

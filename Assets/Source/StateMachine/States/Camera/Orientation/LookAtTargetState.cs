@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class LookAtTargetState : iState
 {
-    private FocusCartridge cart_focus;
     private CameraData c_cameraData;
 
-    public LookAtTargetState(ref CameraData cameraData, ref FocusCartridge focus)
+    public LookAtTargetState(ref CameraData cameraData)
     {
         this.c_cameraData = cameraData;
-        this.cart_focus = focus;
     }
     public void Act()
     {
@@ -20,7 +18,7 @@ public class LookAtTargetState : iState
         Vector3 lookVector = c_cameraData.v_currentDirection;
 
         // cart_focus.PointVectorAt(ref currentPosition, ref currentTargetPosition, ref lookVector);
-        cart_focus.PointVectorAtLerp(ref currentPosition, currentTargetDirection, Time.deltaTime);
+        FocusCartridge.PointVectorAtLerp(ref currentPosition, currentTargetDirection, Time.deltaTime);
 
         c_cameraData.v_currentDirection = lookVector;
     }

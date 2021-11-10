@@ -20,6 +20,10 @@ public class MoveAerialState : iState
         {
             return StateRef.RIDING;
         }
+        if (cmd == Command.CRASH)
+        {
+            return StateRef.CRASHED;
+        }
         return StateRef.AIRBORNE;
     }
 }

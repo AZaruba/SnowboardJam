@@ -8,6 +8,9 @@ public class ScoreDisplayController : MonoBehaviour, iEntityController
     [SerializeField] private Text scoreText;
     [SerializeField] private ScoreDisplayData data_scoreDisplay;
 
+    private StateData c_stateData;
+    private ScoreJudge c_judge;
+
     private iMessageClient cl_score;
     private StateMachine sm_scoring;
 
@@ -22,6 +25,11 @@ public class ScoreDisplayController : MonoBehaviour, iEntityController
     // Update is called once per frame
     void Update()
     {
+        if (!c_stateData.b_updateState)
+        {
+            return;
+        }
+
         EnginePull();
 
         UpdateStateMachine();
@@ -36,13 +44,11 @@ public class ScoreDisplayController : MonoBehaviour, iEntityController
 
     }
 
-    // TODO: Add scoreDisplay data
     public void EngineUpdate()
     {
         scoreText.text = data_scoreDisplay.i_displayScore.ToString();
     }
 
-    // TODO: Add state machine for adding score
     public void UpdateStateMachine()
     {
         if (data_scoreDisplay.i_displayScore == data_scoreDisplay.i_currentScore)
@@ -71,14 +77,21 @@ public class ScoreDisplayController : MonoBehaviour, iEntityController
 
     private void SetDefaultData()
     {
+        c_stateData = new StateData();
+
         data_scoreDisplay.i_currentScore = 0;
         data_scoreDisplay.i_displayScore = 0;
+
+        c_stateData.b_updateState = true;
+
+        c_judge = new ScoreJudge();
     }
 
     private void InitializeMessageClient()
     {
-        cl_score = new ScoreMessageClient(ref data_scoreDisplay);
+        cl_score = new ScoreMessageClient(ref data_scoreDisplay, ref c_stateData);
         MessageServer.Subscribe(ref cl_score, MessageID.SCORE_EDIT);
+        MessageServer.Subscribe(ref cl_score, MessageID.PAUSE);
     }
     #endregion
 }

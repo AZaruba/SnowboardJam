@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class TrickTransitionState : iState
 {
+    private TrickData c_trickData;
+    private ScoringData c_scoreData;
+
+    public TrickTransitionState(ref TrickData trickIn, ref ScoringData scoreIn)
+    {
+        c_trickData = trickIn;
+        c_scoreData = scoreIn;
+    }
 
     public void Act()
     {

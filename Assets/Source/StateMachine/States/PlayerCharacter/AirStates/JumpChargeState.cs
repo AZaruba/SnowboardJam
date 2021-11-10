@@ -5,11 +5,17 @@ using UnityEngine;
 public class JumpChargeState : iState
 {
     private PlayerData c_playerData;
+    private PlayerPositionData c_positionData;
+    private CollisionData c_collisionData;
+    private AerialMoveData c_aerialMoveData;
     private IncrementCartridge cart_increment;
     
-    public JumpChargeState(ref PlayerData playerData, ref IncrementCartridge incr)
+    public JumpChargeState(ref PlayerData playerData, ref PlayerPositionData positionData, ref CollisionData collisionData, ref AerialMoveData aerialMoveData, ref IncrementCartridge incr)
     {
         this.c_playerData = playerData;
+        this.c_positionData = positionData;
+        this.c_aerialMoveData = aerialMoveData;
+        this.c_collisionData = collisionData;
         this.cart_increment = incr;
     }
 
@@ -22,6 +28,23 @@ public class JumpChargeState : iState
         cart_increment.Increment(ref chargeValue, chargeDelta * Time.deltaTime, chargeCap);
 
         c_playerData.f_currentJumpCharge = chargeValue;
+
+        Vector3 currentNormal = c_playerData.v_currentNormal;
+        Quaternion currentRotation = c_playerData.q_currentRotation;
+        Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
+
+        c_playerData.v_currentPosition -= c_collisionData.v_attachPoint;
+
+        AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
+                                            ref currentRotation,
+                                            ref currentNormal);
+        AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
+                                            ref currentModelRotation,
+                                            ref currentNormal);
+
+        c_playerData.v_currentNormal = currentNormal;
+        c_playerData.q_currentRotation = currentRotation;
+        c_positionData.q_currentModelRotation = currentModelRotation;
     }
 
     public void TransitionAct()
@@ -31,14 +54,18 @@ public class JumpChargeState : iState
 
     public StateRef GetNextState(Command cmd)
     {
-        // TODO: differentiate between jumping and falling
         if (cmd == Command.FALL)
         {
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.JUMP)
         {
-            return StateRef.JUMPING;
+            // edit position to ensure we are already the first jump frame ABOVE the ground here
+            Vector3 upwardTranslation = c_playerData.q_currentRotation * Vector3.up * (0.02f);
+            c_aerialMoveData.f_verticalVelocity = 0.0f;
+
+            c_playerData.v_currentPosition += upwardTranslation;
+            return StateRef.AIRBORNE;
         }
         if (cmd == Command.CRASH)
         {

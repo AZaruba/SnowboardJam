@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class StationaryState : iState {
 
-    AngleCalculationCartridge cart_angleCalc;
-    VelocityCartridge cart_velocity;
     PlayerData c_playerData;
+    PlayerPositionData c_playerPositionData;
 
-    public StationaryState(ref PlayerData playerData, ref AngleCalculationCartridge angleCalc, ref VelocityCartridge velocity)
+    public StationaryState(ref PlayerData playerData,
+                           ref PlayerPositionData positionData)
     {
         this.c_playerData = playerData;
-        this.cart_angleCalc = angleCalc;
-        this.cart_velocity = velocity;
+        this.c_playerPositionData = positionData;
     }
 
     public void Act()
@@ -22,24 +21,9 @@ public class StationaryState : iState {
 
     public void TransitionAct()
     {
-        Vector3 currentPosition = c_playerData.v_currentPosition;
-        Vector3 currentNormal = c_playerData.v_currentNormal;
-        Vector3 currentForward = c_playerData.v_currentDirection;
-        Vector3 currentSurfaceNormal = c_playerData.v_currentSurfaceNormal;
-        Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
-        Quaternion currentRotation = c_playerData.q_currentRotation;
-
-        cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
-        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentForward, ref currentRotation);
-
-        c_playerData.v_currentNormal = currentNormal.normalized;
-        c_playerData.v_currentDown = currentNormal.normalized * -1;
-        c_playerData.v_currentDirection = currentForward.normalized;
-        c_playerData.v_currentPosition = currentPosition;
-        c_playerData.q_currentRotation = currentRotation;
+        c_playerData.v_currentDown = c_playerData.v_currentNormal.normalized * -1;
         c_playerData.f_currentSpeed = Constants.ZERO_F;
         c_playerData.f_currentCrashTimer = Constants.ZERO_F;
-        // surface normal does not need to be updated
     }
 
     /// <summary>
@@ -55,6 +39,7 @@ public class StationaryState : iState {
         }
         if (cmd == Command.STARTMOVE)
         {
+            c_playerData.f_currentSpeed += c_playerData.f_startBoost * c_playerPositionData.i_switchStance;
             return StateRef.RIDING;
         }
         return StateRef.STATIONARY;

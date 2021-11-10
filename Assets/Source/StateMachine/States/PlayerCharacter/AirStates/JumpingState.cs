@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class JumpingState : iState
 {
 
@@ -16,7 +17,6 @@ public class JumpingState : iState
         this.cart_velocity = cart_vel;
     }
 
-    // TODO: add horizontal movement that takes minimal external input here
     public void Act()
     {
         float airVelocity = c_playerData.f_currentAirVelocity;
@@ -28,22 +28,22 @@ public class JumpingState : iState
         Vector3 position = c_playerData.v_currentPosition;
         Vector3 oldPosition = position;
 
-        cart_gravity.UpdateAirVelocity(ref airVelocity, ref gravity, ref terminalVelocity);
+        cart_gravity.UpdateAirVelocity(ref airVelocity, gravity, terminalVelocity);
         cart_velocity.UpdatePosition(ref position, ref currentDir, ref currentSpeed);
         position.y += airVelocity * Time.deltaTime;
         currentAirDir.y = airVelocity;
 
         c_playerData.v_currentPosition = position;
         c_playerData.f_currentAirVelocity = airVelocity;
-
         c_playerData.v_currentAirDirection = Vector3.Normalize(position - oldPosition);
-        if (airVelocity < Constants.ZERO_F)
+        c_playerData.v_currentDown = c_playerData.v_currentAirDirection;
+        if (airVelocity <= Constants.ZERO_F)
         {
             c_playerData.f_currentRaycastDistance = (Mathf.Abs(airVelocity) * Time.deltaTime) + c_playerData.f_raycastDistance;
         }
         else
         {
-            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance - (airVelocity * Time.deltaTime);
+            c_playerData.f_currentRaycastDistance = Constants.ZERO_F;
         }
     }
 
@@ -69,7 +69,8 @@ public class JumpingState : iState
         }
         else
         {
-            currentAirVelocity = jumpCharge + (previousDirection.y * currentVelocity); // what's wrong with the air velocity?
+            currentAirVelocity = jumpCharge + (previousDirection.y * currentVelocity);
+            currentVelocity = nextDirection.magnitude;
         }
 
         c_playerData.v_currentDirection = nextDirection.normalized;
@@ -88,10 +89,6 @@ public class JumpingState : iState
             {
                 c_playerData.v_currentDirection = c_playerData.v_currentAirDirection.normalized;
             }
-            else
-            {
-                c_playerData.v_currentDirection = c_playerData.v_currentModelDirection;
-            }
             c_playerData.f_currentSpeed += c_playerData.f_currentAirVelocity;
             return StateRef.GROUNDED;
         }
@@ -104,3 +101,4 @@ public class JumpingState : iState
 
 
 }
+*/

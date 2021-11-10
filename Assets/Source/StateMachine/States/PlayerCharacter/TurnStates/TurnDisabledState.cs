@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class TurnDisabledState : iState
 {
+    public TurnDisabledState()
+    {
+
+    }
+
     public void Act()
     {
 
@@ -17,10 +22,6 @@ public class TurnDisabledState : iState
     public StateRef GetNextState(Command cmd)
     {
         if (cmd == Command.LAND)
-        {
-            return StateRef.RIDING;
-        }
-        if (cmd == Command.READY)
         {
             return StateRef.RIDING;
         }

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec349bc15174949ada9401490e400fea, type: 3}
+  m_Name: ControllerXboxWin
+  m_EditorClassIdentifier: 
+  SpriteCodes: 5e0100005f0100006001000061010000650100006401000000000000000000000000000000000000630100000000000067010000620100000000000066010000
+  Sprites:
+  - {fileID: -6698116234343737858, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: -6733413099113976455, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: 2988472073443769293, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: 2488039505547671905, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: 1235284809826364737, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: -2524434595605888282, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: 2690439382835219008, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: 6018048217997130118, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: -7026323311942503503, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: 3311483890956137878, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: -3521517942495695250, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: -2616469650063794742, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: -4437714188319120214, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: 7011939129147139061, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: -4283130690671275542, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}
+  - {fileID: 1187169076804086249, guid: 95a1e7066b7a44c8baeb7e42ade997c7, type: 3}

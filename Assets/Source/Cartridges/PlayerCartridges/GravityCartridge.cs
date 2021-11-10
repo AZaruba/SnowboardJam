@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GravityCartridge {
 
-    public void UpdateAirVelocity(ref float currentAirVelocity, ref float globalGravity, ref float terminalVelocity)
+    public void UpdateAirVelocity(ref float currentAirVelocity, float globalGravity, float terminalVelocity)
     {
         if (currentAirVelocity < terminalVelocity * -1)
         {

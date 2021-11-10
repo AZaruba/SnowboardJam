@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class PlayerData : MonoBehaviour {
     
-    // TODO: break out data into multiple piles similar to state machines
     #region Members
     [SerializeField] private float TopSpeed;
     [SerializeField] private float Acceleration;
+    [SerializeField] private float StartBoost;
     [SerializeField] private float BrakePower;
     [SerializeField] private float TurnSpeed;
+    [SerializeField] private float TurnAcceleration;
     [SerializeField] private float JumpPower;
     [SerializeField] private float BaseJumpPower;
     [SerializeField] private float JumpChargeRate;
@@ -18,22 +19,27 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float CrashRecoveryTime;
     [SerializeField] private Vector3 BackVectorOffset;
     [SerializeField] private Vector3 FrontVectorOffset;
+    [SerializeField] private Transform CenterOfGravity;
 
     private float CurrentSpeed;
+    private float CurrentTopSpeed;
+    private float CurrentAcceleration;
     private float CurrentAirVelocity;
     private float CurrentJumpCharge;
     private float CrashTimer;
     private float CurrentRaycastDistance;
     private float CurrentForwardRaycastDistance;
+    private float SurfaceAngleDifference;
 
     private Vector3 CurrentPosition;
-    private Vector3 CurrentDirection;
     private Vector3 CurrentModelDirection;
     private Vector3 CurrentAirDirection;
     private Vector3 CurrentNormal;
     private Vector3 CurrentDown;
 
     private Quaternion CurrentRotation;
+    private Quaternion TargetRotation;
+
     #endregion
 
     #region EngineMembers
@@ -41,10 +47,6 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float ForwardRaycastDistance;
     private bool JumpBtnPressed;
     private bool ObstacleInRange;
-    private float InputAxisTurn { get; set; }
-    private float InputAxisLVert;
-    private Vector3 SurfaceNormal { get; set; } // the normal of whatever surfaace we've collided with
-    private Vector3 SurfaceAttachPoint { get; set; }
     private Vector3 ObstacleNormal;
     #endregion
 
@@ -55,10 +57,22 @@ public class PlayerData : MonoBehaviour {
         set { TopSpeed = value; }
     }
 
+    public float f_currentTopSpeed
+    {
+        get { return CurrentTopSpeed; }
+        set { CurrentTopSpeed = value; }
+    }
+
     public float f_acceleration
     {
         get { return Acceleration; }
         set { Acceleration = value; }
+    }
+
+    public float f_startBoost
+    {
+        get { return StartBoost; }
+        set { StartBoost = value; }
     }
 
     public float f_brakePower
@@ -71,6 +85,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return TurnSpeed; }
         set { TurnSpeed = value; }
+    }
+
+    public float f_turnAcceleration
+    {
+        get { return TurnAcceleration; }
+        set { TurnAcceleration = value; }
     }
 
     public float f_jumpPower
@@ -132,12 +152,24 @@ public class PlayerData : MonoBehaviour {
         get { return CrashRecoveryTime; }
         set { CrashRecoveryTime = value; }
     }
+
+    public float f_surfaceAngleDifference
+    {
+        get { return SurfaceAngleDifference; }
+        set { SurfaceAngleDifference = value; }
+    }
     #endregion
     #region SerializedActives
     public float f_currentSpeed
     {
         get { return CurrentSpeed; }
         set { CurrentSpeed = value; }
+    }
+
+    public float f_currentAcceleration
+    {
+        get { return CurrentAcceleration; }
+        set { CurrentAcceleration = value; }
     }
 
     public float f_currentJumpCharge
@@ -163,12 +195,6 @@ public class PlayerData : MonoBehaviour {
     {
         get { return CurrentPosition; }
         set { CurrentPosition = value; }
-    }
-
-    public Vector3 v_currentDirection
-    {
-        get { return CurrentDirection; }
-        set { CurrentDirection = value; }
     }
 
     public Vector3 v_currentModelDirection
@@ -213,6 +239,12 @@ public class PlayerData : MonoBehaviour {
         get { return CurrentRotation; }
         set { CurrentRotation = value; }
     }
+
+    public Quaternion q_targetRotation
+    {
+        get { return TargetRotation; }
+        set { TargetRotation = value; }
+    }
     #endregion
     #region IOProperties
     public bool b_jumpBtnPressed
@@ -226,10 +258,30 @@ public class PlayerData : MonoBehaviour {
         get { return ObstacleInRange; }
         set { ObstacleInRange = value; }
     }
-    public float f_inputAxisTurn
+
+    public Vector3 v_currentObstacleNormal
     {
-        get { return InputAxisTurn; }
-        set { InputAxisTurn = value; }
+        get { return ObstacleNormal; }
+        set { ObstacleNormal = value; }
+    }
+    #endregion
+
+    public Transform t_centerOfGravity
+    {
+        get { return CenterOfGravity; }
+        set { CenterOfGravity = value; }
+    }
+}
+
+public class PlayerInputData
+{
+    private float InputAxisLHoriz;
+    private float InputAxisLVert;
+
+    public float f_inputAxisLHoriz
+    {
+        get { return InputAxisLHoriz; }
+        set { InputAxisLHoriz = value; }
     }
 
     public float f_inputAxisLVert
@@ -238,22 +290,43 @@ public class PlayerData : MonoBehaviour {
         set { InputAxisLVert = value; }
     }
 
-    public Vector3 v_currentSurfaceNormal
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    public PlayerInputData()
     {
-        get { return SurfaceNormal; }
-        set { SurfaceNormal = value; }
+        f_inputAxisLHoriz = 0.0f;
+        f_inputAxisLVert = 0.0f;
     }
+}
 
-    public Vector3 v_currentSurfaceAttachPoint
-    {
-        get { return SurfaceAttachPoint; }
-        set { SurfaceAttachPoint = value; }
-    }
+/// <summary>
+/// Stores active turn data, with acceleration to give weight
+/// </summary>
+public class PlayerHandlingData
+{
+    public float f_currentTurnSpeed;
+    public float f_currentRealTurnSpeed;
+    public float f_currentSurfaceFactor;
+    public float f_turnAcceleration;
+    public float f_turnTopSpeed;
+    public float f_lastFrameTurnSpeed;
+    public float f_turnResetSpeed;
 
-    public Vector3 v_currentObstacleNormal
+    public PlayerHandlingData(float turnSpeedIn, float turnAccelIn, float turnResetIn)
     {
-        get { return ObstacleNormal; }
-        set { ObstacleNormal = value; }
+        this.f_currentTurnSpeed = Constants.ZERO_F;
+        this.f_currentRealTurnSpeed = Constants.ZERO_F;
+        this.f_currentSurfaceFactor = Constants.ONE;
+        this.f_turnAcceleration = turnAccelIn;
+        this.f_turnTopSpeed = turnSpeedIn;
+        this.f_turnResetSpeed = turnResetIn;
     }
-    #endregion
+}
+
+public class LastFramePositionData
+{
+    public Vector3 v_lastFramePosition;
+    public Quaternion q_lastFrameRotation;
+    public Quaternion q_lastFrameModelRotation;
 }

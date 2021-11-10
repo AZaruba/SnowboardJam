@@ -32,7 +32,7 @@ public enum TrickName
 
     #region RightTricks
     INDY,
-    MUTE,
+    WEDDLE,
     STIFFY,
     #endregion
 

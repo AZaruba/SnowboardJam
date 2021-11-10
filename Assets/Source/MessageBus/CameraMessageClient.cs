@@ -5,20 +5,35 @@ using UnityEngine;
 public class CameraMessageClient : iMessageClient
 {
     ClientID clientID;
+    StateData c_stateData;
+    NewCameraTargetData c_posData;
 
-    public CameraMessageClient()
+    public CameraMessageClient(ref StateData dataIn, ref NewCameraTargetData posDataIn)
     {
         clientID = ClientID.CAMERA_CLIENT;
-    }
-
-    public bool SendMessage(MessageID id, Message message)
-    {
-        MessageServer.SendMessage(id, message);
-        return true;
+        c_stateData = dataIn;
+        c_posData = posDataIn;
     }
 
     public bool RecieveMessage(MessageID id, Message message)
     {
+        if (id == MessageID.PAUSE)
+        {
+            c_stateData.b_updateState = message.getInt() == 0;
+        }
+
+        if (id == MessageID.COUNTDOWN_START)
+        {
+            c_stateData.b_preStarted = false;
+        }
+
+        if (id == MessageID.PLAYER_POSITION_UPDATED)
+        {
+            c_posData.v_currentTargetPosition = message.getVector();
+            c_posData.q_currentTargetRotation = message.getQuaternion();
+            c_posData.f_currentTargetVelocity = message.getFloat();
+        }
+
         return true;
     }
 

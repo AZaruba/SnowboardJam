@@ -4,41 +4,58 @@ using UnityEngine;
 
 public class SlowingState : iState
 {
-    AccelerationCartridge cart_f_acceleration;
+    AccelerationCartridge cart_acceleration;
     VelocityCartridge cart_velocity;
     AngleCalculationCartridge cart_angleCalc;
-    PlayerData c_playerData;
+    SurfaceInfluenceCartridge cart_surfInf;
 
-    public SlowingState(ref PlayerData playerData, ref VelocityCartridge vel, 
-        ref AccelerationCartridge accel, ref AngleCalculationCartridge angleCalc)
+    PlayerData c_playerData;
+    PlayerInputData c_playerInputData;
+    PlayerPositionData c_playerPositionData;
+    CollisionData c_collisionData;
+
+    public SlowingState(ref PlayerData playerData,
+                        ref CollisionData collisionData,
+                        ref PlayerInputData inputData,
+                        ref PlayerPositionData positionData, 
+                        ref VelocityCartridge vel,
+                        ref AccelerationCartridge accel, 
+                        ref AngleCalculationCartridge angleCalc,
+                        ref SurfaceInfluenceCartridge surfInf)
     {
-        c_playerData = playerData;
-        cart_velocity = vel;
-        cart_f_acceleration = accel;
-        cart_angleCalc = angleCalc;
+        this.c_playerData = playerData;
+        this.c_playerInputData = inputData;
+        this.c_playerPositionData = positionData;
+        this.c_collisionData = collisionData;
+        this.cart_velocity = vel;
+        this.cart_acceleration = accel;
+        this.cart_angleCalc = angleCalc;
+        this.cart_surfInf = surfInf;
     }
     public void Act()
     {
         // check for angle when implemented
         float currentVelocity = c_playerData.f_currentSpeed;
         float deceleration = c_playerData.f_brakePower;
+        float slowScaling = c_playerInputData.f_inputAxisLVert * - 1;
         Vector3 currentPosition = c_playerData.v_currentPosition;
-        Vector3 currentDir = c_playerData.v_currentDirection;
         Vector3 currentNormal = c_playerData.v_currentNormal;
-        Vector3 currentSurfaceNormal = c_playerData.v_currentSurfaceNormal;
-        Vector3 currentSurfacePosition = c_playerData.v_currentSurfaceAttachPoint;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
-        cart_f_acceleration.Decelerate(ref currentVelocity, deceleration);
-        cart_velocity.RaycastAdjustment(ref currentSurfacePosition, ref currentPosition, ref currentRotation);
-        cart_angleCalc.AlignRotationWithSurface(ref currentSurfaceNormal, ref currentNormal, ref currentDir, ref currentRotation);
-        cart_velocity.UpdatePosition(ref currentPosition, ref currentDir, ref currentVelocity);
+        AccelerationCartridge.Decelerate(ref currentVelocity, 
+                                         deceleration * slowScaling * c_playerPositionData.i_switchStance, 
+                                         c_playerPositionData.i_switchStance);
+
+        AccelerationCartridge.DecelerateFriction(ref currentVelocity,
+            0.1f,
+            currentRotation);
+
+        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.v_currentNormal = currentNormal.normalized;
         c_playerData.v_currentDown = currentNormal.normalized * -1;
-        c_playerData.v_currentDirection = currentDir.normalized;
         c_playerData.q_currentRotation = currentRotation;
     }
 
@@ -56,6 +73,10 @@ public class SlowingState : iState
         if (cmd == Command.RIDE)
         {
             return StateRef.RIDING;
+        }
+        if (cmd == Command.CHARGE)
+        {
+            return StateRef.CHARGING;
         }
         if (cmd == Command.STOP)
         {
