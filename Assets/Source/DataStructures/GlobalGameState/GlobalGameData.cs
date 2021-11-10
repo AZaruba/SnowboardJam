@@ -663,6 +663,25 @@ public static class GlobalGameData
         LoadControlSettings();
     }
 
+    private static void SetControlGlobal(KeyCode keyIn, ControlAction actIn)
+    {
+        MessageServer.SendMessage(MessageID.EDIT_SWAP, new Message((int)keyIn, (uint)actIn));
+    }
+
+    public static void SetControlsToDefault()
+    {
+        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultJump, ControlAction.JUMP);
+        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTuck, ControlAction.CROUCH);
+        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickU, ControlAction.UP_GRAB);
+        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickL, ControlAction.LEFT_GRAB);
+        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickR, ControlAction.RIGHT_GRAB);
+        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickD, ControlAction.DOWN_GRAB);
+        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultPause, ControlAction.PAUSE);
+
+        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultBack, ControlAction.BACK);
+        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultConfirm, ControlAction.CONFIRM);
+    }
+
     // TODO:
     // when loading controller information, map joystick buttons between DS4 and XO based on which controller we identify on startup
     // add a "press a button to start" to get a "hint" on what input device we want to map to

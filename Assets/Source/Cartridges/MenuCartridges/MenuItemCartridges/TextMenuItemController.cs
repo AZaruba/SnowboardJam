@@ -122,6 +122,9 @@ public class TextMenuItemController : iMenuItemController, iEntityController
                 ChildEditController.Activate(DataItem);
                 MessageServer.SendMessage(MessageID.EDIT_START, new Message());
                 break;
+            case MenuCommand.RESET_CONTROLS:
+                GlobalGameData.SetControlsToDefault();
+                break;
         }
     }
 

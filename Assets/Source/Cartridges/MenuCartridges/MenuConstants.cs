@@ -15,4 +15,5 @@ public enum MenuCommand
     UPDATE_GAME_DATA,
     MENU_FORWARD,
     MENU_BACK,
+    RESET_CONTROLS,
 }

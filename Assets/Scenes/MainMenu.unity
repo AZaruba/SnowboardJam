@@ -368,8 +368,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Change the Pause button
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 126736075}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 126736077}
   MenuAction: 6
   NextSceneId: -1
@@ -681,8 +681,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Edit controls.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 233065322}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 233065323}
   MenuAction: 8
   NextSceneId: 0
@@ -1012,8 +1012,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes overall graphics quality.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 327953936}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 327953938}
   MenuAction: 6
   NextSceneId: -1
@@ -1153,8 +1153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Exit the game.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 411721143}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 411721144}
   MenuAction: 0
   NextSceneId: 0
@@ -1193,8 +1193,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Start the game.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 434950577}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 434950575}
   MenuAction: 5
   NextSceneId: 3
@@ -1542,8 +1542,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes the button used to grab the tail of the board.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 470095452}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 470095453}
   MenuAction: 6
   NextSceneId: -1
@@ -1602,8 +1602,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes the render scale.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 559759901}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 559759903}
   MenuAction: 6
   NextSceneId: -1
@@ -1803,8 +1803,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes the game music volume.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 627689164}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 627689166}
   MenuAction: 6
   NextSceneId: -1
@@ -2194,6 +2194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5c16b4946c1e6f40b8006c3468ba336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ScreenSpaceCamera: {fileID: 0}
 --- !u!1 &843260540
 GameObject:
   m_ObjectHideFlags: 0
@@ -2245,8 +2246,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Return to the previous menu.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 843260541}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 843260543}
   MenuAction: 9
   NextSceneId: 0
@@ -2424,8 +2425,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Change the button used to crouch.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 861616213}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 861616215}
   MenuAction: 6
   NextSceneId: -1
@@ -2525,8 +2526,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes full screen settings
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 890524567}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 890524569}
   MenuAction: 6
   NextSceneId: -1
@@ -2667,8 +2668,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Change the menu Confirm button
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 933874538}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 933874539}
   MenuAction: 6
   NextSceneId: -1
@@ -2815,12 +2816,13 @@ RectTransform:
   - {fileID: 857088380}
   - {fileID: 215115705}
   - {fileID: 126736075}
+  - {fileID: 1238652439}
   m_Father: {fileID: 646614886}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -2040, y: -270}
+  m_AnchoredPosition: {x: -2040, y: -210}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1119804833
@@ -2845,8 +2847,9 @@ MonoBehaviour:
   - {fileID: 126736076}
   - {fileID: 933874541}
   - {fileID: 1651373290}
+  - {fileID: 1238652442}
   - {fileID: 1524199347}
-  ControllerData: {fileID: 11400000, guid: ed2f1e6e072d47c4eb527b8e210a9eb0, type: 2}
+  ControllerData: {fileID: 11400000, guid: 0c627754ac7b042a180dbb8f3be130fd, type: 2}
   rectTransform: {fileID: 1119804832}
   IsDefault: 0
 --- !u!1 &1153800884
@@ -3057,8 +3060,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes the screen resolution.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1176009127}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1176009129}
   MenuAction: 6
   NextSceneId: -1
@@ -3106,6 +3109,106 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1176009126}
   m_CullTransparentMesh: 0
+--- !u!1 &1238652438
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1238652439}
+  - component: {fileID: 1238652441}
+  - component: {fileID: 1238652440}
+  - component: {fileID: 1238652442}
+  m_Layer: 5
+  m_Name: ControlsEditReset
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1238652439
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238652438}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1119804832}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -36, y: -690}
+  m_SizeDelta: {x: 1000, y: 80}
+  m_Pivot: {x: 0, y: 0}
+--- !u!114 &1238652440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238652438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: ca3089982d1150946a7be5aebc5c7b75, type: 3}
+    m_FontSize: 64
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 6
+    m_MaxSize: 64
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Set Controls To Default
+--- !u!222 &1238652441
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238652438}
+  m_CullTransparentMesh: 0
+--- !u!114 &1238652442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238652438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 546458d1956454638a7d82860c699d94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HelpText: Set all controls to default
+  ItemTransform: {fileID: 1238652439}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
+  ItemText: {fileID: 1238652440}
+  MenuAction: 10
+  NextSceneId: -1
+  DataItem: 9
+  ChildMenuController: {fileID: 0}
+  ChildEditController: {fileID: 0}
 --- !u!1 &1254646490
 GameObject:
   m_ObjectHideFlags: 0
@@ -3158,8 +3261,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes the overall game volume.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1254646491}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1254646493}
   MenuAction: 6
   NextSceneId: -1
@@ -3259,8 +3362,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes the button used to grab the right side of the board.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1275743263}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1275743265}
   MenuAction: 6
   NextSceneId: -1
@@ -3452,8 +3555,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes character voice volume.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1517374826}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1517374828}
   MenuAction: 6
   NextSceneId: -1
@@ -3536,7 +3639,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -36, y: -720}
+  m_AnchoredPosition: {x: -36, y: -750}
   m_SizeDelta: {x: 600, y: 80}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1524199347
@@ -3552,8 +3655,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Return to the previous menu.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1524199346}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1524199348}
   MenuAction: 9
   NextSceneId: 0
@@ -3909,8 +4012,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Edit audio settings.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1554866544}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1554866545}
   MenuAction: 8
   NextSceneId: 0
@@ -4062,8 +4165,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Return to the previous menu.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1592001206}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1592001208}
   MenuAction: 9
   NextSceneId: 0
@@ -4203,8 +4306,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Edit video settings.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1598917290}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1598917291}
   MenuAction: 8
   NextSceneId: 0
@@ -4413,8 +4516,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Change the menu Back button
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1651373287}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1651373288}
   MenuAction: 6
   NextSceneId: -1
@@ -4672,8 +4775,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Edit game settings.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1804759388}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1804759390}
   MenuAction: 8
   NextSceneId: 0
@@ -4773,8 +4876,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes the button used to grab the left side of the board.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1848397151}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1848397153}
   MenuAction: 6
   NextSceneId: -1
@@ -4873,8 +4976,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Return to the previous menu.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1892430963}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1892430965}
   MenuAction: 9
   NextSceneId: 0
@@ -4974,8 +5077,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes the game sound effects volume.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 1925064810}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 1925064812}
   MenuAction: 6
   NextSceneId: -1
@@ -5075,8 +5178,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes the button used to grab the front of the board.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 2042060312}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 2042060314}
   MenuAction: 6
   NextSceneId: -1
@@ -5217,8 +5320,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HelpText: Changes the button used to jump.
-  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemTransform: {fileID: 2059778395}
+  ItemData: {fileID: 11400000, guid: 55a2b4f6ba7604c7d957664fc597eb30, type: 2}
   ItemText: {fileID: 2059778396}
   MenuAction: 6
   NextSceneId: -1
