@@ -78,6 +78,7 @@ public class SuperMenuController : MonoBehaviour
         m_activeMenuController = MenuControllers[newIndex];
         m_activeMenuControllerIndex = newIndex;
         m_activeMenuController.ShowMenu();
+        m_activeMenuController.UpdateHelpTextOnBack();
     }
 
     /// <summary>
@@ -103,6 +104,8 @@ public class SuperMenuController : MonoBehaviour
         m_activeMenuControllerIndex = newIndex;
         m_activeMenuController = MenuControllers[newIndex];
         m_activeMenuController.ShowMenu();
+        m_activeMenuController.UpdateHelpTextOnBack();
+
     }
 
     // what's needed is a message client watching for a "menu back" message to

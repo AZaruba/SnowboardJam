@@ -665,7 +665,7 @@ public static class GlobalGameData
 
     private static void SetControlGlobal(KeyCode keyIn, ControlAction actIn)
     {
-        MessageServer.SendMessage(MessageID.EDIT_SWAP, new Message((int)keyIn, (uint)actIn));
+        MessageServer.SendMessage(MessageID.EDIT_RESET, new Message((int)keyIn, (uint)actIn));
     }
 
     public static void SetControlsToDefault()
@@ -682,8 +682,4 @@ public static class GlobalGameData
         SetControlGlobal(DefaultControls.KeyboardLayout.DefaultConfirm, ControlAction.CONFIRM);
     }
 
-    // TODO:
-    // when loading controller information, map joystick buttons between DS4 and XO based on which controller we identify on startup
-    // add a "press a button to start" to get a "hint" on what input device we want to map to
-    // have KBM controls always on as a "backup?"
 }
