@@ -8,6 +8,7 @@ public class InputEditController : iEditController
     public ControlAction InputAction;
     public Image SpriteDisplay;
     public InputMutex InputMutex;
+    public InputType InputType;
 
     private Sprite spriteOut;
     private iMessageClient c_messageClient;
@@ -24,7 +25,7 @@ public class InputEditController : iEditController
         MessageServer.SendMessage(MessageID.EDIT_END, new Message());
         MessageServer.SendMessage(MessageID.EDIT_DISPLAY_UPDATE, new Message((int)c_controllerData.k, (uint)InputAction));
         GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
-        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
+        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k, this.InputType);
         Deactivate();
     }
 
@@ -37,7 +38,7 @@ public class InputEditController : iEditController
     {
         c_controllerData = new EditControllerData();
         c_controllerData.b_editorActive = false;
-        c_controllerData.k = GlobalGameData.GetActionSetting(InputAction);
+        c_controllerData.k = GlobalGameData.GetActionSetting(InputAction, this.InputType);
         c_messageClient = new InputEditMessageClient(this);
         MessageServer.Subscribe(ref c_messageClient, MessageID.EDIT_SWAP);
     }
@@ -47,7 +48,7 @@ public class InputEditController : iEditController
     {
         InitializeData();
         InitializeStateMachine();
-        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, this.InputType))
         {
             SpriteDisplay.sprite = spriteOut;
 

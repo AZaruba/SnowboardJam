@@ -30,6 +30,21 @@ public struct ControlSettings
 
     public string SpinAxis;
     public string FlipAxis;
+
+    public int JumpBtn_Controller;
+    public int CrouchBtn_Controller;
+
+    public int DownGrabBtn_Controller;
+    public int LeftGrabBtn_Controller;
+    public int RightGrabBtn_Controller;
+    public int UpGrabBtn_Controller;
+
+    public int ConfirmBtn_Controller;
+    public int BackBtn_Controller;
+    public int PauseBtn_Controller;
+
+    public string SpinAxis_Controller;
+    public string FlipAxis_Controller;
 }
 
 /// <summary>
@@ -90,7 +105,7 @@ public static class PlayerPrefsNames
     public static string VoiceL = "VoiceLevel";
     public static string SfxL = "SfxLevel";
 
-    // control settings
+    // keyboard settings
     public static string JumpBtn = "Jump";
     public static string CrouchBtn = "Crouch";
 
@@ -105,6 +120,22 @@ public static class PlayerPrefsNames
 
     public static string SpinAxis = "SpinAx";
     public static string FlipAxis = "FlipAx";
+
+    // controller settings
+    public static string JumpBtn_Controller = "Jump_Controller";
+    public static string CrouchBtn_Controller = "Crouch_Controller";
+
+    public static string DownGrabBtn_Controller = "DownGrab_Controller";
+    public static string LeftGrabBtn_Controller = "LeftGrab_Controller";
+    public static string RightGrabBtn_Controller = "RightGrab_Controller";
+    public static string UpGrabBtn_Controller = "UpGrab_Controller";
+
+    public static string ConfirmBtn_Controller = "Confirm_Controller";
+    public static string BackBtn_Controller = "Back_Controller";
+    public static string PauseBtn_Controller = "Pause_Controller";
+
+    public static string SpinAxis_Controller = "SpinAx_Controller";
+    public static string FlipAxis_Controller = "FlipAx_Controller";
 }
 
 /// <summary>
@@ -158,7 +189,7 @@ public static class GlobalGameData
         return default;
     }
 
-    public static bool SetActionSetting(ControlAction actIn, KeyCode keyIn)
+    public static bool SetActionSetting(ControlAction actIn, KeyCode keyIn, InputType inputType = InputType.KEYBOARD_GENERIC)
     {
         switch (actIn)
         {
@@ -219,28 +250,30 @@ public static class GlobalGameData
     }
 
     // TODO: implementing mouse input will mean that there will always be a way to reassign keys, so "safety" keys are unnecessary
-    public static KeyCode GetActionSetting(ControlAction actIn)
+    public static KeyCode GetActionSetting(ControlAction actIn, InputType typeIn = InputType.KEYBOARD_GENERIC)
     {
+        bool controllerSet = typeIn != InputType.KEYBOARD_GENERIC;
+
         switch (actIn)
         {
             case ControlAction.BACK:
-                return (KeyCode)controlSettings.BackBtn;
+                return controllerSet ? (KeyCode)controlSettings.BackBtn_Controller : (KeyCode)controlSettings.BackBtn;
             case ControlAction.CONFIRM:
-                return (KeyCode)controlSettings.ConfirmBtn;
+                return controllerSet ? (KeyCode)controlSettings.ConfirmBtn_Controller : (KeyCode)controlSettings.ConfirmBtn;
             case ControlAction.PAUSE:
-                return (KeyCode)controlSettings.PauseBtn;
+                return controllerSet ? (KeyCode)controlSettings.PauseBtn_Controller : (KeyCode)controlSettings.PauseBtn;
             case ControlAction.JUMP:
-                return (KeyCode)controlSettings.JumpBtn;
+                return controllerSet ? (KeyCode)controlSettings.JumpBtn_Controller : (KeyCode)controlSettings.JumpBtn;
             case ControlAction.CROUCH:
-                return (KeyCode)controlSettings.CrouchBtn;
+                return controllerSet ? (KeyCode)controlSettings.CrouchBtn_Controller : (KeyCode)controlSettings.CrouchBtn;
             case ControlAction.DOWN_GRAB:
-                return (KeyCode)controlSettings.DownGrabBtn;
+                return controllerSet ? (KeyCode)controlSettings.DownGrabBtn_Controller : (KeyCode)controlSettings.DownGrabBtn;
             case ControlAction.LEFT_GRAB:
-                return (KeyCode)controlSettings.LeftGrabBtn;
+                return controllerSet ? (KeyCode)controlSettings.LeftGrabBtn_Controller : (KeyCode)controlSettings.LeftGrabBtn;
             case ControlAction.RIGHT_GRAB:
-                return (KeyCode)controlSettings.RightGrabBtn;
+                return controllerSet ? (KeyCode)controlSettings.RightGrabBtn_Controller : (KeyCode)controlSettings.RightGrabBtn;
             case ControlAction.UP_GRAB:
-                return (KeyCode)controlSettings.UpGrabBtn;
+                return controllerSet ? (KeyCode)controlSettings.UpGrabBtn_Controller : (KeyCode)controlSettings.UpGrabBtn;
             case ControlAction.DOWN_BIN:
                 return KeyCode.DownArrow;
             case ControlAction.LEFT_BIN:
@@ -506,6 +539,21 @@ public static class GlobalGameData
 
         PlayerPrefs.SetString(PlayerPrefsNames.FlipAxis, controlSettings.FlipAxis);
         PlayerPrefs.SetString(PlayerPrefsNames.SpinAxis, controlSettings.SpinAxis);
+
+        PlayerPrefs.SetInt(PlayerPrefsNames.JumpBtn_Controller, controlSettings.JumpBtn_Controller);
+        PlayerPrefs.SetInt(PlayerPrefsNames.CrouchBtn_Controller, controlSettings.CrouchBtn_Controller);
+
+        PlayerPrefs.SetInt(PlayerPrefsNames.DownGrabBtn_Controller, controlSettings.DownGrabBtn_Controller);
+        PlayerPrefs.SetInt(PlayerPrefsNames.LeftGrabBtn_Controller, controlSettings.LeftGrabBtn_Controller);
+        PlayerPrefs.SetInt(PlayerPrefsNames.RightGrabBtn_Controller, controlSettings.RightGrabBtn_Controller);
+        PlayerPrefs.SetInt(PlayerPrefsNames.UpGrabBtn_Controller, controlSettings.UpGrabBtn_Controller);
+
+        PlayerPrefs.SetInt(PlayerPrefsNames.ConfirmBtn_Controller, controlSettings.ConfirmBtn_Controller);
+        PlayerPrefs.SetInt(PlayerPrefsNames.BackBtn_Controller, controlSettings.BackBtn_Controller);
+        PlayerPrefs.SetInt(PlayerPrefsNames.PauseBtn_Controller, controlSettings.PauseBtn_Controller);
+
+        PlayerPrefs.SetString(PlayerPrefsNames.FlipAxis_Controller, controlSettings.FlipAxis_Controller);
+        PlayerPrefs.SetString(PlayerPrefsNames.SpinAxis_Controller, controlSettings.SpinAxis_Controller);
         return true;
     }
 
@@ -517,6 +565,7 @@ public static class GlobalGameData
 
         // decide layout based on 
         DefaultControlLayout layoutIn = DefaultControls.KeyboardLayout;
+        DefaultControlLayout gamepadLayoutIn = DefaultControls.XboxLayout;
         GlobalInputController.SetActiveControllerType(InputType.KEYBOARD_WIN);
 
         int intVal;
@@ -527,15 +576,10 @@ public static class GlobalGameData
             if (joystickNames[0].ToLower().Contains("dualshock"))
             {
                 GlobalInputController.SetActiveControllerType(InputType.CONTROLLER_PS);
-                layoutIn = DefaultControls.PSLayout;
+                gamepadLayoutIn = DefaultControls.PSLayout;
             }
-            else if (joystickNames[0].ToLower().Contains("xbox"))
-            {
-                GlobalInputController.SetActiveControllerType(InputType.CONTROLLER_XBOX);
-                layoutIn = DefaultControls.XboxLayout;
-            }
+            // other controller types?
         }
-
 
         intVal = PlayerPrefs.GetInt(PlayerPrefsNames.JumpBtn);
         if (intVal == default)
@@ -651,6 +695,122 @@ public static class GlobalGameData
         else
         {
             controlSettings.SpinAxis = strVal;
+        }
+
+        // Controller
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.JumpBtn_Controller);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.JumpBtn_Controller = (int)gamepadLayoutIn.DefaultJump;
+        }
+        else
+        {
+            controlSettings.JumpBtn_Controller = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.CrouchBtn_Controller);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.CrouchBtn_Controller = (int)gamepadLayoutIn.DefaultTuck;
+        }
+        else
+        {
+            controlSettings.CrouchBtn_Controller = intVal;
+        }
+
+
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.DownGrabBtn_Controller);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.DownGrabBtn_Controller = (int)gamepadLayoutIn.DefaultTrickD;
+        }
+        else
+        {
+            controlSettings.DownGrabBtn_Controller = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.LeftGrabBtn_Controller);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.LeftGrabBtn_Controller = (int)gamepadLayoutIn.DefaultTrickL;
+        }
+        else
+        {
+            controlSettings.LeftGrabBtn_Controller = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.RightGrabBtn_Controller);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.RightGrabBtn_Controller = (int)gamepadLayoutIn.DefaultTrickR;
+        }
+        else
+        {
+            controlSettings.RightGrabBtn_Controller = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.UpGrabBtn_Controller);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.UpGrabBtn_Controller = (int)gamepadLayoutIn.DefaultTrickU;
+        }
+        else
+        {
+            controlSettings.UpGrabBtn_Controller = intVal;
+        }
+
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.BackBtn_Controller);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.BackBtn_Controller = (int)gamepadLayoutIn.DefaultBack;
+        }
+        else
+        {
+            controlSettings.BackBtn_Controller = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.ConfirmBtn_Controller);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.ConfirmBtn_Controller = (int)gamepadLayoutIn.DefaultConfirm;
+        }
+        else
+        {
+            controlSettings.ConfirmBtn_Controller = intVal;
+        }
+        intVal = PlayerPrefs.GetInt(PlayerPrefsNames.PauseBtn_Controller);
+        if (intVal == default)
+        {
+            status = false;
+            controlSettings.PauseBtn_Controller = (int)gamepadLayoutIn.DefaultPause;
+        }
+        else
+        {
+            controlSettings.PauseBtn_Controller = intVal;
+        }
+
+        strVal = PlayerPrefs.GetString(PlayerPrefsNames.FlipAxis_Controller);
+        if (strVal.Length == 0)
+        {
+            status = false;
+            controlSettings.FlipAxis_Controller = gamepadLayoutIn.DefaultLVerti;
+        }
+        else
+        {
+            controlSettings.FlipAxis_Controller = strVal;
+        }
+        strVal = PlayerPrefs.GetString(PlayerPrefsNames.SpinAxis_Controller);
+        if (strVal.Length == 0)
+        {
+            status = false;
+            controlSettings.SpinAxis_Controller = gamepadLayoutIn.DefaultLHoriz;
+        }
+        else
+        {
+            controlSettings.SpinAxis_Controller = strVal;
         }
 
         return status;

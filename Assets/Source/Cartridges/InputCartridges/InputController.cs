@@ -54,8 +54,15 @@ public static class GlobalInputController
     private static float InputLockTimer = 0.0f;
     private static float InputLockTimeLimit = 0.25f;
 
-    private static Dictionary<ControlAction, KeyCode> DigitalActionInput;
-    private static Dictionary<ControlAction, KeyValue> DigitalActionValue;
+    // Keyboard Inputs
+    private static Dictionary<ControlAction, KeyCode> DigitalActionInput_Keyboard;
+    private static Dictionary<ControlAction, KeyValue> DigitalActionValue_Keyboard;
+
+    // Gamepad Inputs
+    private static Dictionary<ControlAction, KeyCode> DigitalActionInput_Gamepad;
+    private static Dictionary<ControlAction, KeyValue> DigitalActionValue_Gamepad;
+
+    // Analog Inputs
     private static Dictionary<ControlAction, string> AnalogActionInput;
     private static Dictionary<ControlAction, float> AnalogActionValue;
 
@@ -120,46 +127,46 @@ public static class GlobalInputController
     {
         ControllerData = new ControllerInputData();
 
-        DigitalActionInput = new Dictionary<ControlAction, KeyCode>();
-        DigitalActionValue = new Dictionary<ControlAction, KeyValue>();
+        DigitalActionInput_Keyboard = new Dictionary<ControlAction, KeyCode>();
+        DigitalActionValue_Keyboard = new Dictionary<ControlAction, KeyValue>();
         AnalogActionInput = new Dictionary<ControlAction, string>();
         AnalogActionValue = new Dictionary<ControlAction, float>();
 
-        DigitalActionValue[ControlAction.JUMP] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.JUMP] = GlobalGameData.GetActionSetting(ControlAction.JUMP);
+        DigitalActionValue_Keyboard[ControlAction.JUMP] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.JUMP] = GlobalGameData.GetActionSetting(ControlAction.JUMP);
 
-        DigitalActionValue[ControlAction.DOWN_GRAB] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.DOWN_GRAB] = GlobalGameData.GetActionSetting(ControlAction.DOWN_GRAB);
+        DigitalActionValue_Keyboard[ControlAction.DOWN_GRAB] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.DOWN_GRAB] = GlobalGameData.GetActionSetting(ControlAction.DOWN_GRAB);
 
-        DigitalActionValue[ControlAction.LEFT_GRAB] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.LEFT_GRAB] = GlobalGameData.GetActionSetting(ControlAction.LEFT_GRAB);
+        DigitalActionValue_Keyboard[ControlAction.LEFT_GRAB] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.LEFT_GRAB] = GlobalGameData.GetActionSetting(ControlAction.LEFT_GRAB);
 
-        DigitalActionValue[ControlAction.RIGHT_GRAB] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.RIGHT_GRAB] = GlobalGameData.GetActionSetting(ControlAction.RIGHT_GRAB);
+        DigitalActionValue_Keyboard[ControlAction.RIGHT_GRAB] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.RIGHT_GRAB] = GlobalGameData.GetActionSetting(ControlAction.RIGHT_GRAB);
 
-        DigitalActionValue[ControlAction.UP_GRAB] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.UP_GRAB] = GlobalGameData.GetActionSetting(ControlAction.UP_GRAB);
+        DigitalActionValue_Keyboard[ControlAction.UP_GRAB] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.UP_GRAB] = GlobalGameData.GetActionSetting(ControlAction.UP_GRAB);
 
-        DigitalActionValue[ControlAction.PAUSE] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.PAUSE] = GlobalGameData.GetActionSetting(ControlAction.PAUSE);
+        DigitalActionValue_Keyboard[ControlAction.PAUSE] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.PAUSE] = GlobalGameData.GetActionSetting(ControlAction.PAUSE);
 
-        DigitalActionValue[ControlAction.CONFIRM] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.CONFIRM] = GlobalGameData.GetActionSetting(ControlAction.CONFIRM);
+        DigitalActionValue_Keyboard[ControlAction.CONFIRM] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.CONFIRM] = GlobalGameData.GetActionSetting(ControlAction.CONFIRM);
 
-        DigitalActionValue[ControlAction.BACK] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.BACK] = GlobalGameData.GetActionSetting(ControlAction.BACK);
+        DigitalActionValue_Keyboard[ControlAction.BACK] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.BACK] = GlobalGameData.GetActionSetting(ControlAction.BACK);
 
-        DigitalActionValue[ControlAction.DOWN_BIN] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.DOWN_BIN] = GlobalGameData.GetActionSetting(ControlAction.DOWN_BIN);
+        DigitalActionValue_Keyboard[ControlAction.DOWN_BIN] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.DOWN_BIN] = GlobalGameData.GetActionSetting(ControlAction.DOWN_BIN);
 
-        DigitalActionValue[ControlAction.LEFT_BIN] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.LEFT_BIN] = GlobalGameData.GetActionSetting(ControlAction.LEFT_BIN);
+        DigitalActionValue_Keyboard[ControlAction.LEFT_BIN] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.LEFT_BIN] = GlobalGameData.GetActionSetting(ControlAction.LEFT_BIN);
 
-        DigitalActionValue[ControlAction.RIGHT_BIN] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.RIGHT_BIN] = GlobalGameData.GetActionSetting(ControlAction.RIGHT_BIN);
+        DigitalActionValue_Keyboard[ControlAction.RIGHT_BIN] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.RIGHT_BIN] = GlobalGameData.GetActionSetting(ControlAction.RIGHT_BIN);
 
-        DigitalActionValue[ControlAction.UP_BIN] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.UP_BIN] = GlobalGameData.GetActionSetting(ControlAction.UP_BIN);
+        DigitalActionValue_Keyboard[ControlAction.UP_BIN] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.UP_BIN] = GlobalGameData.GetActionSetting(ControlAction.UP_BIN);
 
         AnalogActionInput[ControlAction.SPIN_AXIS] = GlobalGameData.GetAnalogActionSetting(ControlAction.SPIN_AXIS);
         AnalogActionInput[ControlAction.TURN_AXIS] = GlobalGameData.GetAnalogActionSetting(ControlAction.SPIN_AXIS);
@@ -171,29 +178,31 @@ public static class GlobalInputController
         AnalogActionValue[ControlAction.FLIP_AXIS] = Constants.ZERO_F;
         AnalogActionValue[ControlAction.SLOW_AXIS] = Constants.ZERO_F;
 
-        DigitalActionValue[ControlAction.SAFETY_BACK] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.SAFETY_BACK] = GlobalGameData.GetActionSetting(ControlAction.SAFETY_BACK);
+        DigitalActionValue_Keyboard[ControlAction.SAFETY_BACK] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.SAFETY_BACK] = GlobalGameData.GetActionSetting(ControlAction.SAFETY_BACK);
 
-        DigitalActionValue[ControlAction.SAFETY_CONFIRM] = KeyValue.IDLE;
-        DigitalActionInput[ControlAction.SAFETY_CONFIRM] = GlobalGameData.GetActionSetting(ControlAction.SAFETY_CONFIRM);
+        DigitalActionValue_Keyboard[ControlAction.SAFETY_CONFIRM] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.SAFETY_CONFIRM] = GlobalGameData.GetActionSetting(ControlAction.SAFETY_CONFIRM);
     }
 
     public static KeyCode GetInputKey(ControlAction actIn)
     {
-        if (DigitalActionInput.ContainsKey(actIn))
+        if (DigitalActionInput_Keyboard.ContainsKey(actIn))
         {
-            return DigitalActionInput[actIn];
+            return DigitalActionInput_Keyboard[actIn];
         }
         return KeyCode.None;
     }
+
+    // TODO: play a game that allows both inputs and analyze how messing with both input types works
     public static KeyValue GetInputAction(ControlAction actIn)
     {
         // assume no keys are assigned to one and not the other
-        if (DigitalActionInput.ContainsKey(actIn))
+        if (DigitalActionInput_Keyboard.ContainsKey(actIn))
         {
             if (actIn == ControlAction.CONFIRM)
             {
-                KeyValue safetyConfirm = DigitalActionValue[ControlAction.SAFETY_CONFIRM];
+                KeyValue safetyConfirm = DigitalActionValue_Keyboard[ControlAction.SAFETY_CONFIRM];
                 if ((safetyConfirm & KeyValue.AXIS_BIN) != 0)
                 {
                     return safetyConfirm;
@@ -201,14 +210,14 @@ public static class GlobalInputController
             }
             else if (actIn == ControlAction.BACK)
             {
-                KeyValue safetyBack = DigitalActionValue[ControlAction.SAFETY_BACK];
+                KeyValue safetyBack = DigitalActionValue_Keyboard[ControlAction.SAFETY_BACK];
                 if ((safetyBack & KeyValue.AXIS_BIN) != 0)
                 {
                     return safetyBack;
                 }
             }
 
-            return DigitalActionValue[actIn];
+            return DigitalActionValue_Keyboard[actIn];
         }
         return KeyValue.BTN_NOT_FOUND;
     }
@@ -257,12 +266,12 @@ public static class GlobalInputController
     /// <param name="actIn">The ControlAction we are currently checking.</param>
     public static void CheckAndSetKeyValue(ControlAction actIn)
     {
-        if (!DigitalActionInput.ContainsKey(actIn))
+        if (!DigitalActionInput_Keyboard.ContainsKey(actIn))
         {
             return;
         }
-        KeyCode keyIn = DigitalActionInput[actIn];
-        KeyValue frameValue = DigitalActionValue[actIn];
+        KeyCode keyIn = DigitalActionInput_Keyboard[actIn];
+        KeyValue frameValue = DigitalActionValue_Keyboard[actIn];
         bool inputValue = Input.GetKey(keyIn);
 
         /* Pseudo
@@ -296,7 +305,7 @@ public static class GlobalInputController
                 break;
         }
 
-        DigitalActionValue[actIn] = frameValue;
+        DigitalActionValue_Keyboard[actIn] = frameValue;
     }
 
     /// <summary>
@@ -341,9 +350,9 @@ public static class GlobalInputController
 
     public static void ResetKey(ControlAction actIn)
     {
-        if (DigitalActionInput.ContainsKey(actIn))
+        if (DigitalActionInput_Keyboard.ContainsKey(actIn))
         {
-            DigitalActionValue[actIn] = KeyValue.IDLE;
+            DigitalActionValue_Keyboard[actIn] = KeyValue.IDLE;
         }
     }
 
@@ -478,14 +487,14 @@ public static class GlobalInputController
         // check if action is mapped to key
         // and if key is in the key dictionary
         // set them all and in controllerdata
-        if (DigitalActionInput.ContainsKey(actIn))
+        if (DigitalActionInput_Keyboard.ContainsKey(actIn))
         {
-            DigitalActionInput.Remove(actIn);
-            DigitalActionValue.Remove(actIn);
+            DigitalActionInput_Keyboard.Remove(actIn);
+            DigitalActionValue_Keyboard.Remove(actIn);
 
             // reset value
-            DigitalActionInput[actIn] = keyIn;
-            DigitalActionValue[actIn] = KeyValue.IDLE;
+            DigitalActionInput_Keyboard[actIn] = keyIn;
+            DigitalActionValue_Keyboard[actIn] = KeyValue.IDLE;
 
             return true;
         }
@@ -511,11 +520,11 @@ public static class GlobalInputController
     public static List<ControlAction> GetActionForKey(KeyCode keyIn)
     {
         List<ControlAction> actionsOut = new List<ControlAction>();
-        if (DigitalActionInput.ContainsValue(keyIn))
+        if (DigitalActionInput_Keyboard.ContainsValue(keyIn))
         {
-           foreach(ControlAction action in DigitalActionInput.Keys)
+           foreach(ControlAction action in DigitalActionInput_Keyboard.Keys)
            {
-                if (DigitalActionInput[action] == keyIn)
+                if (DigitalActionInput_Keyboard[action] == keyIn)
                 {
                     actionsOut.Add(action);
                 }
@@ -671,6 +680,7 @@ public static class DefaultControls
         XboxLayout.DefaultLVerti = "Vertical";
     }
 
+    // TODO: generate Xbox/Playstation conversion maps to allow for input rebinding
     public static void InitializeMaps()
     {
         XboxToPS = new Dictionary<KeyCode, KeyCode>();
@@ -678,3 +688,4 @@ public static class DefaultControls
     }
 }
 
+// TODO: come up with a solution for binding the xbox triggers as buttons

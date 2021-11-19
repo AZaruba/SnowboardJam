@@ -97,7 +97,7 @@ public static class InputSpriteController
         }
     }
 
-    public static bool getInputSprite(out Sprite spriteOut, KeyCode keyIn)
+    public static bool getInputSprite(out Sprite spriteOut, KeyCode keyIn, InputType inputType = InputType.KEYBOARD_GENERIC)
     {
         if (keyIn == KeyCode.None)
         {
@@ -105,29 +105,15 @@ public static class InputSpriteController
             return true;
         }
 
-        if (INPUT_SPRITES_KEYBOARD.ContainsKey(keyIn))
+        if (INPUT_SPRITES_KEYBOARD.ContainsKey(keyIn) && inputType == InputType.KEYBOARD_GENERIC)
         {
             spriteOut = INPUT_SPRITES_KEYBOARD[keyIn];
             return true;
         }
-        if (INPUT_SPRITES_XBOX.ContainsKey(keyIn) && GlobalInputController.GetActiveControllerType() == InputType.CONTROLLER_XBOX)
+        if (INPUT_SPRITES_XBOX.ContainsKey(keyIn) && inputType == InputType.CONTROLLER_GENERIC)
         {
+            // TODO: differentiate between PS and Xbox
             spriteOut = INPUT_SPRITES_XBOX[keyIn];
-            return true;
-        }
-        if (INPUT_SPRITES_PS.ContainsKey(keyIn) && GlobalInputController.GetActiveControllerType() == InputType.CONTROLLER_PS)
-        {
-            spriteOut = INPUT_SPRITES_PS[keyIn];
-            return true;
-        }
-        if (INPUT_SPRITES_NS.ContainsKey(keyIn) && GlobalInputController.GetActiveControllerType() == InputType.CONTROLLER_NS)
-        {
-            spriteOut = INPUT_SPRITES_NS[keyIn];
-            return true;
-        }
-        if (INPUT_SPRITES_CONTROLLER_GENERIC.ContainsKey(keyIn) && GlobalInputController.GetActiveControllerType() == InputType.CONTROLLER_GENERIC)
-        {
-            spriteOut = INPUT_SPRITES_CONTROLLER_GENERIC[keyIn];
             return true;
         }
 
