@@ -22,6 +22,7 @@ public class InputEditController : iEditController
     public override void ConfirmDataEdit(DataTarget targetIn)
     {
         MessageServer.SendMessage(MessageID.EDIT_END, new Message());
+        MessageServer.SendMessage(MessageID.EDIT_DISPLAY_UPDATE, new Message((int)c_controllerData.k, (uint)InputAction));
         GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
         GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
         Deactivate();
@@ -112,6 +113,20 @@ public class InputEditController : iEditController
         }
     }
 
+    public void InputUnbind()
+    {
+        c_controllerData.k = KeyCode.None;
+
+        GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
+        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
+
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+        {
+            SpriteDisplay.sprite = spriteOut;
+        }
+    }
+
+    // TODO: swapping a key with pause will not also update the "other mutex" buttons, allowing for a multiple mapping edge case
     public void InputSwap(KeyCode keyIn)
     {
         c_controllerData.k = keyIn;

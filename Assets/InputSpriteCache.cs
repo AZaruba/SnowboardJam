@@ -99,6 +99,11 @@ public static class InputSpriteController
 
     public static bool getInputSprite(out Sprite spriteOut, KeyCode keyIn)
     {
+        if (keyIn == KeyCode.None)
+        {
+            spriteOut = EMPTY_SPRITE;
+            return true;
+        }
 
         if (INPUT_SPRITES_KEYBOARD.ContainsKey(keyIn))
         {

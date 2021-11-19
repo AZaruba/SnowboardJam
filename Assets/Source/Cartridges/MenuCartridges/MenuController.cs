@@ -196,6 +196,11 @@ public class MenuController : MonoBehaviour
         c_activeMenuData.b_showMenu = true;
     }
 
+    public void UpdateHelpTextOnBack()
+    {
+        c_activeMenuItem.OnItemActive();
+    }
+
     private void InitializeData()
     {
         c_activeMenuData = new ActiveMenuData();

@@ -28,6 +28,8 @@ public enum MessageID
     EDIT_START,
     EDIT_END,
     EDIT_SWAP,
+    EDIT_RESET,
+    EDIT_DISPLAY_UPDATE,
 
     // Audio IDs
     PLAY_ONE_SHOT,

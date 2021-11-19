@@ -35,6 +35,31 @@ public class MenuMessageClient : iMessageClient
     }
 }
 
+public class InputHelpPromptMessageClient : iMessageClient
+{
+    InputHelpController parent;
+
+    public InputHelpPromptMessageClient(InputHelpController parentIn)
+    {
+        this.parent = parentIn;
+    }
+
+    public bool RecieveMessage(MessageID id, Message message)
+    {
+        if (id == MessageID.EDIT_DISPLAY_UPDATE)
+        {
+            if (parent.InputAction == (ControlAction)message.getUint())
+            {
+                if (InputSpriteController.getInputSprite(out Sprite spriteOut, (KeyCode)message.getInt()))
+                {
+                    parent.SpriteDisplay.sprite = spriteOut;
+                }
+            }
+        }
+        return false;
+    }
+}
+
 public class InputEditMessageClient : iMessageClient
 {
     InputEditController parent;
@@ -50,9 +75,17 @@ public class InputEditMessageClient : iMessageClient
         {
             if (parent.InputAction == (ControlAction)message.getUint())
             {
+                parent.InputUnbind();
+            }
+        }
+        if (id == MessageID.EDIT_RESET)
+        {
+            if (parent.InputAction == (ControlAction)message.getUint())
+            {
                 parent.InputSwap((KeyCode)message.getInt());
             }
         }
+            
         return false;
     }
 }
