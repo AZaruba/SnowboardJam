@@ -86,13 +86,13 @@ public class MenuController : MonoBehaviour
             return;
         }
 
-        if (GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.BACK, KeyValue.PRESSED))
         {
             // return to previous menu
             c_activeMenuItem.MenuCommandBack();
         }
 
-        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED ||
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM, KeyValue.PRESSED) ||
             c_activeMenuData.b_menuItemClicked)
         {
             c_activeMenuItem.ExecuteMenuCommand();
@@ -121,8 +121,8 @@ public class MenuController : MonoBehaviour
     {
         if (!c_activeMenuData.b_menuConfirmActive)
         {
-            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.IDLE &&
-                GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.IDLE)
+            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM, KeyValue.IDLE) &&
+                GlobalInputController.GetInputAction(ControlAction.BACK, KeyValue.IDLE))
             {
                 c_activeMenuData.b_menuConfirmActive = true;
                 return true;

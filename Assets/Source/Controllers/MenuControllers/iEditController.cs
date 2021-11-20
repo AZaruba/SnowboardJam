@@ -26,13 +26,13 @@ public abstract class iEditController : MonoBehaviour
             return;
         }
 
-        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM, KeyValue.PRESSED))
         {
             ConfirmDataEdit(CurrentTarget);
             Deactivate();
         }
 
-        else if (GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.PRESSED)
+        else if (GlobalInputController.GetInputAction(ControlAction.BACK, KeyValue.PRESSED))
         {
             CancelDataEdit();
             Deactivate();
@@ -43,8 +43,8 @@ public abstract class iEditController : MonoBehaviour
     {
         if (!c_controllerData.b_editConfirmationActive)
         {
-            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.IDLE &&
-                GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.IDLE)
+            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM, KeyValue.IDLE) &&
+                GlobalInputController.GetInputAction(ControlAction.BACK, KeyValue.IDLE))
             {
                 c_controllerData.b_editConfirmationActive = true;
                 return true;

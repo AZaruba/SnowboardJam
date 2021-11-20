@@ -40,7 +40,11 @@ public enum MessageID
     COUNTDOWN_OVER,
 
     // Physics and positioning
-    PLAYER_POSITION_UPDATED
+    PLAYER_POSITION_UPDATED,
+
+    // Controller update IDs
+    KEYBOARD_ACTIVATED,
+    CONTROLLER_ACTIVATED,
 }
 
 public enum ClientID

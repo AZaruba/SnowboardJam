@@ -44,7 +44,7 @@ public class CountdownController : MonoBehaviour
 
     private void UpdateStateMachine()
     {
-        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM, KeyValue.PRESSED)
             && !CountdownDisplayImage.enabled)
         {
             InGameInterface.SetActive(true);

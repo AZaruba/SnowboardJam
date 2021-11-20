@@ -63,7 +63,7 @@ public class InputEditController : iEditController
             return;
         }
 
-        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.IDLE)
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM, KeyValue.IDLE))
         {
             GlobalInputController.StartWatchForAnyInput();
             SpriteDisplay.sprite = InputSpriteController.EmptySprite();

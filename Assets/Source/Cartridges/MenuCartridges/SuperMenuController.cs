@@ -42,8 +42,8 @@ public class SuperMenuController : MonoBehaviour
         // call update function for active Menu Controller
         if (!m_bMenuInputActive)
         {
-            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.IDLE &&
-                GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.IDLE)
+            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM, KeyValue.IDLE) &&
+                GlobalInputController.GetInputAction(ControlAction.BACK, KeyValue.IDLE))
             {
                 m_bMenuInputActive = true;
             }

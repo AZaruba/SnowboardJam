@@ -274,18 +274,6 @@ public static class GlobalGameData
                 return controllerSet ? (KeyCode)controlSettings.RightGrabBtn_Controller : (KeyCode)controlSettings.RightGrabBtn;
             case ControlAction.UP_GRAB:
                 return controllerSet ? (KeyCode)controlSettings.UpGrabBtn_Controller : (KeyCode)controlSettings.UpGrabBtn;
-            case ControlAction.DOWN_BIN:
-                return KeyCode.DownArrow;
-            case ControlAction.LEFT_BIN:
-                return KeyCode.LeftArrow;
-            case ControlAction.RIGHT_BIN:
-                return KeyCode.RightArrow;
-            case ControlAction.UP_BIN:
-                return KeyCode.UpArrow;
-            case ControlAction.SAFETY_CONFIRM:
-                return KeyCode.Return;
-            case ControlAction.SAFETY_BACK:
-                return KeyCode.Backspace;
         }
         return KeyCode.None;
     }

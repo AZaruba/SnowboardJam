@@ -131,6 +131,23 @@ public static class InputSpriteController
     {
         return EMPTY_SPRITE;
     }
+
+    public static List<KeyCode> GetKeyCodes(InputType type)
+    {
+        switch(type)
+        {
+            case InputType.KEYBOARD_GENERIC:
+                return new List<KeyCode>(INPUT_SPRITES_KEYBOARD.Keys);
+                break;
+            case InputType.CONTROLLER_XBOX:
+                return new List<KeyCode>(INPUT_SPRITES_XBOX.Keys);
+                break;
+            case InputType.CONTROLLER_PS:
+                return new List<KeyCode>(INPUT_SPRITES_PS.Keys);
+                break;
+        }
+        return new List<KeyCode>();
+    }
 }
 
 // TODO: Add key maps for platform-specific keyboards and gamepads

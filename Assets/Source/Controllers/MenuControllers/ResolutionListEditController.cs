@@ -90,13 +90,13 @@ public class ResolutionListEditController : iEditController
             return;
         }
 
-        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM, KeyValue.PRESSED))
         {
             ConfirmDataEdit(CurrentTarget);
             Deactivate();
         }
 
-        else if (GlobalInputController.GetInputAction(ControlAction.BACK) == KeyValue.PRESSED)
+        else if (GlobalInputController.GetInputAction(ControlAction.BACK, KeyValue.PRESSED))
         {
             CancelDataEdit();
             Deactivate();
