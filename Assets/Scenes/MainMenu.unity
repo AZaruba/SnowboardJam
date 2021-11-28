@@ -1402,7 +1402,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 48}
   m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &291262277
@@ -4706,8 +4706,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -180, y: 116}
-  m_SizeDelta: {x: 1720, y: 60}
+  m_AnchoredPosition: {x: -180, y: 18}
+  m_SizeDelta: {x: 1720, y: 100}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1238888979
 MonoBehaviour:
@@ -4730,11 +4730,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: ca3089982d1150946a7be5aebc5c7b75, type: 3}
-    m_FontSize: 64
+    m_FontSize: 48
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 6
-    m_MaxSize: 64
+    m_MaxSize: 300
     m_Alignment: 2
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -4987,7 +4987,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 48}
   m_SizeDelta: {x: 256, y: 64}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1281416337
@@ -5446,8 +5446,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -180, y: 176}
-  m_SizeDelta: {x: 1720, y: 60}
+  m_AnchoredPosition: {x: -180, y: 96}
+  m_SizeDelta: {x: 1720, y: 100}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1459231018
 MonoBehaviour:
@@ -5470,10 +5470,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: ca3089982d1150946a7be5aebc5c7b75, type: 3}
-    m_FontSize: 64
+    m_FontSize: 48
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 6
+    m_MinSize: 4
     m_MaxSize: 64
     m_Alignment: 2
     m_AlignByGeometry: 0
@@ -5664,7 +5664,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 12800000, guid: ca3089982d1150946a7be5aebc5c7b75, type: 3}
     m_FontSize: 48
-    m_FontStyle: 2
+    m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 64
@@ -5674,7 +5674,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Test
+  m_Text: Help text
 --- !u!222 &1512324905
 CanvasRenderer:
   m_ObjectHideFlags: 0

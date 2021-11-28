@@ -41,6 +41,7 @@ public class InputEditController : iEditController
         c_controllerData.k = GlobalGameData.GetActionSetting(InputAction, this.InputType);
         c_messageClient = new InputEditMessageClient(this);
         MessageServer.Subscribe(ref c_messageClient, MessageID.EDIT_SWAP);
+        MessageServer.Subscribe(ref c_messageClient, MessageID.EDIT_RESET);
     }
 
     // Start is called before the first frame update
@@ -74,7 +75,7 @@ public class InputEditController : iEditController
         {
             GlobalInputController.StopWatchForAnyInput();
             CancelDataEdit();
-            if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+            if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, this.InputType))
             {
                 SpriteDisplay.sprite = spriteOut;
             }
@@ -84,14 +85,13 @@ public class InputEditController : iEditController
         {
             GlobalInputController.StopWatchForAnyInput();
             VerifyAndUpdateMutex(keyIn);
-            c_controllerData.k = keyIn;
             ConfirmDataEdit(CurrentTarget);
-            if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+            if (InputSpriteController.getInputSprite(out spriteOut, keyIn, this.InputType))
             {
                 SpriteDisplay.sprite = spriteOut;
             }
+            c_controllerData.k = keyIn;
         }
-
 
         // no state machine needed, handled by isActive
         EnginePush();
@@ -121,7 +121,7 @@ public class InputEditController : iEditController
         GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
         GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
 
-        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, this.InputType))
         {
             SpriteDisplay.sprite = spriteOut;
         }
@@ -135,7 +135,7 @@ public class InputEditController : iEditController
         GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
         GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
 
-        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, this.InputType))
         {
             SpriteDisplay.sprite = spriteOut;
         }
