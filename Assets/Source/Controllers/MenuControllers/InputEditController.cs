@@ -16,16 +16,16 @@ public class InputEditController : iEditController
     public override void CancelDataEdit()
     {
         MessageServer.SendMessage(MessageID.EDIT_END, new Message());
-        c_controllerData.k = GlobalInputController.GetInputKey(InputAction);
+        c_controllerData.k = GlobalInputController.GetInputKey(InputAction, this.InputType);
         Deactivate();
     }
 
     public override void ConfirmDataEdit(DataTarget targetIn)
     {
         MessageServer.SendMessage(MessageID.EDIT_END, new Message());
-        MessageServer.SendMessage(MessageID.EDIT_DISPLAY_UPDATE, new Message((int)c_controllerData.k, (uint)InputAction));
-        GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
+        GlobalInputController.UpdateAction(InputAction, c_controllerData.k, this.InputType);
         GlobalGameData.SetActionSetting(InputAction, c_controllerData.k, this.InputType);
+        MessageServer.SendMessage(MessageID.EDIT_DISPLAY_UPDATE, new Message((int)c_controllerData.k, (uint)InputAction).withInputType(this.InputType));
         Deactivate();
     }
 
@@ -85,12 +85,12 @@ public class InputEditController : iEditController
         {
             GlobalInputController.StopWatchForAnyInput();
             VerifyAndUpdateMutex(keyIn);
-            ConfirmDataEdit(CurrentTarget);
             if (InputSpriteController.getInputSprite(out spriteOut, keyIn, this.InputType))
             {
                 SpriteDisplay.sprite = spriteOut;
             }
             c_controllerData.k = keyIn;
+            ConfirmDataEdit(CurrentTarget);
         }
 
         // no state machine needed, handled by isActive
@@ -118,8 +118,8 @@ public class InputEditController : iEditController
     {
         c_controllerData.k = KeyCode.None;
 
-        GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
-        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
+        GlobalInputController.UpdateAction(InputAction, c_controllerData.k, this.InputType);
+        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k, this.InputType);
 
         if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, this.InputType))
         {
@@ -132,12 +132,13 @@ public class InputEditController : iEditController
     {
         c_controllerData.k = keyIn;
 
-        GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
-        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
+        GlobalInputController.UpdateAction(InputAction, c_controllerData.k, this.InputType);
+        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k, this.InputType);
 
         if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, this.InputType))
         {
             SpriteDisplay.sprite = spriteOut;
         }
+        MessageServer.SendMessage(MessageID.EDIT_DISPLAY_UPDATE, new Message((int)c_controllerData.k, (uint)InputAction).withInputType(this.InputType));
     }
 }

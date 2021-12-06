@@ -474,7 +474,7 @@ MonoBehaviour:
   ItemText: {fileID: 80187999}
   MenuAction: 10
   NextSceneId: -1
-  DataItem: 9
+  DataItem: 11
   ChildMenuController: {fileID: 0}
   ChildEditController: {fileID: 0}
 --- !u!114 &80187999
@@ -4668,7 +4668,7 @@ MonoBehaviour:
   ItemText: {fileID: 1238652440}
   MenuAction: 10
   NextSceneId: -1
-  DataItem: 9
+  DataItem: 10
   ChildMenuController: {fileID: 0}
   ChildEditController: {fileID: 0}
 --- !u!1 &1238888977

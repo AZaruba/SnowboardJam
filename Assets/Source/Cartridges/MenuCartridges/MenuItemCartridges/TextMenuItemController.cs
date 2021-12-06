@@ -123,7 +123,7 @@ public class TextMenuItemController : iMenuItemController, iEntityController
                 MessageServer.SendMessage(MessageID.EDIT_START, new Message());
                 break;
             case MenuCommand.RESET_CONTROLS:
-                GlobalGameData.SetControlsToDefault();
+                GlobalGameData.SetControlsToDefault(DataItem == DataTarget.CONTROLLER_CONTROLS ? InputType.CONTROLLER_GENERIC : InputType.KEYBOARD_GENERIC);
                 break;
         }
     }

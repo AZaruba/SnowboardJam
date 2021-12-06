@@ -345,11 +345,22 @@ public static class GlobalInputController
         AnalogActionValue[ControlAction.SLOW_AXIS] = Constants.ZERO_F;
     }
 
-    public static KeyCode GetInputKey(ControlAction actIn)
+    public static KeyCode GetInputKey(ControlAction actIn, InputType inputType = InputType.KEYBOARD_GENERIC)
     {
-        if (DigitalActionInput_Keyboard.ContainsKey(actIn))
+        if (inputType == InputType.CONTROLLER_GENERIC)
         {
-            return DigitalActionInput_Keyboard[actIn];
+            if (DigitalActionInput_Gamepad.ContainsKey(actIn))
+            {
+                return DigitalActionInput_Gamepad[actIn];
+            }
+        }
+
+        if (inputType == InputType.KEYBOARD_GENERIC)
+        {
+            if (DigitalActionInput_Keyboard.ContainsKey(actIn))
+            {
+                return DigitalActionInput_Keyboard[actIn];
+            }
         }
         return KeyCode.None;
     }
@@ -476,6 +487,11 @@ public static class GlobalInputController
                     break;
             }
 
+            if (frameValue == KeyValue.PRESSED)
+            {
+                activeControllerType = InputType.KEYBOARD_GENERIC;
+            }
+
             DigitalActionValue_Keyboard[actIn] = frameValue;
         }
 
@@ -514,6 +530,11 @@ public static class GlobalInputController
                 case KeyValue.UP:
                     frameValue = inputValue ? KeyValue.PRESSED : KeyValue.IDLE;
                     break;
+            }
+
+            if (frameValue == KeyValue.PRESSED)
+            {
+                activeControllerType = InputType.CONTROLLER_GENERIC;
             }
 
             DigitalActionValue_Gamepad[actIn] = frameValue;
@@ -587,6 +608,8 @@ public static class GlobalInputController
             InputToFlush = false;
             return;
         }
+        InputType oldInputType = activeControllerType;
+
         CheckAndSetKeyValue(ControlAction.JUMP);
         CheckAndSetKeyValue(ControlAction.LEFT_GRAB);
         CheckAndSetKeyValue(ControlAction.RIGHT_GRAB);
@@ -606,6 +629,11 @@ public static class GlobalInputController
         CheckAndSetAxisValue(ControlAction.SPIN_AXIS);
         CheckAndSetAxisValue(ControlAction.SLOW_AXIS);
         CheckAndSetAxisValue(ControlAction.FLIP_AXIS);
+
+        if (oldInputType != activeControllerType)
+        {
+            MessageServer.SendMessage(MessageID.INPUT_TYPE_CHANGED, new Message().withInputType(activeControllerType));
+        }
     }
 
     public static void FlushInputs()
@@ -688,21 +716,39 @@ public static class GlobalInputController
         return KeyCode.None;
     }
 
-    public static bool UpdateAction(ControlAction actIn, KeyCode keyIn)
+    public static bool UpdateAction(ControlAction actIn, KeyCode keyIn, InputType inputType)
     {
         // check if action is mapped to key
         // and if key is in the key dictionary
         // set them all and in controllerdata
-        if (DigitalActionInput_Keyboard.ContainsKey(actIn))
+        if (inputType == InputType.KEYBOARD_GENERIC)
         {
-            DigitalActionInput_Keyboard.Remove(actIn);
-            DigitalActionValue_Keyboard.Remove(actIn);
+            if (DigitalActionInput_Keyboard.ContainsKey(actIn))
+            {
+                DigitalActionInput_Keyboard.Remove(actIn);
+                DigitalActionValue_Keyboard.Remove(actIn);
 
-            // reset value
-            DigitalActionInput_Keyboard[actIn] = keyIn;
-            DigitalActionValue_Keyboard[actIn] = KeyValue.IDLE;
+                // reset value
+                DigitalActionInput_Keyboard[actIn] = keyIn;
+                DigitalActionValue_Keyboard[actIn] = KeyValue.IDLE;
 
-            return true;
+                return true;
+            }
+        }
+        
+        if (inputType == InputType.CONTROLLER_GENERIC)
+        {
+            if (DigitalActionInput_Gamepad.ContainsKey(actIn))
+            {
+                DigitalActionInput_Gamepad.Remove(actIn);
+                DigitalActionValue_Gamepad.Remove(actIn);
+
+                // reset value
+                DigitalActionInput_Gamepad[actIn] = keyIn;
+                DigitalActionValue_Gamepad[actIn] = KeyValue.IDLE;
+
+                return true;
+            }
         }
         return false;
     }

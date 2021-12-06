@@ -554,7 +554,7 @@ public static class GlobalGameData
         // decide layout based on 
         DefaultControlLayout layoutIn = DefaultControls.KeyboardLayout;
         DefaultControlLayout gamepadLayoutIn = DefaultControls.XboxLayout;
-        GlobalInputController.SetActiveControllerType(InputType.KEYBOARD_WIN);
+        GlobalInputController.SetActiveControllerType(InputType.KEYBOARD_GENERIC);
 
         int intVal;
 
@@ -563,7 +563,6 @@ public static class GlobalGameData
         {
             if (joystickNames[0].ToLower().Contains("dualshock"))
             {
-                GlobalInputController.SetActiveControllerType(InputType.CONTROLLER_PS);
                 gamepadLayoutIn = DefaultControls.PSLayout;
             }
             // other controller types?
@@ -811,23 +810,39 @@ public static class GlobalGameData
         LoadControlSettings();
     }
 
-    private static void SetControlGlobal(KeyCode keyIn, ControlAction actIn)
+    private static void SetControlGlobal(KeyCode keyIn, ControlAction actIn, InputType typeIn)
     {
-        MessageServer.SendMessage(MessageID.EDIT_RESET, new Message((int)keyIn, (uint)actIn));
+        MessageServer.SendMessage(MessageID.EDIT_RESET, new Message((int)keyIn, (uint)actIn).withInputType(typeIn));
     }
 
-    public static void SetControlsToDefault()
+    public static void SetControlsToDefault(InputType typeIn)
     {
-        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultJump, ControlAction.JUMP);
-        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTuck, ControlAction.CROUCH);
-        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickU, ControlAction.UP_GRAB);
-        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickL, ControlAction.LEFT_GRAB);
-        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickR, ControlAction.RIGHT_GRAB);
-        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickD, ControlAction.DOWN_GRAB);
-        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultPause, ControlAction.PAUSE);
+        if (typeIn == InputType.KEYBOARD_GENERIC)
+        {
+            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultJump, ControlAction.JUMP, typeIn);
+            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTuck, ControlAction.CROUCH, typeIn);
+            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickU, ControlAction.UP_GRAB, typeIn);
+            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickL, ControlAction.LEFT_GRAB, typeIn);
+            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickR, ControlAction.RIGHT_GRAB, typeIn);
+            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickD, ControlAction.DOWN_GRAB, typeIn);
+            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultPause, ControlAction.PAUSE, typeIn);
 
-        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultBack, ControlAction.BACK);
-        SetControlGlobal(DefaultControls.KeyboardLayout.DefaultConfirm, ControlAction.CONFIRM);
+            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultBack, ControlAction.BACK, typeIn);
+            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultConfirm, ControlAction.CONFIRM, typeIn);
+        }
+        else if (typeIn == InputType.CONTROLLER_GENERIC)
+        {
+            SetControlGlobal(DefaultControls.XboxLayout.DefaultJump, ControlAction.JUMP, typeIn);
+            SetControlGlobal(DefaultControls.XboxLayout.DefaultTuck, ControlAction.CROUCH, typeIn);
+            SetControlGlobal(DefaultControls.XboxLayout.DefaultTrickU, ControlAction.UP_GRAB, typeIn);
+            SetControlGlobal(DefaultControls.XboxLayout.DefaultTrickL, ControlAction.LEFT_GRAB, typeIn);
+            SetControlGlobal(DefaultControls.XboxLayout.DefaultTrickR, ControlAction.RIGHT_GRAB, typeIn);
+            SetControlGlobal(DefaultControls.XboxLayout.DefaultTrickD, ControlAction.DOWN_GRAB, typeIn);
+            SetControlGlobal(DefaultControls.XboxLayout.DefaultPause, ControlAction.PAUSE, typeIn);
+
+            SetControlGlobal(DefaultControls.XboxLayout.DefaultBack, ControlAction.BACK, typeIn);
+            SetControlGlobal(DefaultControls.XboxLayout.DefaultConfirm, ControlAction.CONFIRM, typeIn);
+        }
     }
 
 }

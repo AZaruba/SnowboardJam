@@ -43,6 +43,7 @@ public enum MessageID
     PLAYER_POSITION_UPDATED,
 
     // Controller update IDs
+    INPUT_TYPE_CHANGED,
     KEYBOARD_ACTIVATED,
     CONTROLLER_ACTIVATED,
 }
@@ -76,6 +77,7 @@ public class Message
     private int i_data;
     private float f_data;
     private string s_data;
+    private InputType inputType_data;
     private TrickMessageData t_data;
     private AudioRef a_data;
     private Vector3 v_data;
@@ -141,6 +143,17 @@ public class Message
         v_data = vDataIn;
         q_data = qDataIn;
         f_data = fDataIn;
+    }
+
+    public Message withInputType(InputType typeIn)
+    {
+        this.inputType_data = typeIn;
+        return this;
+    }
+
+    public InputType getInputType()
+    {
+        return inputType_data;
     }
 
     public uint getUint()
