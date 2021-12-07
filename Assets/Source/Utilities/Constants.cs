@@ -45,4 +45,6 @@ public enum DataTarget
     VOICE_LEVEL,
     SFX_LEVEL,
     ANY_KEY,
+    KEYBOARD_CONTROLS,
+    CONTROLLER_CONTROLS,
 }

@@ -50,7 +50,7 @@ public class PauseMenuController : MonoBehaviour
                 c_activeMenuData.i_menuDir = 0;
             }
 
-            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.PRESSED)
+            if (GlobalInputController.GetInputAction(ControlAction.CONFIRM, KeyValue.PRESSED))
             {
                 c_activeMenuItem.ExecuteMenuCommand();
             }

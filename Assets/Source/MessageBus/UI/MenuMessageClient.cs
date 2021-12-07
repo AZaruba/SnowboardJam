@@ -38,23 +38,44 @@ public class MenuMessageClient : iMessageClient
 public class InputHelpPromptMessageClient : iMessageClient
 {
     InputHelpController parent;
+    InputType activeType;
 
     public InputHelpPromptMessageClient(InputHelpController parentIn)
     {
         this.parent = parentIn;
+        activeType = InputType.KEYBOARD_GENERIC;
     }
 
     public bool RecieveMessage(MessageID id, Message message)
     {
         if (id == MessageID.EDIT_DISPLAY_UPDATE)
         {
+            if (message.getInputType() != activeType)
+            {
+                return false;
+            }
+
             if (parent.InputAction == (ControlAction)message.getUint())
             {
-                if (InputSpriteController.getInputSprite(out Sprite spriteOut, (KeyCode)message.getInt()))
+                if (InputSpriteController.getInputSprite(out Sprite spriteOut, (KeyCode)message.getInt(), message.getInputType()))
                 {
                     parent.SpriteDisplay.sprite = spriteOut;
+                    return true;
                 }
+                return false;
             }
+        }
+        if (id == MessageID.INPUT_TYPE_CHANGED)
+        {
+            this.activeType = message.getInputType();
+            if (InputSpriteController.getInputSprite(out Sprite spriteOut,
+                                                     GlobalInputController.GetInputKey(parent.InputAction, message.getInputType()),
+                                                     message.getInputType()))
+            {
+                parent.SpriteDisplay.sprite = spriteOut;
+                return true;
+            }
+            return false;
         }
         return false;
     }
@@ -80,7 +101,7 @@ public class InputEditMessageClient : iMessageClient
         }
         if (id == MessageID.EDIT_RESET)
         {
-            if (parent.InputAction == (ControlAction)message.getUint())
+            if (parent.InputAction == (ControlAction)message.getUint() && parent.InputType == message.getInputType())
             {
                 parent.InputSwap((KeyCode)message.getInt());
             }

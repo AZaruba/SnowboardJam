@@ -8,6 +8,7 @@ public class InputEditController : iEditController
     public ControlAction InputAction;
     public Image SpriteDisplay;
     public InputMutex InputMutex;
+    public InputType InputType;
 
     private Sprite spriteOut;
     private iMessageClient c_messageClient;
@@ -15,16 +16,16 @@ public class InputEditController : iEditController
     public override void CancelDataEdit()
     {
         MessageServer.SendMessage(MessageID.EDIT_END, new Message());
-        c_controllerData.k = GlobalInputController.GetInputKey(InputAction);
+        c_controllerData.k = GlobalInputController.GetInputKey(InputAction, this.InputType);
         Deactivate();
     }
 
     public override void ConfirmDataEdit(DataTarget targetIn)
     {
         MessageServer.SendMessage(MessageID.EDIT_END, new Message());
-        MessageServer.SendMessage(MessageID.EDIT_DISPLAY_UPDATE, new Message((int)c_controllerData.k, (uint)InputAction));
-        GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
-        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
+        GlobalInputController.UpdateAction(InputAction, c_controllerData.k, this.InputType);
+        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k, this.InputType);
+        MessageServer.SendMessage(MessageID.EDIT_DISPLAY_UPDATE, new Message((int)c_controllerData.k, (uint)InputAction).withInputType(this.InputType));
         Deactivate();
     }
 
@@ -37,9 +38,10 @@ public class InputEditController : iEditController
     {
         c_controllerData = new EditControllerData();
         c_controllerData.b_editorActive = false;
-        c_controllerData.k = GlobalGameData.GetActionSetting(InputAction);
+        c_controllerData.k = GlobalGameData.GetActionSetting(InputAction, this.InputType);
         c_messageClient = new InputEditMessageClient(this);
         MessageServer.Subscribe(ref c_messageClient, MessageID.EDIT_SWAP);
+        MessageServer.Subscribe(ref c_messageClient, MessageID.EDIT_RESET);
     }
 
     // Start is called before the first frame update
@@ -47,7 +49,7 @@ public class InputEditController : iEditController
     {
         InitializeData();
         InitializeStateMachine();
-        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, this.InputType))
         {
             SpriteDisplay.sprite = spriteOut;
 
@@ -62,7 +64,7 @@ public class InputEditController : iEditController
             return;
         }
 
-        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM) == KeyValue.IDLE)
+        if (GlobalInputController.GetInputAction(ControlAction.CONFIRM, KeyValue.IDLE))
         {
             GlobalInputController.StartWatchForAnyInput();
             SpriteDisplay.sprite = InputSpriteController.EmptySprite();
@@ -73,7 +75,7 @@ public class InputEditController : iEditController
         {
             GlobalInputController.StopWatchForAnyInput();
             CancelDataEdit();
-            if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+            if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, this.InputType))
             {
                 SpriteDisplay.sprite = spriteOut;
             }
@@ -83,14 +85,13 @@ public class InputEditController : iEditController
         {
             GlobalInputController.StopWatchForAnyInput();
             VerifyAndUpdateMutex(keyIn);
-            c_controllerData.k = keyIn;
-            ConfirmDataEdit(CurrentTarget);
-            if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+            if (InputSpriteController.getInputSprite(out spriteOut, keyIn, this.InputType))
             {
                 SpriteDisplay.sprite = spriteOut;
             }
+            c_controllerData.k = keyIn;
+            ConfirmDataEdit(CurrentTarget);
         }
-
 
         // no state machine needed, handled by isActive
         EnginePush();
@@ -117,10 +118,10 @@ public class InputEditController : iEditController
     {
         c_controllerData.k = KeyCode.None;
 
-        GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
-        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
+        GlobalInputController.UpdateAction(InputAction, c_controllerData.k, this.InputType);
+        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k, this.InputType);
 
-        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, this.InputType))
         {
             SpriteDisplay.sprite = spriteOut;
         }
@@ -131,12 +132,13 @@ public class InputEditController : iEditController
     {
         c_controllerData.k = keyIn;
 
-        GlobalInputController.UpdateAction(InputAction, c_controllerData.k);
-        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k);
+        GlobalInputController.UpdateAction(InputAction, c_controllerData.k, this.InputType);
+        GlobalGameData.SetActionSetting(InputAction, c_controllerData.k, this.InputType);
 
-        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k))
+        if (InputSpriteController.getInputSprite(out spriteOut, c_controllerData.k, this.InputType))
         {
             SpriteDisplay.sprite = spriteOut;
         }
+        MessageServer.SendMessage(MessageID.EDIT_DISPLAY_UPDATE, new Message((int)c_controllerData.k, (uint)InputAction).withInputType(this.InputType));
     }
 }

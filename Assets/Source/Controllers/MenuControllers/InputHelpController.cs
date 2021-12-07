@@ -16,11 +16,14 @@ public class InputHelpController : MonoBehaviour
         InitializeSpriteDisplay();
         this.c_messageClient = new InputHelpPromptMessageClient(this);
         MessageServer.Subscribe(ref c_messageClient, MessageID.EDIT_DISPLAY_UPDATE);
+        MessageServer.Subscribe(ref c_messageClient, MessageID.INPUT_TYPE_CHANGED);
     }
 
     private void InitializeSpriteDisplay()
     {
-        InputSpriteController.getInputSprite(out Sprite spriteOut, GlobalInputController.GetInputKey(InputAction));
+        InputSpriteController.getInputSprite(out Sprite spriteOut, 
+            GlobalInputController.GetInputKey(InputAction, GlobalInputController.GetActiveControllerType()),
+            GlobalInputController.GetActiveControllerType());
         SpriteDisplay.sprite = spriteOut;
     }
 }
