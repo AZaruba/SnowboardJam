@@ -615,6 +615,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 483208281}
+  - component: {fileID: 483208282}
   m_Layer: 8
   m_Name: CenterOfGravity
   m_TagString: Untagged
@@ -637,6 +638,19 @@ Transform:
   m_Father: {fileID: 734568625}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &483208282
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 483208280}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 2, z: 2.5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &558779296
 GameObject:
   m_ObjectHideFlags: 0
@@ -1005,7 +1019,6 @@ GameObject:
   - component: {fileID: 734568628}
   - component: {fileID: 734568629}
   - component: {fileID: 734568630}
-  - component: {fileID: 734568624}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -1081,19 +1094,6 @@ MonoBehaviour:
   CenterOfGravity: {fileID: 483208281}
   RaycastDistance: 1.2
   ForwardRaycastDistance: 0.6
---- !u!65 &734568624
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734568621}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.5, y: 2, z: 2.5}
-  m_Center: {x: 0, y: 1, z: 0}
 --- !u!4 &734568625
 Transform:
   m_ObjectHideFlags: 0
@@ -1148,7 +1148,7 @@ MonoBehaviour:
   ZoneCollisionMask:
     serializedVersion: 2
     m_Bits: 2048
-  collisionCollider: {fileID: 734568624}
+  collisionCollider: {fileID: 483208282}
 --- !u!114 &734568628
 MonoBehaviour:
   m_ObjectHideFlags: 0

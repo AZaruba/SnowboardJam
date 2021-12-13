@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         EnginePull(); // poll for input every frame
 
         transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition);
-        c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
+        transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
 
         debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
         debugAccessor.DisplayFloat("Turn Speed", c_turnData.f_currentRealTurnSpeed);
@@ -339,10 +339,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         Gizmos.matrix = Matrix4x4.TRS(c_playerData.v_currentPosition, c_playerData.q_currentRotation, transform.lossyScale);
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(CollisionData.CenterOffset, CollisionData.HalfExtents * 2);
+        //Gizmos.DrawWireCube(CollisionData.CenterOffset, CollisionData.HalfExtents * 2);
 
-        Gizmos.color = c_airMachine.GetCurrentState() == StateRef.AIRBORNE ? Color.green : Color.blue;
-        Gizmos.DrawWireCube(CollisionData.CenterOffset + (Vector3.down * c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1), CollisionData.HalfExtents * 2);
+        //Gizmos.color = c_airMachine.GetCurrentState() == StateRef.AIRBORNE ? Color.green : Color.blue;
+        //Gizmos.DrawWireCube(CollisionData.CenterOffset + (c_playerData.q_currentRotation * Vector3.down * c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1), CollisionData.HalfExtents * 2);
 
     }
 
@@ -399,18 +399,32 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void ValidateRotatedAttachPoint()
     {
-        if (Physics.BoxCast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset * 2,
+        if (Physics.BoxCast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset,
                             CollisionData.BodyHalfExtents,
                             c_playerData.q_currentRotation * Vector3.down,
                             out backHit,
                             c_playerData.q_currentRotation,
-                            c_collisionData.f_contactOffset + c_aerialMoveData.f_verticalVelocity * -1 + CollisionData.CenterOffset.y * 2,
+                            c_collisionData.f_contactOffset - c_aerialMoveData.f_verticalVelocity * Time.deltaTime + CollisionData.CenterOffset.y * 2,
                             CollisionLayers.ENVIRONMENT))
         {
+            // TODO: think this out, why is it "desyncing" on curves
+            // we currently have posY - hitY, but if hitY is halfway up the scan then we don't move
+            // so we want to add the distance between hitY and whatever the furthest point on the scan would be
+
+            // For your health
+            // check the debug draw line here:
+            /*
+             * The position appears to be at the front of the player's hitbox (fine, I think? Why is that?)
+             * But it appears to get pushed "down" the player as they level out the rotation. What is something that the rotation could potentially do to futz with this?
+             */ 
             Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - backHit.point);
-            c_collisionData.v_attachPoint = Vector3.up * (unfoldedVector.y + ((c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed).y * Time.deltaTime));
-            Debug.DrawRay(c_playerData.v_currentPosition - unfoldedVector, Vector3.up, Color.red, 5);
-            Debug.DrawLine(backHit.point, backHit.point + c_playerData.q_currentRotation * Vector3.up * unfoldedVector.y, Color.cyan, 5);
+
+            Debug.DrawLine(c_playerData.v_currentPosition,
+                c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset * 2 + c_playerData.q_currentRotation * Vector3.down * (c_collisionData.f_contactOffset - c_aerialMoveData.f_verticalVelocity * Time.deltaTime + CollisionData.CenterOffset.y * 2), 
+                Color.blue);
+
+            c_collisionData.v_attachPoint = c_playerData.q_currentRotation * Vector3.up * (unfoldedVector.y); // - ((c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed).y * Time.deltaTime));
+            c_collisionData.v_surfaceNormal = GetBaryCentricNormal(backHit);
         }
         else
         {
