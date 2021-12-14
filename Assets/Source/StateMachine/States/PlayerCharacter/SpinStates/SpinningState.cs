@@ -43,7 +43,7 @@ public class SpinningState : iState
         cart_incr.DecrementAbs(ref currentFlipRate, c_physData.f_flipDecay * Time.deltaTime, 0.0f);
         cart_incr.DecrementAbs(ref currentSpinRate, c_physData.f_spinDecay * Time.deltaTime, 0.0f);
 
-        c_playerPosData.q_currentModelRotation = currentRotation;
+        c_playerPosData.q_centerOfGravityRotation = currentRotation;
         c_physData.f_currentFlipRate = currentFlipRate;
         c_physData.f_currentSpinRate = currentSpinRate;
         c_scoringData.f_currentSpinDegrees += currentSpinRate * 360f * Time.deltaTime;
@@ -68,6 +68,6 @@ public class SpinningState : iState
     {
         c_physData.f_currentFlipRate = c_physData.f_currentFlipCharge;
         c_physData.f_currentSpinRate = c_physData.f_currentSpinCharge;
-        c_physData.q_startRotation = c_playerPosData.q_currentModelRotation;
+        c_physData.q_startRotation = c_playerPosData.q_centerOfGravityRotation;
     }
 }

@@ -328,5 +328,5 @@ public class LastFramePositionData
 {
     public Vector3 v_lastFramePosition;
     public Quaternion q_lastFrameRotation;
-    public Quaternion q_lastFrameModelRotation;
+    public Quaternion q_lastFrameCoGRotation;
 }
