@@ -103,6 +103,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition);
         transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
+        c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameCoGRotation, c_positionData.q_currentModelRotation * c_positionData.q_centerOfGravityRotation);
 
         debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
         debugAccessor.DisplayFloat("Turn Speed", c_turnData.f_currentRealTurnSpeed);
@@ -118,6 +119,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         c_lastFrameData.v_lastFramePosition = c_playerData.v_currentPosition;
         c_lastFrameData.q_lastFrameRotation = c_positionData.q_currentModelRotation;
+        c_lastFrameData.q_lastFrameCoGRotation = c_positionData.q_currentModelRotation * c_positionData.q_centerOfGravityRotation;
 
         UpdateStateMachine();
 
@@ -606,7 +608,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeTrickPhysicsMachine()
     {
-        SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData, ref c_scoringData);
+        SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData, ref c_scoringData, ref c_positionData);
         SpinChargeState s_spinCharge = new SpinChargeState(ref c_trickPhysicsData, ref c_inputData, ref cart_incr);
         SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_handling, ref cart_incr, ref c_scoringData);
         SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref cart_handling, ref c_scoringData);

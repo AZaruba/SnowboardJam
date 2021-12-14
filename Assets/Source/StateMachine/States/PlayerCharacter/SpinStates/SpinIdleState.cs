@@ -5,12 +5,14 @@ using UnityEngine;
 public class SpinIdleState : iState
 {
     private TrickPhysicsData c_trickPhys;
+    private PlayerPositionData c_posData;
     private ScoringData c_scoring;
 
-    public SpinIdleState(ref TrickPhysicsData dataIn, ref ScoringData scoringIn)
+    public SpinIdleState(ref TrickPhysicsData dataIn, ref ScoringData scoringIn, ref PlayerPositionData posDataIn)
     {
         this.c_trickPhys = dataIn;
         this.c_scoring = scoringIn;
+        this.c_posData = posDataIn;
     }
 
     public void Act()
@@ -36,5 +38,8 @@ public class SpinIdleState : iState
 
         c_scoring.f_currentFlipDegrees = 0.0f;
         c_scoring.f_currentSpinDegrees = 0.0f;
+
+        // reset center of gravity rotation to the current rotation on land
+        c_posData.q_centerOfGravityRotation = Quaternion.identity;
     }
 }

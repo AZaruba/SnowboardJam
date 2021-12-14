@@ -51,7 +51,7 @@ public class SpinSnapState : iState
         cart_rotation.SetRotation(ref currentRotation, root);
         cart_rotation.ValidateSpinRotation(currentSpinDegrees, currentFlipDegrees, spinCeiling, flipCeiling, ref currentSpinRate, ref currentFlipRate);
 
-        c_playerPosData.q_currentModelRotation = currentRotation;
+        c_playerPosData.q_centerOfGravityRotation = currentRotation;
         c_physData.f_currentFlipRate = currentFlipRate;
         c_physData.f_currentSpinRate = currentSpinRate;
         c_scoringData.f_currentSpinDegrees += currentSpinRate * 360f * Time.deltaTime;

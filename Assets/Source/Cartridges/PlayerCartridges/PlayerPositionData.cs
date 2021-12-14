@@ -8,6 +8,7 @@ public class PlayerPositionData
     private Vector3 ModelDirection;
     private Vector3 ModelPosition;
     private Quaternion ModelRotation;
+    private Quaternion CenterOfGravityRotation;
 
     private int ModelReversed;
 
@@ -18,6 +19,7 @@ public class PlayerPositionData
         this.v_modelDirection = direction;
         this.i_switchStance = Constants.REGULAR_STANCE;
         this.q_currentModelRotation = rotation;
+        this.q_centerOfGravityRotation = rotation;
     }
 
     public uint u_zone
@@ -42,6 +44,12 @@ public class PlayerPositionData
     {
         get { return ModelRotation; }
         set { ModelRotation = value; }
+    }
+
+    public Quaternion q_centerOfGravityRotation
+    {
+        get { return CenterOfGravityRotation; }
+        set { CenterOfGravityRotation = value; }
     }
 
     public int i_switchStance
