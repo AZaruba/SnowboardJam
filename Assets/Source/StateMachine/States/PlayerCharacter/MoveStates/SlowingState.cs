@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class SlowingState : iState
 {
-    AccelerationCartridge cart_acceleration;
-    VelocityCartridge cart_velocity;
-    AngleCalculationCartridge cart_angleCalc;
-    SurfaceInfluenceCartridge cart_surfInf;
 
     PlayerData c_playerData;
     PlayerInputData c_playerInputData;
@@ -17,20 +13,12 @@ public class SlowingState : iState
     public SlowingState(ref PlayerData playerData,
                         ref CollisionData collisionData,
                         ref PlayerInputData inputData,
-                        ref PlayerPositionData positionData, 
-                        ref VelocityCartridge vel,
-                        ref AccelerationCartridge accel, 
-                        ref AngleCalculationCartridge angleCalc,
-                        ref SurfaceInfluenceCartridge surfInf)
+                        ref PlayerPositionData positionData)
     {
         this.c_playerData = playerData;
         this.c_playerInputData = inputData;
         this.c_playerPositionData = positionData;
         this.c_collisionData = collisionData;
-        this.cart_velocity = vel;
-        this.cart_acceleration = accel;
-        this.cart_angleCalc = angleCalc;
-        this.cart_surfInf = surfInf;
     }
     public void Act()
     {
@@ -50,7 +38,7 @@ public class SlowingState : iState
             0.1f,
             currentRotation);
 
-        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
+        VelocityCartridge.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.v_currentPosition = currentPosition;

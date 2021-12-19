@@ -42,13 +42,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private AudioDTree t_audioStateTree;
 
     // cartridge list
-    private AccelerationCartridge cart_f_acceleration;
-    private VelocityCartridge cart_velocity;
     private HandlingCartridge cart_handling;
-    private AngleCalculationCartridge cart_angleCalc;
-    private GravityCartridge cart_gravity;
     private IncrementCartridge cart_incr;
-    private SurfaceInfluenceCartridge cart_surfInf;
 
     // Cached Calculation items
     RaycastHit frontHit;
@@ -69,13 +64,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     void Awake()
     {
         SetDefaultPlayerData();
-        cart_gravity = new GravityCartridge();
-        cart_angleCalc = new AngleCalculationCartridge();
-        cart_velocity = new VelocityCartridge();
-        cart_f_acceleration = new AccelerationCartridge();
         cart_handling = new HandlingCartridge();
         cart_incr = new IncrementCartridge();
-        cart_surfInf = new SurfaceInfluenceCartridge();
 
         InitializeStateMachines();
         InitializeAudioController();
@@ -106,7 +96,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameCoGRotation, c_positionData.q_currentModelRotation * c_positionData.q_centerOfGravityRotation);
 
         debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayFloat("Turn Speed", c_turnData.f_currentRealTurnSpeed);
+        debugAccessor.DisplayFloat("Current Speed", c_playerData.f_currentSpeed);
         debugAccessor.DisplayVector3("Attach point", c_collisionData.v_attachPoint);
     }
 
@@ -312,7 +302,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_entityData = new EntityData();
         c_collisionData = new CollisionData(CollisionData.FrontRayOffset, CollisionData.BackRayOffset);
         c_lastFrameData = new LastFramePositionData();
-        c_turnData = new PlayerHandlingData(c_playerData.f_turnSpeed, c_playerData.f_turnAcceleration, c_playerData.f_turnAcceleration * 2);
+        c_turnData = new PlayerHandlingData(c_playerData.f_turnSpeed, c_playerData.f_turnAcceleration, c_playerData.f_turnSpeedDeceleration, c_playerData.f_turnAcceleration * 2);
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
@@ -561,9 +551,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         MoveAerialState s_moveAerial = new MoveAerialState();
         StationaryState s_stationary = new StationaryState(ref c_playerData, ref c_positionData);
-        RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref c_collisionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
-        RidingChargeState s_ridingCharge = new RidingChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref cart_angleCalc, ref cart_f_acceleration, ref cart_velocity, ref cart_surfInf);
-        SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData, ref cart_velocity, ref cart_f_acceleration, ref cart_angleCalc, ref cart_surfInf);
+        RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref c_collisionData);
+        RidingChargeState s_ridingCharge = new RidingChargeState(ref c_playerData, ref c_positionData, ref c_collisionData);
+        SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData);
         CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
 
         c_accelMachine = new StateMachine(StateRef.STATIONARY);
@@ -579,7 +569,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeAirMachine()
     {
-        AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref cart_gravity, ref cart_velocity);
+        AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData);
         GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();

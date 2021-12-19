@@ -4,26 +4,15 @@ using UnityEngine;
 
 public class RidingState : iState {
 
-    AngleCalculationCartridge cart_angleCalc;
-    AccelerationCartridge     cart_acceleration;
-    VelocityCartridge         cart_velocity;
-    SurfaceInfluenceCartridge cart_surfInf;
-
     PlayerData c_playerData;
     PlayerPositionData c_playerPositionData;
     CollisionData c_collisionData;
 
-    public RidingState(ref PlayerData playerData, ref PlayerPositionData positionData, ref CollisionData collisionData,
-        ref AngleCalculationCartridge angleCalc, ref AccelerationCartridge acceleration, 
-        ref VelocityCartridge velocity,ref SurfaceInfluenceCartridge surfInf)
+    public RidingState(ref PlayerData playerData, ref PlayerPositionData positionData, ref CollisionData collisionData)
     {
         this.c_playerData = playerData;
         this.c_playerPositionData = positionData;
         this.c_collisionData = collisionData;
-        this.cart_angleCalc = angleCalc;
-        this.cart_acceleration = acceleration;
-        this.cart_velocity = velocity;
-        this.cart_surfInf = surfInf;
     }
 
     public void Act()
@@ -44,7 +33,7 @@ public class RidingState : iState {
             0.1f,
             currentRotation);
 
-        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
+        VelocityCartridge.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.v_currentPosition = currentPosition;
@@ -84,27 +73,16 @@ public class RidingState : iState {
 // secondary riding state for jump charge
 public class RidingChargeState : iState
 {
-
-    AngleCalculationCartridge cart_angleCalc;
-    AccelerationCartridge cart_acceleration;
-    VelocityCartridge cart_velocity;
-    SurfaceInfluenceCartridge cart_surfInf;
-
     PlayerData c_playerData;
     PlayerPositionData c_playerPositionData;
     CollisionData c_collisionData;
 
-    public RidingChargeState(ref PlayerData playerData, ref PlayerPositionData positionData, ref CollisionData collisionData,
-        ref AngleCalculationCartridge angleCalc, ref AccelerationCartridge acceleration,
-        ref VelocityCartridge velocity, ref SurfaceInfluenceCartridge surfInf)
+    public RidingChargeState(ref PlayerData playerData, ref PlayerPositionData positionData, 
+        ref CollisionData collisionData)
     {
         this.c_playerData = playerData;
         this.c_playerPositionData = positionData;
         this.c_collisionData = collisionData;
-        this.cart_angleCalc = angleCalc;
-        this.cart_acceleration = acceleration;
-        this.cart_velocity = velocity;
-        this.cart_surfInf = surfInf;
     }
 
     public void Act()
@@ -125,7 +103,7 @@ public class RidingChargeState : iState
             0.1f,
             currentRotation);
 
-        cart_velocity.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
+        VelocityCartridge.UpdatePositionTwo(ref currentPosition, ref currentRotation, ref currentVelocity);
 
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.v_currentPosition = currentPosition;

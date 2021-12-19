@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AccelerationCartridge {
+public static class AccelerationCartridge {
 
     #region PublicFunctions
     public static void AccelerateGravity(ref float velocity,

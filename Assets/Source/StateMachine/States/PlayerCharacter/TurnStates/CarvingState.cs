@@ -25,10 +25,11 @@ public class CarvingState : iState {
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
+        float currentSpeed = c_playerData.f_currentSpeed;
         float currentTurnSpeed = c_turnData.f_currentTurnSpeed;
         float currentRealTurnSpeed = c_turnData.f_currentRealTurnSpeed;
         float targetTurnAccel = c_turnData.f_turnAcceleration * c_playerInputData.f_inputAxisLHoriz;
-        float turnSpeedCap = c_turnData.f_turnTopSpeed;
+        float turnSpeedCap = Mathf.Abs(c_turnData.f_turnTopSpeed * c_playerInputData.f_inputAxisLHoriz);
 
         float turnSign = Mathf.Sign(targetTurnAccel);
 
@@ -44,10 +45,16 @@ public class CarvingState : iState {
         HandlingCartridge.Turn(Vector3.up, currentTurnSpeed * Time.fixedDeltaTime, ref currentModelRotation);
         HandlingCartridge.Turn(Vector3.up, currentRealTurnSpeed * Time.fixedDeltaTime, ref currentRotation);
 
+        Debug.Log(currentRealTurnSpeed / turnSpeedCap);
+        AccelerationCartridge.Decelerate(ref currentSpeed, 
+            Mathf.Abs(currentRealTurnSpeed / c_turnData.f_turnTopSpeed) * c_turnData.f_turnSpeedDeceleration, 
+            c_positionData.i_switchStance);
+
         c_positionData.q_currentModelRotation = currentModelRotation;
         c_playerData.q_currentRotation = currentRotation;
         c_turnData.f_currentTurnSpeed = currentTurnSpeed;
         c_turnData.f_currentRealTurnSpeed = currentRealTurnSpeed;
+        c_playerData.f_currentSpeed = currentSpeed;
     }
 
     public void TransitionAct()
