@@ -11,6 +11,7 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float BrakePower;
     [SerializeField] private float TurnSpeed;
     [SerializeField] private float TurnAcceleration;
+    [SerializeField] private float TurnSpeedDeceleration;
     [SerializeField] private float JumpPower;
     [SerializeField] private float BaseJumpPower;
     [SerializeField] private float JumpChargeRate;
@@ -91,6 +92,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return TurnAcceleration; }
         set { TurnAcceleration = value; }
+    }
+
+    public float f_turnSpeedDeceleration
+    {
+        get { return TurnSpeedDeceleration; }
+        set { TurnSpeedDeceleration = value; }
     }
 
     public float f_jumpPower
@@ -309,11 +316,12 @@ public class PlayerHandlingData
     public float f_currentRealTurnSpeed;
     public float f_currentSurfaceFactor;
     public float f_turnAcceleration;
+    public float f_turnSpeedDeceleration;
     public float f_turnTopSpeed;
     public float f_lastFrameTurnSpeed;
     public float f_turnResetSpeed;
 
-    public PlayerHandlingData(float turnSpeedIn, float turnAccelIn, float turnResetIn)
+    public PlayerHandlingData(float turnSpeedIn, float turnAccelIn, float decelIn, float turnResetIn)
     {
         this.f_currentTurnSpeed = Constants.ZERO_F;
         this.f_currentRealTurnSpeed = Constants.ZERO_F;
@@ -321,6 +329,7 @@ public class PlayerHandlingData
         this.f_turnAcceleration = turnAccelIn;
         this.f_turnTopSpeed = turnSpeedIn;
         this.f_turnResetSpeed = turnResetIn;
+        this.f_turnSpeedDeceleration = decelIn;
     }
 }
 

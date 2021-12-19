@@ -2,22 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VelocityCartridge {
+public static class VelocityCartridge {
 
     #region PublicFunctions
-    public void UpdatePosition(ref Vector3 position, ref Vector3 direction, ref float velocity)
-    {
-        position += direction.normalized * velocity * Time.deltaTime;
-    }
-
-    // Test function: We update the character's position via the rotation, why not do it here?
-    public void UpdatePositionTwo(ref Vector3 position, ref Quaternion rotation, ref float velocity)
+    public static void UpdatePositionTwo(ref Vector3 position, ref Quaternion rotation, ref float velocity)
     {
         Vector3 direction = rotation * Vector3.forward;
         position += direction.normalized * velocity * Time.deltaTime;
     }
 
-    public void UpdateAerialPosition(ref Vector3 position, Vector3 lateralDir, float verticalVelocity, float lateralVelocity)
+    public static void UpdateAerialPosition(ref Vector3 position, Vector3 lateralDir, float verticalVelocity, float lateralVelocity)
     {
         position += lateralDir * lateralVelocity * Time.deltaTime;
         position += Vector3.up * verticalVelocity * Time.deltaTime;

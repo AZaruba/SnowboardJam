@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GravityCartridge {
+public static class GravityCartridge {
 
-    public void UpdateAirVelocity(ref float currentAirVelocity, float globalGravity, float terminalVelocity)
+    public static void UpdateAirVelocity(ref float currentAirVelocity, float globalGravity, float terminalVelocity)
     {
         if (currentAirVelocity < terminalVelocity * -1)
         {
@@ -14,7 +14,7 @@ public class GravityCartridge {
         currentAirVelocity -= globalGravity * Time.deltaTime;
     }
 
-    public void Jump(ref float currentAirVelocity, ref float jumpPower)
+    public static void Jump(ref float currentAirVelocity, ref float jumpPower)
     {
         currentAirVelocity += jumpPower;
     }
