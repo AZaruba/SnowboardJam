@@ -23,18 +23,16 @@ public class StraightState : iState
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
-        float currentSpeed = c_playerData.f_currentSpeed;
         float currentTurnSpeed = c_turnData.f_currentTurnSpeed;
         float currentRealTurnSpeed = c_turnData.f_currentRealTurnSpeed;
 
-        AccelerationCartridge.DecelerateAbs(ref currentTurnSpeed, c_turnData.f_turnResetSpeed);
-
+        // AccelerationCartridge.DecelerateAbs(ref currentTurnSpeed, c_turnData.f_turnResetSpeed);
         AccelerationCartridge.DecelerateAbs(ref currentRealTurnSpeed, c_turnData.f_turnResetSpeed);
 
+        //HandlingCartridge.Turn(Vector3.up, currentTurnSpeed * Time.fixedDeltaTime, ref currentModelRotation);
         HandlingCartridge.Turn(Vector3.up, currentRealTurnSpeed * Time.fixedDeltaTime, ref currentRotation);
-        HandlingCartridge.Turn(Vector3.up, currentTurnSpeed * Time.fixedDeltaTime, ref currentModelRotation);
 
-        c_positionData.q_currentModelRotation = currentRotation;
+        c_positionData.q_currentModelRotation = currentModelRotation;
         c_playerData.q_currentRotation = currentRotation;
         c_turnData.f_currentTurnSpeed = currentTurnSpeed;
         c_turnData.f_currentRealTurnSpeed = currentRealTurnSpeed;

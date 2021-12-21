@@ -18,7 +18,8 @@ static class Constants
     public const int NEGATIVE_ONE = -1;
 
     public const int SWITCH_STANCE = -1;
-    public const int REGULAR_STANCE = 1;
+    public const int FORWARD_STANCE = 1;
+    public const float SWITCH_ANGLE = 90f;
 
     public const string TIME_FORMAT_STRING = "{0:0}:{1:00}:{2:00}";
 }

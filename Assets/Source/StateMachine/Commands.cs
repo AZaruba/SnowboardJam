@@ -22,6 +22,7 @@ public enum Command {
     JUMP,
     READY,
     SPIN_STOP,
+    SWITCH_STANCE,
     #endregion
 
     #region PlayerMoveCommands
@@ -142,6 +143,11 @@ public enum StateRef {
     SPINNING,
     SPIN_CHARGE,
     SPIN_RESET,
+    #endregion
+
+    #region SwitchStates
+    FORWARD_STANCE,
+    SWITCH_STANCE,
     #endregion
 
     #region ScoreDisplayStates

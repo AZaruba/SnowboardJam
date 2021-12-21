@@ -39,7 +39,7 @@ public class StationaryState : iState {
         }
         if (cmd == Command.STARTMOVE)
         {
-            c_playerData.f_currentSpeed += c_playerData.f_startBoost * c_playerPositionData.i_switchStance;
+            c_playerData.f_currentSpeed += c_playerData.f_startBoost;
             return StateRef.RIDING;
         }
         return StateRef.STATIONARY;

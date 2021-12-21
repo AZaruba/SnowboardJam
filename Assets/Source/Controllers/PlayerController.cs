@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private StateMachine c_accelMachine;
     private StateMachine sm_tricking;
     private StateMachine sm_trickPhys;
+    private StateMachine sm_switch;
 
     private PlayerPositionData c_positionData;
     private EntityData c_entityData;
@@ -95,8 +96,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameCoGRotation, c_positionData.q_currentModelRotation * c_positionData.q_centerOfGravityRotation);
 
-        debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayFloat("Current Speed", c_playerData.f_currentSpeed);
+        debugAccessor.DisplayState("Switch state", sm_switch.GetCurrentState());
         debugAccessor.DisplayVector3("Attach point", c_collisionData.v_attachPoint);
     }
 
@@ -200,6 +200,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_airMachine.Execute(Command.COUNTDOWN_OVER);
             sm_tricking.Execute(Command.COUNTDOWN_OVER);
             sm_trickPhys.Execute(Command.COUNTDOWN_OVER);
+            sm_switch.Execute(Command.COUNTDOWN_OVER);
             c_stateData.b_preStarted = true; // we want to execute this only once
         }
 
@@ -248,7 +249,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.STARTMOVE);
         }
 
-        if (c_playerData.f_currentSpeed * c_positionData.i_switchStance <= 0.02f)
+        if (c_playerData.f_currentSpeed <= 0.02f)
         {
             c_accelMachine.Execute(Command.STOP);
         }
@@ -285,6 +286,27 @@ public class PlayerController : MonoBehaviour, iEntityController {
             //sm_trickPhys.Execute(Command.CRASH);
         }
 
+        UpdateSwitchStateMachine();
+
+    }
+
+    /* TODOs
+     * - figure out some mechanic of deciding what switch stance would be (angle above 90 degrees?)
+     * - Use the switch states to prevent "wobble" on switch (breaking out rotation and model rotation should do this just fine
+     * - Reset Character rotation "not instantly" when just riding not turning
+     *   - Make sure this reset is relative to the current switch stance somehow
+     * - Verify switch stance on land
+     */ 
+    void UpdateSwitchStateMachine()
+    {
+        float modelAndMotionAngleDifference = Vector3.Angle(c_playerData.q_currentRotation * Vector3.forward,
+            c_positionData.q_currentModelRotation * Vector3.forward * c_positionData.i_switchStance);
+
+        debugAccessor.DisplayFloat("SPEED", c_playerData.f_currentSpeed);
+        if (modelAndMotionAngleDifference > Constants.SWITCH_ANGLE)
+        {
+            sm_switch.Execute(Command.SWITCH_STANCE);
+        }
     }
 
     #region StartupFunctions
@@ -545,6 +567,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeTurnMachine();
         InitializeTrickMachine();
         InitializeTrickPhysicsMachine();
+        InitializeSwitchMachine();
     }
 
     private void InitializeAccelMachine()
@@ -622,6 +645,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
         sm_tricking.AddState(s_trickReady, StateRef.TRICK_READY);
         sm_tricking.AddState(s_tricking, StateRef.TRICKING);
         sm_tricking.AddState(s_trickTransition, StateRef.TRICK_TRANSITION);
+    }
+
+    private void InitializeSwitchMachine()
+    {
+        ForwardState s_forward = new ForwardState(ref c_positionData);
+        SwitchState s_switch = new SwitchState(ref c_positionData);
+
+        sm_switch = new StateMachine(StateRef.FORWARD_STANCE);
+        sm_switch.AddState(s_forward, StateRef.FORWARD_STANCE);
+        sm_switch.AddState(s_switch, StateRef.SWITCH_STANCE);
     }
 
     private void InitializeMessageClient()
