@@ -45,6 +45,8 @@ public class CarvingState : iState {
         HandlingCartridge.Turn(Vector3.up, currentTurnSpeed * Time.fixedDeltaTime, ref currentModelRotation);
         HandlingCartridge.Turn(Vector3.up, currentRealTurnSpeed * Time.fixedDeltaTime, ref currentRotation);
 
+        HandlingCartridge.AddTurnCorrection(Vector3.up, ref currentModelRotation, currentRotation, c_positionData.i_switchStance);
+
         AccelerationCartridge.Decelerate(ref currentSpeed, 
             Mathf.Abs(currentRealTurnSpeed / c_turnData.f_turnTopSpeed) * c_turnData.f_turnSpeedDeceleration * Time.fixedDeltaTime);
 

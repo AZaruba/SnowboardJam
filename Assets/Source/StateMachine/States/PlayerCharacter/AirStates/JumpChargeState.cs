@@ -37,10 +37,12 @@ public class JumpChargeState : iState
 
         AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
                                             ref currentRotation,
-                                            ref currentNormal);
+                                            ref currentNormal,
+                                            1);
         AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
                                             ref currentModelRotation,
-                                            ref currentNormal);
+                                            ref currentNormal,
+                                            1);
 
         c_playerData.v_currentNormal = currentNormal;
         c_playerData.q_currentRotation = currentRotation;

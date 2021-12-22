@@ -7,17 +7,13 @@ public class SpinningState : iState
     private TrickPhysicsData c_physData;
     private PlayerPositionData c_playerPosData;
     private ScoringData c_scoringData;
-
-    private HandlingCartridge cart_rotation;
     private IncrementCartridge cart_incr;
 
     public SpinningState(ref TrickPhysicsData dataIn, ref PlayerPositionData posIn,
-                         ref HandlingCartridge handleIn, ref IncrementCartridge incrIn,
-                         ref ScoringData scoringIn)
+        ref IncrementCartridge incrIn, ref ScoringData scoringIn)
     {
         this.c_physData = dataIn;
         this.c_playerPosData = posIn;
-        this.cart_rotation = handleIn;
         this.cart_incr = incrIn;
         this.c_scoringData = scoringIn;
     }
@@ -38,7 +34,7 @@ public class SpinningState : iState
 
         HandlingCartridge.Turn(flipAxis, currentFlipDegrees, ref root);
         HandlingCartridge.Turn(spinAxis, currentSpinDegrees, ref root);
-        cart_rotation.SetRotation(ref currentRotation, root);
+        HandlingCartridge.SetRotation(ref currentRotation, root);
 
         cart_incr.DecrementAbs(ref currentFlipRate, c_physData.f_flipDecay * Time.deltaTime, 0.0f);
         cart_incr.DecrementAbs(ref currentSpinRate, c_physData.f_spinDecay * Time.deltaTime, 0.0f);

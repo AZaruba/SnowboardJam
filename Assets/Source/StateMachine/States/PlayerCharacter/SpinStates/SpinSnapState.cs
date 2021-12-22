@@ -14,18 +14,14 @@ public class SpinSnapState : iState
     private TrickPhysicsData c_physData;
     private ScoringData c_scoringData;
 
-    private HandlingCartridge cart_rotation;
-
     public SpinSnapState(ref AerialMoveData aerialIn,
         ref PlayerPositionData playerPosIn,
         ref TrickPhysicsData trickIn,
-        ref HandlingCartridge handleIn,
         ref ScoringData scoringIn)
     {
         this.c_aerialMoveData = aerialIn;
         this.c_playerPosData = playerPosIn;
         this.c_physData = trickIn;
-        this.cart_rotation = handleIn;
         this.c_scoringData = scoringIn;
     }
 
@@ -48,8 +44,8 @@ public class SpinSnapState : iState
 
         HandlingCartridge.Turn(flipAxis, currentFlipDegrees, ref root);
         HandlingCartridge.Turn(spinAxis, currentSpinDegrees, ref root);
-        cart_rotation.SetRotation(ref currentRotation, root);
-        cart_rotation.ValidateSpinRotation(currentSpinDegrees, currentFlipDegrees, spinCeiling, flipCeiling, ref currentSpinRate, ref currentFlipRate);
+        HandlingCartridge.SetRotation(ref currentRotation, root);
+        HandlingCartridge.ValidateSpinRotation(currentSpinDegrees, currentFlipDegrees, spinCeiling, flipCeiling, ref currentSpinRate, ref currentFlipRate);
 
         c_playerPosData.q_centerOfGravityRotation = currentRotation;
         c_physData.f_currentFlipRate = currentFlipRate;

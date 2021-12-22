@@ -43,7 +43,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private AudioDTree t_audioStateTree;
 
     // cartridge list
-    private HandlingCartridge cart_handling;
     private IncrementCartridge cart_incr;
 
     // Cached Calculation items
@@ -65,7 +64,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     void Awake()
     {
         SetDefaultPlayerData();
-        cart_handling = new HandlingCartridge();
         cart_incr = new IncrementCartridge();
 
         InitializeStateMachines();
@@ -96,7 +94,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameCoGRotation, c_positionData.q_currentModelRotation * c_positionData.q_centerOfGravityRotation);
 
-        debugAccessor.DisplayState("Switch state", sm_switch.GetCurrentState());
+        debugAccessor.DisplayState("Turn state", c_turnMachine.GetCurrentState());
         debugAccessor.DisplayVector3("Attach point", c_collisionData.v_attachPoint);
     }
 
@@ -291,11 +289,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
     }
 
     /* TODOs
-     * - figure out some mechanic of deciding what switch stance would be (angle above 90 degrees?)
-     * - Use the switch states to prevent "wobble" on switch (breaking out rotation and model rotation should do this just fine
      * - Reset Character rotation "not instantly" when just riding not turning
-     *   - Make sure this reset is relative to the current switch stance somehow
+     *   - Make sure this reset is relative to the current switch stance somehow (DONE)
+     *   - Assess the grounded state surface alignment and refactor to be stance-friendly
      * - Verify switch stance on land
+     *   - If we land "awkwardly" add in some switch state that will swiftly rotate to where we want to be
      */ 
     void UpdateSwitchStateMachine()
     {
@@ -421,16 +419,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             c_collisionData.f_contactOffset - c_aerialMoveData.f_verticalVelocity * Time.deltaTime + CollisionData.CenterOffset.y * 2,
                             CollisionLayers.ENVIRONMENT))
         {
-            // TODO: think this out, why is it "desyncing" on curves
-            // we currently have posY - hitY, but if hitY is halfway up the scan then we don't move
-            // so we want to add the distance between hitY and whatever the furthest point on the scan would be
-
-            // For your health
-            // check the debug draw line here:
-            /*
-             * The position appears to be at the front of the player's hitbox (fine, I think? Why is that?)
-             * But it appears to get pushed "down" the player as they level out the rotation. What is something that the rotation could potentially do to futz with this?
-             */ 
             Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - backHit.point);
 
             Debug.DrawLine(c_playerData.v_currentPosition,
@@ -623,8 +611,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData, ref c_scoringData, ref c_positionData);
         SpinChargeState s_spinCharge = new SpinChargeState(ref c_trickPhysicsData, ref c_inputData, ref cart_incr);
-        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_handling, ref cart_incr, ref c_scoringData);
-        SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref cart_handling, ref c_scoringData);
+        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_incr, ref c_scoringData);
+        SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref c_scoringData);
 
         sm_trickPhys = new StateMachine(StateRef.SPIN_IDLE);
         sm_trickPhys.AddState(s_spinIdle, StateRef.SPIN_IDLE);
