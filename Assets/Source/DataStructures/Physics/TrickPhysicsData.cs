@@ -25,6 +25,9 @@ public class TrickPhysicsData
     private float FlipIncrement;
     private float FlipDecay;
 
+    private float GroundResetRate;
+    private float GroundResetTarget;
+    private float CurrentGroundResetRotation;
     private float ResetRate;
 
     private Quaternion StartRotation;
@@ -103,6 +106,24 @@ public class TrickPhysicsData
         set { FlipDecay = value; }
     }
 
+    public float f_groundResetRate
+    {
+        get { return GroundResetRate; }
+        set { GroundResetRate = value; }
+    }
+
+    public float f_groundResetTarget
+    {
+        get { return GroundResetTarget; }
+        set { GroundResetTarget = value; }
+    }
+
+    public float f_groundResetRotation
+    {
+        get { return CurrentGroundResetRotation; }
+        set { CurrentGroundResetRotation = value; }
+    }
+
     public float f_resetRate
     {
         get { return ResetRate; }
@@ -135,7 +156,10 @@ public class TrickPhysicsData
         this.SpinDecay = TrickStatRatio * 0.2f;
         this.SpinIncrement = TrickStatRatio * 0.5f;
 
+        this.GroundResetRate = TrickStatRatio * 3f;
         this.ResetRate = TrickStatRatio * 3f;
+        this.GroundResetTarget = Constants.ZERO_F;
+        this.CurrentGroundResetRotation = Constants.ZERO_F;
 
         this.StartRotation = Quaternion.identity;
     }

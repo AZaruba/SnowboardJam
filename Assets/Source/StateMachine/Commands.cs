@@ -22,6 +22,8 @@ public enum Command {
     JUMP,
     READY,
     SPIN_STOP,
+    SPIN_CORRECT_BEGIN,
+    SPIN_CORRECT_END,
     SWITCH_STANCE,
     #endregion
 
@@ -142,6 +144,7 @@ public enum StateRef {
     SPIN_IDLE,
     SPINNING,
     SPIN_CHARGE,
+    SPIN_CORRECT,
     SPIN_RESET,
     #endregion
 

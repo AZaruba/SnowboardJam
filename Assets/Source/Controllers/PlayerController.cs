@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameCoGRotation, c_positionData.q_currentModelRotation * c_positionData.q_centerOfGravityRotation);
 
-        debugAccessor.DisplayState("Turn state", c_turnMachine.GetCurrentState());
+        debugAccessor.DisplayState("Switch State", sm_switch.GetCurrentState());
         debugAccessor.DisplayVector3("Attach point", c_collisionData.v_attachPoint);
     }
 
@@ -252,6 +252,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.STOP);
         }
 
+        // TODO: split out the sm_trickPhysics machine to ensure that after correcting we can charge the spin again
         if (GlobalInputController.GetInputAction(ControlAction.JUMP, KeyValue.PRESSED))
         {
             c_accelMachine.Execute(Command.CHARGE);
@@ -580,7 +581,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeAirMachine()
     {
-        AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData);
+        AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref c_positionData);
         GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();

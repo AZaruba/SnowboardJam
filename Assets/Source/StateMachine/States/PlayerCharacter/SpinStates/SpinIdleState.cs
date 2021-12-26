@@ -39,6 +39,9 @@ public class SpinIdleState : iState
         c_scoring.f_currentFlipDegrees = 0.0f;
         c_scoring.f_currentSpinDegrees = 0.0f;
 
+        c_trickPhys.f_groundResetRotation = 0.0f;
+        c_trickPhys.f_groundResetTarget = 0.0f;
+
         // reset center of gravity rotation to the current rotation on land
         c_posData.q_centerOfGravityRotation = Quaternion.identity;
     }

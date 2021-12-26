@@ -30,7 +30,7 @@ public class HandlingCartridge {
         Vector3 projectedTravel = Vector3.ProjectOnPlane(travelRotation * Vector3.forward, normal).normalized;
 
         float angleCorrection = Vector3.SignedAngle(projectedModel, projectedTravel, normal) / Constants.SWITCH_ANGLE;
-        modelRotation = modelRotation * Quaternion.AngleAxis(angleCorrection * Time.deltaTime * 100, normal);
+        modelRotation = modelRotation * Quaternion.AngleAxis(angleCorrection * Time.deltaTime * 50, normal);
     }
 
     public static void SetRotation(ref Quaternion rotationOut, Quaternion rotationIn)

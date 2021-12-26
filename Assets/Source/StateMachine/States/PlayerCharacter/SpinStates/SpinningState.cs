@@ -48,10 +48,13 @@ public class SpinningState : iState
 
     public StateRef GetNextState(Command cmd)
     {
-        if (cmd == Command.CRASH ||
-            cmd == Command.LAND)
+        if (cmd == Command.CRASH)
         {
             return StateRef.SPIN_IDLE;
+        }
+        if (cmd == Command.LAND)
+        {
+            return StateRef.SPIN_CORRECT;
         }
         if (cmd == Command.SPIN_STOP)
         {

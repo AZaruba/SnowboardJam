@@ -97,7 +97,7 @@ public class TurnChargeState : iState
 
         HandlingCartridge.AddTurnCorrection(Vector3.up, ref currentModelRotation, currentRotation, c_positionData.i_switchStance);
 
-        c_positionData.q_currentModelRotation = currentRotation;
+        c_positionData.q_currentModelRotation = currentModelRotation;
         c_playerData.q_currentRotation = currentRotation;
         c_turnData.f_currentTurnSpeed = currentTurnSpeed;
         c_turnData.f_currentRealTurnSpeed = currentRealTurnSpeed;
