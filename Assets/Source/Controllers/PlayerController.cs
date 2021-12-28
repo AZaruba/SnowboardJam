@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private StateMachine c_accelMachine;
     private StateMachine sm_tricking;
     private StateMachine sm_trickPhys;
+    private StateMachine sm_switch;
 
     private PlayerPositionData c_positionData;
     private EntityData c_entityData;
@@ -42,7 +43,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     private AudioDTree t_audioStateTree;
 
     // cartridge list
-    private HandlingCartridge cart_handling;
     private IncrementCartridge cart_incr;
 
     // Cached Calculation items
@@ -64,7 +64,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     void Awake()
     {
         SetDefaultPlayerData();
-        cart_handling = new HandlingCartridge();
         cart_incr = new IncrementCartridge();
 
         InitializeStateMachines();
@@ -95,9 +94,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameCoGRotation, c_positionData.q_currentModelRotation * c_positionData.q_centerOfGravityRotation);
 
-        debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
-        debugAccessor.DisplayFloat("Current Speed", c_playerData.f_currentSpeed);
+        debugAccessor.DisplayState("Spin State", sm_trickPhys.GetCurrentState());
         debugAccessor.DisplayVector3("Attach point", c_collisionData.v_attachPoint);
+        debugAccessor.DisplayFloat("rotationAngles", Quaternion.Angle(c_playerData.q_currentRotation, c_positionData.q_currentModelRotation));
     }
 
     void FixedUpdate()
@@ -200,6 +199,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_airMachine.Execute(Command.COUNTDOWN_OVER);
             sm_tricking.Execute(Command.COUNTDOWN_OVER);
             sm_trickPhys.Execute(Command.COUNTDOWN_OVER);
+            sm_switch.Execute(Command.COUNTDOWN_OVER);
             c_stateData.b_preStarted = true; // we want to execute this only once
         }
 
@@ -248,11 +248,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.STARTMOVE);
         }
 
-        if (c_playerData.f_currentSpeed * c_positionData.i_switchStance <= 0.02f)
+        if (c_playerData.f_currentSpeed <= 0.02f)
         {
             c_accelMachine.Execute(Command.STOP);
         }
 
+        // TODO: split out the sm_trickPhysics machine to ensure that after correcting we can charge the spin again
         if (GlobalInputController.GetInputAction(ControlAction.JUMP, KeyValue.PRESSED))
         {
             c_accelMachine.Execute(Command.CHARGE);
@@ -285,6 +286,31 @@ public class PlayerController : MonoBehaviour, iEntityController {
             //sm_trickPhys.Execute(Command.CRASH);
         }
 
+        if (c_trickPhysicsData.f_groundResetTarget.Equals(Constants.ZERO_F))
+        {
+            sm_trickPhys.Execute(Command.SPIN_CORRECT_END);
+        }
+
+        UpdateSwitchStateMachine();
+
+    }
+
+    /* TODOs
+     * - Reset Character rotation "not instantly" when just riding not turning
+     *   - Make sure this reset is relative to the current switch stance somehow (DONE)
+     *   - Assess the grounded state surface alignment and refactor to be stance-friendly
+     * - Verify switch stance on land
+     *   - If we land "awkwardly" add in some switch state that will swiftly rotate to where we want to be
+     */ 
+    void UpdateSwitchStateMachine()
+    {
+        float modelAndMotionAngleDifference = Vector3.Angle(c_playerData.q_currentRotation * Vector3.forward,
+            c_positionData.q_currentModelRotation * Vector3.forward * c_positionData.i_switchStance);
+
+        if (modelAndMotionAngleDifference > Constants.SWITCH_ANGLE)
+        {
+            sm_switch.Execute(Command.SWITCH_STANCE);
+        }
     }
 
     #region StartupFunctions
@@ -399,16 +425,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             c_collisionData.f_contactOffset - c_aerialMoveData.f_verticalVelocity * Time.deltaTime + CollisionData.CenterOffset.y * 2,
                             CollisionLayers.ENVIRONMENT))
         {
-            // TODO: think this out, why is it "desyncing" on curves
-            // we currently have posY - hitY, but if hitY is halfway up the scan then we don't move
-            // so we want to add the distance between hitY and whatever the furthest point on the scan would be
-
-            // For your health
-            // check the debug draw line here:
-            /*
-             * The position appears to be at the front of the player's hitbox (fine, I think? Why is that?)
-             * But it appears to get pushed "down" the player as they level out the rotation. What is something that the rotation could potentially do to futz with this?
-             */ 
             Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - backHit.point);
 
             Debug.DrawLine(c_playerData.v_currentPosition,
@@ -545,6 +561,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeTurnMachine();
         InitializeTrickMachine();
         InitializeTrickPhysicsMachine();
+        InitializeSwitchMachine();
     }
 
     private void InitializeAccelMachine()
@@ -569,7 +586,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeAirMachine()
     {
-        AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData);
+        AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref c_positionData);
         GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
@@ -598,16 +615,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeTrickPhysicsMachine()
     {
-        SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData, ref c_scoringData, ref c_positionData);
+        SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData, ref c_positionData);
         SpinChargeState s_spinCharge = new SpinChargeState(ref c_trickPhysicsData, ref c_inputData, ref cart_incr);
-        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_handling, ref cart_incr, ref c_scoringData);
-        SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref cart_handling, ref c_scoringData);
+        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_incr);
+        SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref c_scoringData);
+        SpinCorrectState s_spinCorrect = new SpinCorrectState(ref c_trickPhysicsData, ref c_playerData, ref c_positionData);
 
         sm_trickPhys = new StateMachine(StateRef.SPIN_IDLE);
         sm_trickPhys.AddState(s_spinIdle, StateRef.SPIN_IDLE);
         sm_trickPhys.AddState(s_spinCharge, StateRef.SPIN_CHARGE);
         sm_trickPhys.AddState(s_spinning, StateRef.SPINNING);
         sm_trickPhys.AddState(s_spinSnap, StateRef.SPIN_RESET);
+        sm_trickPhys.AddState(s_spinCorrect, StateRef.SPIN_CORRECT);
     }
 
     private void InitializeTrickMachine()
@@ -622,6 +641,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
         sm_tricking.AddState(s_trickReady, StateRef.TRICK_READY);
         sm_tricking.AddState(s_tricking, StateRef.TRICKING);
         sm_tricking.AddState(s_trickTransition, StateRef.TRICK_TRANSITION);
+    }
+
+    private void InitializeSwitchMachine()
+    {
+        ForwardState s_forward = new ForwardState(ref c_positionData);
+        SwitchState s_switch = new SwitchState(ref c_positionData);
+
+        sm_switch = new StateMachine(StateRef.FORWARD_STANCE);
+        sm_switch.AddState(s_forward, StateRef.FORWARD_STANCE);
+        sm_switch.AddState(s_switch, StateRef.SWITCH_STANCE);
     }
 
     private void InitializeMessageClient()

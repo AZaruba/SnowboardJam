@@ -61,9 +61,9 @@ public static class AccelerationCartridge {
         }
     }
 
-    public static void Decelerate(ref float velocity, float deceleration, int switchStance, float surfaceFactor = 1.0f)
+    public static void Decelerate(ref float velocity, float deceleration, float surfaceFactor = 1.0f)
     {
-        if (velocity * switchStance < 0)
+        if (velocity < 0)
         {
             velocity = 0.0f;
             return;

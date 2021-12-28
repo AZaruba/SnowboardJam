@@ -14,18 +14,14 @@ public class SpinSnapState : iState
     private TrickPhysicsData c_physData;
     private ScoringData c_scoringData;
 
-    private HandlingCartridge cart_rotation;
-
     public SpinSnapState(ref AerialMoveData aerialIn,
         ref PlayerPositionData playerPosIn,
         ref TrickPhysicsData trickIn,
-        ref HandlingCartridge handleIn,
         ref ScoringData scoringIn)
     {
         this.c_aerialMoveData = aerialIn;
         this.c_playerPosData = playerPosIn;
         this.c_physData = trickIn;
-        this.cart_rotation = handleIn;
         this.c_scoringData = scoringIn;
     }
 
@@ -43,19 +39,19 @@ public class SpinSnapState : iState
         float currentSpinRate = c_physData.f_currentSpinRate;
         float currentFlipRate = c_physData.f_currentFlipRate;
 
-        float currentSpinDegrees = c_scoringData.f_currentSpinDegrees;
-        float currentFlipDegrees = c_scoringData.f_currentFlipDegrees;
+        float currentSpinDegrees = c_physData.f_currentSpinDegrees;
+        float currentFlipDegrees = c_physData.f_currentFlipDegrees;
 
         HandlingCartridge.Turn(flipAxis, currentFlipDegrees, ref root);
         HandlingCartridge.Turn(spinAxis, currentSpinDegrees, ref root);
-        cart_rotation.SetRotation(ref currentRotation, root);
-        cart_rotation.ValidateSpinRotation(currentSpinDegrees, currentFlipDegrees, spinCeiling, flipCeiling, ref currentSpinRate, ref currentFlipRate);
+        HandlingCartridge.SetRotation(ref currentRotation, root);
+        HandlingCartridge.ValidateSpinRotation(currentSpinDegrees, currentFlipDegrees, spinCeiling, flipCeiling, ref currentSpinRate, ref currentFlipRate);
 
         c_playerPosData.q_centerOfGravityRotation = currentRotation;
         c_physData.f_currentFlipRate = currentFlipRate;
         c_physData.f_currentSpinRate = currentSpinRate;
-        c_scoringData.f_currentSpinDegrees += currentSpinRate * 360f * Time.deltaTime;
-        c_scoringData.f_currentFlipDegrees += currentFlipRate * 360f * Time.deltaTime;
+        c_physData.f_currentSpinDegrees += currentSpinRate * 360f * Time.deltaTime;
+        c_physData.f_currentFlipDegrees += currentFlipRate * 360f * Time.deltaTime;
     }
 
     public StateRef GetNextState(Command cmd)
@@ -74,23 +70,23 @@ public class SpinSnapState : iState
         if (c_physData.f_currentSpinRate > 0)
         {
             c_physData.f_currentSpinRate = c_physData.f_resetRate;
-            c_scoringData.f_currentSpinTarget = Mathf.Ceil(c_scoringData.f_currentSpinDegrees / 180) * 180;
+            c_scoringData.f_currentSpinTarget = Mathf.Ceil(c_physData.f_currentSpinDegrees / 180) * 180;
         }
         else if (c_physData.f_currentSpinRate < 0)
         {
             c_physData.f_currentSpinRate = c_physData.f_resetRate * -1;
-            c_scoringData.f_currentSpinTarget = Mathf.Floor(c_scoringData.f_currentSpinDegrees / 180) * 180;
+            c_scoringData.f_currentSpinTarget = Mathf.Floor(c_physData.f_currentSpinDegrees / 180) * 180;
         }
 
         if (c_physData.f_currentFlipRate > 0)
         {
             c_physData.f_currentFlipRate = c_physData.f_resetRate;
-            c_scoringData.f_currentFlipTarget = Mathf.Ceil(c_scoringData.f_currentFlipDegrees / 360) * 360;
+            c_scoringData.f_currentFlipTarget = Mathf.Ceil(c_physData.f_currentFlipDegrees / 360) * 360;
         }
         else if (c_physData.f_currentFlipRate < 0)
         {
             c_physData.f_currentFlipRate = c_physData.f_resetRate * -1;
-            c_scoringData.f_currentFlipTarget = Mathf.Floor(c_scoringData.f_currentFlipDegrees / 360) * 360;
+            c_scoringData.f_currentFlipTarget = Mathf.Floor(c_physData.f_currentFlipDegrees / 360) * 360;
         }
 
     }

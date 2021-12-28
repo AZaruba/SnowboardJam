@@ -31,8 +31,7 @@ public class SlowingState : iState
         Quaternion currentRotation = c_playerData.q_currentRotation;
 
         AccelerationCartridge.Decelerate(ref currentVelocity, 
-                                         deceleration * slowScaling * c_playerPositionData.i_switchStance, 
-                                         c_playerPositionData.i_switchStance);
+                                         deceleration * slowScaling);
 
         AccelerationCartridge.DecelerateFriction(ref currentVelocity,
             0.1f,

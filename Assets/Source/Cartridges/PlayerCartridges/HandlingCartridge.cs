@@ -19,16 +19,21 @@ public class HandlingCartridge {
     }
 
     /// <summary>
-    /// Applies a pre-calculated rotation to an already rotated object
+    /// Adds an extra pull to the model rotation 
     /// </summary>
-    /// <param name="target">The orientation of the object</param>
-    /// <param name="rotation"></param>
-    public void ApplyRotation(ref Quaternion target, ref Quaternion rotation)
+    /// <param name="normal">The surface normal</param>
+    /// <param name="modelRotation">The current orientation of the model</param>
+    /// <param name="travelRotation">The current direction of travel, expressed by rotation</param>
+    public static void AddTurnCorrection(Vector3 normal, ref Quaternion modelRotation, Quaternion travelRotation, int switchStance)
     {
-        rotation = target * rotation;
+        Vector3 projectedModel = Vector3.ProjectOnPlane(modelRotation * Vector3.forward * switchStance, normal).normalized;
+        Vector3 projectedTravel = Vector3.ProjectOnPlane(travelRotation * Vector3.forward, normal).normalized;
+
+        float angleCorrection = Vector3.SignedAngle(projectedModel, projectedTravel, normal) / Constants.SWITCH_ANGLE;
+        modelRotation = modelRotation * Quaternion.AngleAxis(angleCorrection * Time.deltaTime * 50, normal);
     }
 
-    public void SetRotation(ref Quaternion rotationOut, Quaternion rotationIn)
+    public static void SetRotation(ref Quaternion rotationOut, Quaternion rotationIn)
     {
         rotationOut = rotationIn;
     }
@@ -41,7 +46,7 @@ public class HandlingCartridge {
     /// <param name="targetFwd">The direction of  travel/direction identifying "not spinning"</param>
     /// <param name="spinRate">The current spin rate</param>
     /// <param name="flipRate">The current flip rate</param>
-    public void ValidateSpinRotation(float spinDegrees, float flipDegrees, float spinTarget, float flipTarget, ref float spinRate, ref float flipRate)
+    public static void ValidateSpinRotation(float spinDegrees, float flipDegrees, float spinTarget, float flipTarget, ref float spinRate, ref float flipRate)
     {
         if (Mathf.Abs(spinDegrees) >= Mathf.Abs(spinTarget))
         {

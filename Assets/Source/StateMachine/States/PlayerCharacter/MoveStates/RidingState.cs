@@ -38,7 +38,6 @@ public class RidingState : iState {
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.q_currentRotation = currentRotation;
-        c_playerPositionData.i_switchStance = currentVelocity != Mathf.Abs(currentVelocity) ? Constants.SWITCH_STANCE : Constants.REGULAR_STANCE;
     }
 
     public void TransitionAct()
@@ -108,7 +107,6 @@ public class RidingChargeState : iState
         c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.v_currentPosition = currentPosition;
         c_playerData.q_currentRotation = currentRotation;
-        c_playerPositionData.i_switchStance = currentVelocity != Mathf.Abs(currentVelocity) ? Constants.SWITCH_STANCE : Constants.REGULAR_STANCE;
     }
 
     public void TransitionAct()

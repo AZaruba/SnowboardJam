@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 44771478}
-  m_IndirectSpecularColor: {r: 0.44971025, g: 0.49977905, b: 0.5756352, a: 1}
+  m_IndirectSpecularColor: {r: 0.44970965, g: 0.49977863, b: 0.57563376, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1083,7 +1083,7 @@ MonoBehaviour:
   BrakePower: 10
   TurnSpeed: 200
   TurnAcceleration: 3000
-  TurnSpeedDeceleration: 20
+  TurnSpeedDeceleration: 15
   JumpPower: 10
   BaseJumpPower: 5
   JumpChargeRate: 5

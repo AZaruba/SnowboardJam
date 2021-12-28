@@ -17,7 +17,7 @@ public class PlayerPositionData
         this.OccupiedZone = uint.MaxValue;
         this.v_modelPosition = position;
         this.v_modelDirection = direction;
-        this.i_switchStance = Constants.REGULAR_STANCE;
+        this.i_switchStance = Constants.FORWARD_STANCE;
         this.q_currentModelRotation = rotation;
         this.q_centerOfGravityRotation = rotation;
     }
