@@ -7,26 +7,31 @@ public class SpinCorrectState : iState
     private TrickPhysicsData c_trickPhys;
     private PlayerData c_playerData;
     private PlayerPositionData c_posData;
-    private ScoringData c_scoring;
 
-    public SpinCorrectState(ref TrickPhysicsData dataIn, ref PlayerData playerData, ref ScoringData scoringIn, ref PlayerPositionData posDataIn)
+    public SpinCorrectState(ref TrickPhysicsData dataIn, ref PlayerData playerData,ref PlayerPositionData posDataIn)
     {
         this.c_trickPhys = dataIn;
         this.c_playerData = playerData;
-        this.c_scoring = scoringIn;
         this.c_posData = posDataIn;
     }
 
     public void Act()
     {
         Quaternion currentModelRotation = c_posData.q_currentModelRotation;
-        float frameSpinValue = c_trickPhys.f_currentSpinRate * Time.deltaTime;
+        float frameSpinValue = c_trickPhys.f_groundResetRate * 360f * c_trickPhys.i_groundResetDir * Time.deltaTime;
 
         // round off the last frame of rotation if we hit our target
-        if (c_trickPhys.f_groundResetRotation + frameSpinValue > c_trickPhys.f_groundResetTarget)
+        if (Quaternion.Angle(c_playerData.q_currentRotation, c_posData.q_currentModelRotation) < Constants.ROTATION_TOLERANCE)
+        {
+            c_trickPhys.f_groundResetTarget = Constants.ZERO_F;
+        }
+        /*
+        if (Mathf.Abs(c_trickPhys.f_groundResetRotation + frameSpinValue) > Mathf.Abs(c_trickPhys.f_groundResetTarget))
         {
             frameSpinValue = c_trickPhys.f_groundResetTarget - c_trickPhys.f_groundResetRotation;
+            c_trickPhys.f_groundResetTarget = Constants.ZERO_F;
         }
+        */
 
         HandlingCartridge.Turn(c_playerData.q_currentRotation * Vector3.up, frameSpinValue, ref currentModelRotation);
 
@@ -45,12 +50,17 @@ public class SpinCorrectState : iState
 
     public void TransitionAct()
     {
-        c_trickPhys.f_currentFlipCharge = 0.0f;
-        c_trickPhys.f_currentSpinCharge = 0.0f;
-        c_trickPhys.f_currentFlipRate = 0.0f;
+        c_trickPhys.f_groundResetTarget = c_trickPhys.f_currentSpinDegrees % 180;
+        c_trickPhys.i_groundResetDir = Mathf.FloorToInt(Mathf.Sign(c_trickPhys.f_groundResetTarget));
+        Debug.Log(c_trickPhys.i_groundResetDir);
 
-        c_scoring.f_currentFlipDegrees = 0.0f;
-        c_scoring.f_currentSpinDegrees = 0.0f;
+        c_trickPhys.f_currentFlipCharge = Constants.ZERO_F;
+        c_trickPhys.f_currentSpinCharge = Constants.ZERO_F;
+        c_trickPhys.f_currentFlipRate = Constants.ZERO_F;
+        c_trickPhys.f_currentSpinRate = Constants.ZERO_F;
+
+        c_trickPhys.f_currentFlipDegrees = Constants.ZERO_F;
+        c_trickPhys.f_currentSpinDegrees = Constants.ZERO_F;
 
         // reset center of gravity rotation to the current rotation on land
         c_posData.q_centerOfGravityRotation = Quaternion.identity;
@@ -60,9 +70,7 @@ public class SpinCorrectState : iState
          * - on land, we are rotating in some direction defined by the sign of the spin rate
          * - there is an angle in that direction to get to our desired forward defined by rotation * forward * switch
          * - that angle is our target correction
-         */ 
-
-        // reset the spin rate after because we want to rotate in this direction
-        c_trickPhys.f_currentSpinRate = c_trickPhys.f_groundResetRate;
+         */
+        c_trickPhys.f_groundResetRotation = Constants.ZERO_F;
     }
 }

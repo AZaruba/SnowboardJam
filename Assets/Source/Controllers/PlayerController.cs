@@ -94,8 +94,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameCoGRotation, c_positionData.q_currentModelRotation * c_positionData.q_centerOfGravityRotation);
 
-        debugAccessor.DisplayState("Switch State", sm_switch.GetCurrentState());
+        debugAccessor.DisplayState("Spin State", sm_trickPhys.GetCurrentState());
         debugAccessor.DisplayVector3("Attach point", c_collisionData.v_attachPoint);
+        debugAccessor.DisplayFloat("rotationAngles", Quaternion.Angle(c_playerData.q_currentRotation, c_positionData.q_currentModelRotation));
     }
 
     void FixedUpdate()
@@ -285,6 +286,11 @@ public class PlayerController : MonoBehaviour, iEntityController {
             //sm_trickPhys.Execute(Command.CRASH);
         }
 
+        if (c_trickPhysicsData.f_groundResetTarget.Equals(Constants.ZERO_F))
+        {
+            sm_trickPhys.Execute(Command.SPIN_CORRECT_END);
+        }
+
         UpdateSwitchStateMachine();
 
     }
@@ -301,7 +307,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         float modelAndMotionAngleDifference = Vector3.Angle(c_playerData.q_currentRotation * Vector3.forward,
             c_positionData.q_currentModelRotation * Vector3.forward * c_positionData.i_switchStance);
 
-        debugAccessor.DisplayFloat("SPEED", c_playerData.f_currentSpeed);
         if (modelAndMotionAngleDifference > Constants.SWITCH_ANGLE)
         {
             sm_switch.Execute(Command.SWITCH_STANCE);
@@ -610,16 +615,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeTrickPhysicsMachine()
     {
-        SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData, ref c_scoringData, ref c_positionData);
+        SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData, ref c_positionData);
         SpinChargeState s_spinCharge = new SpinChargeState(ref c_trickPhysicsData, ref c_inputData, ref cart_incr);
-        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_incr, ref c_scoringData);
+        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_incr);
         SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref c_scoringData);
+        SpinCorrectState s_spinCorrect = new SpinCorrectState(ref c_trickPhysicsData, ref c_playerData, ref c_positionData);
 
         sm_trickPhys = new StateMachine(StateRef.SPIN_IDLE);
         sm_trickPhys.AddState(s_spinIdle, StateRef.SPIN_IDLE);
         sm_trickPhys.AddState(s_spinCharge, StateRef.SPIN_CHARGE);
         sm_trickPhys.AddState(s_spinning, StateRef.SPINNING);
         sm_trickPhys.AddState(s_spinSnap, StateRef.SPIN_RESET);
+        sm_trickPhys.AddState(s_spinCorrect, StateRef.SPIN_CORRECT);
     }
 
     private void InitializeTrickMachine()

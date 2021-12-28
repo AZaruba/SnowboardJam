@@ -25,7 +25,11 @@ public class TrickPhysicsData
     private float FlipIncrement;
     private float FlipDecay;
 
+    private float CurrentSpinDegrees;
+    private float CurrentFlipDegrees;
+
     private float GroundResetRate;
+    private int GroundResetDir;
     private float GroundResetTarget;
     private float CurrentGroundResetRotation;
     private float ResetRate;
@@ -112,6 +116,12 @@ public class TrickPhysicsData
         set { GroundResetRate = value; }
     }
 
+    public int i_groundResetDir
+    {
+        get { return GroundResetDir; }
+        set { GroundResetDir = value; }
+    }
+
     public float f_groundResetTarget
     {
         get { return GroundResetTarget; }
@@ -135,6 +145,18 @@ public class TrickPhysicsData
         get { return StartRotation; }
         set { StartRotation = value; }
     }
+
+    public float f_currentSpinDegrees
+    {
+        get { return CurrentSpinDegrees; }
+        set { CurrentSpinDegrees = value; }
+    }
+
+    public float f_currentFlipDegrees
+    {
+        get { return CurrentFlipDegrees; }
+        set { CurrentFlipDegrees = value; }
+    }
     #endregion
 
     #region Constructor
@@ -156,10 +178,14 @@ public class TrickPhysicsData
         this.SpinDecay = TrickStatRatio * 0.2f;
         this.SpinIncrement = TrickStatRatio * 0.5f;
 
-        this.GroundResetRate = TrickStatRatio * 3f;
+        this.GroundResetRate = TrickStatRatio * 2f;
         this.ResetRate = TrickStatRatio * 3f;
         this.GroundResetTarget = Constants.ZERO_F;
         this.CurrentGroundResetRotation = Constants.ZERO_F;
+
+        this.f_currentFlipDegrees = Constants.ZERO_F;
+        this.f_currentSpinDegrees = Constants.ZERO_F;
+        this.i_groundResetDir = Constants.ZERO;
 
         this.StartRotation = Quaternion.identity;
     }

@@ -6,16 +6,14 @@ public class SpinningState : iState
 {
     private TrickPhysicsData c_physData;
     private PlayerPositionData c_playerPosData;
-    private ScoringData c_scoringData;
     private IncrementCartridge cart_incr;
 
     public SpinningState(ref TrickPhysicsData dataIn, ref PlayerPositionData posIn,
-        ref IncrementCartridge incrIn, ref ScoringData scoringIn)
+        ref IncrementCartridge incrIn)
     {
         this.c_physData = dataIn;
         this.c_playerPosData = posIn;
         this.cart_incr = incrIn;
-        this.c_scoringData = scoringIn;
     }
 
     public void Act()
@@ -29,8 +27,8 @@ public class SpinningState : iState
         float currentSpinRate = c_physData.f_currentSpinRate;
         float currentFlipRate = c_physData.f_currentFlipRate;
 
-        float currentSpinDegrees = c_scoringData.f_currentSpinDegrees;
-        float currentFlipDegrees = c_scoringData.f_currentFlipDegrees;
+        float currentSpinDegrees = c_physData.f_currentSpinDegrees;
+        float currentFlipDegrees = c_physData.f_currentFlipDegrees;
 
         HandlingCartridge.Turn(flipAxis, currentFlipDegrees, ref root);
         HandlingCartridge.Turn(spinAxis, currentSpinDegrees, ref root);
@@ -42,8 +40,8 @@ public class SpinningState : iState
         c_playerPosData.q_centerOfGravityRotation = currentRotation;
         c_physData.f_currentFlipRate = currentFlipRate;
         c_physData.f_currentSpinRate = currentSpinRate;
-        c_scoringData.f_currentSpinDegrees += currentSpinRate * 360f * Time.deltaTime;
-        c_scoringData.f_currentFlipDegrees += currentFlipRate * 360f * Time.deltaTime;
+        c_physData.f_currentSpinDegrees += currentSpinRate * 360f * Time.deltaTime;
+        c_physData.f_currentFlipDegrees += currentFlipRate * 360f * Time.deltaTime;
     }
 
     public StateRef GetNextState(Command cmd)
@@ -68,5 +66,6 @@ public class SpinningState : iState
         c_physData.f_currentFlipRate = c_physData.f_currentFlipCharge;
         c_physData.f_currentSpinRate = c_physData.f_currentSpinCharge;
         c_physData.q_startRotation = c_playerPosData.q_centerOfGravityRotation;
+        c_physData.f_groundResetTarget = Constants.ZERO_F;
     }
 }
