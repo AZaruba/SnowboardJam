@@ -95,8 +95,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameCoGRotation, c_positionData.q_currentModelRotation * c_positionData.q_centerOfGravityRotation);
 
         debugAccessor.DisplayState("Spin State", sm_trickPhys.GetCurrentState());
-        debugAccessor.DisplayVector3("Attach point", c_collisionData.v_attachPoint);
-        debugAccessor.DisplayFloat("rotationAngles", Quaternion.Angle(c_playerData.q_currentRotation, c_positionData.q_currentModelRotation));
     }
 
     void FixedUpdate()
@@ -379,13 +377,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         Vector3 newDir = c_playerData.q_currentRotation * Vector3.forward;
         newDir = Vector3.Reflect(newDir, c_collisionData.v_obstacleNormal).normalized;
+        float dirAngle = Vector3.Angle(newDir, c_playerData.q_currentRotation * Vector3.forward);
 
-        c_playerData.q_currentRotation = Quaternion.LookRotation(newDir, c_playerData.v_currentNormal);
+        c_playerData.q_currentRotation = Quaternion.LookRotation(newDir, c_playerData.q_currentRotation * Vector3.up);
 
         newDir.y = 0;
         c_aerialMoveData.v_lateralDirection = newDir;
-
-        // TODO: velocity adjustment on collision
+        c_playerData.f_currentSpeed *= Mathf.Max((Constants.HALF_ROTATION_F - dirAngle) / Constants.HALF_ROTATION_F, Constants.WALL_BOUNCE_ADJUSTMENT);
     }
 
     private void CheckForWall()
