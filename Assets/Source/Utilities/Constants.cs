@@ -12,7 +12,9 @@ static class Constants
     public const float LONG_DATA_EDIT_TICK_TIME = 0.5f;
 
     public const float PERPENDICULAR_F = 90f;
+    public const float HALF_ROTATION_F = 180f;
     public const float DOWNHILL_SPEED_RATIO = 0.5f;
+    public const float WALL_BOUNCE_ADJUSTMENT = 0.2f;
 
     public const int ZERO = 0;
     public const int ONE = 1;
