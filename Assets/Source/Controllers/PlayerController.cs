@@ -93,8 +93,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         transform.position = Utils.InterpolateFixedVector(c_lastFrameData.v_lastFramePosition, c_playerData.v_currentPosition);
         transform.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameRotation, c_positionData.q_currentModelRotation);
         c_playerData.t_centerOfGravity.rotation = Utils.InterpolateFixedQuaternion(c_lastFrameData.q_lastFrameCoGRotation, c_positionData.q_currentModelRotation * c_positionData.q_centerOfGravityRotation);
-
-        debugAccessor.DisplayState("Spin State", sm_trickPhys.GetCurrentState());
     }
 
     void FixedUpdate()
@@ -383,6 +381,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         newDir.y = 0;
         c_aerialMoveData.v_lateralDirection = newDir;
+        c_aerialMoveData.f_lateralVelocity *= Mathf.Max((Constants.HALF_ROTATION_F - dirAngle) / Constants.HALF_ROTATION_F, Constants.WALL_BOUNCE_ADJUSTMENT);
         c_playerData.f_currentSpeed *= Mathf.Max((Constants.HALF_ROTATION_F - dirAngle) / Constants.HALF_ROTATION_F, Constants.WALL_BOUNCE_ADJUSTMENT);
     }
 
@@ -419,7 +418,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             CollisionData.BodyHalfExtents,
                             c_playerData.q_currentRotation * Vector3.down,
                             out backHit,
-                            c_playerData.q_currentRotation,
+                            c_positionData.q_currentModelRotation,
                             c_collisionData.f_contactOffset - c_aerialMoveData.f_verticalVelocity * Time.deltaTime + CollisionData.CenterOffset.y * 2,
                             CollisionLayers.ENVIRONMENT))
         {
@@ -429,11 +428,12 @@ public class PlayerController : MonoBehaviour, iEntityController {
                 c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset * 2 + c_playerData.q_currentRotation * Vector3.down * (c_collisionData.f_contactOffset - c_aerialMoveData.f_verticalVelocity * Time.deltaTime + CollisionData.CenterOffset.y * 2), 
                 Color.blue);
 
-            c_collisionData.v_attachPoint = c_playerData.q_currentRotation * Vector3.up * (unfoldedVector.y); // - ((c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed).y * Time.deltaTime));
+            c_collisionData.v_attachPoint = c_playerData.q_currentRotation * Vector3.up * (unfoldedVector.y);
             c_collisionData.v_surfaceNormal = GetBaryCentricNormal(backHit);
         }
         else
         {
+            c_collisionData.v_surfaceNormal = GetBaryCentricNormal(centerHit);
             c_collisionData.v_attachPoint = Vector3.zero;
         }
     }
@@ -459,7 +459,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
                             CollisionData.BodyHalfExtents,
                             c_playerData.q_currentRotation * Vector3.down,
                             out centerHit,
-                            c_playerData.q_currentRotation,
+                            c_positionData.q_currentModelRotation,
                             c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1 + CollisionData.CenterOffset.y * 2,
                             CollisionLayers.ENVIRONMENT))
         {

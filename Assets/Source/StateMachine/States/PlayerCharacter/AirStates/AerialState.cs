@@ -49,13 +49,15 @@ public class AerialState : iState {
     {
         Vector3 jumpVector = Vector3.up * c_playerData.f_currentJumpCharge;
         Vector3 directVector = c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed;
+        Vector3 rotationVector = c_playerData.q_currentRotation * Vector3.forward;
+
 
         Vector3 totalAerialVector = jumpVector + directVector;
         Vector3 latDir = totalAerialVector;
         float vertVel = totalAerialVector.y;
 
         // the lateral direction should be flattened
-        latDir.y = 0.0f;
+        latDir.y = Constants.ZERO_F;
         float latVel = latDir.magnitude;
         latDir.Normalize();
 
@@ -64,12 +66,15 @@ public class AerialState : iState {
         c_aerialMoveData.f_lateralVelocity = latVel;
         c_playerData.v_currentNormal = Vector3.up;
         c_playerData.v_currentDown = Vector3.down;
+        rotationVector.y = Constants.ZERO_F;
+        c_playerData.q_currentRotation = Quaternion.LookRotation(rotationVector.normalized, Vector3.up);
     }
 
     public StateRef GetNextState(Command cmd)
     {
         if (cmd == Command.LAND)
         {
+            Debug.Log(c_collisionData.v_surfaceNormal);
             Vector3 horizontalDir = c_aerialMoveData.v_lateralDirection * c_aerialMoveData.f_lateralVelocity;
             horizontalDir.y = c_aerialMoveData.f_verticalVelocity;
 
@@ -79,6 +84,7 @@ public class AerialState : iState {
 
             Vector3 projectedRotation = Vector3.ProjectOnPlane(c_playerData.q_currentRotation * c_positionData.q_centerOfGravityRotation * Vector3.forward * c_positionData.i_switchStance, c_collisionData.v_surfaceNormal);
             c_positionData.q_currentModelRotation = Quaternion.LookRotation(projectedRotation, c_collisionData.v_surfaceNormal);
+            c_playerData.q_currentRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(c_playerData.q_currentRotation * Vector3.forward, c_collisionData.v_surfaceNormal));
             return StateRef.GROUNDED;
         }
         if (cmd == Command.CRASH)
