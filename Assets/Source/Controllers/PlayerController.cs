@@ -15,9 +15,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
     [SerializeField] private CharacterCollisionData CollisionData;
     [SerializeField] private AudioSource AudioSource;
     [SerializeField] private AudioBank SoundBank;
+    [SerializeField] private BoxCollider PlayerCollider;
     [SerializeField] private LayerMask GroundCollisionMask;
     [SerializeField] private LayerMask ZoneCollisionMask;
-    [SerializeField] private Collider collisionCollider;
 
     private StateData c_stateData;
     private AerialMoveData c_aerialMoveData;
@@ -41,6 +41,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private AudioController c_audioController;
     private AudioDTree t_audioStateTree;
+
+    private CollisionController c_collisionController;
 
     // cartridge list
     private IncrementCartridge cart_incr;
@@ -70,6 +72,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         InitializeAudioController();
         InitializeMessageClient();
         InitializeCachedLists();
+        InitializeCollisionController();
 
         EnginePull();
         MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation)); // NOT the model rotation
@@ -117,6 +120,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         EngineUpdate();
 
         LateEnginePull();
+        debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
 
         // send normal 
         MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation, c_playerData.f_currentSpeed)); // NOT the model rotation INCLUDE AIR STATE
@@ -351,8 +355,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void OnDrawGizmos()
     {
-        Gizmos.matrix = Matrix4x4.TRS(c_playerData.v_currentPosition, c_playerData.q_currentRotation, transform.lossyScale);
-        Gizmos.color = Color.red;
+        //Gizmos.matrix = Matrix4x4.TRS(c_playerData.v_currentPosition, c_playerData.q_currentRotation, transform.lossyScale);
+        //Gizmos.color = Color.red;
         //Gizmos.DrawWireCube(CollisionData.CenterOffset, CollisionData.HalfExtents * 2);
 
         //Gizmos.color = c_airMachine.GetCurrentState() == StateRef.AIRBORNE ? Color.green : Color.blue;
@@ -416,41 +420,93 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (Physics.BoxCast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset,
                             CollisionData.BodyHalfExtents,
-                            c_playerData.q_currentRotation * Vector3.down,
+                            Vector3.down,
                             out backHit,
                             c_positionData.q_currentModelRotation,
-                            c_collisionData.f_contactOffset - c_aerialMoveData.f_verticalVelocity * Time.deltaTime + CollisionData.CenterOffset.y * 2,
+                            (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.deltaTime,
                             CollisionLayers.ENVIRONMENT))
         {
             Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - backHit.point);
 
-            Debug.DrawLine(c_playerData.v_currentPosition,
-                c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset * 2 + c_playerData.q_currentRotation * Vector3.down * (c_collisionData.f_contactOffset - c_aerialMoveData.f_verticalVelocity * Time.deltaTime + CollisionData.CenterOffset.y * 2), 
-                Color.blue);
-
-            c_collisionData.v_attachPoint = c_playerData.q_currentRotation * Vector3.up * (unfoldedVector.y);
+            debugAccessor.DisplayString("Found Attach");
+            //c_collisionData.v_attachPoint = c_playerData.q_currentRotation * Vector3.up * (unfoldedVector.y);
             c_collisionData.v_surfaceNormal = GetBaryCentricNormal(backHit);
         }
         else
         {
-            c_collisionData.v_surfaceNormal = GetBaryCentricNormal(centerHit);
-            c_collisionData.v_attachPoint = Vector3.zero;
+            debugAccessor.DisplayString("No Attach");
+            // c_collisionData.v_surfaceNormal = GetBaryCentricNormal(centerHit);
+            //c_collisionData.v_attachPoint = Vector3.zero;
         }
     }
 
     private void CollectCenteredNormalIfPresent()
     {
-        if (Physics.Raycast(c_playerData.v_currentPosition,
+        if (Physics.Raycast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset,
                             c_playerData.q_currentRotation * Vector3.down,
                             out frontHit,
-                            c_collisionData.f_contactOffset + CollisionData.CenterOffset.y))
+                            c_collisionData.v_attachPoint.magnitude + CollisionData.CenterOffset.y))
         {
+            debugAccessor.DisplayString("center attach");
             c_collisionData.v_surfaceNormal = GetBaryCentricNormal(frontHit);
         }
     }
 
+    /* New goal for collision
+     * 
+     * 1) use compute penetration to verify that we ran into something
+     * 2) perform adjustment on that single frame (execution of state machine update)
+     * 3) do NOT use penetration computation to check for aerial, we are now grounded and above surface
+     * 4) use a boxcast to check if there is ground BENEATH the player, as we are now above but VERY CLOSE to the surface
+     * 5) if the boxcast is false, do air stuff
+     * 6) if the boxcast is true, do some other ground stuff to accomodate surface changes
+     * 
+     * ISSUES:
+     * Wall collisions and normals get funky
+     * The normals are wonky here and there
+     * The adjustment doesn't seem to want to take all the time or something is pushing back down
+     */  
     private void CheckForGround3()
     {
+        c_collisionData.v_backPoint = Vector3.zero;
+
+        ValidateRotatedAttachPoint();
+        CollectCenteredNormalIfPresent();
+        if (c_collisionController.CheckForGround4())
+        {
+            debugAccessor.DisplayVector3("attachPoint", c_collisionData.v_attachPoint);
+
+            c_accelMachine.Execute(Command.LAND);
+            c_turnMachine.Execute(Command.LAND);
+            c_airMachine.Execute(Command.LAND, true); // force this transition as we want the adjustment many times
+            sm_tricking.Execute(Command.LAND);
+            sm_trickPhys.Execute(Command.LAND);
+        }
+        // maybe cast the box to check if there's no ground?
+        else if (!Physics.BoxCast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset,
+                            CollisionData.BodyHalfExtents,
+                            Vector3.down,
+                            out backHit,
+                            c_positionData.q_currentModelRotation,
+                            (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.deltaTime,
+                            CollisionLayers.ENVIRONMENT))
+        {
+            c_collisionData.f_contactOffset = Constants.ZERO_F;
+            c_collisionData.v_attachPoint = Vector3.zero;
+
+            c_accelMachine.Execute(Command.FALL);
+            c_turnMachine.Execute(Command.FALL);
+            c_airMachine.Execute(Command.FALL);
+            sm_tricking.Execute(Command.READY_TRICK);
+        }
+        else
+        {
+            // do something
+            Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - backHit.point);
+
+            c_collisionData.v_backPoint = c_playerData.q_currentRotation * Vector3.up * (unfoldedVector.y);
+        }
+        /*
         float offsetDist = CollisionData.CenterOffset.magnitude;
 
         c_collisionData.b_collisionDetected = false;
@@ -488,6 +544,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_airMachine.Execute(Command.FALL);
             sm_tricking.Execute(Command.READY_TRICK);
         }
+        */
     }
 
     private Vector3 GetBaryCentricNormal(RaycastHit hitIn)
@@ -663,6 +720,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         l_barycentricMeshIdx = new List<int>();
         l_barycentricMeshNormals = new List<Vector3>();
+    }
+
+    private void InitializeCollisionController()
+    {
+        this.c_collisionController = new CollisionController(ref c_playerData,
+            ref c_positionData,
+            ref c_collisionData,
+            ref CollisionData,
+            ref c_aerialMoveData,
+            ref PlayerCollider,
+            GroundCollisionMask,
+            ZoneCollisionMask);
     }
 
     private void InitializeAudioController()

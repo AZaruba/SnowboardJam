@@ -74,7 +74,6 @@ public class AerialState : iState {
     {
         if (cmd == Command.LAND)
         {
-            Debug.Log(c_collisionData.v_surfaceNormal);
             Vector3 horizontalDir = c_aerialMoveData.v_lateralDirection * c_aerialMoveData.f_lateralVelocity;
             horizontalDir.y = c_aerialMoveData.f_verticalVelocity;
 
