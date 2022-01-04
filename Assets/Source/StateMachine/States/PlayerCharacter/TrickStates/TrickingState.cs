@@ -20,7 +20,7 @@ public class TrickingState : iState
     {
         float trickTime = c_trickData.f_trickTime;
 
-        cart_incr.Increment(ref trickTime, Time.deltaTime);
+        cart_incr.Increment(ref trickTime, Time.fixedDeltaTime);
 
         c_trickData.f_trickTime = trickTime;
     }

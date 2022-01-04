@@ -13,8 +13,8 @@ public static class VelocityCartridge {
 
     public static void UpdateAerialPosition(ref Vector3 position, Vector3 lateralDir, float verticalVelocity, float lateralVelocity)
     {
-        position += lateralDir * lateralVelocity * Time.deltaTime;
-        position += Vector3.up * verticalVelocity * Time.deltaTime;
+        position += lateralDir * lateralVelocity * Time.fixedDeltaTime;
+        position += Vector3.up * verticalVelocity * Time.fixedDeltaTime;
     }
 
     /// <summary>

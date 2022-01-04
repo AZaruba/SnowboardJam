@@ -40,6 +40,25 @@ public class CollisionController
         this.a_colliders = new Collider[5];
     }
 
+    /// <summary>
+    /// Casts a ray downward directly from the player to verify the rotation the
+    /// model should have
+    /// </summary>
+    /// <returns>Whether the raycast finds a normal</returns>
+    public bool CheckGroundRotation()
+    {
+        if (Physics.Raycast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset,
+                                           Vector3.down,
+                                           out h_groundCheck,
+                                           (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.deltaTime + c_collisionAttrs.CenterOffset.y,
+                                           i_groundCollisionMask))
+        {
+            c_collisionData.v_surfaceNormal = Utils.GetBaryCentricNormal(h_groundCheck);
+            return true;
+        }
+        return false;
+    }
+
     public bool CheckForGround4()
     {
         int collisionsDetected = Physics.OverlapBoxNonAlloc(c_playerCollider.transform.position, 
@@ -48,7 +67,6 @@ public class CollisionController
             i_groundCollisionMask);
         if (collisionsDetected > 0)
         {
-            Debug.Log(collisionsDetected);
             if (Physics.ComputePenetration(c_playerCollider,
                 c_playerCollider.transform.position,
                 c_playerCollider.transform.rotation,
@@ -68,39 +86,4 @@ public class CollisionController
         return false;
     }
 
-    public bool CheckForGround5()
-    {
-        float offsetDist = c_collisionAttrs.CenterOffset.magnitude; // CollisionData.CenterOffset.magnitude;
-
-        c_collisionData.b_collisionDetected = false;
-
-        float boxDist = (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * - 1)) * Time.deltaTime;
-        Debug.Log(boxDist);
-        bool hitDetected = Physics.BoxCast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset,
-                            c_collisionAttrs.BodyHalfExtents,
-                            Vector3.down,
-                            out h_groundCheck,
-                            c_positionData.q_currentModelRotation,
-                            boxDist,
-                            CollisionLayers.ENVIRONMENT);
-
-        if (hitDetected)
-        {
-            c_collisionData.b_collisionDetected = true;
-            c_collisionData.f_contactOffset = h_groundCheck.distance;
-
-            // rotation being weird on land, possibly influencing the offset push
-            c_playerData.q_currentRotation = Quaternion.FromToRotation(c_playerData.q_currentRotation * Vector3.up, c_collisionData.v_surfaceNormal) * c_playerData.q_currentRotation;
-
-            // ValidateRotatedAttachPoint();
-            // CollectCenteredNormalIfPresent();
-        }
-        else
-        {
-            c_collisionData.f_contactOffset = Constants.ZERO_F;
-            c_collisionData.v_attachPoint = Vector3.zero;
-        }
-
-        return hitDetected;
-    }
 }

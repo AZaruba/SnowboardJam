@@ -18,7 +18,7 @@ public class SpinCorrectState : iState
     public void Act()
     {
         Quaternion currentModelRotation = c_posData.q_currentModelRotation;
-        float frameSpinValue = c_trickPhys.f_groundResetRate * 360f * c_trickPhys.i_groundResetDir * Time.deltaTime;
+        float frameSpinValue = c_trickPhys.f_groundResetRate * 360f * c_trickPhys.i_groundResetDir * Time.fixedDeltaTime;
 
         // round off the last frame of rotation if we hit our target
         if (Quaternion.Angle(c_playerData.q_currentRotation, c_posData.q_currentModelRotation) < Constants.ROTATION_TOLERANCE)

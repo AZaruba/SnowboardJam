@@ -34,14 +34,14 @@ public class SpinningState : iState
         HandlingCartridge.Turn(spinAxis, currentSpinDegrees, ref root);
         HandlingCartridge.SetRotation(ref currentRotation, root);
 
-        cart_incr.DecrementAbs(ref currentFlipRate, c_physData.f_flipDecay * Time.deltaTime, 0.0f);
-        cart_incr.DecrementAbs(ref currentSpinRate, c_physData.f_spinDecay * Time.deltaTime, 0.0f);
+        cart_incr.DecrementAbs(ref currentFlipRate, c_physData.f_flipDecay * Time.fixedDeltaTime, 0.0f);
+        cart_incr.DecrementAbs(ref currentSpinRate, c_physData.f_spinDecay * Time.fixedDeltaTime, 0.0f);
 
         c_playerPosData.q_centerOfGravityRotation = currentRotation;
         c_physData.f_currentFlipRate = currentFlipRate;
         c_physData.f_currentSpinRate = currentSpinRate;
-        c_physData.f_currentSpinDegrees += currentSpinRate * 360f * Time.deltaTime;
-        c_physData.f_currentFlipDegrees += currentFlipRate * 360f * Time.deltaTime;
+        c_physData.f_currentSpinDegrees += currentSpinRate * 360f * Time.fixedDeltaTime;
+        c_physData.f_currentFlipDegrees += currentFlipRate * 360f * Time.fixedDeltaTime;
     }
 
     public StateRef GetNextState(Command cmd)

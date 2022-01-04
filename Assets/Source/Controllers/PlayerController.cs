@@ -416,42 +416,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
     }
 
-    private void ValidateRotatedAttachPoint()
-    {
-        if (Physics.BoxCast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset,
-                            CollisionData.BodyHalfExtents,
-                            Vector3.down,
-                            out backHit,
-                            c_positionData.q_currentModelRotation,
-                            (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.deltaTime,
-                            CollisionLayers.ENVIRONMENT))
-        {
-            Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - backHit.point);
-
-            debugAccessor.DisplayString("Found Attach");
-            //c_collisionData.v_attachPoint = c_playerData.q_currentRotation * Vector3.up * (unfoldedVector.y);
-            c_collisionData.v_surfaceNormal = GetBaryCentricNormal(backHit);
-        }
-        else
-        {
-            debugAccessor.DisplayString("No Attach");
-            // c_collisionData.v_surfaceNormal = GetBaryCentricNormal(centerHit);
-            //c_collisionData.v_attachPoint = Vector3.zero;
-        }
-    }
-
-    private void CollectCenteredNormalIfPresent()
-    {
-        if (Physics.Raycast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset,
-                            c_playerData.q_currentRotation * Vector3.down,
-                            out frontHit,
-                            c_collisionData.v_attachPoint.magnitude + CollisionData.CenterOffset.y))
-        {
-            debugAccessor.DisplayString("center attach");
-            c_collisionData.v_surfaceNormal = GetBaryCentricNormal(frontHit);
-        }
-    }
-
     /* New goal for collision
      * 
      * 1) use compute penetration to verify that we ran into something
@@ -462,33 +426,47 @@ public class PlayerController : MonoBehaviour, iEntityController {
      * 6) if the boxcast is true, do some other ground stuff to accomodate surface changes
      * 
      * ISSUES:
-     * Wall collisions and normals get funky
-     * The normals are wonky here and there
-     * The adjustment doesn't seem to want to take all the time or something is pushing back down
+     * Once we're on the ground, we sometimes can't "remain" there
+     *    - think of what honestly happens when we are riding "above" the ground i.e. grounded but not correcting for penetration
+     *    - think of how we transition into the air, maybe refactor air travel for consistency as there's a "bounce" when we leave the ground for whatever reason
+     * 
+     * How do we adjust the model
+     * 
+     * If we're accurately moving on the ground, it sems to work great!
+     * Down the road: wall collisions
      */  
     private void CheckForGround3()
     {
         c_collisionData.v_backPoint = Vector3.zero;
 
-        ValidateRotatedAttachPoint();
-        CollectCenteredNormalIfPresent();
+        //ValidateRotatedAttachPoint();
+        //CollectCenteredNormalIfPresent();
+        if (c_collisionController.CheckGroundRotation())
+        {
+            // force player rotation before checking
+            Vector3 projectedRotation = Vector3.ProjectOnPlane(c_positionData.q_currentModelRotation * Vector3.forward, c_collisionData.v_surfaceNormal);
+            c_positionData.q_currentModelRotation = Quaternion.LookRotation(projectedRotation, c_collisionData.v_surfaceNormal);
+            c_playerData.q_currentRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(c_playerData.q_currentRotation * Vector3.forward, c_collisionData.v_surfaceNormal));
+        }
         if (c_collisionController.CheckForGround4())
         {
-            debugAccessor.DisplayVector3("attachPoint", c_collisionData.v_attachPoint);
+            debugAccessor.DisplayString("detectin'");
+            debugAccessor.DisplayVector3("AttachPoint", c_collisionData.v_attachPoint);
 
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
-            c_airMachine.Execute(Command.LAND, true); // force this transition as we want the adjustment many times
+            c_airMachine.Execute(Command.LAND, false, true); // force this transition as we want the adjustment many times
             sm_tricking.Execute(Command.LAND);
             sm_trickPhys.Execute(Command.LAND);
         }
         // maybe cast the box to check if there's no ground?
-        else if (!Physics.BoxCast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset,
+        Debug.DrawRay(c_playerData.v_currentPosition, Vector3.down, Color.blue, (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.fixedDeltaTime);
+        if (!Physics.BoxCast(c_playerData.v_currentPosition + Vector3.up,
                             CollisionData.BodyHalfExtents,
                             Vector3.down,
                             out backHit,
                             c_positionData.q_currentModelRotation,
-                            (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.deltaTime,
+                            c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.fixedDeltaTime + 1,
                             CollisionLayers.ENVIRONMENT))
         {
             c_collisionData.f_contactOffset = Constants.ZERO_F;
@@ -506,77 +484,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
             c_collisionData.v_backPoint = c_playerData.q_currentRotation * Vector3.up * (unfoldedVector.y);
         }
-        /*
-        float offsetDist = CollisionData.CenterOffset.magnitude;
-
-        c_collisionData.b_collisionDetected = false;
-
-        if (Physics.BoxCast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * CollisionData.CenterOffset * 2,
-                            CollisionData.BodyHalfExtents,
-                            c_playerData.q_currentRotation * Vector3.down,
-                            out centerHit,
-                            c_positionData.q_currentModelRotation,
-                            c_aerialMoveData.f_verticalVelocity * Time.fixedDeltaTime * -1 + CollisionData.CenterOffset.y * 2,
-                            CollisionLayers.ENVIRONMENT))
-        {
-            c_collisionData.b_collisionDetected = true;
-            c_collisionData.f_contactOffset = centerHit.distance;
-
-            // rotation being weird on land, possibly influencing the offset push
-            c_playerData.q_currentRotation = Quaternion.FromToRotation(c_playerData.q_currentRotation * Vector3.up, c_collisionData.v_surfaceNormal) * c_playerData.q_currentRotation;
-
-            ValidateRotatedAttachPoint();
-            CollectCenteredNormalIfPresent();
-
-            c_accelMachine.Execute(Command.LAND);
-            c_turnMachine.Execute(Command.LAND);
-            c_airMachine.Execute(Command.LAND);
-            sm_tricking.Execute(Command.LAND);
-            sm_trickPhys.Execute(Command.LAND);
-        }
-        else
-        {
-            c_collisionData.f_contactOffset = Constants.ZERO_F;
-            c_collisionData.v_attachPoint = Vector3.zero;
-
-            c_accelMachine.Execute(Command.FALL);
-            c_turnMachine.Execute(Command.FALL);
-            c_airMachine.Execute(Command.FALL);
-            sm_tricking.Execute(Command.READY_TRICK);
-        }
-        */
-    }
-
-    private Vector3 GetBaryCentricNormal(RaycastHit hitIn)
-    {
-        Vector3 BarycentricNormal = Vector3.zero;
-        Vector3 BarycentricCoords = hitIn.barycentricCoordinate;
-
-        MeshCollider meshCol = hitIn.collider as MeshCollider;
-        if (meshCol == null || meshCol.sharedMesh == null)
-        {
-            return BarycentricNormal;
-        }
-
-        Mesh mesh = (hitIn.collider as MeshCollider).sharedMesh;
-        mesh.GetNormals(l_barycentricMeshNormals);
-        mesh.GetTriangles(l_barycentricMeshIdx, 0);
-
-        Vector3 n0 = l_barycentricMeshNormals[l_barycentricMeshIdx[hitIn.triangleIndex * 3]]; //mesh.normals[mesh.triangles[hitIn.triangleIndex * 3 + 0]];
-        Vector3 n1 = l_barycentricMeshNormals[l_barycentricMeshIdx[hitIn.triangleIndex * 3 + 1]];
-        Vector3 n2 = l_barycentricMeshNormals[l_barycentricMeshIdx[hitIn.triangleIndex * 3 + 2]];
-
-        BarycentricNormal = n0 * BarycentricCoords.x +
-                            n1 * BarycentricCoords.y +
-                            n2 * BarycentricCoords.z;
-
-        BarycentricNormal = BarycentricNormal.normalized;
-
-        // Transform local space normals to world space
-        Transform hitTransform = hitIn.collider.transform;
-        BarycentricNormal = hitTransform.TransformDirection(BarycentricNormal);
-
-        return BarycentricNormal.normalized;
     }
 
     private void CheckForZone()

@@ -26,8 +26,6 @@ public class GroundedState : iState
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
-        c_playerData.v_currentPosition -= c_collisionData.v_backPoint;
-
         AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
                                             ref currentRotation,
                                             ref currentNormal,
@@ -36,7 +34,6 @@ public class GroundedState : iState
                                             ref currentModelRotation,
                                             ref currentNormal,
                                             1);
-
 
         c_playerData.v_currentNormal = currentNormal;
         c_playerData.q_currentRotation = currentRotation;
@@ -49,6 +46,7 @@ public class GroundedState : iState
     {
         c_playerData.f_currentJumpCharge = Constants.ZERO_F;
         c_playerData.f_currentAirVelocity = Constants.ZERO_F;
+        c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * Constants.NEGATIVE_ONE;
 
         c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
 
@@ -61,6 +59,8 @@ public class GroundedState : iState
     {
         if (cmd == Command.CHARGE)
         {
+            // move this to leaving state so forced transition doesn't reset jump power
+            c_playerData.f_currentJumpCharge = c_playerData.f_baseJumpPower;
             return StateRef.CHARGING;
         }
         if (cmd == Command.FALL)

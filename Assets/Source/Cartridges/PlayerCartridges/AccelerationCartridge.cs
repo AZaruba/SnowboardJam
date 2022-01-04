@@ -11,7 +11,7 @@ public static class AccelerationCartridge {
         ref Quaternion playerRotation,
         ref Quaternion modelRotation)
     {
-        Vector3 projectedGravityAcceleration = Vector3.ProjectOnPlane(Vector3.down * gravity * Time.deltaTime, playerRotation * Vector3.up);
+        Vector3 projectedGravityAcceleration = Vector3.ProjectOnPlane(Vector3.down * gravity * Time.fixedDeltaTime, playerRotation * Vector3.up);
         Vector3 playerVec = playerRotation * Vector3.forward * velocity;
 
         velocity = (playerVec + projectedGravityAcceleration).magnitude;
@@ -31,7 +31,7 @@ public static class AccelerationCartridge {
     {
         Vector3 velocityVec = playerRotation * Vector3.forward * velocity;
 
-        Vector3 frictionVec = playerRotation * Vector3.back * surfaceValue * Time.deltaTime;
+        Vector3 frictionVec = playerRotation * Vector3.back * surfaceValue * Time.fixedDeltaTime;
 
         velocity = (velocityVec + frictionVec).magnitude;
     }
@@ -45,13 +45,13 @@ public static class AccelerationCartridge {
         }
 
         // value incorporates stick direction so negatives work correctly here
-        velocity += f_acceleration * surfaceFactor * Time.deltaTime;
+        velocity += f_acceleration * surfaceFactor * Time.fixedDeltaTime;
     }
 
     public static void DecelerateAbs(ref float velocity, float f_acceleration, float surfaceFactor = 1.0f)
     {
         bool positiveTurnRate = Mathf.Sign(velocity) > 0;
-        velocity -= f_acceleration * Mathf.Sign(velocity) * surfaceFactor * Time.deltaTime;
+        velocity -= f_acceleration * Mathf.Sign(velocity) * surfaceFactor * Time.fixedDeltaTime;
 
         // check for sign change, which signals we have "crossed" zero and reset
         if ((positiveTurnRate && Mathf.Sign(velocity) < 0) ||
@@ -68,7 +68,7 @@ public static class AccelerationCartridge {
             velocity = 0.0f;
             return;
         }
-        velocity -= deceleration * surfaceFactor * Time.deltaTime;
+        velocity -= deceleration * surfaceFactor * Time.fixedDeltaTime;
     }
 
     /*

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 44771478}
-  m_IndirectSpecularColor: {r: 0.44971025, g: 0.49977905, b: 0.5756352, a: 1}
+  m_IndirectSpecularColor: {r: 0.44970965, g: 0.49977863, b: 0.57563376, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1233,13 +1233,13 @@ MonoBehaviour:
   CollisionData: {fileID: 11400000, guid: fb9b355910260b14bb089b66c1fa92a2, type: 2}
   AudioSource: {fileID: 0}
   SoundBank: {fileID: 734568630}
+  PlayerCollider: {fileID: 483208282}
   GroundCollisionMask:
     serializedVersion: 2
     m_Bits: 1024
   ZoneCollisionMask:
     serializedVersion: 2
     m_Bits: 2048
-  collisionCollider: {fileID: 483208282}
 --- !u!114 &734568628
 MonoBehaviour:
   m_ObjectHideFlags: 0

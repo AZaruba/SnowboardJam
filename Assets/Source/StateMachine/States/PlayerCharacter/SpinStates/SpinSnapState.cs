@@ -50,8 +50,8 @@ public class SpinSnapState : iState
         c_playerPosData.q_centerOfGravityRotation = currentRotation;
         c_physData.f_currentFlipRate = currentFlipRate;
         c_physData.f_currentSpinRate = currentSpinRate;
-        c_physData.f_currentSpinDegrees += currentSpinRate * 360f * Time.deltaTime;
-        c_physData.f_currentFlipDegrees += currentFlipRate * 360f * Time.deltaTime;
+        c_physData.f_currentSpinDegrees += currentSpinRate * 360f * Time.fixedDeltaTime;
+        c_physData.f_currentFlipDegrees += currentFlipRate * 360f * Time.fixedDeltaTime;
     }
 
     public StateRef GetNextState(Command cmd)
