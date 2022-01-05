@@ -133,8 +133,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     public void EngineUpdate()
     {
         //transform.position = c_playerData.v_currentPosition;
-        c_playerData.t_centerOfGravity.rotation = c_positionData.q_currentModelRotation;
-
         UpdateAnimator();
         UpdateAudio();
     }
