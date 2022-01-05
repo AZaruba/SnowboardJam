@@ -100,6 +100,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     void FixedUpdate()
     {
+        debugAccessor.DisplayState("Switch State", sm_switch.GetCurrentState());
         if (!c_stateData.b_updateState)
         {
             return;
@@ -120,7 +121,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         EngineUpdate();
 
         LateEnginePull();
-        debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
+        // debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
 
         // send normal 
         MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation, c_playerData.f_currentSpeed)); // NOT the model rotation INCLUDE AIR STATE
@@ -264,10 +265,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         else if (GlobalInputController.GetInputAction(ControlAction.JUMP, KeyValue.UP))
         {
             c_airMachine.Execute(Command.JUMP);
-            c_accelMachine.Execute(Command.JUMP);
-            c_turnMachine.Execute(Command.JUMP);
             sm_trickPhys.Execute(Command.JUMP);
-            sm_tricking.Execute(Command.READY_TRICK);
         }
 
         UpdateTrickStateMachine();
@@ -453,20 +451,26 @@ public class PlayerController : MonoBehaviour, iEntityController {
             debugAccessor.DisplayString("detectin'");
             debugAccessor.DisplayVector3("AttachPoint", c_collisionData.v_attachPoint);
 
+            c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
+
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
-            c_airMachine.Execute(Command.LAND, false, true); // force this transition as we want the adjustment many times
+            c_airMachine.Execute(Command.LAND); // force this transition as we want the adjustment many times
             sm_tricking.Execute(Command.LAND);
             sm_trickPhys.Execute(Command.LAND);
         }
         // maybe cast the box to check if there's no ground?
-        Debug.DrawRay(c_playerData.v_currentPosition, Vector3.down, Color.blue, (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.fixedDeltaTime);
+        Debug.DrawRay(c_playerData.v_currentPosition + Vector3.up + c_playerData.q_currentRotation * Vector3.forward * 1.25f, Vector3.down, Color.red, c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.fixedDeltaTime + 1);
+        Debug.DrawRay(c_playerData.v_currentPosition + Vector3.up + c_playerData.q_currentRotation * Vector3.forward * 1.25f, Vector3.down, Color.red, c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.fixedDeltaTime + 1);
+
+        debugAccessor.DisplayFloat("vert vel", c_aerialMoveData.f_verticalVelocity);
+        float groundDist = (c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed * Time.deltaTime).y;
         if (!Physics.BoxCast(c_playerData.v_currentPosition + Vector3.up,
                             CollisionData.BodyHalfExtents,
-                            Vector3.down,
+                            c_playerData.q_currentRotation * Vector3.down,
                             out backHit,
                             c_positionData.q_currentModelRotation,
-                            c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.fixedDeltaTime + 1,
+                            c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.fixedDeltaTime + 1 + groundDist,
                             CollisionLayers.ENVIRONMENT))
         {
             c_collisionData.f_contactOffset = Constants.ZERO_F;
@@ -475,6 +479,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.FALL);
             c_turnMachine.Execute(Command.FALL);
             c_airMachine.Execute(Command.FALL);
+            sm_trickPhys.Execute(Command.FALL);
             sm_tricking.Execute(Command.READY_TRICK);
         }
         else

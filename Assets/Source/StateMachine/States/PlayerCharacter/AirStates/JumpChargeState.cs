@@ -56,11 +56,11 @@ public class JumpChargeState : iState
     {
         if (cmd == Command.FALL)
         {
+            c_playerData.f_currentJumpCharge = Constants.ZERO_F;
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.JUMP)
         {
-            c_aerialMoveData.f_verticalVelocity = 0.0f;
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.CRASH)

@@ -45,6 +45,10 @@ public class SpinCorrectState : iState
         {
             return StateRef.SPIN_IDLE;
         }
+        if (cmd == Command.FALL)
+        {
+            return StateRef.SPIN_IDLE;
+        }
         return StateRef.SPIN_CORRECT;
     }
 

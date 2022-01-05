@@ -48,9 +48,9 @@ public class CollisionController
     public bool CheckGroundRotation()
     {
         if (Physics.Raycast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset,
-                                           Vector3.down,
+                                           c_playerData.q_currentRotation * Vector3.down,
                                            out h_groundCheck,
-                                           (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.deltaTime + c_collisionAttrs.CenterOffset.y,
+                                           (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.deltaTime + c_collisionAttrs.CenterOffset.y * 2,
                                            i_groundCollisionMask))
         {
             c_collisionData.v_surfaceNormal = Utils.GetBaryCentricNormal(h_groundCheck);

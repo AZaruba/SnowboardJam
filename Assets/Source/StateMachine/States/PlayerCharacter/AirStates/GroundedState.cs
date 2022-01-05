@@ -48,8 +48,6 @@ public class GroundedState : iState
         c_playerData.f_currentAirVelocity = Constants.ZERO_F;
         c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * Constants.NEGATIVE_ONE;
 
-        c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
-
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
         c_playerData.v_currentDown = c_collisionData.v_surfaceNormal * -1;
 
