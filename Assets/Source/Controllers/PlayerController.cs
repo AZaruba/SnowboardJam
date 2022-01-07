@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     void FixedUpdate()
     {
-        debugAccessor.DisplayState("Switch State", sm_switch.GetCurrentState());
+        debugAccessor.DisplayState("Air State", c_airMachine.GetCurrentState());
         if (!c_stateData.b_updateState)
         {
             return;
@@ -121,8 +121,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
         EngineUpdate();
 
         LateEnginePull();
-        // debugAccessor.DisplayState("Air state", c_airMachine.GetCurrentState());
-
         // send normal 
         MessageServer.SendMessage(MessageID.PLAYER_POSITION_UPDATED, new Message(c_playerData.v_currentPosition, c_playerData.q_currentRotation, c_playerData.f_currentSpeed)); // NOT the model rotation INCLUDE AIR STATE
     }
@@ -132,7 +130,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     /// </summary>
     public void EngineUpdate()
     {
-        //transform.position = c_playerData.v_currentPosition;
         UpdateAnimator();
         UpdateAudio();
     }
@@ -433,10 +430,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
      */  
     private void CheckForGround3()
     {
-        c_collisionData.v_backPoint = Vector3.zero;
-
-        //ValidateRotatedAttachPoint();
-        //CollectCenteredNormalIfPresent();
         if (c_collisionController.CheckGroundRotation())
         {
             // force player rotation before checking
@@ -457,19 +450,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.LAND);
             sm_trickPhys.Execute(Command.LAND);
         }
-        // maybe cast the box to check if there's no ground?
-        Debug.DrawRay(c_playerData.v_currentPosition + Vector3.up + c_playerData.q_currentRotation * Vector3.forward * 1.25f, Vector3.down, Color.red, c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.fixedDeltaTime + 1);
-        Debug.DrawRay(c_playerData.v_currentPosition + Vector3.up + c_playerData.q_currentRotation * Vector3.forward * 1.25f, Vector3.down, Color.red, c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.fixedDeltaTime + 1);
 
         debugAccessor.DisplayFloat("vert vel", c_aerialMoveData.f_verticalVelocity);
-        float groundDist = (c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed * Time.deltaTime).y;
-        if (!Physics.BoxCast(c_playerData.v_currentPosition + Vector3.up,
-                            CollisionData.BodyHalfExtents,
-                            c_playerData.q_currentRotation * Vector3.down,
-                            out backHit,
-                            c_positionData.q_currentModelRotation,
-                            c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.fixedDeltaTime + 1 + groundDist,
-                            CollisionLayers.ENVIRONMENT))
+        if (!c_collisionController.CheckForAir())
         {
             c_collisionData.f_contactOffset = Constants.ZERO_F;
             c_collisionData.v_attachPoint = Vector3.zero;
@@ -479,13 +462,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_airMachine.Execute(Command.FALL);
             sm_trickPhys.Execute(Command.FALL);
             sm_tricking.Execute(Command.READY_TRICK);
-        }
-        else
-        {
-            // do something
-            Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - backHit.point);
-
-            c_collisionData.v_backPoint = c_playerData.q_currentRotation * Vector3.up * (unfoldedVector.y);
         }
     }
 

@@ -86,4 +86,44 @@ public class CollisionController
         return false;
     }
 
+    public bool CheckForAir()
+    {
+        CalculateRaycastDistance(out float upwardDist, out float downwardDist);
+
+        Debug.DrawRay(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_playerData.q_currentRotation * Vector3.forward * 1.25f,
+            Vector3.down,
+            Color.green,
+            downwardDist);
+        Debug.DrawRay(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_playerData.q_currentRotation * Vector3.forward * -1.25f,
+            Vector3.down,
+            Color.red,
+            downwardDist);
+
+        return Physics.BoxCast(c_playerData.v_currentPosition + Vector3.up * upwardDist,
+                               c_collisionAttrs.BodyHalfExtents,
+                               Vector3.down,
+                               out h_groundCheck,
+                               c_positionData.q_currentModelRotation,
+                               downwardDist,
+                               CollisionLayers.ENVIRONMENT);
+    }
+
+    /// <summary>
+    /// Calculates the distance to check downward for triggering the "fall"
+    /// state based on the current velocity
+    /// </summary>
+    /// <returns>The total distance of the raycast check</returns>
+    private void CalculateRaycastDistance(out float upwardDistance, out float downwardDistance)
+    {
+        // TODO: come up with better distnace heuristics
+
+        // upward dist raises the scan start point, so any upward vertical velocity should increase it
+        upwardDistance = c_aerialMoveData.f_verticalVelocity > Constants.ZERO_F ? c_aerialMoveData.f_verticalVelocity * Time.deltaTime : Constants.ZERO_F;
+        upwardDistance += 1f;
+
+        // downward scan lowers the bottom, so it should be increased with downward velocity and decreased by speed
+        downwardDistance = c_aerialMoveData.f_verticalVelocity > Constants.ZERO_F ? Constants.ZERO_F : (c_aerialMoveData.f_verticalVelocity + c_playerData.f_gravity) * Time.deltaTime;
+        downwardDistance += 1f;
+    }
+
 }
