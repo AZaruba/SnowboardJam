@@ -86,21 +86,15 @@ public class CollisionController
         return false;
     }
 
+    // TODO: assess why the boxcast seems to miss the ground
     public bool CheckForAir()
     {
         CalculateRaycastDistance(out float upwardDist, out float downwardDist);
 
-        Debug.DrawRay(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_playerData.q_currentRotation * Vector3.forward * 1.25f,
-            Vector3.down,
-            Color.green,
-            downwardDist);
-        Debug.DrawRay(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_playerData.q_currentRotation * Vector3.forward * -1.25f,
-            Vector3.down,
-            Color.red,
-            downwardDist);
+        DrawBoxcast(upwardDist, downwardDist);
 
-        return Physics.BoxCast(c_playerData.v_currentPosition + Vector3.up * upwardDist,
-                               c_collisionAttrs.BodyHalfExtents,
+        return Physics.BoxCast(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset,
+                               c_collisionAttrs.HalfExtents,
                                Vector3.down,
                                out h_groundCheck,
                                c_positionData.q_currentModelRotation,
@@ -119,11 +113,59 @@ public class CollisionController
 
         // upward dist raises the scan start point, so any upward vertical velocity should increase it
         upwardDistance = c_aerialMoveData.f_verticalVelocity > Constants.ZERO_F ? c_aerialMoveData.f_verticalVelocity * Time.deltaTime : Constants.ZERO_F;
-        upwardDistance += 1f;
 
         // downward scan lowers the bottom, so it should be increased with downward velocity and decreased by speed
-        downwardDistance = c_aerialMoveData.f_verticalVelocity > Constants.ZERO_F ? Constants.ZERO_F : (c_aerialMoveData.f_verticalVelocity + c_playerData.f_gravity) * Time.deltaTime;
-        downwardDistance += 1f;
+        downwardDistance = c_aerialMoveData.f_verticalVelocity > Constants.ZERO_F ? Constants.ZERO_F : c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.deltaTime;
+        downwardDistance += c_playerData.f_gravity * Time.deltaTime;
     }
 
+    private void DrawBoxcast(float upwardDist, float downwardDist)
+    {
+        DrawCubePoints(CubePoints(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_positionData.q_currentModelRotation * c_collisionAttrs.CenterOffset,
+                                  c_collisionAttrs.HalfExtents,
+                                  c_positionData.q_currentModelRotation),
+                       Color.blue);
+
+        // draw dest
+        DrawCubePoints(CubePoints(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_positionData.q_currentModelRotation * c_collisionAttrs.CenterOffset + Vector3.down * downwardDist,
+                                  c_collisionAttrs.HalfExtents,
+                                  c_positionData.q_currentModelRotation),
+                       Color.red);
+    }
+
+    // debug functions
+    Vector3[] CubePoints(Vector3 center, Vector3 extents, Quaternion rotation)
+    {
+        Vector3[] points = new Vector3[8];
+        points[0] = rotation * Vector3.Scale(extents, new Vector3(1, 1, 1)) + center;
+        points[1] = rotation * Vector3.Scale(extents, new Vector3(1, 1, -1)) + center;
+        points[2] = rotation * Vector3.Scale(extents, new Vector3(1, -1, 1)) + center;
+        points[3] = rotation * Vector3.Scale(extents, new Vector3(1, -1, -1)) + center;
+        points[4] = rotation * Vector3.Scale(extents, new Vector3(-1, 1, 1)) + center;
+        points[5] = rotation * Vector3.Scale(extents, new Vector3(-1, 1, -1)) + center;
+        points[6] = rotation * Vector3.Scale(extents, new Vector3(-1, -1, 1)) + center;
+        points[7] = rotation * Vector3.Scale(extents, new Vector3(-1, -1, -1)) + center;
+
+        return points;
+    }
+
+    void DrawCubePoints(Vector3[] points, Color color)
+    {
+        Debug.DrawLine(points[0], points[1], color);
+        Debug.DrawLine(points[0], points[2], color);
+        Debug.DrawLine(points[0], points[4], color);
+
+        Debug.DrawLine(points[7], points[6], color);
+        Debug.DrawLine(points[7], points[5], color);
+        Debug.DrawLine(points[7], points[3], color);
+
+        Debug.DrawLine(points[1], points[3], color);
+        Debug.DrawLine(points[1], points[5], color);
+
+        Debug.DrawLine(points[2], points[3], color);
+        Debug.DrawLine(points[2], points[6], color);
+
+        Debug.DrawLine(points[4], points[5], color);
+        Debug.DrawLine(points[4], points[6], color);
+    }
 }

@@ -450,9 +450,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.LAND);
             sm_trickPhys.Execute(Command.LAND);
         }
-
-        debugAccessor.DisplayFloat("vert vel", c_aerialMoveData.f_verticalVelocity);
-        if (!c_collisionController.CheckForAir())
+        else if (!c_collisionController.CheckForAir())
         {
             c_collisionData.f_contactOffset = Constants.ZERO_F;
             c_collisionData.v_attachPoint = Vector3.zero;
@@ -463,6 +461,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_trickPhys.Execute(Command.FALL);
             sm_tricking.Execute(Command.READY_TRICK);
         }
+
+        debugAccessor.DisplayFloat("vert vel", c_aerialMoveData.f_verticalVelocity);
     }
 
     private void CheckForZone()
