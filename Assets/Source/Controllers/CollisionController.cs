@@ -78,9 +78,12 @@ public class CollisionController
             {
                 // add a little less to keep the adjustment from pushing all the way out
                 c_collisionData.v_attachPoint = adjustmentDirection * adjustmentDistance;
-                return true;
             }
-            c_collisionData.v_attachPoint = Vector3.zero;
+            else
+            {
+                c_collisionData.v_attachPoint = Vector3.zero;
+            }
+            return true;
         }
 
         return false;
@@ -93,14 +96,29 @@ public class CollisionController
 
         DrawBoxcast(upwardDist, downwardDist);
 
-        return Physics.BoxCast(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset,
+        bool boxCasted = Physics.BoxCast(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset,
                                c_collisionAttrs.HalfExtents,
                                Vector3.down,
                                out h_groundCheck,
                                c_positionData.q_currentModelRotation,
                                downwardDist,
                                CollisionLayers.ENVIRONMENT);
+
+        if (boxCasted)
+        {
+            Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - h_groundCheck.point);
+
+            Debug.DrawLine(c_playerData.v_currentPosition,
+                c_playerData.v_currentPosition + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset * 2 + c_playerData.q_currentRotation * Vector3.down * (c_collisionData.f_contactOffset - c_aerialMoveData.f_verticalVelocity * Time.deltaTime + c_collisionAttrs.CenterOffset.y * 2),
+                Color.blue);
+
+            c_collisionData.v_attachPoint = c_playerData.q_currentRotation * Vector3.down * (unfoldedVector.y); // - ((c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed).y * Time.deltaTime));
+            c_collisionData.v_surfaceNormal = Utils.GetBaryCentricNormal(h_groundCheck);
+        }
+        return boxCasted;
     }
+
+    // TODO: upward travel makes it all goofylike
 
     /// <summary>
     /// Calculates the distance to check downward for triggering the "fall"
@@ -112,7 +130,7 @@ public class CollisionController
         // TODO: come up with better distnace heuristics
 
         // upward dist raises the scan start point, so any upward vertical velocity should increase it
-        upwardDistance = c_aerialMoveData.f_verticalVelocity > Constants.ZERO_F ? c_aerialMoveData.f_verticalVelocity * Time.deltaTime : Constants.ZERO_F;
+        upwardDistance = c_aerialMoveData.f_verticalVelocity > Constants.ZERO_F ? c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.deltaTime : Constants.ZERO_F;
 
         // downward scan lowers the bottom, so it should be increased with downward velocity and decreased by speed
         downwardDistance = c_aerialMoveData.f_verticalVelocity > Constants.ZERO_F ? Constants.ZERO_F : c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.deltaTime;

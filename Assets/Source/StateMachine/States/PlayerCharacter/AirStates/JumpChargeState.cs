@@ -49,7 +49,7 @@ public class JumpChargeState : iState
 
     public void TransitionAct()
     {
-        c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
+
     }
 
     public StateRef GetNextState(Command cmd)

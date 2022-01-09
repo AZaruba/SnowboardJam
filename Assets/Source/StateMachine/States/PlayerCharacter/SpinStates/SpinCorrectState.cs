@@ -56,7 +56,6 @@ public class SpinCorrectState : iState
     {
         c_trickPhys.f_groundResetTarget = c_trickPhys.f_currentSpinDegrees % 180;
         c_trickPhys.i_groundResetDir = Mathf.FloorToInt(Mathf.Sign(c_trickPhys.f_groundResetTarget));
-        Debug.Log(c_trickPhys.i_groundResetDir);
 
         c_trickPhys.f_currentFlipCharge = Constants.ZERO_F;
         c_trickPhys.f_currentSpinCharge = Constants.ZERO_F;

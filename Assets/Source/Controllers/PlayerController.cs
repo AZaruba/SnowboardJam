@@ -389,8 +389,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
          * We should push the origin UP by q_currentRotation * f_FrontRayLengthUp
          * Then lower the vertical extents by half, effectively keeping the TOP
          * consistent but only pushing the bottom up
-         */ 
-
+         */
         Vector3 playerBox = CollisionData.BodyHalfExtents;
         Vector3 originCenter = Vector3.up * (c_collisionData.f_obstacleRayLength + playerBox.y);
 
@@ -409,49 +408,31 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
     }
 
-    /* New goal for collision
-     * 
-     * 1) use compute penetration to verify that we ran into something
-     * 2) perform adjustment on that single frame (execution of state machine update)
-     * 3) do NOT use penetration computation to check for aerial, we are now grounded and above surface
-     * 4) use a boxcast to check if there is ground BENEATH the player, as we are now above but VERY CLOSE to the surface
-     * 5) if the boxcast is false, do air stuff
-     * 6) if the boxcast is true, do some other ground stuff to accomodate surface changes
-     * 
+    /* 
      * ISSUES:
-     * Once we're on the ground, we sometimes can't "remain" there
-     *    - think of what honestly happens when we are riding "above" the ground i.e. grounded but not correcting for penetration
-     *    - think of how we transition into the air, maybe refactor air travel for consistency as there's a "bounce" when we leave the ground for whatever reason
+     * Why are we wiggling to one side or the other on the ground?
      * 
-     * How do we adjust the model
-     * 
-     * If we're accurately moving on the ground, it sems to work great!
+     * If we're accurately moving on the ground, it seems to work great!
      * Down the road: wall collisions
      */  
     private void CheckForGround3()
     {
-        if (c_collisionController.CheckGroundRotation())
-        {
-            // force player rotation before checking
-            Vector3 projectedRotation = Vector3.ProjectOnPlane(c_positionData.q_currentModelRotation * Vector3.forward, c_collisionData.v_surfaceNormal);
-            c_positionData.q_currentModelRotation = Quaternion.LookRotation(projectedRotation, c_collisionData.v_surfaceNormal);
-            c_playerData.q_currentRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(c_playerData.q_currentRotation * Vector3.forward, c_collisionData.v_surfaceNormal));
-        }
         if (c_collisionController.CheckForGround4())
         {
             debugAccessor.DisplayString("detectin'");
-            debugAccessor.DisplayVector3("AttachPoint", c_collisionData.v_attachPoint);
 
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
 
             c_accelMachine.Execute(Command.LAND);
             c_turnMachine.Execute(Command.LAND);
-            c_airMachine.Execute(Command.LAND); // force this transition as we want the adjustment many times
+            c_airMachine.Execute(Command.LAND);
             sm_tricking.Execute(Command.LAND);
             sm_trickPhys.Execute(Command.LAND);
         }
         else if (!c_collisionController.CheckForAir())
         {
+            debugAccessor.DisplayString("NOT DETECTIN'");
+            debugAccessor.DisplayVector3("AIR CHECK AERIAL", Vector3.zero);
             c_collisionData.f_contactOffset = Constants.ZERO_F;
             c_collisionData.v_attachPoint = Vector3.zero;
 
@@ -460,6 +441,23 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_airMachine.Execute(Command.FALL);
             sm_trickPhys.Execute(Command.FALL);
             sm_tricking.Execute(Command.READY_TRICK);
+        }
+        else
+        {
+            debugAccessor.DisplayString("NOT DETECTIN'");
+            debugAccessor.DisplayVector3("AIR CHECK GROUNDED", Vector3.zero);
+            c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
+            
+            // only do this in the air?
+            if (c_collisionController.CheckGroundRotation())
+            {
+                // force player rotation before checking
+
+                // is this wrong?
+                Vector3 projectedRotation = Vector3.ProjectOnPlane(c_positionData.q_currentModelRotation * Vector3.forward, c_collisionData.v_surfaceNormal);
+                c_positionData.q_currentModelRotation = Quaternion.LookRotation(projectedRotation, c_collisionData.v_surfaceNormal);
+                c_playerData.q_currentRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(c_playerData.q_currentRotation * Vector3.forward, c_collisionData.v_surfaceNormal));
+            }
         }
 
         debugAccessor.DisplayFloat("vert vel", c_aerialMoveData.f_verticalVelocity);
