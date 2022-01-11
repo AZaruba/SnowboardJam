@@ -2,9 +2,14 @@
 
 public class CameraController3 : MonoBehaviour
 {
+    [SerializeField] private CameraMotionData CameraMotionData;
+    [SerializeField] private DebugAccessor debugAccessor;
+
     private StateData c_stateData;
     private EntityPositionData c_positionData;
     private CameraTrackingData c_trackingData;
+
+    private StateMachine sm_camera;
     private iMessageClient c_cameraClient;
 
     // Start after awake so targets are initialized
@@ -12,6 +17,7 @@ public class CameraController3 : MonoBehaviour
     {
         InitializeData();
         InitializeMessangingClient();
+        InitializeStateMachine();
     }
 
     // TODO:
@@ -38,6 +44,8 @@ public class CameraController3 : MonoBehaviour
 
     private void FixedUpdate()
     {
+        debugAccessor.DisplayState("Camera State", sm_camera.GetCurrentState());
+
         if (!c_stateData.b_updateState)
         {
             return;
@@ -45,8 +53,6 @@ public class CameraController3 : MonoBehaviour
 
         c_positionData.v_position_lastFrame = c_positionData.v_position;
         c_positionData.q_rotation_lastFrame = c_positionData.q_rotation;
-
-        c_positionData.v_position = c_trackingData.v_position - c_trackingData.v_position_lastFrame;
     }
 
     private void InitializeData()
@@ -56,7 +62,15 @@ public class CameraController3 : MonoBehaviour
 
         c_positionData = new EntityPositionData(transform.position, transform.rotation);
         c_trackingData = new CameraTrackingData(); // position will be updated on first frame
+    }
 
+    private void InitializeStateMachine()
+    {
+        CameraSnapState s_snap = new CameraSnapState(ref c_trackingData, ref c_positionData);
+        CameraFollowState2 s_follow = new CameraFollowState2(ref c_trackingData, ref CameraMotionData, ref c_positionData);
+
+        sm_camera = new StateMachine(s_snap, StateRef.SNAPPING);
+        sm_camera.AddState(s_follow, StateRef.FOLLOWING);
     }
 
     private void InitializeMessangingClient()

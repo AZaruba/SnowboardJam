@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     void FixedUpdate()
     {
-        debugAccessor.DisplayState("Air State", c_airMachine.GetCurrentState());
+        //debugAccessor.DisplayState("Air State", c_airMachine.GetCurrentState());
         if (!c_stateData.b_updateState)
         {
             return;
@@ -419,7 +419,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (c_collisionController.CheckForGround4())
         {
-            debugAccessor.DisplayString("detectin'");
+            //debugAccessor.DisplayString("detectin'");
 
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
 
@@ -431,8 +431,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else if (!c_collisionController.CheckForAir())
         {
-            debugAccessor.DisplayString("NOT DETECTIN'");
-            debugAccessor.DisplayVector3("AIR CHECK AERIAL", Vector3.zero);
+            //debugAccessor.DisplayString("NOT DETECTIN'");
+            //debugAccessor.DisplayVector3("AIR CHECK AERIAL", Vector3.zero);
             c_collisionData.f_contactOffset = Constants.ZERO_F;
             c_collisionData.v_attachPoint = Vector3.zero;
 
@@ -444,8 +444,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else
         {
-            debugAccessor.DisplayString("NOT DETECTIN'");
-            debugAccessor.DisplayVector3("AIR CHECK GROUNDED", Vector3.zero);
+            //debugAccessor.DisplayString("NOT DETECTIN'");
+            //debugAccessor.DisplayVector3("AIR CHECK GROUNDED", Vector3.zero);
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
             
             // only do this in the air?
@@ -460,7 +460,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             }
         }
 
-        debugAccessor.DisplayFloat("vert vel", c_aerialMoveData.f_verticalVelocity);
+        //debugAccessor.DisplayFloat("vert vel", c_aerialMoveData.f_verticalVelocity);
     }
 
     private void CheckForZone()
