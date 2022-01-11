@@ -571,7 +571,7 @@ public static class GlobalGameData
 
         if (confirmSettings == playerPrefsConfirm)
         {
-            Debug.Log("yo");
+
         }
 
         PlayerPrefs.SetInt(PlayerPrefsNames.DownGrabBtn_Controller, controlSettings_controller.DownGrabBtn);

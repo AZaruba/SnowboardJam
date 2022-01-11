@@ -109,7 +109,7 @@ public class TurnChargeState : iState
 
     public StateRef GetNextState(Command cmd)
     {
-        if (cmd == Command.JUMP)
+        if (cmd == Command.JUMP || cmd == Command.FALL)
         {
             return StateRef.DISABLED;
         }

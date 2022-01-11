@@ -33,8 +33,6 @@ public class JumpChargeState : iState
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
-        c_playerData.v_currentPosition -= c_collisionData.v_attachPoint;
-
         AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
                                             ref currentRotation,
                                             ref currentNormal,
@@ -51,22 +49,18 @@ public class JumpChargeState : iState
 
     public void TransitionAct()
     {
-        c_playerData.f_currentJumpCharge = c_playerData.f_baseJumpPower;
+
     }
 
     public StateRef GetNextState(Command cmd)
     {
         if (cmd == Command.FALL)
         {
+            c_playerData.f_currentJumpCharge = Constants.ZERO_F;
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.JUMP)
         {
-            // edit position to ensure we are already the first jump frame ABOVE the ground here
-            Vector3 upwardTranslation = c_playerData.q_currentRotation * Vector3.up * (0.02f);
-            c_aerialMoveData.f_verticalVelocity = 0.0f;
-
-            c_playerData.v_currentPosition += upwardTranslation;
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.CRASH)

@@ -23,8 +23,8 @@ public class SpinChargeState : iState
         float flipChargeRate = c_trickPhys.f_flipIncrement * c_playerInput.f_inputAxisLVert;
         float spinChargeRate = c_trickPhys.f_spinIncrement * c_playerInput.f_inputAxisLHoriz;
 
-        cart_incr.IncrementTethered(ref currentSpinCharge, spinChargeRate * Time.deltaTime, c_trickPhys.f_maxSpinRate *-1, c_trickPhys.f_maxSpinRate);
-        cart_incr.IncrementTethered(ref currentFlipCharge, flipChargeRate * Time.deltaTime, c_trickPhys.f_maxFlipRate *-1, c_trickPhys.f_maxFlipRate);
+        cart_incr.IncrementTethered(ref currentSpinCharge, spinChargeRate * Time.fixedDeltaTime, c_trickPhys.f_maxSpinRate *-1, c_trickPhys.f_maxSpinRate);
+        cart_incr.IncrementTethered(ref currentFlipCharge, flipChargeRate * Time.fixedDeltaTime, c_trickPhys.f_maxFlipRate *-1, c_trickPhys.f_maxFlipRate);
 
         c_trickPhys.f_currentFlipCharge = currentFlipCharge;
         c_trickPhys.f_currentSpinCharge = currentSpinCharge;

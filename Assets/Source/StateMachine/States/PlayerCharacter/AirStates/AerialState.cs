@@ -34,7 +34,7 @@ public class AerialState : iState {
 
         if (vertVelocity <= Constants.ZERO_F)
         {
-            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance + Mathf.Abs(vertVelocity) * Time.deltaTime;
+            c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance + Mathf.Abs(vertVelocity) * Time.fixedDeltaTime;
         }
         else
         {
@@ -47,23 +47,22 @@ public class AerialState : iState {
 
     public void TransitionAct()
     {
-        Vector3 jumpVector = Vector3.up * c_playerData.f_currentJumpCharge;
-        Vector3 directVector = c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed;
+        Vector3 directionVector = c_playerData.q_currentRotation * Vector3.forward;
+        Vector3 rotationVector = c_playerData.q_currentRotation * Vector3.forward;
+        float verticalVelocity = Vector3.Dot(c_playerData.q_currentRotation * Vector3.forward, Vector3.up) * c_playerData.f_currentSpeed;
 
-        Vector3 totalAerialVector = jumpVector + directVector;
-        Vector3 latDir = totalAerialVector;
-        float vertVel = totalAerialVector.y;
+        // remove y and normalize to get to horizontal direction
+        directionVector.y = Constants.ZERO_F;
+        float horizontalVelocity = Vector3.Dot(c_playerData.q_currentRotation * Vector3.forward, directionVector.normalized) * c_playerData.f_currentSpeed;
 
-        // the lateral direction should be flattened
-        latDir.y = 0.0f;
-        float latVel = latDir.magnitude;
-        latDir.Normalize();
+        c_aerialMoveData.f_verticalVelocity = verticalVelocity + c_playerData.f_currentJumpCharge;
+        c_aerialMoveData.f_lateralVelocity = horizontalVelocity;
+        c_aerialMoveData.v_lateralDirection = directionVector.normalized;
 
-        c_aerialMoveData.v_lateralDirection = latDir;
-        c_aerialMoveData.f_verticalVelocity = vertVel;
-        c_aerialMoveData.f_lateralVelocity = latVel;
         c_playerData.v_currentNormal = Vector3.up;
         c_playerData.v_currentDown = Vector3.down;
+        rotationVector.y = Constants.ZERO_F;
+        c_playerData.q_currentRotation = Quaternion.LookRotation(rotationVector.normalized, Vector3.up);
     }
 
     public StateRef GetNextState(Command cmd)
