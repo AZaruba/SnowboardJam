@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 44771478}
-  m_IndirectSpecularColor: {r: 0.44971025, g: 0.49977905, b: 0.5756352, a: 1}
+  m_IndirectSpecularColor: {r: 0.44970965, g: 0.49977863, b: 0.57563376, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1380,6 +1380,7 @@ GameObject:
   - component: {fileID: 745530429}
   - component: {fileID: 745530434}
   - component: {fileID: 745530433}
+  - component: {fileID: 745530435}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1453,13 +1454,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745530428}
-  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
-  m_LocalPosition: {x: 0, y: 2, z: -2}
+  m_LocalRotation: {x: 0, y: 0.9848078, z: -0.17364816, w: 0}
+  m_LocalPosition: {x: 0, y: -2, z: 30}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 20, y: 180, z: 0}
 --- !u!114 &745530433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1489,7 +1490,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745530428}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79ce5724f7b22452ca3647b664264def, type: 3}
   m_Name: 
@@ -1497,6 +1498,18 @@ MonoBehaviour:
   c_cameraData: {fileID: 745530433}
   c_previewData: {fileID: 11400000, guid: c6e323d19040147fdb7669ba8ed3dc54, type: 2}
   debugAccessor: {fileID: 734568626}
+--- !u!114 &745530435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745530428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45e5c87a1aab94fdbbf947773cdfef96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &799940039
 PrefabInstance:
   m_ObjectHideFlags: 0
