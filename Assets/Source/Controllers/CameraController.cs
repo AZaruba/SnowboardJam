@@ -13,7 +13,7 @@ public class CameraController : MonoBehaviour, iEntityController
     private StateData c_stateData;
     private CameraPreviewActiveData c_previewActiveData;
     private CameraLastFrameData c_lastFrameData;
-    private CameraPositionData c_positionData;
+    private CameraPositionData_Old_Old c_positionData;
 
     private StateMachine sm_cameraBehavior;
 
@@ -206,7 +206,7 @@ public class CameraController : MonoBehaviour, iEntityController
         c_cameraData.v_currentPosition = c_previewData.PreviewShots[c_previewActiveData.i_currentPreviewIndex].StartPosition;
 
 
-        c_positionData = new CameraPositionData(c_cameraData.v_currentPosition, c_cameraData.q_cameraRotation);
+        c_positionData = new CameraPositionData_Old_Old(c_cameraData.v_currentPosition, c_cameraData.q_cameraRotation);
 
         c_lastFrameData = new CameraLastFrameData();
         c_lastFrameData.v_lastFramePosition = c_cameraData.v_currentPosition;

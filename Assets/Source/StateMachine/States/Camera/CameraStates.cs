@@ -5,10 +5,10 @@ using UnityEngine;
 public class CameraPreviewStateO : iState
 {
     CameraPreviewData c_previewData;
-    CameraPositionData c_positionData;
+    CameraPositionData_Old_Old c_positionData;
     CameraPreviewActiveData c_activeData;
 
-    public CameraPreviewStateO(ref CameraPositionData dataIn, ref CameraPreviewData pDataIn, ref CameraPreviewActiveData aDataIn)
+    public CameraPreviewStateO(ref CameraPositionData_Old_Old dataIn, ref CameraPreviewData pDataIn, ref CameraPreviewActiveData aDataIn)
     {
         this.c_previewData = pDataIn;
         this.c_positionData = dataIn;
@@ -51,9 +51,9 @@ public class CameraFollowTargetState : iState
 {
 
     private CameraData c_cameraData;
-    private CameraPositionData c_positionData;
+    private CameraPositionData_Old_Old c_positionData;
 
-    public CameraFollowTargetState(ref CameraData cameraDataIn, ref CameraPositionData positionDataIn)
+    public CameraFollowTargetState(ref CameraData cameraDataIn, ref CameraPositionData_Old_Old positionDataIn)
     {
         this.c_cameraData = cameraDataIn;
         this.c_positionData = positionDataIn;
