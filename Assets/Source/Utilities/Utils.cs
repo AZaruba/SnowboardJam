@@ -18,6 +18,16 @@ public static class Utils
         return Quaternion.Lerp(lastRotation, targetRotation, TimestepInterpolator.FIXED_INTERPOLATION_VALUE);
     }
 
+    public static float GetFloatRatio(float target, float minimum, float maximum)
+    {
+        return (target - minimum) / (maximum - minimum);
+    }
+
+    public static float InterpolateFloat(float ratio, float minimum, float maximum)
+    {
+        return (minimum * (1.0f - ratio)) + (maximum * ratio);
+    }
+
     public static float InterpolateFixedFloat(float lastFloat, float targetFloat)
     {
         return (lastFloat * (1.0f - TimestepInterpolator.FIXED_INTERPOLATION_VALUE)) + (targetFloat * TimestepInterpolator.FIXED_INTERPOLATION_VALUE);

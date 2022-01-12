@@ -26,6 +26,20 @@ public class CameraFollowState2 : iState
         float currentLatVel = c_motionData.f_currentLateralVelocity;
         float currentRotVel = c_motionData.f_currentRotationalVelocity;
 
+        Vector3 axis = Vector3.Cross(currentRotation * Vector3.forward, Vector3.up);
+
+        CameraCartridge.AccelerateVerticalVelocity(ref currentVertVel,
+            c_motionData.f_maxVerticalVelocity,
+            c_motionData.f_maxVerticalAngle,
+            c_motionData.f_minVerticalAngle,
+            axis,
+            currentPosition,
+            c_trackingData.v_position,
+            c_motionData.v_targetOffset,
+            c_trackingData.v_position - c_trackingData.v_position_lastFrame);
+
+        // test
+        currentPosition += Vector3.up * currentVertVel * Time.deltaTime;
 
         c_positionData.v_position = currentPosition;
         c_positionData.q_rotation = currentRotation;

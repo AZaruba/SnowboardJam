@@ -19,3 +19,4 @@ MonoBehaviour:
   MinFollowDistance: 4
   MaxVerticalAngle: 70
   MinVerticalAngle: -15
+  TargetOffset: {x: 0, y: 0, z: 0}

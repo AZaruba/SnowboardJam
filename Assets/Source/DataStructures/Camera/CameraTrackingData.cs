@@ -38,6 +38,8 @@ public class CameraMotionData : ScriptableObject
     [SerializeField] private float MaxVerticalAngle; // the angle before the camera starts moving vertically down
     [SerializeField] private float MinVerticalAngle; // the angle before the camera starts moving vertically up
 
+    [SerializeField] private Vector3 TargetOffset; // the distance in front of the target 
+
     private float CurrentCameraVerticalVelocity;
     private float CurrentCameraLateralVelocity;
     private float CurrentCameraRotationalVelocity;
@@ -69,6 +71,11 @@ public class CameraMotionData : ScriptableObject
     public float f_minVerticalAngle
     {
         get { return MinVerticalAngle; }
+    }
+
+    public Vector3 v_targetOffset
+    {
+        get { return TargetOffset; }
     }
 
 

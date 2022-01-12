@@ -18,6 +18,8 @@ public class CameraController3 : MonoBehaviour
         InitializeData();
         InitializeMessangingClient();
         InitializeStateMachine();
+
+        sm_camera.Execute(Command.FOLLOW);
     }
 
     // TODO:
@@ -44,8 +46,13 @@ public class CameraController3 : MonoBehaviour
 
     private void FixedUpdate()
     {
-        debugAccessor.DisplayState("Camera State", sm_camera.GetCurrentState());
+        Vector3 axis = Vector3.Cross(c_positionData.q_rotation * Vector3.forward, Vector3.up);
 
+        Vector3 projectedAngle = c_trackingData.v_position - c_positionData.v_position;
+        float currentAngle = Vector3.SignedAngle(Vector3.ProjectOnPlane(projectedAngle, Vector3.up), projectedAngle, axis);
+
+        debugAccessor.DisplayState("Camera State", sm_camera.GetCurrentState());
+        debugAccessor.DisplayFloat("Camera to Target angle", currentAngle);
         if (!c_stateData.b_updateState)
         {
             return;
@@ -53,6 +60,8 @@ public class CameraController3 : MonoBehaviour
 
         c_positionData.v_position_lastFrame = c_positionData.v_position;
         c_positionData.q_rotation_lastFrame = c_positionData.q_rotation;
+
+        sm_camera.Act();
     }
 
     private void InitializeData()
