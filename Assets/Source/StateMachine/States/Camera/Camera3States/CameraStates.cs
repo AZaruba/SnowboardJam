@@ -38,8 +38,18 @@ public class CameraFollowState2 : iState
             c_motionData.v_targetOffset,
             c_trackingData.v_position - c_trackingData.v_position_lastFrame);
 
+        CameraCartridge.AccelerateHorizontalVelocity(ref currentLatVel,
+            c_motionData.f_maxLateralVelocity,
+            c_motionData.f_maxFollowDistance,
+            c_motionData.f_minFollowDistance,
+            currentPosition,
+            c_trackingData.v_position);
+
         // test
+        currentRotation = Quaternion.LookRotation(c_trackingData.v_position - currentPosition, Vector3.up);
+        Vector3 dir = Vector3.ProjectOnPlane(currentRotation * Vector3.forward, Vector3.up);
         currentPosition += Vector3.up * currentVertVel * Time.deltaTime;
+        currentPosition += dir * currentLatVel * Time.deltaTime;
 
         c_positionData.v_position = currentPosition;
         c_positionData.q_rotation = currentRotation;

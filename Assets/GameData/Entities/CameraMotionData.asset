@@ -9,14 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: GameCameraMotionData
-  m_EditorClassIdentifier: Assembly-CSharp::CameraMotionData
+  m_Script: {fileID: 11500000, guid: a6677105ef4ab497eab8fca72760baf0, type: 3}
+  m_Name: CameraMotionData
+  m_EditorClassIdentifier: 
   MaxCameraVerticalVelocity: 40
-  MaxCameraLateralVelocity: 40
-  MaxCameraRotationalVelocity: 360
-  MaxFollowDistance: 6
-  MinFollowDistance: 4
+  MaxCameraLateralVelocity: 25
+  MaxCameraRotationalVelocity: 40
+  MaxFollowDistance: 4
+  MinFollowDistance: 2
   MaxVerticalAngle: 70
   MinVerticalAngle: -15
-  TargetOffset: {x: 0, y: 0, z: 0}
+  TargetOffset: {x: 0, y: 1, z: 1}

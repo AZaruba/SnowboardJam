@@ -34,4 +34,20 @@ public static class CameraCartridge
         Quaternion resultRotation = Quaternion.AngleAxis(rotationalVelocity, axis);
         cameraRotation *= resultRotation;
     }
+
+    public static void AccelerateHorizontalVelocity(
+        ref float horizontalVelocity,
+        float maxVelocity,
+        float maxDist,
+        float minDist,
+        Vector3 cameraPosition,
+        Vector3 targetPosition)
+    {
+        float currentDist = Vector3.Distance(Vector3.ProjectOnPlane(cameraPosition, Vector3.up),
+                                             Vector3.ProjectOnPlane(targetPosition, Vector3.up));
+
+        horizontalVelocity = Utils.InterpolateFloat(Utils.GetFloatRatio(currentDist, minDist, maxDist),
+                                                    Constants.ZERO_F,
+                                                    maxVelocity);
+    }
 }
