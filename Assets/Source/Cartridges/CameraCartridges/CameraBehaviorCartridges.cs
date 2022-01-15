@@ -52,8 +52,7 @@ public static class CameraOrientationCartridge
     /* 
      * Gimbal Lock on going straight up, need to refactor into quaternions
      */
-    public static void CalculateHorizontalRotation(out Quaternion rotationOut, Quaternion currentRotation,
-                                                   Quaternion playerRotation, Vector3 playerOffset)
+    public static void CalculateHorizontalRotation(out Quaternion rotationOut, Quaternion currentRotation, Vector3 playerOffset)
     {
         Vector3 planeDir = Vector3.up;
         Vector3 playerDir = Vector3.ProjectOnPlane(playerOffset, planeDir).normalized;

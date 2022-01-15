@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 44771478}
-  m_IndirectSpecularColor: {r: 0.44970965, g: 0.49977863, b: 0.57563376, a: 1}
+  m_IndirectSpecularColor: {r: 0.44971025, g: 0.49977905, b: 0.5756352, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1378,7 +1378,8 @@ GameObject:
   - component: {fileID: 745530431}
   - component: {fileID: 745530430}
   - component: {fileID: 745530429}
-  - component: {fileID: 745530435}
+  - component: {fileID: 745530434}
+  - component: {fileID: 745530433}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1459,7 +1460,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &745530435
+--- !u!114 &745530433
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1468,10 +1469,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 745530428}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45e5c87a1aab94fdbbf947773cdfef96, type: 3}
+  m_Script: {fileID: 11500000, guid: fd6f496fa701542f991014c304e66144, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraMotionData: {fileID: 11400000, guid: f3b67bc5c71bf43f39012fd89c9b9872, type: 2}
+  MaxFollowDistance: 7
+  MinFollowDistance: 6
+  FollowHeight: 3
+  MaximumVerticalAngle: 70
+  DesiredVerticalAngle: 20
+  RotationalAcceleration: 40
+  TranslationAcceleration: 40
+  MaxVerticalVelocity: 50
+  MaxHorizontalVelocity: 40
+  TargetLookOffset: {x: 0, y: 1.6, z: 2}
+--- !u!114 &745530434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745530428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79ce5724f7b22452ca3647b664264def, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  c_cameraData: {fileID: 745530433}
+  c_previewData: {fileID: 11400000, guid: c6e323d19040147fdb7669ba8ed3dc54, type: 2}
   debugAccessor: {fileID: 734568626}
 --- !u!1001 &799940039
 PrefabInstance:
@@ -1885,8 +1909,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -64, y: 394}
-  m_SizeDelta: {x: 72, y: 72}
+  m_AnchoredPosition: {x: -90, y: 394}
+  m_SizeDelta: {x: 128, y: 72}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1065723487
 MonoBehaviour:
@@ -2201,7 +2225,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1372732379}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 026a410c03b024d419278b79c22a2c29, type: 3}
   m_Name: 

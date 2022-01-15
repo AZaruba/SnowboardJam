@@ -31,9 +31,9 @@ public class NewCameraTargetData
     }
 }
 
-public class CameraPositionData_Old
+public class CameraPositionData
 {
-    public CameraPositionData_Old(Vector3 pos, Quaternion rot, float angle)
+    public CameraPositionData(Vector3 pos, Quaternion rot, float angle)
     {
         this.v_currentPosition = pos;
         this.q_currentRotation = rot;

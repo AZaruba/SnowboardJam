@@ -21,6 +21,12 @@ public static class CameraCartridge
                                                    maxVelocity);
     }
 
+
+    /* TODO: 
+     * - figure out how to get rid of the "elasticity" when we rotate horizontally
+     * - figure out how to get the camera to have an ideal "spot" between the max and the min, rather than
+     *   the exact midpoint
+     */
     public static void AccelerateRotation(
         out float rotVelocity,
         float maxVelocity,
@@ -31,9 +37,8 @@ public static class CameraCartridge
         Vector3 targetDelta,
         Vector3 axis)
     {
-        Quaternion intendedOffset = Quaternion.LookRotation(targetDelta, Vector3.up);
-
-        Vector3 targetVector = targetPosition - cameraPosition;
+        
+        Vector3 targetVector = targetPosition + Vector3.ProjectOnPlane(cameraRotation * targetOffset, Vector3.up) - cameraPosition;
         float diff = Vector3.SignedAngle(Vector3.ProjectOnPlane(cameraRotation * Vector3.forward, axis), Vector3.ProjectOnPlane(targetVector, axis), axis);
 
         rotVelocity = Utils.InterpolateFloat(Utils.GetFloatRatio(diff, 0, 180f * Mathf.Sign(diff)),
@@ -55,7 +60,7 @@ public static class CameraCartridge
         float rotationalVelocity,
         Vector3 axis)
     {
-        Quaternion resultRotation = Quaternion.AngleAxis(rotationalVelocity, axis);
+        Quaternion resultRotation = Quaternion.AngleAxis(rotationalVelocity * Time.deltaTime, axis).normalized;
         cameraRotation *= resultRotation;
     }
 
