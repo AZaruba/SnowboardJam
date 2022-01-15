@@ -148,9 +148,9 @@ public class CameraData : MonoBehaviour {
     #endregion
 }
 
-public class CameraPositionData
+public class CameraPositionData_Old_Old
 {
-    public CameraPositionData(Vector3 posIn, Quaternion rotIn)
+    public CameraPositionData_Old_Old(Vector3 posIn, Quaternion rotIn)
     {
         this.v_currentPosition = posIn;
         this.v_currentTargetPosition = Vector3.zero;

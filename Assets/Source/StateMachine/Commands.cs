@@ -33,6 +33,7 @@ public enum Command {
 
     #region CameraPositionCommands
     APPROACH,
+    FOLLOW,
     DRAG,
     TRACK,
     REST,
@@ -125,6 +126,7 @@ public enum StateRef {
     PREVIEW_TRACKING,
 
     FOLLOWING,
+    SNAPPING,
     #endregion
 
     #region CameraOrientationStates

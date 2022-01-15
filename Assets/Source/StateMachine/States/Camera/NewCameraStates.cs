@@ -5,10 +5,10 @@ using UnityEngine;
 public class CameraPreviewState : iState
 {
     CameraPreviewData c_previewData;
-    NewCameraPositionData c_positionData;
+    CameraPositionData_Old c_positionData;
     CameraPreviewActiveData c_activeData;
 
-    public CameraPreviewState(ref NewCameraPositionData dataIn, ref CameraPreviewData pDataIn, ref CameraPreviewActiveData aDataIn)
+    public CameraPreviewState(ref CameraPositionData_Old dataIn, ref CameraPreviewData pDataIn, ref CameraPreviewActiveData aDataIn)
     {
         this.c_previewData = pDataIn;
         this.c_positionData = dataIn;
@@ -65,12 +65,12 @@ public class CameraFollowState : iState
      *    - this also enables us to not really track maximum speed
      */
     private NewCameraData c_cameraData;
-    private NewCameraPositionData c_positionData;
+    private CameraPositionData_Old c_positionData;
     private NewCameraTargetData c_targetData;
     private NewCameraLastFrameData c_lastFrameData;
 
     public CameraFollowState(ref NewCameraData dataIn, 
-                             ref NewCameraPositionData posDataIn, 
+                             ref CameraPositionData_Old posDataIn, 
                              ref NewCameraTargetData targetDataIn,
                              ref NewCameraLastFrameData lastFrameDataIn)
     {
