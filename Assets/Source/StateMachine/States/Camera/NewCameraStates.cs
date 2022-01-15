@@ -5,10 +5,10 @@ using UnityEngine;
 public class CameraPreviewState : iState
 {
     CameraPreviewData c_previewData;
-    CameraPositionData_Old c_positionData;
+    CameraPositionData c_positionData;
     CameraPreviewActiveData c_activeData;
 
-    public CameraPreviewState(ref CameraPositionData_Old dataIn, ref CameraPreviewData pDataIn, ref CameraPreviewActiveData aDataIn)
+    public CameraPreviewState(ref CameraPositionData dataIn, ref CameraPreviewData pDataIn, ref CameraPreviewActiveData aDataIn)
     {
         this.c_previewData = pDataIn;
         this.c_positionData = dataIn;
@@ -65,12 +65,12 @@ public class CameraFollowState : iState
      *    - this also enables us to not really track maximum speed
      */
     private NewCameraData c_cameraData;
-    private CameraPositionData_Old c_positionData;
+    private CameraPositionData c_positionData;
     private NewCameraTargetData c_targetData;
     private NewCameraLastFrameData c_lastFrameData;
 
     public CameraFollowState(ref NewCameraData dataIn, 
-                             ref CameraPositionData_Old posDataIn, 
+                             ref CameraPositionData posDataIn, 
                              ref NewCameraTargetData targetDataIn,
                              ref NewCameraLastFrameData lastFrameDataIn)
     {
@@ -93,13 +93,12 @@ public class CameraFollowState : iState
         Quaternion outRotation;
 
         CameraOrientationCartridge.CalculateHorizontalRotation(out outRotation, 
-                                                               currentRotation, 
-                                                               c_targetData.q_currentTargetRotation,
-                                                               c_targetData.v_currentTargetPosition - c_positionData.v_currentPosition);
+                                                               currentRotation,
+                                                               (c_targetData.v_currentTargetPosition + currentRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition);
 
         CameraOrientationCartridge.CalculateVerticalRotation(out verticalAngleToTarget,
                                                              currentRotation,
-                                                              (c_targetData.v_currentTargetPosition + c_targetData.q_currentTargetRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition);
+                                                              (c_targetData.v_currentTargetPosition + currentRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition);
 ;
 
         CameraOrientationCartridge.ApplyRotation(ref currentRotation,
@@ -109,7 +108,7 @@ public class CameraFollowState : iState
                                                  Quaternion.AngleAxis(verticalAngleToTarget, currentRotation * Vector3.right).normalized);
 
         CameraOrientationCartridge.CalculateHorizontalDistance(out distanceToTarget,
-                                                               (c_targetData.v_currentTargetPosition + c_targetData.q_currentTargetRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition,
+                                                               (c_targetData.v_currentTargetPosition + currentRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition,
                                                                currentRotation);
 
         CameraOrientationCartridge.AccelerateTranslationalVelocity(ref currentTransVelocity,
@@ -119,7 +118,7 @@ public class CameraFollowState : iState
                                                                    c_cameraData.MaxHorizontalVelocity);
 
         CameraOrientationCartridge.CalculateVerticalDifference(out verticalAngleDiscrepancy, 
-                                                               (c_targetData.v_currentTargetPosition + c_targetData.q_currentTargetRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition,
+                                                               (c_targetData.v_currentTargetPosition + currentRotation * c_cameraData.TargetLookOffset) - c_positionData.v_currentPosition,
                                                                currentRotation);
 
         CameraOrientationCartridge.AccelerateVerticalVelocity(ref currentVertVelocity,

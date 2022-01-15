@@ -10,7 +10,7 @@ public class NewCameraController : MonoBehaviour, iEntityController
 
     private StateData c_stateData;
     private NewCameraLastFrameData c_lastFrameData;
-    private CameraPositionData_Old c_positionData;
+    private CameraPositionData c_positionData;
     private NewCameraTargetData c_targetData;
     private CameraPreviewActiveData c_previewActiveData;
 
@@ -31,7 +31,7 @@ public class NewCameraController : MonoBehaviour, iEntityController
         c_stateData = new StateData();
         c_stateData.b_updateState = true;
 
-        cl_camera = new CameraMessageClient_Old(ref c_stateData, ref c_targetData);
+        cl_camera = new CameraMessageClient(ref c_stateData, ref c_targetData);
         MessageServer.Subscribe(ref cl_camera, MessageID.PAUSE);
         MessageServer.Subscribe(ref cl_camera, MessageID.COUNTDOWN_START);
         MessageServer.Subscribe(ref cl_camera, MessageID.PLAYER_POSITION_UPDATED);
@@ -106,7 +106,7 @@ public class NewCameraController : MonoBehaviour, iEntityController
         renderPixelRatio = ((float)Camera.main.pixelHeight / (float)Camera.main.pixelWidth);
         renderPixelWidth = Mathf.RoundToInt(renderPixelRatio * renderPixelHeight);
 
-        c_positionData = new CameraPositionData_Old(transform.position, transform.rotation, 0);
+        c_positionData = new CameraPositionData(transform.position, transform.rotation, 0);
         c_targetData = new NewCameraTargetData(Vector3.zero, Quaternion.identity);
 
         c_lastFrameData = new NewCameraLastFrameData(c_positionData.v_currentPosition,
