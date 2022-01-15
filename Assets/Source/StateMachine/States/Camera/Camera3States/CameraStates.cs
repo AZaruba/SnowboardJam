@@ -24,7 +24,8 @@ public class CameraFollowState2 : iState
 
         float currentVertVel = c_motionData.f_currentVerticalVelocity;
         float currentLatVel = c_motionData.f_currentLateralVelocity;
-        float currentRotVel = c_motionData.f_currentRotationalVelocity;
+        float currentRotLat;
+        float currentRotVert;
 
         Vector3 axis = Vector3.Cross(currentRotation * Vector3.forward, Vector3.up);
 
@@ -34,9 +35,7 @@ public class CameraFollowState2 : iState
             c_motionData.f_minVerticalAngle,
             axis,
             currentPosition,
-            c_trackingData.v_position,
-            c_motionData.v_targetOffset,
-            c_trackingData.v_position - c_trackingData.v_position_lastFrame);
+            c_trackingData.v_position);
 
         CameraCartridge.AccelerateHorizontalVelocity(ref currentLatVel,
             c_motionData.f_maxLateralVelocity,
@@ -45,8 +44,35 @@ public class CameraFollowState2 : iState
             currentPosition,
             c_trackingData.v_position);
 
-        // test
-        currentRotation = Quaternion.LookRotation(c_trackingData.v_position - currentPosition, Vector3.up);
+        // vert rotation
+        CameraCartridge.AccelerateRotation(
+            out currentRotVert,
+            c_motionData.f_maxRotationalVelocity,
+            currentRotation,
+            currentPosition,
+            c_trackingData.v_position,
+            c_motionData.v_targetOffset,
+            c_trackingData.v_position - c_trackingData.v_position_lastFrame,
+            axis);
+
+        // lat rotation
+        CameraCartridge.AccelerateRotation(
+            out currentRotLat,
+            c_motionData.f_maxRotationalVelocity,
+            currentRotation,
+            currentPosition,
+            c_trackingData.v_position,
+            c_motionData.v_targetOffset,
+            c_trackingData.v_position - c_trackingData.v_position_lastFrame,
+            Vector3.up);
+
+        // vertical rotation
+        CameraCartridge.UpdateRotation(ref currentRotation, currentRotVert, axis);
+
+        // horizontal rotation 
+        CameraCartridge.UpdateRotation(ref currentRotation, currentRotLat, Vector3.up);
+
+        // currentRotation = Quaternion.LookRotation(c_trackingData.v_position - currentPosition, Vector3.up);
         Vector3 dir = Vector3.ProjectOnPlane(currentRotation * Vector3.forward, Vector3.up);
         currentPosition += Vector3.up * currentVertVel * Time.deltaTime;
         currentPosition += dir * currentLatVel * Time.deltaTime;
@@ -56,7 +82,6 @@ public class CameraFollowState2 : iState
 
         c_motionData.f_currentVerticalVelocity = currentVertVel;
         c_motionData.f_currentLateralVelocity = currentLatVel;
-        c_motionData.f_currentRotationalVelocity = currentRotVel;
     }
 
     public StateRef GetNextState(Command cmd)
