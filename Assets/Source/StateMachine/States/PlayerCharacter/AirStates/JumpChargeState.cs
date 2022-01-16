@@ -61,6 +61,7 @@ public class JumpChargeState : iState
         }
         if (cmd == Command.JUMP)
         {
+            c_playerData.v_currentPosition += Vector3.up * 0.2f;
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.CRASH)

@@ -100,7 +100,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     void FixedUpdate()
     {
-        //debugAccessor.DisplayState("Air State", c_airMachine.GetCurrentState());
+        debugAccessor.DisplayFloat("vertical vel", c_aerialMoveData.f_verticalVelocity);
+        debugAccessor.DisplayState("turn state", c_turnMachine.GetCurrentState());
         if (!c_stateData.b_updateState)
         {
             return;
@@ -419,7 +420,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (c_collisionController.CheckForGround4())
         {
-            //debugAccessor.DisplayString("detectin'");
+            debugAccessor.DisplayString("detectin'");
+            debugAccessor.DisplayVector3("AIR CHECK GROUNDED", Vector3.zero);
 
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
 
@@ -431,9 +433,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else if (!c_collisionController.CheckForAir())
         {
-            //debugAccessor.DisplayString("NOT DETECTIN'");
-            //debugAccessor.DisplayVector3("AIR CHECK AERIAL", Vector3.zero);
-            c_collisionData.f_contactOffset = Constants.ZERO_F;
+            debugAccessor.DisplayString("NOT DETECTIN'");
+            debugAccessor.DisplayVector3("AIR CHECK AERIAL", Vector3.zero);
             c_collisionData.v_attachPoint = Vector3.zero;
 
             c_accelMachine.Execute(Command.FALL);
@@ -444,10 +445,16 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else
         {
-            //debugAccessor.DisplayString("NOT DETECTIN'");
-            //debugAccessor.DisplayVector3("AIR CHECK GROUNDED", Vector3.zero);
+            debugAccessor.DisplayString("NOT DETECTIN'");
+            debugAccessor.DisplayVector3("AIR CHECK GROUNDED", Vector3.zero);
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
-            
+
+            c_accelMachine.Execute(Command.LAND);
+            c_turnMachine.Execute(Command.LAND);
+            c_airMachine.Execute(Command.LAND);
+            sm_tricking.Execute(Command.LAND);
+            sm_trickPhys.Execute(Command.LAND);
+
             // only do this in the air?
             if (c_collisionController.CheckGroundRotation())
             {

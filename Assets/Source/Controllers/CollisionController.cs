@@ -89,7 +89,7 @@ public class CollisionController
         return false;
     }
 
-    // TODO: assess why the boxcast seems to miss the ground
+    // TODO: strange behavior on land with a bounce, attach point is decidedly wrong but how to rectify it?
     public bool CheckForAir()
     {
         CalculateRaycastDistance(out float upwardDist, out float downwardDist);
