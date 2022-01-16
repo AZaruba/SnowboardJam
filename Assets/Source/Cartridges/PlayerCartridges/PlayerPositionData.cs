@@ -19,7 +19,7 @@ public class PlayerPositionData
         this.v_modelDirection = direction;
         this.i_switchStance = Constants.FORWARD_STANCE;
         this.q_currentModelRotation = rotation;
-        this.q_centerOfGravityRotation = rotation;
+        this.q_centerOfGravityRotation = Quaternion.identity;
     }
 
     public uint u_zone

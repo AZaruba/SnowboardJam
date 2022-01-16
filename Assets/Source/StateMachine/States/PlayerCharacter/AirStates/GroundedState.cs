@@ -22,7 +22,7 @@ public class GroundedState : iState
     }
     public void Act()
     {
-        Vector3 currentNormal = c_playerData.v_currentNormal;
+        Vector3 currentNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
 
