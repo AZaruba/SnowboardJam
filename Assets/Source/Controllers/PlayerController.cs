@@ -100,7 +100,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     void FixedUpdate()
     {
-        //debugAccessor.DisplayState("Air State", c_airMachine.GetCurrentState());
+        debugAccessor.DisplayFloat("vertical vel", c_aerialMoveData.f_verticalVelocity);
+        debugAccessor.DisplayState("turn state", c_turnMachine.GetCurrentState());
         if (!c_stateData.b_updateState)
         {
             return;
@@ -149,7 +150,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_collisionData.f_frontRayLengthDown = (Mathf.Tan(c_collisionData.f_obstacleAngle * (Mathf.PI / 180.0f)) * Time.fixedDeltaTime + c_aerialMoveData.f_verticalVelocity * -1) * Time.fixedDeltaTime;
 
         c_collisionData.f_obstacleRayLength = speedRatio * Time.fixedDeltaTime; // the expected travel amount next frame
-        CheckForWall();
+        // CheckForWall();
         CheckForGround3();
     }
 
@@ -259,6 +260,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else if (GlobalInputController.GetInputAction(ControlAction.JUMP, KeyValue.UP))
         {
+            c_turnMachine.Execute(Command.JUMP);
             c_airMachine.Execute(Command.JUMP);
             sm_trickPhys.Execute(Command.JUMP);
         }
@@ -343,6 +345,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
         c_stateData.b_updateState = true;
         c_stateData.b_courseFinished = false;
+
     }
     #endregion
 
@@ -419,8 +422,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (c_collisionController.CheckForGround4())
         {
-            //debugAccessor.DisplayString("detectin'");
-
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
 
             c_accelMachine.Execute(Command.LAND);
@@ -429,11 +430,29 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_tricking.Execute(Command.LAND);
             sm_trickPhys.Execute(Command.LAND);
         }
+        /*
+         * Up next, the case that we're on the gorund, not IN it
+         */
+        else if (c_collisionController.CheckForAir())
+        {
+            c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
+            debugAccessor.DisplayVector3("attachpoint", Quaternion.Inverse(c_playerData.q_currentRotation) * c_collisionData.v_attachPoint);
+        }
+        else
+        {
+            c_collisionData.v_attachPoint = Vector3.zero;
+
+            c_accelMachine.Execute(Command.FALL);
+            c_turnMachine.Execute(Command.FALL);
+            c_airMachine.Execute(Command.FALL);
+            sm_trickPhys.Execute(Command.FALL);
+            sm_tricking.Execute(Command.READY_TRICK);
+        }
+        /*
         else if (!c_collisionController.CheckForAir())
         {
-            //debugAccessor.DisplayString("NOT DETECTIN'");
-            //debugAccessor.DisplayVector3("AIR CHECK AERIAL", Vector3.zero);
-            c_collisionData.f_contactOffset = Constants.ZERO_F;
+            debugAccessor.DisplayString("NOT DETECTIN'");
+            debugAccessor.DisplayVector3("AIR CHECK AERIAL", Vector3.zero);
             c_collisionData.v_attachPoint = Vector3.zero;
 
             c_accelMachine.Execute(Command.FALL);
@@ -444,23 +463,27 @@ public class PlayerController : MonoBehaviour, iEntityController {
         }
         else
         {
-            //debugAccessor.DisplayString("NOT DETECTIN'");
-            //debugAccessor.DisplayVector3("AIR CHECK GROUNDED", Vector3.zero);
+            debugAccessor.DisplayString("NOT DETECTIN'");
+            debugAccessor.DisplayVector3("AIR CHECK GROUNDED", Vector3.zero);
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
-            
-            // only do this in the air?
-            if (c_collisionController.CheckGroundRotation())
-            {
-                // force player rotation before checking
 
-                // is this wrong?
-                Vector3 projectedRotation = Vector3.ProjectOnPlane(c_positionData.q_currentModelRotation * Vector3.forward, c_collisionData.v_surfaceNormal);
-                c_positionData.q_currentModelRotation = Quaternion.LookRotation(projectedRotation, c_collisionData.v_surfaceNormal);
-                c_playerData.q_currentRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(c_playerData.q_currentRotation * Vector3.forward, c_collisionData.v_surfaceNormal));
-            }
+            c_accelMachine.Execute(Command.LAND);
+            c_turnMachine.Execute(Command.LAND);
+            c_airMachine.Execute(Command.LAND);
+            sm_tricking.Execute(Command.LAND);s
+            sm_trickPhys.Execute(Command.LAND);
+
         }
+        */
+        if (c_collisionController.CheckGroundRotation())
+        {
+            // force player rotation before checking
 
-        //debugAccessor.DisplayFloat("vert vel", c_aerialMoveData.f_verticalVelocity);
+            // is this wrong?
+            Vector3 projectedRotation = Vector3.ProjectOnPlane(c_positionData.q_currentModelRotation * Vector3.forward, c_collisionData.v_surfaceNormal);
+            c_positionData.q_currentModelRotation = Quaternion.LookRotation(projectedRotation, c_collisionData.v_surfaceNormal);
+            c_playerData.q_currentRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(c_playerData.q_currentRotation * Vector3.forward, c_collisionData.v_surfaceNormal));
+        }
     }
 
     private void CheckForZone()

@@ -54,6 +54,7 @@ public class CollisionController
                                            i_groundCollisionMask))
         {
             c_collisionData.v_surfaceNormal = Utils.GetBaryCentricNormal(h_groundCheck);
+
             return true;
         }
         return false;
@@ -89,31 +90,27 @@ public class CollisionController
         return false;
     }
 
-    // TODO: assess why the boxcast seems to miss the ground
+    // TODO: strange behavior on land with a bounce, attach point is decidedly wrong but how to rectify it?
     public bool CheckForAir()
     {
+        c_collisionData.v_attachPoint = Vector3.zero;
         CalculateRaycastDistance(out float upwardDist, out float downwardDist);
 
-        DrawBoxcast(upwardDist, downwardDist);
-
-        bool boxCasted = Physics.BoxCast(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset,
+        Vector3 origin = c_playerData.v_currentPosition + Vector3.up * (upwardDist + 0.1f) + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset;
+        bool boxCasted = Physics.BoxCast(origin,
                                c_collisionAttrs.HalfExtents,
                                Vector3.down,
                                out h_groundCheck,
                                c_positionData.q_currentModelRotation,
-                               downwardDist,
+                               downwardDist + 0.1f,
                                CollisionLayers.ENVIRONMENT);
 
+        DrawBoxcast(upwardDist, downwardDist, boxCasted);
         if (boxCasted)
         {
-            Vector3 unfoldedVector = Quaternion.Inverse(c_playerData.q_currentRotation) * (c_playerData.v_currentPosition - h_groundCheck.point);
-
-            Debug.DrawLine(c_playerData.v_currentPosition,
-                c_playerData.v_currentPosition + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset * 2 + c_playerData.q_currentRotation * Vector3.down * (c_collisionData.f_contactOffset - c_aerialMoveData.f_verticalVelocity * Time.deltaTime + c_collisionAttrs.CenterOffset.y * 2),
-                Color.blue);
-
-            c_collisionData.v_attachPoint = c_playerData.q_currentRotation * Vector3.down * (unfoldedVector.y); // - ((c_playerData.q_currentRotation * Vector3.forward * c_playerData.f_currentSpeed).y * Time.deltaTime));
-            c_collisionData.v_surfaceNormal = Utils.GetBaryCentricNormal(h_groundCheck);
+            Vector3 projected = Vector3.ProjectOnPlane(c_playerData.v_currentPosition - h_groundCheck.point, c_playerData.q_currentRotation * Vector3.forward);
+            projected = Vector3.ProjectOnPlane(projected, c_playerData.q_currentRotation * Vector3.right);
+            c_collisionData.v_attachPoint = projected * -1;
         }
         return boxCasted;
     }
@@ -137,8 +134,9 @@ public class CollisionController
         downwardDistance += c_playerData.f_gravity * Time.deltaTime;
     }
 
-    private void DrawBoxcast(float upwardDist, float downwardDist)
+    private void DrawBoxcast(float upwardDist, float downwardDist, bool collision)
     {
+        Debug.Log("ding");
         DrawCubePoints(CubePoints(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_positionData.q_currentModelRotation * c_collisionAttrs.CenterOffset,
                                   c_collisionAttrs.HalfExtents,
                                   c_positionData.q_currentModelRotation),
@@ -148,7 +146,7 @@ public class CollisionController
         DrawCubePoints(CubePoints(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_positionData.q_currentModelRotation * c_collisionAttrs.CenterOffset + Vector3.down * downwardDist,
                                   c_collisionAttrs.HalfExtents,
                                   c_positionData.q_currentModelRotation),
-                       Color.red);
+                       collision ? Color.green : Color.red);
     }
 
     // debug functions
