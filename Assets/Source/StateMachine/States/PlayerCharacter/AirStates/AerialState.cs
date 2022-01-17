@@ -76,6 +76,8 @@ public class AerialState : iState {
             c_playerData.f_currentSpeed = projectedDir.magnitude;
             c_aerialMoveData.f_verticalVelocity = c_playerData.f_gravity * -1;
 
+            Vector3 projectedRotation = Vector3.ProjectOnPlane(c_playerData.q_currentRotation * c_positionData.q_centerOfGravityRotation * Vector3.forward * c_positionData.i_switchStance, c_collisionData.v_surfaceNormal);
+            c_positionData.q_currentModelRotation = Quaternion.LookRotation(projectedRotation, c_collisionData.v_surfaceNormal);
             return StateRef.GROUNDED;
         }
         if (cmd == Command.CRASH)

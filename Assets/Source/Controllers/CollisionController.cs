@@ -136,7 +136,6 @@ public class CollisionController
 
     private void DrawBoxcast(float upwardDist, float downwardDist, bool collision)
     {
-        Debug.Log("ding");
         DrawCubePoints(CubePoints(c_playerData.v_currentPosition + Vector3.up * upwardDist + c_positionData.q_currentModelRotation * c_collisionAttrs.CenterOffset,
                                   c_collisionAttrs.HalfExtents,
                                   c_positionData.q_currentModelRotation),
