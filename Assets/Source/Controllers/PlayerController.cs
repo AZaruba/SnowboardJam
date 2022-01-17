@@ -437,6 +437,13 @@ public class PlayerController : MonoBehaviour, iEntityController {
         {
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
             debugAccessor.DisplayVector3("attachpoint", Quaternion.Inverse(c_playerData.q_currentRotation) * c_collisionData.v_attachPoint);
+
+            // if we hit the range where there's less than a "frame" of motion until the ground, we should still consider that landing
+            c_accelMachine.Execute(Command.LAND);
+            c_turnMachine.Execute(Command.LAND);
+            c_airMachine.Execute(Command.LAND);
+            sm_tricking.Execute(Command.LAND);
+            sm_trickPhys.Execute(Command.LAND);
         }
         else
         {
