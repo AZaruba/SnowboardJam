@@ -2,23 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GroundedState : iState
+public class BoostState : iState
 {
 
     private PlayerData c_playerData;
     private AerialMoveData c_aerialMoveData;
     private PlayerPositionData c_positionData;
     private CollisionData c_collisionData;
+    private PlayerHandlingData c_turnData;
 
-    public GroundedState(ref PlayerData playerData,
+    public BoostState(ref PlayerData playerData,
                          ref AerialMoveData aerialMoveData,
                          ref CollisionData collisionData,
-                         ref PlayerPositionData positionData)
+                         ref PlayerPositionData positionData,
+                         ref PlayerHandlingData turnData)
     {
         this.c_playerData = playerData;
         this.c_aerialMoveData = aerialMoveData;
         this.c_positionData = positionData;
         this.c_collisionData = collisionData;
+        this.c_turnData = turnData;
     }
     public void Act()
     {
@@ -49,29 +52,32 @@ public class GroundedState : iState
 
         c_playerData.f_currentRaycastDistance = c_playerData.f_raycastDistance;
         c_playerData.v_currentDown = c_collisionData.v_surfaceNormal * -1;
+        c_turnData.f_turnTopSpeed *= c_turnData.f_boostTurnRatio;
+        c_playerData.f_topSpeed += c_playerData.f_boostBonus;
 
     }
 
     public StateRef GetNextState(Command cmd)
     {
-        if (cmd == Command.CHARGE)
+        if (cmd == Command.STOP_BOOST)
         {
-            // move this to leaving state so forced transition doesn't reset jump power
             c_playerData.f_currentJumpCharge = c_playerData.f_baseJumpPower;
-            return StateRef.CHARGING;
-        }
-        if (cmd == Command.START_BOOST)
-        {
-            return StateRef.GROUNDED_BOOSTING;
+            c_turnData.f_turnTopSpeed /= c_turnData.f_boostTurnRatio;
+            c_playerData.f_topSpeed -= c_playerData.f_boostBonus;
+            return StateRef.GROUNDED;
         }
         if (cmd == Command.FALL)
         {
+            c_turnData.f_turnTopSpeed /= c_turnData.f_boostTurnRatio;
+            c_playerData.f_topSpeed -= c_playerData.f_boostBonus;
             return StateRef.AIRBORNE;
         }
         if (cmd == Command.CRASH)
         {
+            c_turnData.f_turnTopSpeed /= c_turnData.f_boostTurnRatio;
+            c_playerData.f_topSpeed -= c_playerData.f_boostBonus;
             return StateRef.DISABLED;
         }
-        return StateRef.GROUNDED;
+        return StateRef.GROUNDED_BOOSTING;
     }
 }

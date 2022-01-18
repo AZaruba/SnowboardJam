@@ -20,7 +20,7 @@ public static class AccelerationCartridge {
         modelRotation = resultRotation * modelRotation;
         if (velocity > topSpeed)
         {
-            velocity = topSpeed;
+            velocity -= Constants.SPEED_CAP_CORRECTION_VALUE * Time.deltaTime;
         }
 
     }

@@ -8,8 +8,8 @@ public class ControllerInputData
     [SerializeField] public KeyCode JumpButton;
     [SerializeField] public KeyCode JumpKey;
 
-    [SerializeField] public KeyCode TuckButton;
-    [SerializeField] public KeyCode TuckKey;
+    [SerializeField] public KeyCode CrouchButton;
+    [SerializeField] public KeyCode CrouchKey;
 
     [SerializeField] public KeyCode DTrickButton;
     [SerializeField] public KeyCode DTrickKey;

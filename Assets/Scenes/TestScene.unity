@@ -1179,6 +1179,7 @@ MonoBehaviour:
   GravityFactor: 20
   TerminalVelocity: 40
   CrashRecoveryTime: 2
+  BoostTopSpeed: 10
   BackVectorOffset: {x: 0, y: 0, z: 0.5}
   FrontVectorOffset: {x: 0, y: 0, z: -0.5}
   CenterOfGravity: {fileID: 483208281}

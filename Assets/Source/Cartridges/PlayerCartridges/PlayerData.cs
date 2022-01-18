@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerData : MonoBehaviour {
-    
+
+    // Note: these values should be universal base values that will be modified by character stats
     #region Members
     [SerializeField] private float TopSpeed;
     [SerializeField] private float Acceleration;
@@ -18,6 +19,7 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float GravityFactor;
     [SerializeField] private float TerminalVelocity;
     [SerializeField] private float CrashRecoveryTime;
+    [SerializeField] private float BoostTopSpeed;
     [SerializeField] private Vector3 BackVectorOffset;
     [SerializeField] private Vector3 FrontVectorOffset;
     [SerializeField] private Transform CenterOfGravity;
@@ -164,6 +166,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return SurfaceAngleDifference; }
         set { SurfaceAngleDifference = value; }
+    }
+
+    public float f_boostBonus
+    {
+        get { return BoostTopSpeed; }
+        set { BoostTopSpeed = value; }
     }
     #endregion
     #region SerializedActives
@@ -321,7 +329,9 @@ public class PlayerHandlingData
     public float f_lastFrameTurnSpeed;
     public float f_turnResetSpeed;
 
-    public PlayerHandlingData(float turnSpeedIn, float turnAccelIn, float decelIn, float turnResetIn)
+    private float BoostTurnRatio;
+
+    public PlayerHandlingData(float turnSpeedIn, float turnAccelIn, float decelIn, float turnResetIn, float handlingStat)
     {
         this.f_currentTurnSpeed = Constants.ZERO_F;
         this.f_currentRealTurnSpeed = Constants.ZERO_F;
@@ -330,6 +340,13 @@ public class PlayerHandlingData
         this.f_turnTopSpeed = turnSpeedIn;
         this.f_turnResetSpeed = turnResetIn;
         this.f_turnSpeedDeceleration = decelIn;
+        this.f_boostTurnRatio = handlingStat * 0.1f;
+    }
+
+    public float f_boostTurnRatio
+    {
+        get { return BoostTurnRatio; }
+        set { BoostTurnRatio = value; }
     }
 }
 
