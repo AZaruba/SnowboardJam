@@ -20,6 +20,7 @@ public class PlayerData : MonoBehaviour {
     [SerializeField] private float TerminalVelocity;
     [SerializeField] private float CrashRecoveryTime;
     [SerializeField] private float BoostTopSpeed;
+    [SerializeField] private float BoostAcceleration;
     [SerializeField] private Vector3 BackVectorOffset;
     [SerializeField] private Vector3 FrontVectorOffset;
     [SerializeField] private Transform CenterOfGravity;
@@ -172,6 +173,12 @@ public class PlayerData : MonoBehaviour {
     {
         get { return BoostTopSpeed; }
         set { BoostTopSpeed = value; }
+    }
+
+    public float f_boostAcceleration
+    {
+        get { return BoostAcceleration; }
+        set { BoostAcceleration = value; }
     }
     #endregion
     #region SerializedActives

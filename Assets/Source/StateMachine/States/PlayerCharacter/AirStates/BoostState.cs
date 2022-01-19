@@ -28,6 +28,7 @@ public class BoostState : iState
         Vector3 currentNormal = c_collisionData.v_surfaceNormal;
         Quaternion currentRotation = c_playerData.q_currentRotation;
         Quaternion currentModelRotation = c_positionData.q_currentModelRotation;
+        float currentVelocity = c_playerData.f_currentSpeed;
 
         AngleCalculationCartridge.AlignToSurfaceByTail(c_collisionData.v_surfaceNormal,
                                             ref currentRotation,
@@ -38,6 +39,12 @@ public class BoostState : iState
                                             ref currentNormal,
                                             1);
 
+        // boosting adds an extra acceleration force, scale boost rate by vertical direction
+        float scaledBoost = Mathf.Max((c_playerData.q_currentRotation * Vector3.forward).y * c_playerData.f_boostAcceleration * Constants.NEGATIVE_ONE, Constants.ZERO_F);
+        Debug.Log(scaledBoost);
+        AccelerationCartridge.AccelerateAbs(ref currentVelocity, scaledBoost * Time.fixedDeltaTime, c_playerData.f_topSpeed);
+
+        c_playerData.f_currentSpeed = currentVelocity;
         c_playerData.v_currentNormal = currentNormal;
         c_playerData.q_currentRotation = currentRotation;
         c_positionData.q_currentModelRotation = currentModelRotation;

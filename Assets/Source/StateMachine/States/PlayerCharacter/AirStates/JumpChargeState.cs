@@ -59,6 +59,11 @@ public class JumpChargeState : iState
             c_playerData.f_currentJumpCharge = Constants.ZERO_F;
             return StateRef.AIRBORNE;
         }
+        if (cmd == Command.START_BOOST)
+        {
+            c_playerData.f_currentJumpCharge = Constants.ZERO_F;
+            return StateRef.GROUNDED_BOOSTING;
+        }
         if (cmd == Command.JUMP)
         {
             c_playerData.v_currentPosition += Vector3.up * 0.2f;

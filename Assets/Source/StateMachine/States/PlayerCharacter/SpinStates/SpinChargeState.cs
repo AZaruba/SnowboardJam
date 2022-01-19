@@ -36,6 +36,12 @@ public class SpinChargeState : iState
         {
             return StateRef.SPINNING;
         }
+        if (cmd == Command.START_BOOST)
+        {
+            c_trickPhys.f_currentFlipCharge = Constants.ZERO_F;
+            c_trickPhys.f_currentSpinCharge = Constants.ZERO_F;
+            return StateRef.SPIN_IDLE;
+        }
         if (cmd == Command.CRASH)
         {
             return StateRef.SPIN_IDLE;

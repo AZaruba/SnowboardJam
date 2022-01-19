@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     void FixedUpdate()
     {
-        debugAccessor.DisplayFloat("speed", c_playerData.f_currentSpeed);
+        debugAccessor.DisplayFloat("Speed", c_playerData.f_currentSpeed);
         debugAccessor.DisplayState("air state", c_airMachine.GetCurrentState());
         if (!c_stateData.b_updateState)
         {
@@ -253,6 +253,9 @@ public class PlayerController : MonoBehaviour, iEntityController {
         if (GlobalInputController.GetInputAction(ControlAction.CROUCH, KeyValue.PRESSED))
         {
             c_airMachine.Execute(Command.START_BOOST);
+            c_accelMachine.Execute(Command.START_BOOST);
+            c_turnMachine.Execute(Command.START_BOOST);
+            sm_trickPhys.Execute(Command.START_BOOST);
         }
         else if (GlobalInputController.GetInputAction(ControlAction.CROUCH, KeyValue.UP))
         {

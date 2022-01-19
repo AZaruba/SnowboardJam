@@ -124,6 +124,10 @@ public class RidingChargeState : iState
         {
             return StateRef.CRASHED;
         }
+        if (cmd == Command.START_BOOST)
+        {
+            return StateRef.RIDING;
+        }
         return StateRef.CHARGING;
     }
 }
