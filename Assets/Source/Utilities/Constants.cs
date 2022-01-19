@@ -24,6 +24,8 @@ static class Constants
     public const int FORWARD_STANCE = 1;
     public const float SWITCH_ANGLE = 90f;
 
+    public const float SPEED_CAP_CORRECTION_VALUE = 20f;
+
     public const string TIME_FORMAT_STRING = "{0:0}:{1:00}:{2:00}";
 }
 

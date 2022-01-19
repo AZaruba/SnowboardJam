@@ -100,8 +100,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     void FixedUpdate()
     {
-        debugAccessor.DisplayFloat("vertical vel", c_aerialMoveData.f_verticalVelocity);
-        debugAccessor.DisplayState("turn state", c_turnMachine.GetCurrentState());
+        debugAccessor.DisplayFloat("Speed", c_playerData.f_currentSpeed);
+        debugAccessor.DisplayState("air state", c_airMachine.GetCurrentState());
         if (!c_stateData.b_updateState)
         {
             return;
@@ -250,6 +250,18 @@ public class PlayerController : MonoBehaviour, iEntityController {
             c_accelMachine.Execute(Command.STOP);
         }
 
+        if (GlobalInputController.GetInputAction(ControlAction.CROUCH, KeyValue.PRESSED))
+        {
+            c_airMachine.Execute(Command.START_BOOST);
+            c_accelMachine.Execute(Command.START_BOOST);
+            c_turnMachine.Execute(Command.START_BOOST);
+            sm_trickPhys.Execute(Command.START_BOOST);
+        }
+        else if (GlobalInputController.GetInputAction(ControlAction.CROUCH, KeyValue.UP))
+        {
+            c_airMachine.Execute(Command.STOP_BOOST);
+        }
+
         // TODO: split out the sm_trickPhysics machine to ensure that after correcting we can charge the spin again
         if (GlobalInputController.GetInputAction(ControlAction.JUMP, KeyValue.PRESSED))
         {
@@ -290,13 +302,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     }
 
-    /* TODOs
-     * - Reset Character rotation "not instantly" when just riding not turning
-     *   - Make sure this reset is relative to the current switch stance somehow (DONE)
-     *   - Assess the grounded state surface alignment and refactor to be stance-friendly
-     * - Verify switch stance on land
-     *   - If we land "awkwardly" add in some switch state that will swiftly rotate to where we want to be
-     */ 
     void UpdateSwitchStateMachine()
     {
         float modelAndMotionAngleDifference = Vector3.Angle(c_playerData.q_currentRotation * Vector3.forward,
@@ -323,7 +328,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_entityData = new EntityData();
         c_collisionData = new CollisionData(CollisionData.FrontRayOffset, CollisionData.BackRayOffset);
         c_lastFrameData = new LastFramePositionData();
-        c_turnData = new PlayerHandlingData(c_playerData.f_turnSpeed, c_playerData.f_turnAcceleration, c_playerData.f_turnSpeedDeceleration, c_playerData.f_turnAcceleration * 2);
+        c_turnData = new PlayerHandlingData(c_playerData.f_turnSpeed, c_playerData.f_turnAcceleration, c_playerData.f_turnSpeedDeceleration, c_playerData.f_turnAcceleration * 2, this.Attributes.Balance);
 
         c_playerData.v_currentPosition = transform.position;
         c_playerData.q_currentRotation = transform.rotation;
@@ -557,6 +562,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref c_positionData);
         GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData);
+        BoostState s_boost = new BoostState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData, ref c_turnData);
         JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
@@ -565,6 +571,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         c_airMachine.AddState(s_aerial, StateRef.AIRBORNE);
         c_airMachine.AddState(s_jumpCharge, StateRef.CHARGING);
         c_airMachine.AddState(s_airDisabled, StateRef.DISABLED);
+        c_airMachine.AddState(s_boost, StateRef.GROUNDED_BOOSTING);
     }
 
     private void InitializeTurnMachine()

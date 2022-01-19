@@ -625,7 +625,7 @@ public static class GlobalGameData
         if (intVal == default)
         {
             status = false;
-            controlSettings.CrouchBtn = (int)layoutIn.DefaultTuck;
+            controlSettings.CrouchBtn = (int)layoutIn.DefaultCrouch;
         }
         else
         {
@@ -742,7 +742,7 @@ public static class GlobalGameData
         if (intVal == default)
         {
             status = false;
-            controlSettings_controller.CrouchBtn = (int)gamepadLayoutIn.DefaultTuck;
+            controlSettings_controller.CrouchBtn = (int)gamepadLayoutIn.DefaultCrouch;
         }
         else
         {
@@ -863,7 +863,7 @@ public static class GlobalGameData
         if (typeIn == InputType.KEYBOARD_GENERIC)
         {
             SetControlGlobal(DefaultControls.KeyboardLayout.DefaultJump, ControlAction.JUMP, typeIn);
-            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTuck, ControlAction.CROUCH, typeIn);
+            SetControlGlobal(DefaultControls.KeyboardLayout.DefaultCrouch, ControlAction.CROUCH, typeIn);
             SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickU, ControlAction.UP_GRAB, typeIn);
             SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickL, ControlAction.LEFT_GRAB, typeIn);
             SetControlGlobal(DefaultControls.KeyboardLayout.DefaultTrickR, ControlAction.RIGHT_GRAB, typeIn);
@@ -876,7 +876,7 @@ public static class GlobalGameData
         else if (typeIn == InputType.CONTROLLER_GENERIC)
         {
             SetControlGlobal(DefaultControls.XboxLayout.DefaultJump, ControlAction.JUMP, typeIn);
-            SetControlGlobal(DefaultControls.XboxLayout.DefaultTuck, ControlAction.CROUCH, typeIn);
+            SetControlGlobal(DefaultControls.XboxLayout.DefaultCrouch, ControlAction.CROUCH, typeIn);
             SetControlGlobal(DefaultControls.XboxLayout.DefaultTrickU, ControlAction.UP_GRAB, typeIn);
             SetControlGlobal(DefaultControls.XboxLayout.DefaultTrickL, ControlAction.LEFT_GRAB, typeIn);
             SetControlGlobal(DefaultControls.XboxLayout.DefaultTrickR, ControlAction.RIGHT_GRAB, typeIn);

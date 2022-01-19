@@ -113,6 +113,10 @@ public class TurnChargeState : iState
         {
             return StateRef.DISABLED;
         }
+        if (cmd == Command.START_BOOST)
+        {
+            return StateRef.RIDING;
+        }
         return StateRef.CHARGING;
     }
 }

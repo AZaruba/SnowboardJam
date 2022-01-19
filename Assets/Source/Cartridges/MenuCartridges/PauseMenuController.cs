@@ -31,9 +31,14 @@ public class PauseMenuController : MonoBehaviour
         c_activeMenuItem.ExecuteStateMachineCommand(Command.SELECT);
     }
 
-    void Update()
+    private void Update()
     {
-        rectTransform.anchoredPosition = c_activeMenuData.v_currentPosition;
+        rectTransform.anchoredPosition = Utils.InterpolateFixedVector(c_activeMenuData.v_lastFramePosition, c_activeMenuData.v_currentPosition);
+    }
+
+    void FixedUpdate()
+    {
+        c_activeMenuData.v_lastFramePosition = c_activeMenuData.v_currentPosition;
         if (c_activeMenuData.b_showMenu == true)
         {
             float inputAxisValue = GlobalInputController.GetAnalogInputAction(ControlAction.FLIP_AXIS);

@@ -1167,7 +1167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TopSpeed: 25
-  Acceleration: 0.2
+  Acceleration: 10
   StartBoost: 5
   BrakePower: 10
   TurnSpeed: 200
@@ -1179,6 +1179,8 @@ MonoBehaviour:
   GravityFactor: 20
   TerminalVelocity: 40
   CrashRecoveryTime: 2
+  BoostTopSpeed: 10
+  BoostAcceleration: 3000
   BackVectorOffset: {x: 0, y: 0, z: 0.5}
   FrontVectorOffset: {x: 0, y: 0, z: -0.5}
   CenterOfGravity: {fileID: 483208281}

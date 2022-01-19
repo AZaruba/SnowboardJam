@@ -242,6 +242,9 @@ public static class GlobalInputController
         DigitalActionValue_Keyboard[ControlAction.JUMP] = KeyValue.IDLE;
         DigitalActionInput_Keyboard[ControlAction.JUMP] = GlobalGameData.GetActionSetting(ControlAction.JUMP);
 
+        DigitalActionValue_Keyboard[ControlAction.CROUCH] = KeyValue.IDLE;
+        DigitalActionInput_Keyboard[ControlAction.CROUCH] = GlobalGameData.GetActionSetting(ControlAction.CROUCH);
+
         DigitalActionValue_Keyboard[ControlAction.DOWN_GRAB] = KeyValue.IDLE;
         DigitalActionInput_Keyboard[ControlAction.DOWN_GRAB] = GlobalGameData.GetActionSetting(ControlAction.DOWN_GRAB);
 
@@ -281,6 +284,9 @@ public static class GlobalInputController
     {
         DigitalActionValue_Gamepad[ControlAction.JUMP] = KeyValue.IDLE;
         DigitalActionInput_Gamepad[ControlAction.JUMP] = GlobalGameData.GetActionSetting(ControlAction.JUMP, InputType.CONTROLLER_GENERIC);
+
+        DigitalActionValue_Gamepad[ControlAction.CROUCH] = KeyValue.IDLE;
+        DigitalActionInput_Gamepad[ControlAction.CROUCH] = GlobalGameData.GetActionSetting(ControlAction.CROUCH);
 
         DigitalActionValue_Gamepad[ControlAction.DOWN_GRAB] = KeyValue.IDLE;
         DigitalActionInput_Gamepad[ControlAction.DOWN_GRAB] = GlobalGameData.GetActionSetting(ControlAction.DOWN_GRAB, InputType.CONTROLLER_GENERIC);
@@ -365,7 +371,6 @@ public static class GlobalInputController
         return KeyCode.None;
     }
 
-    // TODO: play a game that allows both inputs and analyze how messing with both input types works
     public static bool GetInputAction(ControlAction actIn, KeyValue desiredValue)
     {
         /*
@@ -392,17 +397,13 @@ public static class GlobalInputController
         {
             case KeyValue.IDLE:
                 return ControllerValue == desiredValue && KeyboardValue == desiredValue;
-                break;
             case KeyValue.PRESSED:
                 return ControllerValue == desiredValue || KeyboardValue == desiredValue;
-                break;
             case KeyValue.HELD:
                 return ControllerValue == desiredValue || KeyboardValue == desiredValue;
-                break;
             case KeyValue.UP:
                 return (ControllerValue == desiredValue && (KeyboardValue & KeyValue.UP_VALID) != KeyValue.BTN_NOT_FOUND) || 
                        (KeyboardValue == desiredValue && (ControllerValue & KeyValue.UP_VALID) != KeyValue.BTN_NOT_FOUND);
-                break;
         }
 
         return false;
@@ -611,6 +612,7 @@ public static class GlobalInputController
         InputType oldInputType = activeControllerType;
 
         CheckAndSetKeyValue(ControlAction.JUMP);
+        CheckAndSetKeyValue(ControlAction.CROUCH);
         CheckAndSetKeyValue(ControlAction.LEFT_GRAB);
         CheckAndSetKeyValue(ControlAction.RIGHT_GRAB);
         CheckAndSetKeyValue(ControlAction.DOWN_GRAB);
@@ -639,6 +641,7 @@ public static class GlobalInputController
     public static void FlushInputs()
     {
         ResetKey(ControlAction.JUMP);
+        ResetKey(ControlAction.CROUCH);
         ResetKey(ControlAction.LEFT_GRAB);
         ResetKey(ControlAction.RIGHT_GRAB);
         ResetKey(ControlAction.DOWN_GRAB);
@@ -832,7 +835,7 @@ public class DefaultControlLayout
     public KeyCode DefaultTrickD;
     public KeyCode DefaultJump;
 
-    public KeyCode DefaultTuck;
+    public KeyCode DefaultCrouch;
     public KeyCode DefaultBack;
     public KeyCode DefaultConfirm;
 
@@ -867,7 +870,7 @@ public static class DefaultControls
         KeyboardLayout.DefaultTrickD = KeyCode.K;
         KeyboardLayout.DefaultJump = KeyCode.Space;
 
-        KeyboardLayout.DefaultTuck = KeyCode.LeftControl;
+        KeyboardLayout.DefaultCrouch = KeyCode.LeftControl;
         KeyboardLayout.DefaultBack = KeyCode.L;
         KeyboardLayout.DefaultConfirm = KeyCode.K;
 
@@ -887,7 +890,7 @@ public static class DefaultControls
         PSLayout.DefaultTrickD = KeyCode.Joystick1Button1;
         PSLayout.DefaultJump = KeyCode.Joystick1Button5;
 
-        PSLayout.DefaultTuck = KeyCode.Joystick1Button4;
+        PSLayout.DefaultCrouch = KeyCode.Joystick1Button4;
         PSLayout.DefaultBack = KeyCode.Joystick1Button2;
         PSLayout.DefaultConfirm = KeyCode.Joystick1Button1;
 
@@ -907,7 +910,7 @@ public static class DefaultControls
         XboxLayout.DefaultTrickD = KeyCode.Joystick1Button0;
         XboxLayout.DefaultJump = KeyCode.Joystick1Button5;
 
-        XboxLayout.DefaultTuck = KeyCode.Joystick1Button4;
+        XboxLayout.DefaultCrouch = KeyCode.Joystick1Button4;
         XboxLayout.DefaultBack = KeyCode.Joystick1Button1;
         XboxLayout.DefaultConfirm = KeyCode.Joystick1Button0;
 

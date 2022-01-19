@@ -15,6 +15,8 @@ public enum Command {
     SLOW,
     STOP, // when velocity reaches zero
     CHARGE,
+    START_BOOST,
+    STOP_BOOST,
     CRASH,
     BONK,
     LAND,
@@ -113,6 +115,7 @@ public enum StateRef {
 
     #region AirStates
     GROUNDED,
+    GROUNDED_BOOSTING,
     #endregion
 
     #region CameraStates
