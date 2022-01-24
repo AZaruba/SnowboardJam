@@ -138,13 +138,10 @@ public static class InputSpriteController
         {
             case InputType.KEYBOARD_GENERIC:
                 return new List<KeyCode>(INPUT_SPRITES_KEYBOARD.Keys);
-                break;
             case InputType.CONTROLLER_XBOX:
                 return new List<KeyCode>(INPUT_SPRITES_XBOX.Keys);
-                break;
             case InputType.CONTROLLER_PS:
                 return new List<KeyCode>(INPUT_SPRITES_PS.Keys);
-                break;
         }
         return new List<KeyCode>();
     }
