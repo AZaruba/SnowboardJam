@@ -516,7 +516,7 @@ public static class GlobalInputController
              * ----|------|---------
              * UP  | PRES | IDLE
              */
-
+             
             switch (frameValue)
             {
                 case KeyValue.IDLE:

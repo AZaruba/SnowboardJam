@@ -58,3 +58,6 @@ SnowboardJam.sln
 *.sln
 
 *.blend1
+
+.fake
+.ionide

@@ -371,10 +371,6 @@ public static class GlobalGameData
     }
     public static bool SetSettingsValue(DataTarget target, float value)
     {
-        switch (target)
-        {
-            // no floats currently
-        }
         return true;
     }
     public static bool SetSettingsValue(DataTarget target, bool value)
