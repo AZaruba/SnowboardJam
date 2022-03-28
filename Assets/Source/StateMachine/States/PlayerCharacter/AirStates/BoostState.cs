@@ -41,7 +41,6 @@ public class BoostState : iState
 
         // boosting adds an extra acceleration force, scale boost rate by vertical direction
         float scaledBoost = Mathf.Max((c_playerData.q_currentRotation * Vector3.forward).y * c_playerData.f_boostAcceleration * Constants.NEGATIVE_ONE, Constants.ZERO_F);
-        Debug.Log(scaledBoost);
         AccelerationCartridge.AccelerateAbs(ref currentVelocity, scaledBoost * Time.fixedDeltaTime, c_playerData.f_topSpeed);
 
         c_playerData.f_currentSpeed = currentVelocity;

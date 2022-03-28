@@ -418,15 +418,20 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     /* 
      * ISSUES:
-     * Why are we wiggling to one side or the other on the ground?
+     * Player should have littles hop on and off the ground based on speed
+     *     - speed should be be compared against gravity
+     *     - having this implemented should also reveal issues with the ground-air transition
+     * Player should NOT rotate before touching the ground
+     *     - this is caused by an ostensibly incorrect heuristic for alignment distance
+     *     - should it be EXACT or based on downward travel? Experiments are necessary
      * 
-     * If we're accurately moving on the ground, it seems to work great!
      * Down the road: wall collisions
      */  
     private void CheckForGround3()
     {
         if (c_collisionController.CheckForGround4())
         {
+            Debug.Log("ground hit 4");
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
 
             c_accelMachine.Execute(Command.LAND);
@@ -460,37 +465,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_trickPhys.Execute(Command.FALL);
             sm_tricking.Execute(Command.READY_TRICK);
         }
-        /*
-        else if (!c_collisionController.CheckForAir())
-        {
-            debugAccessor.DisplayString("NOT DETECTIN'");
-            debugAccessor.DisplayVector3("AIR CHECK AERIAL", Vector3.zero);
-            c_collisionData.v_attachPoint = Vector3.zero;
-
-            c_accelMachine.Execute(Command.FALL);
-            c_turnMachine.Execute(Command.FALL);
-            c_airMachine.Execute(Command.FALL);
-            sm_trickPhys.Execute(Command.FALL);
-            sm_tricking.Execute(Command.READY_TRICK);
-        }
-        else
-        {
-            debugAccessor.DisplayString("NOT DETECTIN'");
-            debugAccessor.DisplayVector3("AIR CHECK GROUNDED", Vector3.zero);
-            c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
-
-            c_accelMachine.Execute(Command.LAND);
-            c_turnMachine.Execute(Command.LAND);
-            c_airMachine.Execute(Command.LAND);
-            sm_tricking.Execute(Command.LAND);s
-            sm_trickPhys.Execute(Command.LAND);
-
-        }
-        */
         if (c_collisionController.CheckGroundRotation())
         {
-            // force player rotation before checking
-
             // is this wrong?
             Vector3 projectedRotation = Vector3.ProjectOnPlane(c_positionData.q_currentModelRotation * Vector3.forward, c_collisionData.v_surfaceNormal);
             c_positionData.q_currentModelRotation = Quaternion.LookRotation(projectedRotation, c_collisionData.v_surfaceNormal);

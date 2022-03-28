@@ -47,16 +47,29 @@ public class CollisionController
     /// <returns>Whether the raycast finds a normal</returns>
     public bool CheckGroundRotation()
     {
+        // draw a box here, check to see what this guy looks like
+        DrawCubePoints(CubePoints(c_playerData.v_currentPosition + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset, new Vector3(0.25f, 0.25f, 0.25f), c_playerData.q_currentRotation), Color.cyan);
+
+        // TODO: assess distance and under what circumstances we would realign
         if (Physics.Raycast(c_playerData.v_currentPosition + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset,
-                                           c_playerData.q_currentRotation * Vector3.down,
+                                           Vector3.down,
                                            out h_groundCheck,
                                            (c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.deltaTime + c_collisionAttrs.CenterOffset.y * 2,
                                            i_groundCollisionMask))
         {
+            DrawCubePoints(CubePoints(c_playerData.v_currentPosition + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset
+                + c_playerData.q_currentRotation * Vector3.down *
+                ((c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.deltaTime + c_collisionAttrs.CenterOffset.y * 2),
+                new Vector3(0.25f, 0.25f, 0.25f), c_playerData.q_currentRotation), Color.magenta);
+
             c_collisionData.v_surfaceNormal = Utils.GetBaryCentricNormal(h_groundCheck);
 
             return true;
         }
+        DrawCubePoints(CubePoints(c_playerData.v_currentPosition + c_playerData.q_currentRotation * c_collisionAttrs.CenterOffset
+            + c_playerData.q_currentRotation * Vector3.down *
+            ((c_playerData.f_gravity + (c_aerialMoveData.f_verticalVelocity * -1)) * Time.deltaTime + c_collisionAttrs.CenterOffset.y * 2),
+            new Vector3(0.25f, 0.25f, 0.25f), c_playerData.q_currentRotation), Color.cyan);
         return false;
     }
 
@@ -115,8 +128,6 @@ public class CollisionController
         return boxCasted;
     }
 
-    // TODO: upward travel makes it all goofylike
-
     /// <summary>
     /// Calculates the distance to check downward for triggering the "fall"
     /// state based on the current velocity
@@ -124,8 +135,6 @@ public class CollisionController
     /// <returns>The total distance of the raycast check</returns>
     private void CalculateRaycastDistance(out float upwardDistance, out float downwardDistance)
     {
-        // TODO: come up with better distnace heuristics
-
         // upward dist raises the scan start point, so any upward vertical velocity should increase it
         upwardDistance = c_aerialMoveData.f_verticalVelocity > Constants.ZERO_F ? c_aerialMoveData.f_verticalVelocity * Constants.NEGATIVE_ONE * Time.deltaTime : Constants.ZERO_F;
 
