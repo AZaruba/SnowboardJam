@@ -16,7 +16,6 @@ public class ResolutionListEditController : iEditController
         l_resolutions = Screen.resolutions;
         i_currentValue = FindCurrentResolutionIndex();
 
-        InitializeCarts();
         InitializeData();
         InitializeStateMachine();
         // get the settings resolution
@@ -120,17 +119,12 @@ public class ResolutionListEditController : iEditController
         i_lastStoredValue = c_controllerData.i;
     }
 
-    public void InitializeCarts()
-    {
-        cart_incr = new IncrementCartridge();
-    }
-
     public override void InitializeStateMachine()
     {
         DataEditDisabledState disabledState = new DataEditDisabledState(ref c_controllerData);
         DataEditReadyState readyState = new DataEditReadyState(ref c_controllerData);
-        DataEditWaitState waitState = new DataEditWaitState(ref c_controllerData, ref cart_incr);
-        IntEditTickState tickState = new IntEditTickState(ref c_controllerData, ref cart_incr);
+        DataEditWaitState waitState = new DataEditWaitState(ref c_controllerData);
+        IntEditTickState tickState = new IntEditTickState(ref c_controllerData);
 
         sm_editController = new StateMachine(disabledState, StateRef.MENU_DISABLED);
         sm_editController.AddState(readyState, StateRef.MENU_READY);

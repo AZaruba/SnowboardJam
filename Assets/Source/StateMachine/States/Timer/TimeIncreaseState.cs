@@ -4,19 +4,17 @@ using UnityEngine;
 
 public class TimeIncreaseState : iState
 {
-    IncrementCartridge cart_incr;
     TimerData c_timerData;
 
-    public TimeIncreaseState(ref TimerData tData, ref IncrementCartridge incr)
+    public TimeIncreaseState(ref TimerData tData)
     {
-        this.cart_incr = incr;
         this.c_timerData = tData;
     }
     public void Act()
     {
         float currentTime = c_timerData.f_currentTime;
 
-        cart_incr.Increment(ref currentTime, Time.deltaTime);
+        IncrementCartridge.Increment(ref currentTime, Time.deltaTime);
 
         c_timerData.f_currentTime = currentTime;
     }

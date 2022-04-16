@@ -4,43 +4,59 @@ using UnityEngine;
 
 public class SpinIdleState : iState
 {
-    private TrickPhysicsData c_trickPhys;
+    private TrickPhysicsData c_physData;
     private PlayerPositionData c_posData;
 
     public SpinIdleState(ref TrickPhysicsData dataIn, ref PlayerPositionData posDataIn)
     {
-        this.c_trickPhys = dataIn;
+        this.c_physData = dataIn;
         this.c_posData = posDataIn;
     }
 
     public void Act()
     {
-        
+        Quaternion root = c_physData.q_startRotation;
+        Quaternion currentRotation = c_physData.q_startRotation;
+
+        Vector3 spinAxis = Vector3.up;
+        Vector3 flipAxis = Vector3.right;
+
+        float currentSpinRate = c_physData.f_currentSpinRate;
+        float currentFlipRate = c_physData.f_currentFlipRate;
+
+        float currentSpinDegrees = c_physData.f_currentSpinDegrees;
+        float currentFlipDegrees = c_physData.f_currentFlipDegrees;
+
+        HandlingCartridge.Turn(flipAxis, currentFlipDegrees, ref root);
+        HandlingCartridge.Turn(spinAxis, currentSpinDegrees, ref root);
+        HandlingCartridge.SetRotation(ref currentRotation, root);
+
+        IncrementCartridge.DecrementAbs(ref currentFlipRate, c_physData.f_flipDecay * Time.fixedDeltaTime, 0.0f);
+        IncrementCartridge.DecrementAbs(ref currentSpinRate, c_physData.f_spinDecay * Time.fixedDeltaTime, 0.0f);
+
+        c_posData.q_centerOfGravityRotation = currentRotation;
+        c_physData.f_currentFlipRate = currentFlipRate;
+        c_physData.f_currentSpinRate = currentSpinRate;
+        c_physData.f_currentSpinDegrees += currentSpinRate * 360f * Time.fixedDeltaTime;
+        c_physData.f_currentFlipDegrees += currentFlipRate * 360f * Time.fixedDeltaTime;
+
     }
 
     public StateRef GetNextState(Command cmd)
     {
-        if (cmd == Command.CHARGE)
+        if (cmd == Command.SPIN_START)
         {
-            return StateRef.SPIN_CHARGE;
+            return StateRef.SPINNING;
+        }
+        if (cmd == Command.LAND)
+        {
+            return StateRef.SPIN_DISABLED;
         }
         return StateRef.SPIN_IDLE;
     }
 
     public void TransitionAct()
     {
-        c_trickPhys.f_currentFlipCharge = Constants.ZERO_F;
-        c_trickPhys.f_currentSpinCharge = Constants.ZERO_F;
-        c_trickPhys.f_currentFlipRate = Constants.ZERO_F;
-        c_trickPhys.f_currentSpinRate = Constants.ZERO_F;
 
-        c_trickPhys.f_currentFlipDegrees = Constants.ZERO_F;
-        c_trickPhys.f_currentSpinDegrees = Constants.ZERO_F;
-
-        c_trickPhys.f_groundResetRotation = Constants.ZERO_F;
-        c_trickPhys.f_groundResetTarget = Constants.ZERO_F;
-
-        // reset center of gravity rotation to the current rotation on land
-        c_posData.q_centerOfGravityRotation = Quaternion.identity;
     }
 }

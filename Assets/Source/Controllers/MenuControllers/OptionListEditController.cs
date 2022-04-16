@@ -9,7 +9,6 @@ public class OptionListEditController : IntegerEditController
 
     private void Start()
     {
-        base.InitializeCarts();
         InitializeData();
         base.InitializeStateMachine();
 

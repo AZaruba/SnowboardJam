@@ -5,18 +5,16 @@ using UnityEngine;
 public class DataEditWaitState : iState
 {
     private EditControllerData c_ctrlData;
-    private IncrementCartridge cart_incr;
 
-    public DataEditWaitState(ref EditControllerData editIn, ref IncrementCartridge incr)
+    public DataEditWaitState(ref EditControllerData editIn)
     {
         this.c_ctrlData = editIn;
-        this.cart_incr = incr;
     }
 
     public void Act()
     {
         float currentTickTime = c_ctrlData.f_currentTickTime;
-        cart_incr.Increment(ref currentTickTime, Time.deltaTime, c_ctrlData.f_maxTickTime);
+        IncrementCartridge.Increment(ref currentTickTime, Time.deltaTime, c_ctrlData.f_maxTickTime);
         c_ctrlData.f_currentTickTime = currentTickTime;
     }
 

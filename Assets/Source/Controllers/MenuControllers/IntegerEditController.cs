@@ -30,8 +30,6 @@ public class IntegerEditController : iEditController
 
     private void Start()
     {
-        
-        InitializeCarts();
         InitializeData();
         InitializeStateMachine();
         c_controllerData.i = GlobalGameData.GetSettingsInt(CurrentTarget);
@@ -120,17 +118,12 @@ public class IntegerEditController : iEditController
         GlobalInputController.ResetKey(ControlAction.BACK);
     }
 
-    public void InitializeCarts()
-    {
-        cart_incr = new IncrementCartridge();
-    }
-
     public override void InitializeStateMachine()
     {
         DataEditDisabledState disabledState = new DataEditDisabledState(ref c_controllerData);
         DataEditReadyState readyState = new DataEditReadyState(ref c_controllerData);
-        DataEditWaitState waitState = new DataEditWaitState(ref c_controllerData, ref cart_incr);
-        IntEditTickState tickState = new IntEditTickState(ref c_controllerData, ref cart_incr);
+        DataEditWaitState waitState = new DataEditWaitState(ref c_controllerData);
+        IntEditTickState tickState = new IntEditTickState(ref c_controllerData);
 
         sm_editController = new StateMachine(disabledState, StateRef.MENU_DISABLED);
         sm_editController.AddState(readyState, StateRef.MENU_READY);

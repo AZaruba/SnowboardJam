@@ -13,7 +13,6 @@ public class PauseMenuController : MonoBehaviour
 
     private iMenuItemController c_activeMenuItem;
     private ActiveMenuData c_activeMenuData;
-    private IncrementCartridge cart_incr;
     private LerpCartridge cart_lerp;
 
     private iMessageClient c_messageClient;
@@ -130,7 +129,6 @@ public class PauseMenuController : MonoBehaviour
     /// </summary>
     private void InitializeStateMachine()
     {
-        cart_incr = new IncrementCartridge();
         cart_lerp = new LerpCartridge();
 
         MenuDisabledState s_disabled = new MenuDisabledState();
@@ -138,7 +136,7 @@ public class PauseMenuController : MonoBehaviour
         MenuShowState s_shown = new MenuShowState(ref c_activeMenuData, ref ControllerData, ref cart_lerp);
 
         MenuReadyState s_ready = new MenuReadyState(ref c_activeMenuData);
-        MenuWaitState s_wait = new MenuWaitState(ref ControllerData, ref c_activeMenuData, ref cart_incr);
+        MenuWaitState s_wait = new MenuWaitState(ref ControllerData, ref c_activeMenuData);
         MenuTickState s_tick = new MenuTickState(ref c_activeMenuData);
 
         sm_menuInput = new StateMachine(s_disabled, StateRef.MENU_DISABLED);

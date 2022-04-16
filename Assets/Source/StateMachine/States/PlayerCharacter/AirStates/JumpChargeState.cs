@@ -8,15 +8,13 @@ public class JumpChargeState : iState
     private PlayerPositionData c_positionData;
     private CollisionData c_collisionData;
     private AerialMoveData c_aerialMoveData;
-    private IncrementCartridge cart_increment;
     
-    public JumpChargeState(ref PlayerData playerData, ref PlayerPositionData positionData, ref CollisionData collisionData, ref AerialMoveData aerialMoveData, ref IncrementCartridge incr)
+    public JumpChargeState(ref PlayerData playerData, ref PlayerPositionData positionData, ref CollisionData collisionData, ref AerialMoveData aerialMoveData)
     {
         this.c_playerData = playerData;
         this.c_positionData = positionData;
         this.c_aerialMoveData = aerialMoveData;
         this.c_collisionData = collisionData;
-        this.cart_increment = incr;
     }
 
     public void Act()
@@ -25,7 +23,7 @@ public class JumpChargeState : iState
         float chargeValue = c_playerData.f_currentJumpCharge;
         float chargeDelta = c_playerData.f_jumpChargeRate;
 
-        cart_increment.Increment(ref chargeValue, chargeDelta * Time.deltaTime, chargeCap);
+        IncrementCartridge.Increment(ref chargeValue, chargeDelta * Time.deltaTime, chargeCap);
 
         c_playerData.f_currentJumpCharge = chargeValue;
 

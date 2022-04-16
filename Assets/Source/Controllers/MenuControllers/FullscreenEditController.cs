@@ -6,7 +6,6 @@ public class FullscreenEditController : IntegerEditController
 {
     public void Start()
     {
-        InitializeCarts();
         InitializeData();
         InitializeStateMachine();
         ValueDisplay.text = GetMappedText();

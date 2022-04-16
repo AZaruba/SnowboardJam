@@ -6,7 +6,6 @@ public class QualityEditController : IntegerEditController
 {
     public void Start()
     {
-        InitializeCarts();
         InitializeData();
         InitializeStateMachine();
         ValueDisplay.text = QualitySettings.names[c_controllerData.i];

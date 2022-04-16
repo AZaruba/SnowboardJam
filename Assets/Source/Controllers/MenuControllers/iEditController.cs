@@ -11,8 +11,6 @@ public abstract class iEditController : MonoBehaviour
     public StateMachine sm_editController;
     public EditControllerData c_controllerData;
 
-    public IncrementCartridge cart_incr;
-
     private void Start()
     {
         InitializeData();
@@ -81,8 +79,8 @@ public abstract class iEditController : MonoBehaviour
     {
         DataEditDisabledState disabledState = new DataEditDisabledState(ref c_controllerData);
         DataEditReadyState readyState = new DataEditReadyState(ref c_controllerData);
-        DataEditWaitState waitState = new DataEditWaitState(ref c_controllerData, ref cart_incr);
-        IntEditTickState tickState = new IntEditTickState(ref c_controllerData, ref cart_incr);
+        DataEditWaitState waitState = new DataEditWaitState(ref c_controllerData);
+        IntEditTickState tickState = new IntEditTickState(ref c_controllerData);
 
         sm_editController = new StateMachine(disabledState, StateRef.MENU_DISABLED);
         sm_editController.AddState(readyState, StateRef.MENU_READY);

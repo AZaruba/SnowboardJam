@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class TrickingState : iState
 {
-    private IncrementCartridge cart_incr;
 
     private TrickData c_trickData;
     private ScoringData c_scoreData;
 
-    public TrickingState(ref TrickData trickIn, ref ScoringData scoreIn, ref IncrementCartridge cartIn)
+    public TrickingState(ref TrickData trickIn, ref ScoringData scoreIn)
     {
-        cart_incr = cartIn;
         c_trickData = trickIn;
         c_scoreData = scoreIn;
     }
@@ -20,7 +18,7 @@ public class TrickingState : iState
     {
         float trickTime = c_trickData.f_trickTime;
 
-        cart_incr.Increment(ref trickTime, Time.fixedDeltaTime);
+        IncrementCartridge.Increment(ref trickTime, Time.fixedDeltaTime);
 
         c_trickData.f_trickTime = trickTime;
     }

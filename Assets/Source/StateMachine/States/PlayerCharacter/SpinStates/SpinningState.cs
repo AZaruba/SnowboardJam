@@ -6,14 +6,13 @@ public class SpinningState : iState
 {
     private TrickPhysicsData c_physData;
     private PlayerPositionData c_playerPosData;
-    private IncrementCartridge cart_incr;
+    private PlayerInputData c_playerInput;
 
-    public SpinningState(ref TrickPhysicsData dataIn, ref PlayerPositionData posIn,
-        ref IncrementCartridge incrIn)
+    public SpinningState(ref TrickPhysicsData dataIn, ref PlayerPositionData posIn, ref PlayerInputData inputIn)
     {
         this.c_physData = dataIn;
         this.c_playerPosData = posIn;
-        this.cart_incr = incrIn;
+        this.c_playerInput = inputIn;
     }
 
     public void Act()
@@ -30,12 +29,15 @@ public class SpinningState : iState
         float currentSpinDegrees = c_physData.f_currentSpinDegrees;
         float currentFlipDegrees = c_physData.f_currentFlipDegrees;
 
+        float flipChargeRate = c_physData.f_flipIncrement * c_playerInput.f_inputAxisLVert;
+        float spinChargeRate = c_physData.f_spinIncrement * c_playerInput.f_inputAxisLHoriz;
+
         HandlingCartridge.Turn(flipAxis, currentFlipDegrees, ref root);
         HandlingCartridge.Turn(spinAxis, currentSpinDegrees, ref root);
         HandlingCartridge.SetRotation(ref currentRotation, root);
 
-        cart_incr.DecrementAbs(ref currentFlipRate, c_physData.f_flipDecay * Time.fixedDeltaTime, 0.0f);
-        cart_incr.DecrementAbs(ref currentSpinRate, c_physData.f_spinDecay * Time.fixedDeltaTime, 0.0f);
+        IncrementCartridge.IncrementAbs(ref currentFlipRate, flipChargeRate * Time.fixedDeltaTime, c_physData.f_maxFlipRate);
+        IncrementCartridge.IncrementAbs(ref currentSpinRate, spinChargeRate * Time.fixedDeltaTime, c_physData.f_maxSpinRate);
 
         c_playerPosData.q_centerOfGravityRotation = currentRotation;
         c_physData.f_currentFlipRate = currentFlipRate;
@@ -56,7 +58,7 @@ public class SpinningState : iState
         }
         if (cmd == Command.SPIN_STOP)
         {
-            return StateRef.SPIN_RESET;
+            return StateRef.SPIN_IDLE;
         }
         return StateRef.SPINNING;
     }

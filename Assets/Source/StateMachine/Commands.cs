@@ -23,6 +23,7 @@ public enum Command {
     FALL,
     JUMP,
     READY,
+    SPIN_START,
     SPIN_STOP,
     SPIN_CORRECT_BEGIN,
     SPIN_CORRECT_END,
@@ -146,6 +147,7 @@ public enum StateRef {
     #endregion
 
     #region SpinStates
+    SPIN_DISABLED,
     SPIN_IDLE,
     SPINNING,
     SPIN_CHARGE,

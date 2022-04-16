@@ -44,9 +44,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private CollisionController c_collisionController;
 
-    // cartridge list
-    private IncrementCartridge cart_incr;
-
     // Cached Calculation items
     RaycastHit frontHit;
     RaycastHit backHit;
@@ -66,7 +63,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     void Awake()
     {
         SetDefaultPlayerData();
-        cart_incr = new IncrementCartridge();
 
         InitializeStateMachines();
         InitializeAudioController();
@@ -100,8 +96,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     void FixedUpdate()
     {
-        debugAccessor.DisplayFloat("Speed", c_playerData.f_currentSpeed);
-        debugAccessor.DisplayState("air state", c_airMachine.GetCurrentState());
+        debugAccessor.DisplayFloat("Spin Rate", c_trickPhysicsData.f_currentSpinRate);
+        debugAccessor.DisplayState("Spin State", sm_trickPhys.GetCurrentState());
         if (!c_stateData.b_updateState)
         {
             return;
@@ -230,6 +226,10 @@ public class PlayerController : MonoBehaviour, iEntityController {
             Mathf.Abs(c_inputData.f_inputAxisLVert) <= 0.0f)
         {
             sm_trickPhys.Execute(Command.SPIN_STOP);
+        }
+        else
+        {
+            sm_trickPhys.Execute(Command.SPIN_START);
         }
 
         if (c_inputData.f_inputAxisLVert < 0.0f)
@@ -521,7 +521,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         RidingState s_riding = new RidingState(ref c_playerData, ref c_positionData, ref c_collisionData);
         RidingChargeState s_ridingCharge = new RidingChargeState(ref c_playerData, ref c_positionData, ref c_collisionData);
         SlowingState s_slowing = new SlowingState(ref c_playerData, ref c_collisionData, ref c_inputData, ref c_positionData);
-        CrashedState s_crashed = new CrashedState(ref c_playerData, ref cart_incr);
+        CrashedState s_crashed = new CrashedState(ref c_playerData);
 
         c_accelMachine = new StateMachine(StateRef.STATIONARY);
         c_accelMachine.AddState(s_stationary, StateRef.STATIONARY);
@@ -539,7 +539,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         AerialState s_aerial = new AerialState(ref c_playerData, ref c_collisionData, ref c_aerialMoveData, ref c_positionData);
         GroundedState s_grounded = new GroundedState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData);
         BoostState s_boost = new BoostState(ref c_playerData, ref c_aerialMoveData, ref c_collisionData, ref c_positionData, ref c_turnData);
-        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref c_aerialMoveData, ref cart_incr);
+        JumpChargeState s_jumpCharge = new JumpChargeState(ref c_playerData, ref c_positionData, ref c_collisionData, ref c_aerialMoveData);
         AirDisabledState s_airDisabled = new AirDisabledState();
 
         c_airMachine = new StateMachine(StateRef.GROUNDED);
@@ -567,13 +567,15 @@ public class PlayerController : MonoBehaviour, iEntityController {
 
     private void InitializeTrickPhysicsMachine()
     {
+        SpinDisabledState s_spinDisabled = new SpinDisabledState(ref c_trickPhysicsData, ref c_positionData);
         SpinIdleState s_spinIdle = new SpinIdleState(ref c_trickPhysicsData, ref c_positionData);
-        SpinChargeState s_spinCharge = new SpinChargeState(ref c_trickPhysicsData, ref c_inputData, ref cart_incr);
-        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref cart_incr);
+        SpinChargeState s_spinCharge = new SpinChargeState(ref c_trickPhysicsData, ref c_inputData);
+        SpinningState s_spinning = new SpinningState(ref c_trickPhysicsData, ref c_positionData, ref c_inputData);
         SpinSnapState s_spinSnap = new SpinSnapState(ref c_aerialMoveData, ref c_positionData, ref c_trickPhysicsData, ref c_scoringData);
         SpinCorrectState s_spinCorrect = new SpinCorrectState(ref c_trickPhysicsData, ref c_playerData, ref c_positionData);
 
-        sm_trickPhys = new StateMachine(StateRef.SPIN_IDLE);
+        sm_trickPhys = new StateMachine(StateRef.SPIN_DISABLED);
+        sm_trickPhys.AddState(s_spinDisabled, StateRef.SPIN_DISABLED);
         sm_trickPhys.AddState(s_spinIdle, StateRef.SPIN_IDLE);
         sm_trickPhys.AddState(s_spinCharge, StateRef.SPIN_CHARGE);
         sm_trickPhys.AddState(s_spinning, StateRef.SPINNING);
@@ -586,7 +588,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
         TrickDisabledState s_trickDisabled = new TrickDisabledState(ref trickData, ref c_scoringData);
         TrickReadyState s_trickReady = new TrickReadyState();
         TrickTransitionState s_trickTransition = new TrickTransitionState(ref trickData, ref c_scoringData);
-        TrickingState s_tricking = new TrickingState(ref trickData, ref c_scoringData, ref cart_incr);
+        TrickingState s_tricking = new TrickingState(ref trickData, ref c_scoringData);
 
         sm_tricking = new StateMachine(StateRef.TRICK_DISABLED);
         sm_tricking.AddState(s_trickDisabled, StateRef.TRICK_DISABLED);

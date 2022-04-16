@@ -5,12 +5,10 @@ using UnityEngine;
 public class IntEditTickState : iState
 {
     private EditControllerData c_ctrlData;
-    private IncrementCartridge cart_incr;
 
-    public IntEditTickState(ref EditControllerData editIn, ref IncrementCartridge incr)
+    public IntEditTickState(ref EditControllerData editIn)
     {
         this.c_ctrlData = editIn;
-        this.cart_incr = incr;
     }
 
     public void Act()
@@ -37,11 +35,11 @@ public class IntEditTickState : iState
 
         if (c_ctrlData.i_increasing > 0)
         {
-            cart_incr.Increment(ref currentValue, Constants.ONE, c_ctrlData.i_max);
+            IncrementCartridge.Increment(ref currentValue, Constants.ONE, c_ctrlData.i_max);
         }
         else if (c_ctrlData.i_increasing < 0) // we should never reach this line with == 0 but just in case...
         {
-            cart_incr.Decrement(ref currentValue, Constants.ONE, c_ctrlData.i_min);
+            IncrementCartridge.Decrement(ref currentValue, Constants.ONE, c_ctrlData.i_min);
         }
 
         c_ctrlData.i = currentValue;

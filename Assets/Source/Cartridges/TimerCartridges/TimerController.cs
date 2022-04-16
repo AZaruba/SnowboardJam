@@ -11,8 +11,6 @@ public class TimerController : MonoBehaviour
     private StateData c_stateData;
     private StateMachine sm_timer;
 
-    private IncrementCartridge cart_incr;
-
     private iMessageClient cl_timer;
 
     // DEBUG: implement UI-backend messaging if there are reasons to, as it keeps the architecture consistent
@@ -59,10 +57,9 @@ public class TimerController : MonoBehaviour
 
     private void InitializeStateMachine()
     {
-        cart_incr = new IncrementCartridge();
 
-        TimeDecreaseState s_timeDecr = new TimeDecreaseState(ref c_timerData, ref cart_incr);
-        TimeIncreaseState s_timeIncr = new TimeIncreaseState(ref c_timerData, ref cart_incr);
+        TimeDecreaseState s_timeDecr = new TimeDecreaseState(ref c_timerData);
+        TimeIncreaseState s_timeIncr = new TimeIncreaseState(ref c_timerData);
 
         sm_timer = new StateMachine(StateRef.TIMER_INCR);
         sm_timer.AddState(s_timeIncr, StateRef.TIMER_INCR);

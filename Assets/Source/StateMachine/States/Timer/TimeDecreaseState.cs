@@ -4,12 +4,10 @@ using UnityEngine;
 
 public class TimeDecreaseState : iState
 {
-    IncrementCartridge cart_incr;
     TimerData c_timerData;
 
-    public TimeDecreaseState(ref TimerData tData, ref IncrementCartridge incr)
+    public TimeDecreaseState(ref TimerData tData)
     {
-        this.cart_incr = incr;
         this.c_timerData = tData;
     }
     public void Act()

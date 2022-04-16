@@ -6,13 +6,11 @@ public class SpinChargeState : iState
 {
     private TrickPhysicsData c_trickPhys;
     private PlayerInputData c_playerInput;
-    private IncrementCartridge cart_incr;
 
-    public SpinChargeState(ref TrickPhysicsData dataIn, ref PlayerInputData inputIn, ref IncrementCartridge incrIn)
+    public SpinChargeState(ref TrickPhysicsData dataIn, ref PlayerInputData inputIn)
     {
         this.c_trickPhys = dataIn;
         this.c_playerInput = inputIn;
-        this.cart_incr = incrIn;
     }
 
     public void Act()
@@ -23,8 +21,8 @@ public class SpinChargeState : iState
         float flipChargeRate = c_trickPhys.f_flipIncrement * c_playerInput.f_inputAxisLVert;
         float spinChargeRate = c_trickPhys.f_spinIncrement * c_playerInput.f_inputAxisLHoriz;
 
-        cart_incr.IncrementTethered(ref currentSpinCharge, spinChargeRate * Time.fixedDeltaTime, c_trickPhys.f_maxSpinRate *-1, c_trickPhys.f_maxSpinRate);
-        cart_incr.IncrementTethered(ref currentFlipCharge, flipChargeRate * Time.fixedDeltaTime, c_trickPhys.f_maxFlipRate *-1, c_trickPhys.f_maxFlipRate);
+        IncrementCartridge.IncrementTethered(ref currentSpinCharge, spinChargeRate * Time.fixedDeltaTime, c_trickPhys.f_maxSpinRate *-1, c_trickPhys.f_maxSpinRate);
+        IncrementCartridge.IncrementTethered(ref currentFlipCharge, flipChargeRate * Time.fixedDeltaTime, c_trickPhys.f_maxFlipRate *-1, c_trickPhys.f_maxFlipRate);
 
         c_trickPhys.f_currentFlipCharge = currentFlipCharge;
         c_trickPhys.f_currentSpinCharge = currentSpinCharge;

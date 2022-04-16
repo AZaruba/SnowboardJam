@@ -4,20 +4,18 @@ using UnityEngine;
 
 public class UIIncrementState : iState
 {
-    private IncrementCartridge cart_incr;
     private ScoreDisplayData data_score;
 
-    public UIIncrementState(ref ScoreDisplayData dataIn, ref IncrementCartridge incrIn)
+    public UIIncrementState(ref ScoreDisplayData dataIn)
     {
         data_score = dataIn;
-        cart_incr = incrIn;
     }
 
     public void Act()
     {
         int displayScore = data_score.i_displayScore;
 
-        cart_incr.Increment(ref displayScore, 1);
+        IncrementCartridge.Increment(ref displayScore, 1);
 
         data_score.i_displayScore = displayScore;
     }

@@ -64,9 +64,8 @@ public class ScoreDisplayController : MonoBehaviour, iEntityController
     #region StartupFunctions
     private void InitializeStateMachine()
     {
-        IncrementCartridge cart_increment = new IncrementCartridge();
 
-        UIIncrementState s_increment = new UIIncrementState(ref data_scoreDisplay, ref cart_increment);
+        UIIncrementState s_increment = new UIIncrementState(ref data_scoreDisplay);
         UIRestState s_rest = new UIRestState();
         UIPausedState s_paused = new UIPausedState();
 

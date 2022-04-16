@@ -15,7 +15,6 @@ public class MenuController : MonoBehaviour
     private iMenuItemController c_activeMenuItem;
     private ActiveMenuData c_activeMenuData;
     private LastFrameActiveMenuData c_lastFrameData;
-    private IncrementCartridge cart_incr;
     private LerpCartridge cart_lerp;
 
     private int i_superMenuIndex;
@@ -224,12 +223,11 @@ public class MenuController : MonoBehaviour
     /// </summary>
     private void InitializeStateMachine()
     {
-        cart_incr = new IncrementCartridge();
         cart_lerp = new LerpCartridge();
 
         MenuDisabledState s_disabled = new MenuDisabledState();
         MenuReadyState s_ready = new MenuReadyState(ref c_activeMenuData);
-        MenuWaitState s_wait = new MenuWaitState(ref ControllerData, ref c_activeMenuData, ref cart_incr);
+        MenuWaitState s_wait = new MenuWaitState(ref ControllerData, ref c_activeMenuData);
         MenuTickState s_tick = new MenuTickState(ref c_activeMenuData);
         MenuJumpState s_jump = new MenuJumpState(ref c_activeMenuData);
 
