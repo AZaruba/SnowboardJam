@@ -71,7 +71,7 @@ public static class IncrementCartridge
         int sign = (value > 0.0f) ? 1 : -1;
         float absVal = Mathf.Abs(value);
 
-        Decrement(ref absVal, delta, cap);
+        Decrement(ref absVal, Mathf.Abs(delta), cap);
         value = absVal * sign;
     }
 
@@ -84,10 +84,10 @@ public static class IncrementCartridge
     /// <param name="cap"></param>
     public static void IncrementAbs(ref float value, float delta, float cap = float.MaxValue)
     {
-        int sign = (value > 0.0f) ? 1 : -1;
+        int sign = (delta > 0.0f) ? 1 : -1;
         float absVal = Mathf.Abs(value);
 
-        Increment(ref absVal, delta, cap);
+        Increment(ref absVal, Mathf.Abs(delta), cap);
         value = absVal * sign;
     }
 

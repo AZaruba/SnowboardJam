@@ -65,9 +65,6 @@ public class SpinningState : iState
 
     public void TransitionAct()
     {
-        c_physData.f_currentFlipRate = c_physData.f_currentFlipCharge;
-        c_physData.f_currentSpinRate = c_physData.f_currentSpinCharge;
-        c_physData.q_startRotation = c_playerPosData.q_centerOfGravityRotation;
-        c_physData.f_groundResetTarget = Constants.ZERO_F;
+
     }
 }

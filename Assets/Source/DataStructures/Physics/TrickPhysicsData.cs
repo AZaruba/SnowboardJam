@@ -168,15 +168,15 @@ public class TrickPhysicsData
         this.MaximumFlipRate = TrickStatRatio * 2.0f;
         this.CurrentFlipRate = 0.0f;
         this.CurrentFlipCharge = 0.0f;
-        this.FlipDecay = TrickStatRatio * 0.2f;
-        this.FlipIncrement = TrickStatRatio * 0.5f;
+        this.FlipDecay = TrickStatRatio * 3.2f;
+        this.FlipIncrement = TrickStatRatio * 2.5f;
 
         this.MinimumSpinRate = TrickStatRatio * 1.0f;
         this.MaximumSpinRate = TrickStatRatio * 2.5f;
         this.CurrentSpinRate = 0.0f;
         this.CurrentSpinCharge = 0.0f;
-        this.SpinDecay = TrickStatRatio * 0.2f;
-        this.SpinIncrement = TrickStatRatio * 0.5f;
+        this.SpinDecay = TrickStatRatio * 3.2f;
+        this.SpinIncrement = TrickStatRatio * 2.5f;
 
         this.GroundResetRate = TrickStatRatio * 2f;
         this.ResetRate = TrickStatRatio * 3f;

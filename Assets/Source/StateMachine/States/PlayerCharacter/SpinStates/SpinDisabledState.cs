@@ -24,6 +24,10 @@ public class SpinDisabledState : iState
         {
             return StateRef.SPIN_IDLE;
         }
+        if (cmd == Command.FALL)
+        {
+            return StateRef.SPIN_IDLE;
+        }
 
         return StateRef.SPIN_DISABLED;
     }

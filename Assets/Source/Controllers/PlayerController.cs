@@ -431,7 +431,6 @@ public class PlayerController : MonoBehaviour, iEntityController {
     {
         if (c_collisionController.CheckForGround4())
         {
-            Debug.Log("ground hit 4");
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
 
             c_accelMachine.Execute(Command.LAND);
