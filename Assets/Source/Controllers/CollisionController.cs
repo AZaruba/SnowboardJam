@@ -86,6 +86,7 @@ public class CollisionController
             }
             return true;
         }
+        c_collisionData.v_attachPoint = Vector3.zero;
 
         return false;
     }

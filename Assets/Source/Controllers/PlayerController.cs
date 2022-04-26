@@ -428,17 +428,8 @@ public class PlayerController : MonoBehaviour, iEntityController {
         if (c_collisionController.CheckForGround4())
         {
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
-
-            c_accelMachine.Execute(Command.LAND);
-            c_turnMachine.Execute(Command.LAND);
-            c_airMachine.Execute(Command.LAND);
-            sm_tricking.Execute(Command.LAND);
-            sm_trickPhys.Execute(Command.LAND);
         }
-        /*
-         * Up next, the case that we're on the gorund, not IN it
-         */
-        else if (c_collisionController.CheckForAir())
+        if (c_collisionController.CheckForAir())
         {
             c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
             debugAccessor.DisplayVector3("attachpoint", Quaternion.Inverse(c_playerData.q_currentRotation) * c_collisionData.v_attachPoint);
@@ -460,33 +451,7 @@ public class PlayerController : MonoBehaviour, iEntityController {
             sm_trickPhys.Execute(Command.FALL);
             sm_tricking.Execute(Command.READY_TRICK);
         }
-        /*
-        else if (!c_collisionController.CheckForAir())
-        {
-            debugAccessor.DisplayString("NOT DETECTIN'");
-            debugAccessor.DisplayVector3("AIR CHECK AERIAL", Vector3.zero);
-            c_collisionData.v_attachPoint = Vector3.zero;
-
-            c_accelMachine.Execute(Command.FALL);
-            c_turnMachine.Execute(Command.FALL);
-            c_airMachine.Execute(Command.FALL);
-            sm_trickPhys.Execute(Command.FALL);
-            sm_tricking.Execute(Command.READY_TRICK);
-        }
-        else
-        {
-            debugAccessor.DisplayString("NOT DETECTIN'");
-            debugAccessor.DisplayVector3("AIR CHECK GROUNDED", Vector3.zero);
-            c_playerData.v_currentPosition += c_collisionData.v_attachPoint;
-
-            c_accelMachine.Execute(Command.LAND);
-            c_turnMachine.Execute(Command.LAND);
-            c_airMachine.Execute(Command.LAND);
-            sm_tricking.Execute(Command.LAND);s
-            sm_trickPhys.Execute(Command.LAND);
-
-        }
-        */
+        
         if (c_collisionController.CheckGroundRotation())
         {
             // force player rotation before checking
